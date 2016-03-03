@@ -1,0 +1,24 @@
+{
+  "secret_key": "[required* secret key goes here]: ogk9xrw5c2dzb_bde!!1%12gc4gft!nm^sktlyq(95ic!l1uo+",
+  "host": "[required* deployment host domain] *required",
+  "databases": [
+    {
+      "name": "default",
+      "schema": "[required* schema name]: dataloader",
+      "engine": "[required* database engine]: django.db.backends.mysql",
+      "user": "[database connection user]: djangouser",
+      "password": "[database connection password]: 12345",
+      "host": "[database host]: localhost",
+      "port": "[database connection port]: 3306"
+    },
+    {
+      "name": "odm2",
+      "schema": "[required* schema name]: odm2",
+      "engine": "[required* database engine]: django.db.backends.mysql",
+      "user": "[database connection user]: djangouser",
+      "password": "[database connection password]: 12345",
+      "host": "[database host]: localhost",
+      "port": "[database connection port]: 3306"
+    }
+  ]
+}

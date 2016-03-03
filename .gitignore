@@ -86,6 +86,7 @@ target/
 
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
+/src/WebSDL/WebSDL/settings/settings.json
 
 ## File-based project format:
 *.ipr
