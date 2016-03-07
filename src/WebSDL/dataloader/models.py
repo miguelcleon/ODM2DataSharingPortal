@@ -76,6 +76,11 @@ class UnitType(ControlledVocabulary):
         db_table = 'CV_UnitType'
 
 
+class QualityCode(ControlledVocabulary):
+    class Meta:
+        db_table = 'QualityCodeCV'
+
+
 class VariableType(ControlledVocabulary):
     class Meta:
         db_table = 'CV_VariableType'
@@ -278,3 +283,23 @@ class TimeSeriesResult(models.Model):
     intended_time_spacing = models.FloatField(db_column='IntendedTimeSpacing', blank=True, null=True)
     intended_time_spacing_unit = models.ForeignKey('Unit', related_name='time_series_intended_time_spacing', db_column='IntendedTimeSpacingUnitsID', blank=True, null=True)
     aggregation_statistic_cv = models.ForeignKey('AggregationStatistic', db_column='AggregationStatisticCV')
+
+    class Meta:
+        managed = False
+        db_table = 'TimeSeriesResults'
+
+
+class TimeSeriesResultValue(models.Model):
+    value_id = models.BigIntegerField(db_column='ValueID', primary_key=True)
+    result = models.ForeignKey('TimeSeriesResult', db_column='ResultID')
+    data_value = models.FloatField(db_column='DataValue')
+    value_datetime = models.DateTimeField(db_column='ValueDateTime')
+    value_datetime_utc_offset = models.IntegerField(db_column='ValueDateTimeUTCOffset')
+    censor_code = models.ForeignKey('CensorCode', db_column='CensorCodeCV')
+    quality_code = models.ForeignKey('QualityCode', db_column='QualityCodeCV')
+    time_aggregation_interval = models.FloatField(db_column='TimeAggregationInterval')
+    time_aggregation_interval_unit = models.ForeignKey('Unit', db_column='TimeAggregationIntervalUnitsID')
+
+    class Meta:
+        managed = False
+        db_table = 'TimeSeriesResultValues'
