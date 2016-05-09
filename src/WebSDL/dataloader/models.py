@@ -101,6 +101,12 @@ class SamplingFeature(models.Model):
     sampling_feature_description = models.TextField(db_column='SamplingFeatureDescription', blank=True)
     elevation_m = models.FloatField(db_column='Elevation_m', blank=True, null=True)
 
+    def __str__(self):
+        return str(self.sampling_feature_type_id) + ': ' + self.sampling_feature_code + ' ' + self.sampling_feature_name
+
+    def __unicode__(self):
+        return unicode(self.sampling_feature_type_id) + ': ' + self.sampling_feature_code + ' ' + self.sampling_feature_name
+
     class Meta:
         managed = False
         db_table = 'SamplingFeatures'
@@ -110,6 +116,12 @@ class FeatureAction(models.Model):
     feature_action_id = models.AutoField(db_column='FeatureActionID', primary_key=True)
     sampling_feature = models.ForeignKey('SamplingFeature', related_name="feature_action", db_column='SamplingFeatureID')
     action = models.ForeignKey('Action', related_name="feature_action", db_column='ActionID')
+
+    def __str__(self):
+        return str(self.action.action_type_id) + ' - ' + str(self.action.begin_datetime) + ' ' + self.sampling_feature.sampling_feature_code
+
+    def __unicode__(self):
+        return unicode(self.action.action_type_id) + ' - ' + unicode(self.action.begin_datetime) + ' ' + self.sampling_feature.sampling_feature_code
 
     class Meta:
         managed = False
@@ -124,6 +136,12 @@ class Action(models.Model):
     begin_datetime_utc_offset = models.IntegerField(db_column='BeginDateTimeUTCOffset')
     action_description = models.TextField(db_column='ActionDescription', blank=True)
 
+    def __str__(self):
+        return str(self.action_type_id) + ' - ' + str(self.begin_datetime)
+
+    def __unicode__(self):
+        return unicode(self.action_type_id) + ' - ' + unicode(self.begin_datetime)
+
     class Meta:
         managed = False
         db_table = 'Actions'
@@ -135,6 +153,12 @@ class ActionBy(models.Model):
     affiliation = models.ForeignKey('Affiliation', db_column='AffiliationID')
     is_action_lead = models.BooleanField(db_column='IsActionLead', default=None)
     role_description = models.TextField(db_column='RoleDescription', blank=True)
+
+    def __str__(self):
+        return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + str(self.action)
+
+    def __unicode__(self):
+        return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + unicode(self.action)
 
     class Meta:
         managed = False
@@ -150,6 +174,12 @@ class Method(models.Model):
     method_link = models.TextField(db_column='MethodLink', blank=True)
     organization = models.ForeignKey('Organization', db_column='OrganizationID', blank=True, null=True)
 
+    def __str__(self):
+        return str(self.method_type_id) + ': ' + self.method_name + ' (' + self.method_code + ')'
+
+    def __unicode__(self):
+        return unicode(self.method_type_id) + ': ' + self.method_name + ' (' + self.method_code + ')'
+
     class Meta:
         managed = False
         db_table = 'Methods'
@@ -160,6 +190,12 @@ class People(models.Model):
     person_first_name = models.TextField(db_column='PersonFirstName')
     person_middle_name = models.TextField(db_column='PersonMiddleName', blank=True)
     person_last_name = models.TextField(db_column='PersonLastName')
+
+    def __str__(self):
+        return self.person_first_name + ' ' + self.person_last_name
+
+    def __unicode__(self):
+        return self.person_first_name + ' ' + self.person_last_name
 
     class Meta:
         managed = False
@@ -174,6 +210,12 @@ class Organization(models.Model):
     organization_description = models.TextField(db_column='OrganizationDescription', blank=True)
     organization_link = models.TextField(db_column='OrganizationLink', blank=True)
     parent_organization = models.ForeignKey('self', db_column='ParentOrganizationID', blank=True, null=True)
+
+    def __str__(self):
+        return str(self.organization_type_id) + ': ' + self.organization_code + ' ' + self.organization_name
+
+    def __unicode__(self):
+        return unicode(self.organization_type_id) + ': ' + self.organization_code + ' ' + self.organization_name
 
     class Meta:
         managed = False
@@ -192,6 +234,12 @@ class Affiliation(models.Model):
     primary_address = models.TextField(db_column='PrimaryAddress', blank=True)
     person_link = models.TextField(db_column='PersonLink', blank=True)
 
+    def __str__(self):
+        return str(self.person) + '(' + str(self.organization) + ') - ' + self.primary_email
+
+    def __unicode__(self):
+        return unicode(self.person) + '(' + unicode(self.organization) + ') - ' + self.primary_email
+
     class Meta:
         managed = False
         db_table = 'Affiliations'
@@ -203,6 +251,12 @@ class ProcessingLevel(models.Model):
     definition = models.TextField(db_column='Definition', blank=True)
     explanation = models.TextField(db_column='Explanation', blank=True)
 
+    def __str__(self):
+        return self.processing_level_code + '(' + self.definition + ')'
+
+    def __unicode__(self):
+        return self.processing_level_code + '(' + self.definition + ')'
+
     class Meta:
         managed = False
         db_table = 'ProcessingLevels'
@@ -213,6 +267,12 @@ class Unit(models.Model):
     unit_type = models.ForeignKey('UnitType', db_column='UnitsTypeCV')
     unit_abbreviation = models.TextField(db_column='UnitsAbbreviation')
     unit_name = models.TextField(db_column='UnitsName')
+
+    def __str__(self):
+        return str(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
+
+    def __unicode__(self):
+        return unicode(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
 
     class Meta:
         managed = False
@@ -227,8 +287,11 @@ class Variable(models.Model):
     variable_definition = models.TextField(db_column='VariableDefinition', blank=True)
     no_data_value = models.FloatField(db_column='NoDataValue')
 
-    def natural_key(self):
-        return self.variablecode + ' ' + self.variabletypecv.name
+    def __str__(self):
+        return str(self.variable_type_id) + ': ' + self.variable_name + '(' + self.variable_code + ')'
+
+    def __unicode__(self):
+        return unicode(self.variable_type_id) + ': ' + self.variable_name + '(' + self.variable_code + ')'
 
     class Meta:
         managed = False
@@ -249,6 +312,12 @@ class Result(models.Model):
     sampled_medium = models.ForeignKey('Medium', db_column='SampledMediumCV')
     value_count = models.IntegerField(db_column='ValueCount')
 
+    def __str__(self):
+        return str(self.result_datetime) + ' - ' + str(self.result_type_id) + ': ' + self.variable.variable_code + ' ' + self.unit.unit_code
+
+    def __unicode__(self):
+        return unicode(self.result_datetime) + ' - ' + unicode(self.result_type_id) + ': ' + self.variable.variable_code + ' ' + self.unit.unit_code
+
     class Meta:
         managed = False
         db_table = 'Results'
@@ -261,10 +330,10 @@ class SpatialReference(models.Model):
     srs_description = models.TextField(db_column='SRSDescription', blank=True)
 
     def __str__(self):
-        return self.srsname
+        return self.srsname + '(' + self.srs_code + ')'
 
     def __unicode__(self):
-        return self.srsname
+        return self.srsname + '(' + self.srs_code + ')'
 
     class Meta:
         managed = False
@@ -272,7 +341,7 @@ class SpatialReference(models.Model):
 
 
 class TimeSeriesResult(models.Model):
-    result_id = models.ForeignKey(Result, db_column='ResultID', primary_key=True)
+    result = models.ForeignKey(Result, db_column='ResultID', primary_key=True)
     x_location = models.FloatField(db_column='XLocation', blank=True, null=True)
     x_location_unit = models.ForeignKey('Unit', related_name='time_series_x_locations', db_column='XLocationUnitsID', blank=True, null=True)
     y_location = models.FloatField(db_column='YLocation', blank=True, null=True)
@@ -283,6 +352,12 @@ class TimeSeriesResult(models.Model):
     intended_time_spacing = models.FloatField(db_column='IntendedTimeSpacing', blank=True, null=True)
     intended_time_spacing_unit = models.ForeignKey('Unit', related_name='time_series_intended_time_spacing', db_column='IntendedTimeSpacingUnitsID', blank=True, null=True)
     aggregation_statistic_cv = models.ForeignKey('AggregationStatistic', db_column='AggregationStatisticCV')
+
+    def __str__(self):
+        return str(self.result)
+
+    def __unicode__(self):
+        return unicode(self.result)
 
     class Meta:
         managed = False
@@ -299,6 +374,12 @@ class TimeSeriesResultValue(models.Model):
     quality_code = models.ForeignKey('QualityCode', db_column='QualityCodeCV')
     time_aggregation_interval = models.FloatField(db_column='TimeAggregationInterval')
     time_aggregation_interval_unit = models.ForeignKey('Unit', db_column='TimeAggregationIntervalUnitsID')
+
+    def __str__(self):
+        return str(self.value_datetime) + ': ' + str(self.data_value) + '(' + str(self.result) + ')'
+
+    def __unicode__(self):
+        return unicode(self.value_datetime) + ': ' + unicode(self.data_value) + '(' + unicode(self.result) + ')'
 
     class Meta:
         managed = False
