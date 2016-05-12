@@ -9,11 +9,11 @@ from django.db import models
 # Controlled Vocabularies
 
 class ControlledVocabulary(models.Model):
-    term = models.TextField(db_column='Term')
-    name = models.TextField(db_column='Name', primary_key=True)
-    definition = models.TextField(db_column='Definition', blank=True)
-    category = models.TextField(db_column='Category', blank=True)
-    source_vocabulary_uri = models.TextField(db_column='SourceVocabularyURI', blank=True)
+    term = models.CharField(db_column='Term', max_length=255)
+    name = models.CharField(db_column='Name', primary_key=True, max_length=255)
+    definition = models.CharField(db_column='Definition', blank=True, max_length=500)
+    category = models.CharField(db_column='Category', blank=True, max_length=255)
+    source_vocabulary_uri = models.CharField(db_column='SourceVocabularyURI', blank=True, max_length=255)
 
     def __str__(self):
         return self.name
@@ -22,7 +22,7 @@ class ControlledVocabulary(models.Model):
         return self.name
 
     class Meta:
-        managed = False
+        managed = True
         abstract = True
 
 
@@ -95,10 +95,11 @@ class VariableName(ControlledVocabulary):
 
 class SamplingFeature(models.Model):
     sampling_feature_id = models.AutoField(db_column='SamplingFeatureID', primary_key=True)
+    sampling_feature_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='SamplingFeatureUUID')
     sampling_feature_type = models.ForeignKey('SamplingFeatureType', db_column='SamplingFeatureTypeCV')
-    sampling_feature_code = models.TextField(db_column='SamplingFeatureCode')
-    sampling_feature_name = models.TextField(db_column='SamplingFeatureName', blank=True)
-    sampling_feature_description = models.TextField(db_column='SamplingFeatureDescription', blank=True)
+    sampling_feature_code = models.CharField(db_column='SamplingFeatureCode', max_length=50)
+    sampling_feature_name = models.CharField(db_column='SamplingFeatureName', blank=True, max_length=255)
+    sampling_feature_description = models.CharField(db_column='SamplingFeatureDescription', blank=True, max_length=500)
     elevation_m = models.FloatField(db_column='Elevation_m', blank=True, null=True)
 
     def __str__(self):
@@ -108,7 +109,7 @@ class SamplingFeature(models.Model):
         return unicode(self.sampling_feature_type_id) + ': ' + self.sampling_feature_code + ' ' + self.sampling_feature_name
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'SamplingFeatures'
 
 
@@ -124,7 +125,7 @@ class FeatureAction(models.Model):
         return unicode(self.action.action_type_id) + ' - ' + unicode(self.action.begin_datetime) + ' ' + self.sampling_feature.sampling_feature_code
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'FeatureActions'
 
 
@@ -143,7 +144,7 @@ class Action(models.Model):
         return unicode(self.action_type_id) + ' - ' + unicode(self.begin_datetime)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Actions'
 
 
@@ -152,7 +153,7 @@ class ActionBy(models.Model):
     action = models.ForeignKey('Action', related_name="action_by", db_column='ActionID')
     affiliation = models.ForeignKey('Affiliation', db_column='AffiliationID')
     is_action_lead = models.BooleanField(db_column='IsActionLead', default=None)
-    role_description = models.TextField(db_column='RoleDescription', blank=True)
+    role_description = models.CharField(db_column='RoleDescription', blank=True, max_length=255)
 
     def __str__(self):
         return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + str(self.action)
@@ -161,17 +162,17 @@ class ActionBy(models.Model):
         return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + unicode(self.action)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'ActionBy'
 
 
 class Method(models.Model):
     method_id = models.AutoField(db_column='MethodID', primary_key=True)
     method_type = models.ForeignKey('MethodType', db_column='MethodTypeCV')
-    method_code = models.TextField(db_column='MethodCode')
-    method_name = models.TextField(db_column='MethodName')
-    method_description = models.TextField(db_column='MethodDescription', blank=True)
-    method_link = models.TextField(db_column='MethodLink', blank=True)
+    method_code = models.CharField(db_column='MethodCode', max_length=50)
+    method_name = models.CharField(db_column='MethodName', max_length=255)
+    method_description = models.CharField(db_column='MethodDescription', blank=True, max_length=500)
+    method_link = models.CharField(db_column='MethodLink', blank=True, max_length=255)
     organization = models.ForeignKey('Organization', db_column='OrganizationID', blank=True, null=True)
 
     def __str__(self):
@@ -181,15 +182,15 @@ class Method(models.Model):
         return unicode(self.method_type_id) + ': ' + self.method_name + ' (' + self.method_code + ')'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Methods'
 
 
 class People(models.Model):
     person_id = models.AutoField(db_column='PersonID', primary_key=True)
-    person_first_name = models.TextField(db_column='PersonFirstName')
-    person_middle_name = models.TextField(db_column='PersonMiddleName', blank=True)
-    person_last_name = models.TextField(db_column='PersonLastName')
+    person_first_name = models.CharField(db_column='PersonFirstName', max_length=255)
+    person_middle_name = models.CharField(db_column='PersonMiddleName', blank=True, max_length=255)
+    person_last_name = models.CharField(db_column='PersonLastName', max_length=255)
 
     def __str__(self):
         return self.person_first_name + ' ' + self.person_last_name
@@ -198,17 +199,17 @@ class People(models.Model):
         return self.person_first_name + ' ' + self.person_last_name
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'People'
 
 
 class Organization(models.Model):
     organization_id = models.AutoField(db_column='OrganizationID', primary_key=True)
     organization_type = models.ForeignKey('OrganizationType', db_column='OrganizationTypeCV')
-    organization_code = models.TextField(db_column='OrganizationCode')
-    organization_name = models.TextField(db_column='OrganizationName')
-    organization_description = models.TextField(db_column='OrganizationDescription', blank=True)
-    organization_link = models.TextField(db_column='OrganizationLink', blank=True)
+    organization_code = models.CharField(db_column='OrganizationCode', max_length=50)
+    organization_name = models.CharField(db_column='OrganizationName', max_length=255)
+    organization_description = models.CharField(db_column='OrganizationDescription', blank=True, max_length=500)
+    organization_link = models.CharField(db_column='OrganizationLink', blank=True, max_length=255)
     parent_organization = models.ForeignKey('self', db_column='ParentOrganizationID', blank=True, null=True)
 
     def __str__(self):
@@ -218,7 +219,7 @@ class Organization(models.Model):
         return unicode(self.organization_type_id) + ': ' + self.organization_code + ' ' + self.organization_name
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Organizations'
 
 
@@ -229,10 +230,10 @@ class Affiliation(models.Model):
     is_primary_organization_contact = models.NullBooleanField(db_column='IsPrimaryOrganizationContact', default=None)
     affiliation_start_date = models.DateField(db_column='AffiliationStartDate')
     affiliation_end_date = models.DateField(db_column='AffiliationEndDate', blank=True, null=True)
-    primary_phone = models.TextField(db_column='PrimaryPhone', blank=True)
-    primary_email = models.TextField(db_column='PrimaryEmail')
-    primary_address = models.TextField(db_column='PrimaryAddress', blank=True)
-    person_link = models.TextField(db_column='PersonLink', blank=True)
+    primary_phone = models.CharField(db_column='PrimaryPhone', blank=True, max_length=50)
+    primary_email = models.CharField(db_column='PrimaryEmail', max_length=255)
+    primary_address = models.CharField(db_column='PrimaryAddress', blank=True, max_length=255)
+    person_link = models.CharField(db_column='PersonLink', blank=True, max_length=255)
 
     def __str__(self):
         return str(self.person) + '(' + str(self.organization) + ') - ' + self.primary_email
@@ -241,15 +242,15 @@ class Affiliation(models.Model):
         return unicode(self.person) + '(' + unicode(self.organization) + ') - ' + self.primary_email
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Affiliations'
 
 
 class ProcessingLevel(models.Model):
     processing_level_id = models.IntegerField(db_column='ProcessingLevelID', primary_key=True)
-    processing_level_code = models.TextField(db_column='ProcessingLevelCode')
-    definition = models.TextField(db_column='Definition', blank=True)
-    explanation = models.TextField(db_column='Explanation', blank=True)
+    processing_level_code = models.CharField(db_column='ProcessingLevelCode', max_length=50)
+    definition = models.CharField(db_column='Definition', blank=True, max_length=500)
+    explanation = models.CharField(db_column='Explanation', blank=True, max_length=500)
 
     def __str__(self):
         return self.processing_level_code + '(' + self.definition + ')'
@@ -258,15 +259,15 @@ class ProcessingLevel(models.Model):
         return self.processing_level_code + '(' + self.definition + ')'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'ProcessingLevels'
 
 
 class Unit(models.Model):
     unit_id = models.IntegerField(db_column='UnitsID', primary_key=True)
     unit_type = models.ForeignKey('UnitType', db_column='UnitsTypeCV')
-    unit_abbreviation = models.TextField(db_column='UnitsAbbreviation')
-    unit_name = models.TextField(db_column='UnitsName')
+    unit_abbreviation = models.CharField(db_column='UnitsAbbreviation', max_length=255)
+    unit_name = models.CharField(db_column='UnitsName', max_length=255)
 
     def __str__(self):
         return str(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
@@ -275,16 +276,16 @@ class Unit(models.Model):
         return unicode(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Units'
 
 
 class Variable(models.Model):
     variable_id = models.IntegerField(db_column='VariableID', primary_key=True)
     variable_type = models.ForeignKey('VariableType', db_column='VariableTypeCV')
-    variable_code = models.TextField(db_column='VariableCode')
+    variable_code = models.CharField(db_column='VariableCode', max_length=50)
     variable_name = models.ForeignKey('VariableName', db_column='VariableNameCV')
-    variable_definition = models.TextField(db_column='VariableDefinition', blank=True)
+    variable_definition = models.CharField(db_column='VariableDefinition', blank=True, max_length=255)
     no_data_value = models.FloatField(db_column='NoDataValue')
 
     def __str__(self):
@@ -294,13 +295,13 @@ class Variable(models.Model):
         return unicode(self.variable_type_id) + ': ' + self.variable_name + '(' + self.variable_code + ')'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Variables'
 
 
 class Result(models.Model):
     result_id = models.AutoField(db_column='ResultID', primary_key=True)
-    result_uuid = models.TextField(db_column='ResultUUID', default=uuid.uuid4)
+    result_uuid = models.CharField(db_column='ResultUUID', default=uuid.uuid4, max_length=255)
     feature_action = models.ForeignKey('FeatureAction', db_column='FeatureActionID')
     result_type = models.ForeignKey('ResultType', db_column='ResultTypeCV')
     variable = models.ForeignKey('Variable', db_column='VariableID')
@@ -319,15 +320,15 @@ class Result(models.Model):
         return unicode(self.result_datetime) + ' - ' + unicode(self.result_type_id) + ': ' + self.variable.variable_code + ' ' + self.unit.unit_code
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Results'
 
 
 class SpatialReference(models.Model):
     spatial_reference_id = models.IntegerField(db_column='SpatialReferenceID', primary_key=True)
-    srs_code = models.TextField(db_column='SRSCode', blank=True)
-    srs_name = models.TextField(db_column='SRSName')
-    srs_description = models.TextField(db_column='SRSDescription', blank=True)
+    srs_code = models.CharField(db_column='SRSCode', blank=True, max_length=50)
+    srs_name = models.CharField(db_column='SRSName', max_length=255)
+    srs_description = models.CharField(db_column='SRSDescription', blank=True, max_length=500)
 
     def __str__(self):
         return self.srsname + '(' + self.srs_code + ')'
@@ -336,7 +337,7 @@ class SpatialReference(models.Model):
         return self.srsname + '(' + self.srs_code + ')'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'SpatialReferences'
 
 
@@ -360,7 +361,7 @@ class TimeSeriesResult(models.Model):
         return unicode(self.result)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'TimeSeriesResults'
 
 
@@ -382,5 +383,5 @@ class TimeSeriesResultValue(models.Model):
         return unicode(self.value_datetime) + ': ' + unicode(self.data_value) + '(' + unicode(self.result) + ')'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'TimeSeriesResultValues'
