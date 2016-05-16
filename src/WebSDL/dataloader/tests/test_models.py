@@ -5,8 +5,6 @@ from dataloader.models import SamplingFeature, SamplingFeatureType
 
 
 class TestSamplingFeature(TestCase):
-    multi_db = True
-
     def setUp(self):
         sampling_feature_type_data = {
             "term": "site",
@@ -25,7 +23,13 @@ class TestSamplingFeature(TestCase):
         }
         self.sampling_feature = SamplingFeature.objects.create(**sampling_feature_data)
 
-    def test_sampling_feature_creation(self):
+    def test_creation(self):
         self.assertTrue(isinstance(self.sampling_feature, SamplingFeature))
+
+    def test_string_representation(self):
         self.assertEqual(str(self.sampling_feature), 'Site: RB_KF_C Knowlton Fork Climate')
         self.assertEqual(self.sampling_feature.__unicode__(), u'Site: RB_KF_C Knowlton Fork Climate')
+
+    def tearDown(self):
+        self.sampling_feature.delete()
+        self.sampling_feature_type.delete()

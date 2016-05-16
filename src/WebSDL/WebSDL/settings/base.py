@@ -96,8 +96,8 @@ for database in data['databases']:
         'PASSWORD': database['password'] if 'password' in database else '',
         'HOST': database['host'] if 'host' in database else '',
         'PORT': database['port'] if 'port' in database else '',
-        'OPTIONS': database['options'] if 'options' in database else '',
-        'TEST': database['test'] if 'test' in database else '',
+        'OPTIONS': database['options'] if 'options' in database else {},
+        'TEST': database['test'] if 'test' in database else {},
     }
 
 # Password validation

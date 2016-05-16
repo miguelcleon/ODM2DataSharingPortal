@@ -22,7 +22,6 @@ class ControlledVocabulary(models.Model):
         return self.name
 
     class Meta:
-        managed = True
         abstract = True
 
 
@@ -109,7 +108,6 @@ class SamplingFeature(models.Model):
         return unicode(self.sampling_feature_type_id) + ': ' + self.sampling_feature_code + ' ' + self.sampling_feature_name
 
     class Meta:
-        managed = True
         db_table = 'SamplingFeatures'
 
 
@@ -125,7 +123,6 @@ class FeatureAction(models.Model):
         return unicode(self.action.action_type_id) + ' - ' + unicode(self.action.begin_datetime) + ' ' + self.sampling_feature.sampling_feature_code
 
     class Meta:
-        managed = True
         db_table = 'FeatureActions'
 
 
@@ -144,7 +141,6 @@ class Action(models.Model):
         return unicode(self.action_type_id) + ' - ' + unicode(self.begin_datetime)
 
     class Meta:
-        managed = True
         db_table = 'Actions'
 
 
@@ -162,7 +158,6 @@ class ActionBy(models.Model):
         return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + unicode(self.action)
 
     class Meta:
-        managed = True
         db_table = 'ActionBy'
 
 
@@ -182,7 +177,6 @@ class Method(models.Model):
         return unicode(self.method_type_id) + ': ' + self.method_name + ' (' + self.method_code + ')'
 
     class Meta:
-        managed = True
         db_table = 'Methods'
 
 
@@ -199,7 +193,6 @@ class People(models.Model):
         return self.person_first_name + ' ' + self.person_last_name
 
     class Meta:
-        managed = True
         db_table = 'People'
 
 
@@ -219,7 +212,6 @@ class Organization(models.Model):
         return unicode(self.organization_type_id) + ': ' + self.organization_code + ' ' + self.organization_name
 
     class Meta:
-        managed = True
         db_table = 'Organizations'
 
 
@@ -242,7 +234,6 @@ class Affiliation(models.Model):
         return unicode(self.person) + '(' + unicode(self.organization) + ') - ' + self.primary_email
 
     class Meta:
-        managed = True
         db_table = 'Affiliations'
 
 
@@ -259,7 +250,6 @@ class ProcessingLevel(models.Model):
         return self.processing_level_code + '(' + self.definition + ')'
 
     class Meta:
-        managed = True
         db_table = 'ProcessingLevels'
 
 
@@ -276,7 +266,6 @@ class Unit(models.Model):
         return unicode(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
 
     class Meta:
-        managed = True
         db_table = 'Units'
 
 
@@ -295,7 +284,6 @@ class Variable(models.Model):
         return unicode(self.variable_type_id) + ': ' + self.variable_name + '(' + self.variable_code + ')'
 
     class Meta:
-        managed = True
         db_table = 'Variables'
 
 
@@ -320,7 +308,6 @@ class Result(models.Model):
         return unicode(self.result_datetime) + ' - ' + unicode(self.result_type_id) + ': ' + self.variable.variable_code + ' ' + self.unit.unit_code
 
     class Meta:
-        managed = True
         db_table = 'Results'
 
 
@@ -337,7 +324,6 @@ class SpatialReference(models.Model):
         return self.srsname + '(' + self.srs_code + ')'
 
     class Meta:
-        managed = True
         db_table = 'SpatialReferences'
 
 
@@ -361,7 +347,6 @@ class TimeSeriesResult(models.Model):
         return unicode(self.result)
 
     class Meta:
-        managed = True
         db_table = 'TimeSeriesResults'
 
 
@@ -383,5 +368,4 @@ class TimeSeriesResultValue(models.Model):
         return unicode(self.value_datetime) + ': ' + unicode(self.data_value) + '(' + unicode(self.result) + ')'
 
     class Meta:
-        managed = True
         db_table = 'TimeSeriesResultValues'

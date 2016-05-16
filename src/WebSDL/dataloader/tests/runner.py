@@ -16,7 +16,7 @@ class ODM2TestRunner(DiscoverRunner):
     def setup_test_environment(self, **kwargs):
         for model in self.models:
             model._meta.managed = True
-        #call_command('makemigrations', 'dataloader')
+        call_command('makemigrations', 'dataloader')
         super(ODM2TestRunner, self).setup_test_environment(**kwargs)
 
     def teardown_test_environment(self, **kwargs):
@@ -28,7 +28,6 @@ class ODM2TestRunner(DiscoverRunner):
         old_names = []
 
         self.test_connection = connections[self.database_alias]
-        #database_signature = self.test_connection.creation.test_db_signature()
         old_names.append((self.test_connection, self.test_connection.settings_dict['NAME'], True))
         self.test_connection.creation.create_test_db(
             verbosity=self.verbosity,
