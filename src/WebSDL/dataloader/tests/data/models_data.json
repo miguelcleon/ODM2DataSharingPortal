@@ -1,0 +1,167 @@
+{
+  "site_sampling_feature_type": {
+    "term": "site",
+    "name": "Site",
+    "category": "SamplingPoint",
+    "definition": "A facility or location at which observations have been collected."
+  },
+  "site_sampling_feature": {
+    "sampling_feature_code": "RB_KF_C",
+    "sampling_feature_name": "Knowlton Fork Climate",
+    "sampling_feature_description": "It's a nice site.",
+    "elevation_m": 2178.1008
+  },
+  "visit_method_type": {
+    "term": "siteVisit",
+    "name": "Site Visit",
+    "category": "FieldActivity",
+    "definition": "A method for performing a site visit action."
+  },
+  "visit_method": {
+    "method_code": "SiteVisit",
+    "method_name": "SiteVisit",
+    "method_description": "SiteVisit"
+  },
+  "visit_action_type": {
+    "term": "siteVisit",
+    "name": "Site Visit",
+    "category": "FieldActivity",
+    "definition": "A field visit action in which a single site is visited for one or more other possible actions."
+  },
+  "visit_action": {
+    "begin_datetime": "1991-08-17 1:20",
+    "begin_datetime_utc_offset": -7,
+    "action_description": "Test Action"
+  },
+  "person": {
+    "person_first_name": "Jeffery",
+    "person_middle_name": "Something",
+    "person_last_name": "Horsburgh"
+  },
+  "research_organization_type": {
+    "term": "researchInstitute",
+    "name": "Research institute",
+    "definition": "An organization founded to conduct research."
+  },
+  "usu_organization": {
+    "organization_code": "Utah State University",
+    "organization_name": "Utah State University"
+  },
+  "usu_affiliation": {
+    "is_primary_organization_contact": false,
+    "primary_phone": "777-666-5555",
+    "primary_email": "serious.email@usu.edu",
+    "primary_address": "Logan, Utah, United States, Earth, Solar Sytem, Milky Way Galaxy, Local Group, Virgo Supercluster"
+  },
+  "deployment_method_type": {
+    "term": "instrumentDeployment",
+    "name": "Instrument deployment",
+    "category": "Equipment",
+    "definition": "A method for deploying an instrument to make observations at a sampling feature."
+  },
+  "deployment_method": {
+    "method_code": "Deployment",
+    "method_name": "Deployment",
+    "method_description": "Deployment"
+  },
+  "usu_visit_action_by": {
+    "is_action_lead": true,
+    "role_description": "Test all sensors."
+  },
+  "raw_processing_level": {
+    "processing_level_code": "Raw",
+    "definition": "Raw and Unprocessed Data"
+  },
+  "temperature_unit_type": {
+    "term": "temperature",
+    "name": "Temperature",
+    "definition": "A temperature is a numerical measure of hot and cold."
+  },
+  "climate_variable_type": {
+    "term": "climate",
+    "name": "Climate",
+    "definition": "Variables associated with the climate, weather, or atmospheric processes."
+  },
+  "temperature_variable_name": {
+    "term": "temperature",
+    "name": "Temperature",
+    "definition": "Temperature"
+  },
+  "degrees_celsius_unit": {
+    "unit_abbreviation": "degC",
+    "unit_name": "degree celsius"
+  },
+  "avg_air_temperature_variable": {
+    "variable_code": "AirTemp_Avg",
+    "no_data_value": -9999
+  },
+  "wgs_spatial_reference": {
+    "srs_code": "4326",
+    "srs_name": "WGS84"
+  },
+  "series_coverage_result_type": {
+    "term": "timeSeriesCoverage",
+    "name": "Time series coverage",
+    "definition": "A series of ResultValues for a single Variable, measured on or at a single SamplingFeature of fixed location, using a single Method, with specific Units, having a specific ProcessingLevel, but measured over time."
+  },
+  "ongoing_result_status": {
+    "term": "ongoing",
+    "name": "Ongoing",
+    "definition": "Data collection is ongoing. New data values will be added periodically."
+  },
+  "air_medium": {
+    "term": "air",
+    "name": "Air",
+    "definition": "Specimen collection of ambient air or sensor emplaced to measure properties of ambient air."
+  },
+  "air_temperature_coverage_result": {
+    "result_uuid": "1E7E4F35-4F35-E511-8319-0050569B0C9E",
+    "result_datetime": "2016-04-20 2:10",
+    "result_datetime_utc_offset": -7,
+    "value_count": 0
+  },
+  "length_unit_type": {
+    "term": "length",
+    "name": "Length"
+  },
+  "time_unit_type": {
+    "term": "time",
+    "name": "Time",
+    "definition": "Time is a basic component of the measuring system used to sequence events, to compare the durations of events and the intervals between them, and to quantify the motions of objects."
+  },
+  "coordinate_location_unit": {
+    "unit_abbreviation": "ft",
+    "unit_name": "international foot"
+  },
+  "time_spacing_unit": {
+    "unit_abbreviation": "hhmm",
+    "unit_name": "hour minute"
+  },
+  "continuous_aggregation_statistic": {
+    "term": "continuous",
+    "name": "Continuous",
+    "definition": "A quantity specified at a particular instant in time measured with sufficient frequency (small spacing) to be interpreted as a continuous record of the phenomenon."
+  },
+  "air_temperature_time_series_result": {
+    "x_location": 12.5,
+    "y_location": 10.3,
+    "z_location": 20.0,
+    "intended_time_spacing": 351.87
+  },
+  "non_detect_censor_code": {
+    "term": "nonDetect",
+    "name": "Non-detect",
+    "definition": "The value was reported as a non-detect."
+  },
+  "good_quality_code": {
+    "term": "good",
+    "name": "Good",
+    "definition": "A quality assessment has been made and all data quality objectives have been met."
+  },
+  "air_temperature_result_value": {
+    "data_value": 1.5,
+    "value_datetime": "2016-05-23 6:33",
+    "value_datetime_utc_offset": -7,
+    "time_aggregation_interval": 0.5
+  }
+}

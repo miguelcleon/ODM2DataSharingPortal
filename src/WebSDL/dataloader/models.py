@@ -117,10 +117,10 @@ class FeatureAction(models.Model):
     action = models.ForeignKey('Action', related_name="feature_action", db_column='ActionID')
 
     def __str__(self):
-        return str(self.action.action_type_id) + ' - ' + str(self.action.begin_datetime) + ' ' + self.sampling_feature.sampling_feature_code
+        return str(self.action) + ' ' + self.sampling_feature.sampling_feature_code + ' (' + str(self.sampling_feature.sampling_feature_type) + ')'
 
     def __unicode__(self):
-        return unicode(self.action.action_type_id) + ' - ' + unicode(self.action.begin_datetime) + ' ' + self.sampling_feature.sampling_feature_code
+        return unicode(self.action) + ' ' + self.sampling_feature.sampling_feature_code + ' (' + unicode(self.sampling_feature.sampling_feature_type) + ')'
 
     class Meta:
         db_table = 'FeatureActions'
@@ -135,10 +135,10 @@ class Action(models.Model):
     action_description = models.TextField(db_column='ActionDescription', blank=True)
 
     def __str__(self):
-        return str(self.action_type_id) + ' - ' + str(self.begin_datetime)
+        return str(self.action_type_id) + ' - ' + str(self.begin_datetime) + ' ' + str(self.begin_datetime_utc_offset)
 
     def __unicode__(self):
-        return unicode(self.action_type_id) + ' - ' + unicode(self.begin_datetime)
+        return unicode(self.action_type_id) + ' - ' + unicode(self.begin_datetime) + ' ' + unicode(self.begin_datetime_utc_offset)
 
     class Meta:
         db_table = 'Actions'
@@ -152,10 +152,10 @@ class ActionBy(models.Model):
     role_description = models.CharField(db_column='RoleDescription', blank=True, max_length=255)
 
     def __str__(self):
-        return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + str(self.action)
+        return str(self.action) + ': ' + str(self.affiliation)
 
     def __unicode__(self):
-        return self.affiliation.person.person_first_name + ' (' + self.affiliation.organization.organization_name + '): ' + unicode(self.action)
+        return unicode(self.action) + ': ' + unicode(self.affiliation)
 
     class Meta:
         db_table = 'ActionBy'
@@ -171,10 +171,10 @@ class Method(models.Model):
     organization = models.ForeignKey('Organization', db_column='OrganizationID', blank=True, null=True)
 
     def __str__(self):
-        return str(self.method_type_id) + ': ' + self.method_name + ' (' + self.method_code + ')'
+        return str(self.method_type_id) + ': ' + self.method_name
 
     def __unicode__(self):
-        return unicode(self.method_type_id) + ': ' + self.method_name + ' (' + self.method_code + ')'
+        return unicode(self.method_type_id) + ': ' + self.method_name
 
     class Meta:
         db_table = 'Methods'
@@ -206,10 +206,10 @@ class Organization(models.Model):
     parent_organization = models.ForeignKey('self', db_column='ParentOrganizationID', blank=True, null=True)
 
     def __str__(self):
-        return str(self.organization_type_id) + ': ' + self.organization_code + ' ' + self.organization_name
+        return str(self.organization_type_id) + ': ' + self.organization_name
 
     def __unicode__(self):
-        return unicode(self.organization_type_id) + ': ' + self.organization_code + ' ' + self.organization_name
+        return unicode(self.organization_type_id) + ': ' + self.organization_name
 
     class Meta:
         db_table = 'Organizations'
@@ -228,49 +228,49 @@ class Affiliation(models.Model):
     person_link = models.CharField(db_column='PersonLink', blank=True, max_length=255)
 
     def __str__(self):
-        return str(self.person) + '(' + str(self.organization) + ') - ' + self.primary_email
+        return str(self.person) + ' (' + self.organization.organization_name + ') - ' + self.primary_email
 
     def __unicode__(self):
-        return unicode(self.person) + '(' + unicode(self.organization) + ') - ' + self.primary_email
+        return unicode(self.person) + ' (' + self.organization.organization_name + ') - ' + self.primary_email
 
     class Meta:
         db_table = 'Affiliations'
 
 
 class ProcessingLevel(models.Model):
-    processing_level_id = models.IntegerField(db_column='ProcessingLevelID', primary_key=True)
+    processing_level_id = models.AutoField(db_column='ProcessingLevelID', primary_key=True)
     processing_level_code = models.CharField(db_column='ProcessingLevelCode', max_length=50)
     definition = models.CharField(db_column='Definition', blank=True, max_length=500)
     explanation = models.CharField(db_column='Explanation', blank=True, max_length=500)
 
     def __str__(self):
-        return self.processing_level_code + '(' + self.definition + ')'
+        return self.processing_level_code + ' (' + self.definition + ')'
 
     def __unicode__(self):
-        return self.processing_level_code + '(' + self.definition + ')'
+        return self.processing_level_code + ' (' + self.definition + ')'
 
     class Meta:
         db_table = 'ProcessingLevels'
 
 
 class Unit(models.Model):
-    unit_id = models.IntegerField(db_column='UnitsID', primary_key=True)
+    unit_id = models.AutoField(db_column='UnitsID', primary_key=True)
     unit_type = models.ForeignKey('UnitType', db_column='UnitsTypeCV')
     unit_abbreviation = models.CharField(db_column='UnitsAbbreviation', max_length=255)
     unit_name = models.CharField(db_column='UnitsName', max_length=255)
 
     def __str__(self):
-        return str(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
+        return str(self.unit_type_id) + ': ' + self.unit_abbreviation + ' (' + self.unit_name + ')'
 
     def __unicode__(self):
-        return unicode(self.unit_type_id) + ': ' + self.unit_name + ' ' + self.unit_abbreviation
+        return unicode(self.unit_type_id) + ': ' + self.unit_abbreviation + ' (' + self.unit_name + ')'
 
     class Meta:
         db_table = 'Units'
 
 
 class Variable(models.Model):
-    variable_id = models.IntegerField(db_column='VariableID', primary_key=True)
+    variable_id = models.AutoField(db_column='VariableID', primary_key=True)
     variable_type = models.ForeignKey('VariableType', db_column='VariableTypeCV')
     variable_code = models.CharField(db_column='VariableCode', max_length=50)
     variable_name = models.ForeignKey('VariableName', db_column='VariableNameCV')
@@ -278,10 +278,10 @@ class Variable(models.Model):
     no_data_value = models.FloatField(db_column='NoDataValue')
 
     def __str__(self):
-        return str(self.variable_type_id) + ': ' + self.variable_name + '(' + self.variable_code + ')'
+        return str(self.variable_name) + ': ' + self.variable_code + ' (' + str(self.variable_type_id) + ')'
 
     def __unicode__(self):
-        return unicode(self.variable_type_id) + ': ' + self.variable_name + '(' + self.variable_code + ')'
+        return unicode(self.variable_name) + ': ' + self.variable_code + ' (' + unicode(self.variable_type_id) + ')'
 
     class Meta:
         db_table = 'Variables'
@@ -302,33 +302,33 @@ class Result(models.Model):
     value_count = models.IntegerField(db_column='ValueCount')
 
     def __str__(self):
-        return str(self.result_datetime) + ' - ' + str(self.result_type_id) + ': ' + self.variable.variable_code + ' ' + self.unit.unit_code
+        return str(self.result_datetime) + ' - ' + str(self.result_type_id) + ' (' + str(self.variable.variable_name_id) + '): ' + self.variable.variable_code + ' ' + self.unit.unit_abbreviation
 
     def __unicode__(self):
-        return unicode(self.result_datetime) + ' - ' + unicode(self.result_type_id) + ': ' + self.variable.variable_code + ' ' + self.unit.unit_code
+        return unicode(self.result_datetime) + ' - ' + unicode(self.result_type_id) + ' (' + unicode(self.variable.variable_name_id) + '): ' + self.variable.variable_code + ' ' + self.unit.unit_abbreviation
 
     class Meta:
         db_table = 'Results'
 
 
 class SpatialReference(models.Model):
-    spatial_reference_id = models.IntegerField(db_column='SpatialReferenceID', primary_key=True)
+    spatial_reference_id = models.AutoField(db_column='SpatialReferenceID', primary_key=True)
     srs_code = models.CharField(db_column='SRSCode', blank=True, max_length=50)
     srs_name = models.CharField(db_column='SRSName', max_length=255)
     srs_description = models.CharField(db_column='SRSDescription', blank=True, max_length=500)
 
     def __str__(self):
-        return self.srsname + '(' + self.srs_code + ')'
+        return self.srs_name + ' (' + self.srs_code + ')'
 
     def __unicode__(self):
-        return self.srsname + '(' + self.srs_code + ')'
+        return self.srs_name + ' (' + self.srs_code + ')'
 
     class Meta:
         db_table = 'SpatialReferences'
 
 
 class TimeSeriesResult(models.Model):
-    result = models.ForeignKey(Result, db_column='ResultID', primary_key=True)
+    result = models.OneToOneField(Result, db_column='ResultID', primary_key=True)
     x_location = models.FloatField(db_column='XLocation', blank=True, null=True)
     x_location_unit = models.ForeignKey('Unit', related_name='time_series_x_locations', db_column='XLocationUnitsID', blank=True, null=True)
     y_location = models.FloatField(db_column='YLocation', blank=True, null=True)
@@ -351,7 +351,7 @@ class TimeSeriesResult(models.Model):
 
 
 class TimeSeriesResultValue(models.Model):
-    value_id = models.BigIntegerField(db_column='ValueID', primary_key=True)
+    value_id = models.AutoField(db_column='ValueID', primary_key=True)
     result = models.ForeignKey('TimeSeriesResult', db_column='ResultID')
     data_value = models.FloatField(db_column='DataValue')
     value_datetime = models.DateTimeField(db_column='ValueDateTime')
@@ -362,10 +362,10 @@ class TimeSeriesResultValue(models.Model):
     time_aggregation_interval_unit = models.ForeignKey('Unit', db_column='TimeAggregationIntervalUnitsID')
 
     def __str__(self):
-        return str(self.value_datetime) + ': ' + str(self.data_value) + '(' + str(self.result) + ')'
+        return str(self.data_value) + ' at ' + str(self.value_datetime) + ' (' + str(self.result) + ')'
 
     def __unicode__(self):
-        return unicode(self.value_datetime) + ': ' + unicode(self.data_value) + '(' + unicode(self.result) + ')'
+        return unicode(self.data_value) + ' at ' + unicode(self.value_datetime) + ' (' + unicode(self.result) + ')'
 
     class Meta:
         db_table = 'TimeSeriesResultValues'
