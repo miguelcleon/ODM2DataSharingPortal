@@ -1,0 +1,38 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        {% block title %}
+        <title></title>
+        {% endblock %}
+        <link rel="stylesheet" href="{% static 'css/reset.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    </head>
+    <body>
+        <div id="" class="">
+            <a href="" class=""></a>
+        </div>
+
+
+        <div id="main" class="fix-width">
+            <div id="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+
+        <footer class="fix-width">
+            <hr>
+            <p>
+                Look around you. You'll see two councilmen, a union official, couple off-duty cops and a judge.
+                I wouldn't have a second's hesitation of blowing your head off in front of them.
+                Now, that's power you can't buy. That's the power of fear.
+            </p>
+        </footer>
+
+    </body>
+</html>
+

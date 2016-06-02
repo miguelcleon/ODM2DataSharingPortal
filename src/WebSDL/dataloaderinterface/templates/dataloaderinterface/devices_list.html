@@ -1,0 +1,24 @@
+{% extends 'dataloaderinterface/base.html' %}
+
+{% block content %}
+    <section class="devices-list">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+{#                <th></th>#}
+{#                <th></th>#}
+            </tr>
+            </thead>
+            <tbody>
+                {% for featureaction in object_list %}
+                    <tr>
+{#                        <td><a href="{% url detail_url concept.term %}">{{ concept.term }}</a></td>#}
+{#                        <td>{{ concept.name }}</td>#}
+                        <td>{{ featureaction }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</section>
+{% endblock %}
