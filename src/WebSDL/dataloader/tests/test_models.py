@@ -59,9 +59,9 @@ class TestFeatureAction(TestCase):
 class TestPeople(TestCase):
     @staticmethod
     def create_person():
-        #  1. grab some dirt
-        #  2. blow on it
-        #  3. be God
+        #  1. be God
+        #  2. grab some dirt
+        #  3. blow on it (???)
         #  4. profit!
 
         person = People(**models_data['person'])
