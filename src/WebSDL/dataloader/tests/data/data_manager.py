@@ -11,7 +11,7 @@ test_data = {
 
 def load_models_data():
     global test_data
-    with open(os.path.join(__file__, os.pardir, test_data['models']['file'])) as data:
+    with open(os.path.join(os.path.dirname(__file__), test_data['models']['file'])) as data:
         test_data['models']['data'] = json.load(data)
 
 
