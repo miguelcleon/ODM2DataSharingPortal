@@ -16,9 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from dataloaderinterface.views import DevicesListView, DeviceDetailView, DeviceRegistrationView, DeviceUpdateView
+from dataloaderinterface.views import DevicesListView, DeviceDetailView, DeviceRegistrationView, DeviceUpdateView, \
+    HomeView
 
 urlpatterns = [
+    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^devices/', DevicesListView.as_view(), name='devices_list'),
     url(r'^devices/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='device_detail'),
     url(r'^devices/register/$', DeviceRegistrationView.as_view(), name='device_registration'),
