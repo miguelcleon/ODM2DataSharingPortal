@@ -212,20 +212,6 @@ class TestVariable(TestCase):
         self.assertEqual(self.variable.__unicode__(), u'Temperature: AirTemp_Avg (Climate)')
 
 
-class TestSpatialReference(TestCase):
-    @staticmethod
-    def create_spatial_reference():
-        spatial_reference = SpatialReference(**models_data['wgs_spatial_reference'])
-        return spatial_reference
-
-    def setUp(self):
-        self.spatial_reference = self.create_spatial_reference()
-
-    def test_string_representation(self):
-        self.assertEqual(str(self.spatial_reference), 'WGS84 (4326)')
-        self.assertEqual(self.spatial_reference.__unicode__(), u'WGS84 (4326)')
-
-
 class TestResult(TestCase):
     @staticmethod
     def create_air_temperature_coverage_result():
@@ -264,7 +250,6 @@ class TestTimeSeriesResult(TestCase):
         x_location_unit = TestUnit.create_feet_distance_unit()
         y_location_unit = TestUnit.create_feet_distance_unit()
         z_location_unit = TestUnit.create_feet_distance_unit()
-        spatial_reference = TestSpatialReference.create_spatial_reference()
         result = TestResult.create_air_temperature_coverage_result()
 
         time_series_result = TimeSeriesResult(**models_data['air_temperature_time_series_result'])
@@ -273,7 +258,6 @@ class TestTimeSeriesResult(TestCase):
         time_series_result.x_location_unit = x_location_unit
         time_series_result.y_location_unit = y_location_unit
         time_series_result.z_location_unit = z_location_unit
-        time_series_result.spatial_reference = spatial_reference
         time_series_result.result = result
 
         return time_series_result

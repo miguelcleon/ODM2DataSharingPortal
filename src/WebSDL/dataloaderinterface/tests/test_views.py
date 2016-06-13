@@ -7,16 +7,6 @@ from dataloaderinterface.views import *
 
 
 class TestDevicesListView(TestCase):
-    devices_list = []
-
-    @staticmethod
-    def generate_deployments(registrations_number):
-        devices = []
-        return devices
-
-    def setUp(self):
-        self.devices_list = self.generate_deployments(5)
-
     def test_status(self):
         url = reverse('devices_list')
         response = self.client.get(url)

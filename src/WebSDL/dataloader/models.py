@@ -30,6 +30,11 @@ class SamplingFeatureType(ControlledVocabulary):
         db_table = 'CV_SamplingFeatureType'
 
 
+class ElevationDatum(ControlledVocabulary):
+    class Meta:
+        db_table = 'CV_ElevationDatum'
+
+
 class ActionType(ControlledVocabulary):
     class Meta:
         db_table = 'CV_ActionType'
@@ -100,6 +105,7 @@ class SamplingFeature(models.Model):
     sampling_feature_name = models.CharField(db_column='SamplingFeatureName', blank=True, max_length=255)
     sampling_feature_description = models.CharField(db_column='SamplingFeatureDescription', blank=True, max_length=500)
     elevation_m = models.FloatField(db_column='Elevation_m', blank=True, null=True)
+    elevation_datum = models.ForeignKey('ElevationDatum', db_column='ElevationDatumCV', blank=True, null=True)
 
     def __str__(self):
         return str(self.sampling_feature_type_id) + ': ' + self.sampling_feature_code + ' ' + self.sampling_feature_name
@@ -311,22 +317,6 @@ class Result(models.Model):
         db_table = 'Results'
 
 
-class SpatialReference(models.Model):
-    spatial_reference_id = models.AutoField(db_column='SpatialReferenceID', primary_key=True)
-    srs_code = models.CharField(db_column='SRSCode', blank=True, max_length=50)
-    srs_name = models.CharField(db_column='SRSName', max_length=255)
-    srs_description = models.CharField(db_column='SRSDescription', blank=True, max_length=500)
-
-    def __str__(self):
-        return self.srs_name + ' (' + self.srs_code + ')'
-
-    def __unicode__(self):
-        return self.srs_name + ' (' + self.srs_code + ')'
-
-    class Meta:
-        db_table = 'SpatialReferences'
-
-
 class TimeSeriesResult(models.Model):
     result = models.OneToOneField(Result, db_column='ResultID', primary_key=True)
     x_location = models.FloatField(db_column='XLocation', blank=True, null=True)
@@ -335,7 +325,6 @@ class TimeSeriesResult(models.Model):
     y_location_unit = models.ForeignKey('Unit', related_name='time_series_y_locations', db_column='YLocationUnitsID', blank=True, null=True)
     z_location = models.FloatField(db_column='ZLocation', blank=True, null=True)
     z_location_unit = models.ForeignKey('Unit', related_name='time_series_z_locations', db_column='ZLocationUnitsID', blank=True, null=True)
-    spatial_reference = models.ForeignKey('SpatialReference', db_column='SpatialReferenceID', blank=True, null=True)
     intended_time_spacing = models.FloatField(db_column='IntendedTimeSpacing', blank=True, null=True)
     intended_time_spacing_unit = models.ForeignKey('Unit', related_name='time_series_intended_time_spacing', db_column='IntendedTimeSpacingUnitsID', blank=True, null=True)
     aggregation_statistic_cv = models.ForeignKey('AggregationStatistic', db_column='AggregationStatisticCV')
