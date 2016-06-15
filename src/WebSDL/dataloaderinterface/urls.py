@@ -21,8 +21,8 @@ from dataloaderinterface.views import DevicesListView, DeviceDetailView, DeviceR
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^devices/', DevicesListView.as_view(), name='devices_list'),
-    url(r'^devices/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='device_detail'),
+    url(r'^devices/$', DevicesListView.as_view(), name='devices_list'),
     url(r'^devices/register/$', DeviceRegistrationView.as_view(), name='device_registration'),
     url(r'^devices/register/update/(?P<slug>[-_\w]+)/$', DeviceUpdateView.as_view(), name='device_update'),
+    url(r'^devices/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='device_detail'),
 ]

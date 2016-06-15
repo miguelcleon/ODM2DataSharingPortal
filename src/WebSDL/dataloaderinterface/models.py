@@ -8,5 +8,5 @@ from django.db import models
 class DeviceRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
     deployment_sampling_feature_uuid = models.UUIDField(db_column='SamplingFeatureUUID')
-    authentication_token = models.CharField(max_length=64, editable=False, db_column='AuthToken')
+    authentication_token = models.CharField(max_length=64, editable=False, db_column='AuthenticationToken')
     user = models.OneToOneField(User, db_column='User')

@@ -1,0 +1,70 @@
+{% extends 'dataloaderinterface/base.html' %}
+{% load formset_tags %}
+{% load staticfiles %}
+
+{% block content %}
+    <section class="device-data">
+        <header>
+            <h2>REGISTER YOUR DEVICE HERE!</h2>
+        </header>
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ sampling_feature_form.as_p }}
+            {{ action_form.as_p }}
+            {{ action_by_form.as_p }}
+            {{ people_form.as_p }}
+            {{ organization_form.as_p }}
+            {{ affiliation_form.as_p }}
+
+            <div id="formset" data-formset-prefix="{{ results_formset.prefix }}">
+                {{ results_formset.management_form }}
+
+                <div data-formset-body>
+                    <!-- New forms will be inserted in here -->
+                    {% for form in results_formset %}
+                        <div data-formset-form>
+                            {{ form }}
+                            <button type="button" data-formset-delete-button>Delete form</button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- The empty form template. By wrapping this in a <script> tag, the
+                __prefix__ placeholder can easily be replaced in both attributes and
+                any scripts -->
+                <script type="form-template" data-formset-empty-form>
+                    {% escapescript %}
+                        <div data-formset-form>
+                            {{ results_formset.empty_form }}
+                            <button type="button" data-formset-delete-button>Delete form</button>
+                        </div>
+                    {% endescapescript %}
+                </script>
+
+                <!-- This button will add a new form when clicked -->
+                <input type="button" value="Add another" data-formset-add>
+
+                <script>jQuery(function($) {
+                    $("#formset").formset({
+                        animateForms: true
+                    });
+                });</script>
+
+            </div>
+
+
+            <input type="submit" value="Register Device! NOW! YES!" class="">
+        </form>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="{% static 'js/jquery.formset.js' %}"></script>
+{% endblock %}
