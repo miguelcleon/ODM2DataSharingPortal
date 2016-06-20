@@ -4,33 +4,55 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        {% block title %}
-        <title></title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="Utah Water Research Laboratory">
+        <meta name="description" content="Web Streaming Data Loader">
+
+        {% block page_title %}
+            <title>Web Streaming Data Loader</title>
         {% endblock %}
-        {% block scripts %}{% endblock %}
-        <link rel="stylesheet" href="{% static 'css/reset.min.css' %}">
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+        <link rel="stylesheet" href="{% static 'dataloaderinterface/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'dataloaderinterface/css/simple-sidebar.css' %}">
     </head>
+
     <body>
-        <div id="" class="">
-            <a href="" class=""></a>
-        </div>
+        <div id="wrapper">
+            <div id="sidebar-wrapper">
+                <ul class="sidebar-nav">
+                    <li class="sidebar-brand"><a href="{% url 'home' %}">Web Streaming Data Loader</a></li>
+                    <li><a href="{% url 'devices_list' %}">View Registered Devices</a></li>
+                    <li><a href="{% url 'device_registration' %}">Register a Device</a></li>
+                    <li><a href="{% url 'user_registration' %}">Create a New Account</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
 
-
-        <div id="main" class="fix-width">
-            <div id="content">
-                {% block content %}
-                {% endblock %}
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        {% block content %}{% endblock %}
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <footer class="fix-width">
-            <hr>
-            <p>
-
-            </p>
-        </footer>
-
+    {% block scripts %}
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    {% endblock %}
     </body>
 </html>
+
 

@@ -102,7 +102,5 @@ class ResultForm(forms.ModelForm):
             'sampled_medium',
         ]
 
-    class Media(object):
-        js = formset_media_js + ()
 
-ResultFormSet = formset_factory(ResultForm)
+ResultFormSet = formset_factory(ResultForm, extra=0, can_delete=True, can_order=False, min_num=1, validate_min=True)

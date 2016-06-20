@@ -1,38 +1,29 @@
 {% extends 'dataloaderinterface/base.html' %}
 
 {% block content %}
-    <section class="home-content">
+    <section class="home-content col-lg-12">
         <header>
-            <h2>This is the home page!</h2>
+            <h1>Web Streaming Data Loader</h1>
         </header>
-
         {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}">hey! here's cool logout link!</a>
-        {% else %}
-            <a href="{% url 'login' %}">hey! here's cool login link!</a> OR
-            <a href="{% url 'user_registration' %}">CLICK ON THIS AMAZING REGISTRATION LINK!</a>
-
-        {% endif %}
-
-    </section>
-    {% if user.is_authenticated %}
-        <section class="user-info">
-            <header>
-                <h3>User info</h3>
-            </header>
-        </section>
-        <section class="devices-info">
-            <header>
-                <h3>Devices info - comprehensive list of registered devices</h3>
-            </header>
-            <div class="devices-list">
-                <a href="{% url 'devices_list' %}">click here to go to the actual list of devices</a>
+            <div class="user-info">
+                <header>
+                    <h3>User info</h3>
+                </header>
             </div>
-        </section>
-        <section class="recent-results">
-            <header>
-                <h3>Recent Results - list of last 5-10 time series result values pushed by any device. maybe? not necessary, but would be cool.</h3>
-            </header>
-        </section>
-    {% endif %}
+            <div class="devices-info">
+                <header>
+                    <h3>Devices info - comprehensive list of registered devices</h3>
+                </header>
+                <div class="devices-list">
+                    <a href="{% url 'devices_list' %}">click here to go to the actual list of devices</a>
+                </div>
+            </div>
+            <div class="recent-results">
+                <header>
+                    <h3>Recent Results - list of last 5-10 time series result values pushed by any device. maybe? not necessary, but would be cool.</h3>
+                </header>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

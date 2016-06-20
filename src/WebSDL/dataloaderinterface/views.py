@@ -1,5 +1,9 @@
+from datetime import datetime
+from uuid import uuid4
+
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
@@ -8,7 +12,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.views.generic.list import ListView
 
-from dataloader.models import FeatureAction
+from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
+    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
     AffiliationForm, ResultFormSet
 from dataloaderinterface.models import DeviceRegistration
@@ -38,24 +43,95 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
 class DeviceRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/device_registration.html'
     model = DeviceRegistration
+    object = None
     fields = []
 
     def get_context_data(self, **kwargs):
         context = super(DeviceRegistrationView, self).get_context_data()
-        context['sampling_feature_form'] = SamplingFeatureForm()
-        context['action_form'] = ActionForm()
-        context['action_by_form'] = ActionByForm()
-        context['people_form'] = PeopleForm()
-        context['organization_form'] = OrganizationForm()
-        context['affiliation_form'] = AffiliationForm()
-        context['results_formset'] = ResultFormSet()
+        data = self.request.POST if self.request.POST else None
+        context['sampling_feature_form'] = SamplingFeatureForm(data)
+        context['action_form'] = ActionForm(data)
+        context['action_by_form'] = ActionByForm(data)
+        context['people_form'] = PeopleForm(data)
+        context['organization_form'] = OrganizationForm(data)
+        context['affiliation_form'] = AffiliationForm(data)
+        context['results_formset'] = ResultFormSet(data)
         return context
 
-    def get(self, request, *args, **kwargs):
-        return super(DeviceRegistrationView, self).get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
-        return super(DeviceRegistrationView, self).post(request, *args, **kwargs)
+        sampling_feature_form = SamplingFeatureForm(request.POST)
+        action_form = ActionForm(request.POST)
+        action_by_form = ActionByForm(request.POST)
+        people_form = PeopleForm(request.POST)
+        organization_form = OrganizationForm(request.POST)
+        affiliation_form = AffiliationForm(request.POST)
+        results_formset = ResultFormSet(request.POST)
+        registration_form = self.get_form()
+
+        if self.all_forms_valid(sampling_feature_form, action_form, action_by_form, people_form, organization_form, affiliation_form, results_formset):
+            # Create sampling feature
+            sampling_feature = sampling_feature_form.instance
+            sampling_feature.sampling_feature_type = SamplingFeatureType.objects.get(name='Site')
+            sampling_feature.save()
+
+            # Create action
+            action = action_form.instance
+            action.action_type = ActionType.objects.get(name='Instrument deployment')
+            action.begin_datetime = datetime.now()
+            action.begin_datetime_utc_offset = -7
+            action.save()
+
+            # Create feature action
+            feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
+            feature_action.save()
+
+            # Create person
+            person = people_form.save()
+
+            # Create organization
+            organization = organization_form.instance
+            organization.organization_type = OrganizationType.objects.get(name='Unknown')
+            organization.save()
+
+            # Create affiliation
+            affiliation = affiliation_form.instance
+            affiliation.person = person
+            affiliation.organization = organization
+            affiliation.save()
+
+            # Create action by
+            action_by = action_by_form.instance
+            action_by.affiliation = affiliation
+            action_by.action = action
+            action_by.save()
+
+            for result_data in results_formset.cleaned_data:
+                if not result_data:
+                    continue
+
+                # Create Results
+                result = Result(**result_data)
+                result.feature_action = feature_action
+                result.result_type = ResultType.objects.get(name='Time series coverage')
+                result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
+                result.status = Status.objects.get(name='Ongoing')
+                result.value_count = 0
+                result.save()
+
+                # Create TimeSeriesResults
+                time_series_result = TimeSeriesResult(result=result)
+                time_series_result.aggregation_statistic_cv = AggregationStatistic.objects.get(name='Average')
+                time_series_result.save()
+
+            registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
+            registration_form.instance.user = self.request.user
+            registration_form.instance.authentication_token = uuid4()
+            return self.form_valid(registration_form)
+        else:
+            return self.form_invalid(registration_form)
+
+    def all_forms_valid(self, *forms):
+        return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
 
 
 class DeviceUpdateView(LoginRequiredMixin, UpdateView):

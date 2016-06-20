@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangoformsetjs',
+    'crispy_forms',
     'dataloader',
     'dataloaderservices',
     'dataloaderinterface'

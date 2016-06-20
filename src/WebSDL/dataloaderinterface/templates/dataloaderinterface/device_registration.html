@@ -3,9 +3,9 @@
 {% load staticfiles %}
 
 {% block content %}
-    <section class="device-data">
+    <section class="device-data col-lg-12">
         <header>
-            <h2>REGISTER YOUR DEVICE HERE!</h2>
+            <h1>REGISTER YOUR DEVICE HERE!</h1>
         </header>
         {% if messages %}
             {% for message in messages %}
@@ -13,15 +13,18 @@
             {% endfor %}
         {% endif %}
 
-        <form method="post">
+        <form method="post" enctype="multipart/form-data" class="input-group col-lg-12">
             {% csrf_token %}
-            {{ sampling_feature_form.as_p }}
-            {{ action_form.as_p }}
-            {{ action_by_form.as_p }}
-            {{ people_form.as_p }}
-            {{ organization_form.as_p }}
-            {{ affiliation_form.as_p }}
-
+            <table class="table form-table form-group">
+                <tbody>
+                    {{ sampling_feature_form.as_table }}
+                    {{ action_form.as_table }}
+                    {{ people_form.as_table }}
+                    {{ organization_form.as_table }}
+                    {{ affiliation_form.as_table }}
+                    {{ action_by_form.as_table }}
+                </tbody>
+            </table>
             <div id="formset" data-formset-prefix="{{ results_formset.prefix }}">
                 {{ results_formset.management_form }}
 
@@ -29,8 +32,7 @@
                     <!-- New forms will be inserted in here -->
                     {% for form in results_formset %}
                         <div data-formset-form>
-                            {{ form }}
-                            <button type="button" data-formset-delete-button>Delete form</button>
+                            {{ form.as_table }}
                         </div>
                     {% endfor %}
                 </div>
@@ -41,30 +43,23 @@
                 <script type="form-template" data-formset-empty-form>
                     {% escapescript %}
                         <div data-formset-form>
-                            {{ results_formset.empty_form }}
-                            <button type="button" data-formset-delete-button>Delete form</button>
+                            {{ results_formset.empty_form.as_table }}
                         </div>
                     {% endescapescript %}
                 </script>
 
                 <!-- This button will add a new form when clicked -->
-                <input type="button" value="Add another" data-formset-add>
-
-                <script>jQuery(function($) {
-                    $("#formset").formset({
-                        animateForms: true
-                    });
-                });</script>
-
+                <tr>
+                    <input type="button" value="Add result" data-formset-add>
+                </tr>
             </div>
-
-
             <input type="submit" value="Register Device! NOW! YES!" class="">
         </form>
     </section>
 {% endblock %}
 
 {% block scripts %}
+    {{ block.super }}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="{% static 'js/jquery.formset.js' %}"></script>
 {% endblock %}
