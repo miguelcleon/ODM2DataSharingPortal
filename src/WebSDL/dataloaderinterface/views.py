@@ -106,6 +106,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             action_by.save()
 
             for result_data in results_formset.cleaned_data:
+                del result_data[u'DELETE']
                 if not result_data:
                     continue
 

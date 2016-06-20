@@ -82,7 +82,7 @@ class UnitType(ControlledVocabulary):
 
 class QualityCode(ControlledVocabulary):
     class Meta:
-        db_table = 'QualityCodeCV'
+        db_table = 'CV_QualityCode'
 
 
 class VariableType(ControlledVocabulary):

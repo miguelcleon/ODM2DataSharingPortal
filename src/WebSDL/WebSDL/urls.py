@@ -34,5 +34,7 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, login_configuration, name='login'),
     url(r'^logout/$', auth_views.logout, logout_configuration, name='logout'),
     url(r'^register/$', CreateView.as_view(template_name='registration/register.html', form_class=UserRegistrationForm, success_url=reverse_lazy('home')), name='user_registration'),
-    url(r'', include('dataloaderinterface.urls'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'', include('dataloaderinterface.urls')),
+    url(r'', include('dataloaderservices.urls'))
 ]
