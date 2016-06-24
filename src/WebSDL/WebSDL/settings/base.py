@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'djangoformsetjs',
     'crispy_forms',
+    'bootstrapform',
     'dataloader',
     'dataloaderservices',
     'dataloaderinterface'

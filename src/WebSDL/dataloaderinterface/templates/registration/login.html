@@ -1,9 +1,10 @@
 {% extends "dataloaderinterface/base.html" %}
+{% load bootstrap %}
 
 {% block content %}
-    <div class="login-container col-lg-12">
+    <section class="login-container col-xs-4">
         <header>
-            <h1>Login</h1>
+            <h2>Login</h2>
         </header>
 
         {% if form.errors %}
@@ -19,14 +20,13 @@
             {% endif %}
         {% endif %}
 
-        <form method="post" action="">
+        <form method="post" action="" class="form-horizontal form-group-sm" role="form">
             {% csrf_token %}
-            {{ form.as_p }}
-
-            <input type="submit" value="login"/>
-            <input type="hidden" name="next" value="{% url 'home' %}"/>
+            {{ form|bootstrap_horizontal }}
+            <input type="hidden" name="next" value="{% url 'home' %}">
+            <input type="submit" value="login" class="btn btn-primary">
         </form>
-    </div>
+    </section>
 
     {# Assumes you setup the password_reset view in your URLconf #}
     {#<p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
