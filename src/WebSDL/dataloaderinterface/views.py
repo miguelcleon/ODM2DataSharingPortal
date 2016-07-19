@@ -2,18 +2,18 @@ from datetime import datetime
 from uuid import uuid4
 
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, UpdateView, CreateView
+from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFormMixin
 from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
-    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic
+    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
     AffiliationForm, ResultFormSet
 from dataloaderinterface.models import DeviceRegistration
@@ -30,18 +30,24 @@ class HomeView(TemplateView):
 
 
 class DevicesListView(LoginRequiredMixin, ListView):
-    model = FeatureAction
+    model = DeviceRegistration
     template_name = 'dataloaderinterface/devices_list.html'
 
 
 class DeviceDetailView(LoginRequiredMixin, DetailView):
-    slug_field = 'feature_action_id'
-    model = FeatureAction
+    slug_field = 'registration_id'
+    model = DeviceRegistration
     template_name = 'dataloaderinterface/device_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DeviceDetailView, self).get_context_data()
+        context['sampling_feature'] = SamplingFeature.objects.using('odm2').get(sampling_feature_uuid__exact=self.object.deployment_sampling_feature_uuid)
+        return context
 
 
 class DeviceRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/device_registration.html'
+    success_url = reverse_lazy('devices_list')
     model = DeviceRegistration
     object = None
     fields = []
@@ -86,7 +92,8 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             feature_action.save()
 
             # Create person
-            person = people_form.save()
+            person = people_form.instance
+            person.save()
 
             # Create organization
             organization = organization_form.instance
@@ -106,9 +113,10 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             action_by.save()
 
             for result_data in results_formset.cleaned_data:
-                if not result_data:
+                if not result_data or result_data['DELETE']:
                     continue
 
+                del result_data['DELETE']
                 # Create Results
                 result = Result(**result_data)
                 result.feature_action = feature_action
@@ -124,8 +132,9 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 time_series_result.save()
 
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
-            registration_form.instance.user = self.request.user
+            registration_form.instance.user_id = self.request.user.id
             registration_form.instance.authentication_token = uuid4()
+            registration_form.instance.save()
             return self.form_valid(registration_form)
         else:
             return self.form_invalid(registration_form)

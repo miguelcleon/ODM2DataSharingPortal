@@ -3,8 +3,13 @@
 {% block content %}
     <section class="devices-list col-lg-12">
         <header>
-            <h1>List of registered devices for {{ user }}</h1>
+            <h2>List of registered devices for {{ user }}</h2>
         </header>
+        <ul>
+            {% for registration in object_list %}
+                <li><a href="{% url 'device_detail' registration.registration_id %}">{{ registration }}</a></li>
+            {% endfor %}
+        </ul>
         <table>
             <thead>
             <tr>
@@ -14,11 +19,11 @@
             </tr>
             </thead>
             <tbody>
-                {% for featureaction in object_list %}
+                {% for registration in object_list %}
                     <tr>
 {#                        <td><a href="{% url detail_url concept.term %}">{{ concept.term }}</a></td>#}
 {#                        <td>{{ concept.name }}</td>#}
-                        <td>{{ featureaction }}</td>
+                        <td></td>
                     </tr>
                 {% endfor %}
             </tbody>
