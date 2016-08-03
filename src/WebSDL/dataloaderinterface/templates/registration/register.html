@@ -1,11 +1,15 @@
 {% extends "dataloaderinterface/base.html" %}
+{% load bootstrap %}
 
 {% block content %}
-    <h1>Register here for free!</h1>
-    <span>Disclosure: this registration form works 87% of the time, all the time.</span>
-    <form method="POST" action="" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
+    <section class="user-registration-container col-xs-6">
+        <header>
+            <h2>Sign in</h2>
+        </header>
 
-        <button type="submit" class="save btn btn-default">Save</button>
-    </form>
+        <form method="POST" action="" class="form-horizontal form-group-sm" role="form">{% csrf_token %}
+            {{ form|bootstrap_horizontal }}
+            <input type="submit" class="btn btn-primary" value="Save">
+        </form>
+    </section>
 {% endblock %}

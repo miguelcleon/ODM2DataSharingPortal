@@ -88,6 +88,24 @@
     background: none;
 }
 
+fieldset.form-fieldset {
+    margin-bottom: 20px;
+}
+
+#formset {
+    clear: both;
+}
+
+.result-form {
+    border-bottom: 1px solid rgba(200,200,200,.5);
+    margin-left: 15px;
+    margin-bottom: 25px;
+}
+
+#page-content-wrapper section header {
+    margin-bottom: 30px;
+}
+
 @media(min-width:768px) {
     #wrapper {
         padding-left: 250px;

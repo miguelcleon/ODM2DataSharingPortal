@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djangoformsetjs',
     'crispy_forms',
+    'bootstrapform',
     'dataloader',
     'dataloaderservices',
     'dataloaderinterface'
