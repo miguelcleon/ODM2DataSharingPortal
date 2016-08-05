@@ -87,6 +87,7 @@ target/
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
 /src/WebSDL/WebSDL/settings/settings.json
+settings.json
 
 ## File-based project format:
 *.ipr
@@ -107,4 +108,6 @@ atlassian-ide-plugin.xml
 com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
+
+
 
