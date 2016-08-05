@@ -17,13 +17,17 @@ class TimeSeriesValuesApi(APIView):
     authentication_classes = (UUIDAuthentication, )
 
     def post(self, request, format=None):
-        # TODO: make sure that the data is in the request (sampling_feature, timestamp(?), ...) if not return error response
-        uuid = request.data[u'sampling_feature']
+        #  make sure that the data is in the request (sampling_feature, timestamp(?), ...) if not return error response
+        try:
+            uuid = request.data[u'sampling_feature']
+            datevalue = request.data[u'timestamp']
+        except Exception as e:
+            raise exceptions.ParseError("missing data from request: {}".format(e))
 
         sampling_feature_queryset = SamplingFeature.objects.filter(sampling_feature_uuid__exact=uuid)
         if not sampling_feature_queryset.exists():
-            # TODO: return error response
-            raise exceptions.AuthenticationFailed('')
+            #  return error response
+            raise exceptions.ParseError('Sampling Feature does not exist')
             return
 
         sampling_feature = sampling_feature_queryset.get()
@@ -32,8 +36,8 @@ class TimeSeriesValuesApi(APIView):
             # Create value object and assign all correct values and stuff
             value = TimeSeriesResultValue()
             value.result_id = result.result_id
-            #value.value_datetime = datetime.now()  # TODO: get timestamp and convert it to datetime object instead of this
-            value.value_datetime = self.try_parsing_data(request.data[u'timestamp'])
+            #value.value_datetime = datetime.now()  #  get timestamp and convert it to datetime object instead of this
+            value.value_datetime = try_parsing_date(datevalue)
             value.value_datetime_utc_offset = sampling_feature.feature_action.get().action.begin_datetime_utc_offset
             value.censor_code = CensorCode.objects.get(name='Not censored')
             value.quality_code = QualityCode.objects.get(name='None')
@@ -43,15 +47,22 @@ class TimeSeriesValuesApi(APIView):
             result_variable_code = result.variable.variable_code
             if result_variable_code in request.data:
                 value.data_value = request.data[result_variable_code]
-            # TODO: update result datetime and action datetime.
-            value.save()  # TODO: if there's error saving, return error response.
+            #  update result datetime and action datetime.
+            try:
+                value.save()  # TODO: if there's error saving, return error response.
+            except Exception as e:
+                raise exceptions.ParseError("{c} value not saved {e}".format(c=result_variable_code, e=e))
+
+        result.result_datetime = value.value_datetime
+        result.feature_action.action.end_date_time = value.value_datetime
+        result.save()
 
         return Response({}, status.HTTP_201_CREATED)
 
-    def try_parsing_date(text):
-        for fmt in ('%Y-%m-%d', '%Y-%m-%d hh:mm:ss', '%d/%m/%y'):
-            try:
-                return datetime.strptime(text, fmt)
-            except ValueError:
-                pass
-        raise ValueError('no valid date format found')
+def try_parsing_date(text):
+    for fmt in ('%Y-%m-%d', '%Y-%m-%d %H:%M:%S','%Y-%m-%d %H:%M'):
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError:
+            pass
+    raise exceptions.ParseError('no valid date format found')
