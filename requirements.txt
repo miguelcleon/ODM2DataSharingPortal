@@ -8,3 +8,7 @@ django-webtest==1.7.9
 mysqlclient==1.3.7
 six==1.10.0
 waitress==0.9.0
+djangorestframework
+django-formset-js
+django-crispy-forms
+django-bootstrap-form
