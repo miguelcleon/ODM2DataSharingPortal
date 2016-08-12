@@ -32,13 +32,16 @@ class TimeSeriesValuesApi(APIView):
 
         sampling_feature = sampling_feature_queryset.get()
         results = sampling_feature.feature_action.get().result_set.all()
+        utc = sampling_feature.feature_action.get().action.begin_datetime_utc_offset
+        date = try_parsing_date(datevalue, utc )
         for result in results:
             # Create value object and assign all correct values and stuff
             value = TimeSeriesResultValue()
             value.result_id = result.result_id
             #value.value_datetime = datetime.now()  #  get timestamp and convert it to datetime object instead of this
-            value.value_datetime = try_parsing_date(datevalue)
-            value.value_datetime_utc_offset = sampling_feature.feature_action.get().action.begin_datetime_utc_offset
+
+            value.value_datetime_utc_offset = utc
+            value.value_datetime = date
             value.censor_code = CensorCode.objects.get(name='Not censored')
             value.quality_code = QualityCode.objects.get(name='None')
             value.time_aggregation_interval_unit = Unit.objects.get(unit_name='hour minute')
@@ -53,16 +56,24 @@ class TimeSeriesValuesApi(APIView):
             except Exception as e:
                 raise exceptions.ParseError("{c} value not saved {e}".format(c=result_variable_code, e=e))
 
-        result.result_datetime = value.value_datetime
-        result.feature_action.action.end_date_time = value.value_datetime
+        result.result_datetime = date
+        result.feature_action.action.end_date_time = date
         result.save()
 
         return Response({}, status.HTTP_201_CREATED)
 
-def try_parsing_date(text):
-    for fmt in ('%Y-%m-%d', '%Y-%m-%d %H:%M:%S','%Y-%m-%d %H:%M'):
+# from dateutil import tz
+# from datetime import timedelta
+def try_parsing_date(text, offset):
+    for fmt in ( '%Y-%m-%d %H:%M:%S','%Y-%m-%d %H:%M', '%Y-%m-%d',):
         try:
-            return datetime.strptime(text, fmt)
-        except ValueError:
+
+            # utc = timedelta(hours=int(offset))
+            # tzlocal = tz.tzoffset(None, utc.seconds)
+
+            dt= datetime.strptime(text, fmt)#.replace(tzinfo=tzlocal)
+            return dt
+        except ValueError as v:
+            print v
             pass
     raise exceptions.ParseError('no valid date format found')
