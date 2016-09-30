@@ -1,5 +1,6 @@
 {% extends "dataloaderinterface/base.html" %}
 {% load bootstrap %}
+{% load static %}
 
 {% block content %}
     <section class="user-registration-container col-xs-6">
@@ -12,4 +13,10 @@
             <input type="submit" class="btn btn-primary" value="Save">
         </form>
     </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    {{ form.media }}
+    <script src="{% static 'dataloaderinterface/js/common.js' %}"></script>
 {% endblock %}

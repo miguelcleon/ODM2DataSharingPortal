@@ -1,19 +1,22 @@
 from datetime import datetime
 from uuid import uuid4
 
+from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 
 # Create your views here.
+from django import http
+from django.utils import six
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFormMixin
 from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
-    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature
+    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
     AffiliationForm, ResultFormSet
 from dataloaderinterface.models import DeviceRegistration
@@ -27,6 +30,27 @@ class LoginRequiredMixin(object):
 
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/index.html'
+
+
+class OrganizationAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        queryset = Organization.objects.all()
+        queryset = queryset.filter(organization_name__istartswith=self.q) if self.q else queryset
+        return queryset
+
+    def post(self, request):
+        organization_name = request.POST['text']
+        organization_type = OrganizationType.objects.get(pk='Research organization')
+        organization = Organization.objects.get_or_create(
+            organization_name=organization_name,
+            organization_code=organization_name,
+            organization_type=organization_type
+        )
+
+        return http.JsonResponse({
+            'id': organization[0].pk,
+            'text': six.text_type(organization_name),
+        })
 
 
 class DevicesListView(LoginRequiredMixin, ListView):

@@ -1,23 +1,24 @@
+from dal import autocomplete
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.forms.formsets import formset_factory
 from djangoformsetjs.utils import formset_media_js
 
-from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method
+from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
+    OrganizationType
 
 
 # AUTHORIZATION
 class UserRegistrationForm(UserCreationForm):
-    first_name = forms.CharField(required=True, max_length=30)
-    last_name = forms.CharField(required=True, max_length=30)
+    first_name = forms.CharField(required=True, max_length=50)
+    last_name = forms.CharField(required=True, max_length=50)
 
     def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit)
-        if user:
-            user.first_name = self.cleaned_data['first_name']
-            user.last_name = self.cleaned_data['last_name']
-            if commit:
-                user.save()
+        user = super(UserRegistrationForm, self).save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        if commit:
+            user.save()
         return user
 
 

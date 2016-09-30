@@ -20,7 +20,9 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import CreateView
 
+from dataloader.models import Organization
 from dataloaderinterface.forms import UserRegistrationForm
+from dataloaderinterface.views import OrganizationAutocomplete
 
 BASE_URL = settings.SITE_URL[1:]
 
@@ -39,5 +41,6 @@ urlpatterns = [
     url(r'^' + BASE_URL + 'register/$', CreateView.as_view(template_name='registration/register.html', form_class=UserRegistrationForm, success_url=reverse_lazy('home')), name='user_registration'),
     url(r'^' + BASE_URL + 'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(BASE_URL, include('dataloaderinterface.urls')),
-    url(BASE_URL, include('dataloaderservices.urls'))
+    url(BASE_URL, include('dataloaderservices.urls')),
+    url(r'^organization-autocomplete/$', OrganizationAutocomplete.as_view(model=Organization, create_field='organization_name'), name='organization-autocomplete')
 ]
