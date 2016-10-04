@@ -30,6 +30,11 @@ class SamplingFeatureType(ControlledVocabulary):
         db_table = 'cv_samplingfeaturetype'
 
 
+class SiteType(ControlledVocabulary):
+    class Meta:
+        db_table = 'cv_sitetype'
+
+
 class ElevationDatum(ControlledVocabulary):
     class Meta:
         db_table = 'cv_elevationdatum'
@@ -115,6 +120,33 @@ class SamplingFeature(models.Model):
 
     class Meta:
         db_table = 'samplingfeatures'
+
+
+class SpatialReference(models.Model):
+    spatial_reference = models.AutoField(db_column='spatialreferenceid', primary_key=True)
+    srs_code = models.CharField(db_column='srscode', blank=True, max_length=50)
+    srs_name = models.CharField(db_column='srsname', max_length=255)
+    srs_description = models.CharField(db_column='srsdescription', blank=True, max_length=500)
+
+    def __str__(self):
+        return self.srsname
+
+    def __unicode__(self):
+        return self.srsname
+
+    class Meta:
+        db_table = 'spatialreferences'
+
+
+class Site(models.Model):
+    sampling_feature = models.OneToOneField('SamplingFeature', related_name='site', db_column='samplingfeatureid', primary_key=True)
+    site_type = models.ForeignKey('SiteType', db_column='sitetypecv')
+    latitude = models.FloatField(db_column='latitude')
+    longitude = models.FloatField(db_column='longitude')
+    spatial_reference = models.ForeignKey('SpatialReference', db_column='spatialreferenceid')
+
+    class Meta:
+        db_table = 'sites'
 
 
 class FeatureAction(models.Model):

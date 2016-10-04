@@ -18,7 +18,7 @@ from django.views.generic.list import ListView
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
     ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
-    AffiliationForm, ResultFormSet
+    AffiliationForm, ResultFormSet, SiteForm
 from dataloaderinterface.models import DeviceRegistration
 
 
@@ -80,6 +80,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         context = super(DeviceRegistrationView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
         context['sampling_feature_form'] = SamplingFeatureForm(data)
+        context['site_form'] = SiteForm(data)
         context['action_form'] = ActionForm(data)
         context['action_by_form'] = ActionByForm(data)
         context['people_form'] = PeopleForm(data)

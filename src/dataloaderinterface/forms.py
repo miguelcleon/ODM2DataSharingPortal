@@ -5,7 +5,7 @@ from django.forms.formsets import formset_factory
 from djangoformsetjs.utils import formset_media_js
 
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    OrganizationType
+    OrganizationType, Site
 
 
 # AUTHORIZATION
@@ -29,9 +29,23 @@ class SamplingFeatureForm(forms.ModelForm):
         fields = [
             'sampling_feature_code',
             'sampling_feature_name',
-            'sampling_feature_description',
             'elevation_m',
             'elevation_datum',
+        ]
+        labels = {
+            'sampling_feature_code': 'Site Code',
+            'sampling_feature_name': 'Site Name',
+            'elevation_m': 'Elevation',
+        }
+
+
+class SiteForm(forms.ModelForm):
+    class Meta:
+        model = Site
+        fields = [
+            'site_type',
+            'latitude',
+            'longitude',
         ]
 
 
@@ -41,25 +55,20 @@ class ActionForm(forms.ModelForm):
         fields = [
             'method',
         ]
-
-
-class MethodForm(forms.ModelForm):
-    class Meta:
-        model = Method
-        fields = [
-            'method_code',
-            'method_name',
-            'method_description',
-        ]
+        labels = {
+            'method': 'Method'
+        }
 
 
 class ActionByForm(forms.ModelForm):
     class Meta:
         model = ActionBy
         fields = [
-            'is_action_lead',
-            'role_description',
+            'affiliation',
         ]
+        labels = {
+            'affiliation': 'Action Lead'
+        }
 
 
 class PeopleForm(forms.ModelForm):
@@ -67,9 +76,12 @@ class PeopleForm(forms.ModelForm):
         model = People
         fields = [
             'person_first_name',
-            'person_middle_name',
             'person_last_name',
         ]
+        labels = {
+            'person_first_name': 'First Name',
+            'person_last_name': 'Last Name',
+        }
 
 
 class OrganizationForm(forms.ModelForm):
@@ -78,7 +90,6 @@ class OrganizationForm(forms.ModelForm):
         fields = [
             'organization_code',
             'organization_name',
-            'organization_description',
         ]
 
 
@@ -86,12 +97,17 @@ class AffiliationForm(forms.ModelForm):
     class Meta:
         model = Affiliation
         fields = [
-            'is_primary_organization_contact',
-            'affiliation_start_date',
             'primary_phone',
             'primary_email',
             'primary_address',
+            'affiliation_start_date',
         ]
+        labels = {
+            'affiliation_start_date': 'Affiliation Date',
+            'primary_phone': 'Phone',
+            'primary_email': 'Email',
+            'primary_address': 'Address',
+        }
 
 
 class ResultForm(forms.ModelForm):
@@ -101,7 +117,8 @@ class ResultForm(forms.ModelForm):
             'variable',
             'unit',
             'sampled_medium',
+            'processing_level',
         ]
 
 
-ResultFormSet = formset_factory(ResultForm, extra=0, can_delete=True, can_order=False, min_num=1, validate_min=True)
+ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, validate_min=True)

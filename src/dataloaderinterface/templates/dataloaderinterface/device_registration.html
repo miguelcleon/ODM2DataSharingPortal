@@ -1,10 +1,9 @@
 {% extends 'dataloaderinterface/base.html' %}
-{% load formset_tags %}
-{% load bootstrap %}
 {% load staticfiles %}
+{% load widget_tweaks %}
 
 {% block content %}
-    <section class="device-data col-xs-6">
+    <section class="device-data col-lg-12">
         <header>
             <h2>Device Registration</h2>
         </header>
@@ -14,49 +13,147 @@
             {% endfor %}
         {% endif %}
 
-        <form method="post" enctype="multipart/form-data" class="form-horizontal form-group-sm" role="form">
+        <form method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
             {% csrf_token %}
             <fieldset class="clearfix form-fieldset">
                 <legend>Sampling Feature</legend>
-                {{ sampling_feature_form|bootstrap_horizontal }}
-            </fieldset>
-
-            <fieldset class="clearfix form-fieldset">
-                <legend>Deployment</legend>
-                {{ action_form|bootstrap_horizontal }}
-                {{ people_form|bootstrap_horizontal }}
-                {{ action_by_form|bootstrap_horizontal }}
-                {{ organization_form|bootstrap_horizontal }}
-                {{ affiliation_form|bootstrap_horizontal }}
-            </fieldset>
-
-            <fieldset class="clearfix form-fieldset">
-                <legend>Results</legend>
-                <div id="formset" data-formset-prefix="{{ results_formset.prefix }}">
-                    {{ results_formset.management_form }}
-
-                    <div data-formset-body>
-                        <!-- New forms will be inserted in here -->
-                        {% for form in results_formset %}
-                            <div class="result-form" data-formset-form>
-                                {{ form|bootstrap_horizontal }}
+                <div class="form-group col-lg-4 sampling-feature-fields">
+                    {% for field in sampling_feature_form %}
+                        <div class="form-field">
+                            <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="col-lg-8">
+                                {{ field|add_class:"form-control input-sm" }}
                             </div>
+                        </div>
+
+    {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                    {% endfor %}
+                    {% for field in site_form %}
+                        <div class="form-field">
+                            <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="col-lg-8">
+                                {{ field|add_class:"form-control" }}
+                            </div>
+                        </div>
+
+    {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                    {% endfor %}
+                </div>
+                <div class="form-group col-lg-8 map-container">
+                    <div id="map"></div>
+                </div>
+            </fieldset>
+
+            <fieldset class="clearfix form-fieldset">
+                <legend>Deployment Action</legend>
+                <div class="row col-lg-12 deployment-action-fields">
+
+{#                <fieldset><div class="col-lg-12">#}
+                    <div class="form-group col-lg-6">
+                        {% for field in action_form %}
+                            <div class="form-field">
+                                <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <div class="col-lg-8">
+                                    {{ field|add_class:"form-control" }}
+                                </div>
+                            </div>
+        {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
                         {% endfor %}
                     </div>
 
-                    <!-- The empty form template. By wrapping this in a <script> tag, the
-                    __prefix__ placeholder can easily be replaced in both attributes and
-                    any scripts -->
-                    <script type="form-template" data-formset-empty-form>
-                        {% escapescript %}
-                            <div class="result-form" data-formset-form>
-                                {{ results_formset.empty_form|bootstrap_horizontal }}
+                    <div class="form-group col-lg-6">
+                        {% for field in action_by_form %}
+                            <div class="form-field">
+                                <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <div class="col-lg-8">
+                                    {{ field|add_class:"form-control" }}
+                                </div>
                             </div>
-                        {% endescapescript %}
-                    </script>
-                    <input type="button" value="Add result" class="btn btn-default" data-formset-add>
+        {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                        {% endfor %}
+                    </div>
+{#                </div></fieldset>#}
+                </div>
+
+
+                <div class="row well col-lg-12 new-person-fields">
+                    {% for field in people_form %}
+                        <div class="col-lg-6 form-field">
+                            <label class="col-lg-3 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="col-lg-9">
+                                {{ field|add_class:"form-control" }}
+                            </div>
+                        </div>
+    {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                    {% endfor %}
+
+                    {% for field in organization_form %}
+                        <div class="col-lg-6 form-field">
+                            <label class="col-lg-3 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="col-lg-9">
+                                {{ field|add_class:"form-control" }}
+                            </div>
+                        </div>
+    {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                    {% endfor %}
+
+                    {% for field in affiliation_form %}
+                        <div class="col-lg-6 form-field">
+                            <label class="col-lg-3 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="col-lg-9">
+                                {{ field|add_class:"form-control" }}
+                            </div>
+                        </div>
+    {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                    {% endfor %}
+
+                    <div class="col-lg-12">
+                        <button type="button" class="btn btn-success new-person-button">Add Person</button>
+                    </div>
+                </div>
+
+                <div class="row col-lg-12 results-fields">
+                    <div id="formset" class="well" data-formset-prefix="{{ results_formset.prefix }}">
+                        {{ results_formset.management_form }}
+
+                        <fieldset class="center-block">
+                            <legend>Results</legend>
+                            <!-- New forms will be inserted in here -->
+                            {% for form in results_formset %}
+                                <div class="result-form col-lg-12" data-formset-form>
+                                    {% for field in form %}
+                                        <div class="col-lg-6 form-field">
+                                            <label class="col-lg-2 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                            <div class="col-lg-9">
+                                                {{ field|add_class:"form-control" }}
+                                            </div>
+                                        </div>
+                    {#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="col-lg-12">
+                                <button type="button" class="btn btn-success new-result-button">Add Result</button>
+                            </div>
+
+                        </fieldset>
+
+                        <!-- The empty form template. By wrapping this in a <script> tag, the
+                        __prefix__ placeholder can easily be replaced in both attributes and
+                        any scripts -->
+
+                        {% comment  %}
+                                <div class="result-form" data-formset-form>
+                                    {{ results_formset.empty_form|bootstrap_horizontal }}
+                                </div>
+                        {% endcomment %}
+
+{#                        <input type="button" value="Add result" class="btn btn-default" data-formset-add>#}
+                    </div>
                 </div>
             </fieldset>
+
             <input type="submit" value="Register Device" class="btn btn-primary">
         </form>
     </section>
@@ -64,13 +161,8 @@
 
 {% block scripts %}
     {{ block.super }}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <script src="{% static 'js/jquery.formset.js' %}"></script>
-    <script type="application/javascript">
-        $(document).ready(function() {
-            $("#formset").formset({
-                animateForms: true
-            });
-        });
-    </script>
+    <script src="{% static 'dataloaderinterface/js/common.js' %}"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+
+
 {% endblock %}

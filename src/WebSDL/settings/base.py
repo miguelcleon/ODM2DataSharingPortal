@@ -49,12 +49,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'djangoformsetjs',
-    'crispy_forms',
-    'bootstrapform',
     'dataloader',
     'dataloaderservices',
-    'dataloaderinterface'
+    'dataloaderinterface',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE_CLASSES = [
