@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+}
+
 span.required-symbol {
     font-size: 1.2em;
     position: relative;
@@ -52,8 +58,14 @@ span.required-symbol {
 /*}*/
 
 .result-form {
+
     margin-left: 15px;
     margin-bottom: 10px;
+}
+
+.result-form:not(:first-of-type) {
+    padding-top: 25px;
+    border-top: 1px solid #9d9d9d;
 }
 
 fieldset.form-fieldset {
@@ -62,4 +74,17 @@ fieldset.form-fieldset {
 
 #formset {
     clear: both;
+}
+
+#results-template {
+    display: none;
+    visibility: hidden;
+}
+
+span.remove-result {
+    float: right;
+    margin-right: 15px;
+    font-size: 1.3em;
+    cursor: pointer;
+
 }

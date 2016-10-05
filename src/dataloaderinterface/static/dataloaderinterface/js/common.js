@@ -63,8 +63,27 @@ function initMap() {
     });
 }
 
-$(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {
-    if (event.keyCode == 13) {
-        event.preventDefault();
-    }
+
+function addResult() {
+    var newIndex = $('div#formset div.result-form').length;
+    $('input[name="form-TOTAL_FORMS"]').val(newIndex + 1);
+
+    var newResultForm = $($('div#results-template').html().replace(new RegExp('__prefix__', 'g'), newIndex));
+    newResultForm.insertBefore($('.formset-container .add-result-container'));
+
+    newResultForm.find('span.remove-result').on('click', function() {
+        $(this).parents('div.result-form').remove();
+    });
+}
+
+
+$(document).ready(function() {
+    $('button.new-result-button').on('click', addResult);
+
+    $(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
 });
+
