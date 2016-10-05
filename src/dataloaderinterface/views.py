@@ -16,7 +16,7 @@ from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFor
 from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
-    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization
+    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
     AffiliationForm, ResultFormSet, SiteForm
 from dataloaderinterface.models import DeviceRegistration
@@ -72,17 +72,24 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         sampling_feature_form = SamplingFeatureForm(request.POST)
         action_form = ActionForm(request.POST)
         action_by_form = ActionByForm(request.POST)
-        people_form = PeopleForm(request.POST)
-        organization_form = OrganizationForm(request.POST)
-        affiliation_form = AffiliationForm(request.POST)
+        site_form = SiteForm(request.POST)
+        # people_form = PeopleForm(request.POST)
+        # organization_form = OrganizationForm(request.POST)
+        # affiliation_form = AffiliationForm(request.POST)
         results_formset = ResultFormSet(request.POST)
         registration_form = self.get_form()
 
-        if self.all_forms_valid(sampling_feature_form, action_form, action_by_form, people_form, organization_form, affiliation_form, results_formset):
+        if self.all_forms_valid(sampling_feature_form, site_form, action_form, action_by_form, results_formset):
             # Create sampling feature
             sampling_feature = sampling_feature_form.instance
             sampling_feature.sampling_feature_type = SamplingFeatureType.objects.get(name='Site')
             sampling_feature.save()
+
+            # Create Site
+            site = site_form.instance
+            site.sampling_feature = sampling_feature
+            site.spatial_reference = SpatialReference.objects.get(srs_name='WGS84')
+            site.save()
 
             # Create action
             action = action_form.instance
@@ -95,37 +102,36 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
             feature_action.save()
 
-            # Create person
-            person = people_form.instance
-            person.save()
-
-            # Create organization
-            organization = organization_form.instance
-            organization.organization_type = OrganizationType.objects.get(name='Unknown')
-            organization.save()
-
-            # Create affiliation
-            affiliation = affiliation_form.instance
-            affiliation.person = person
-            affiliation.organization = organization
-            affiliation.save()
+            # # Create person
+            # person = people_form.instance
+            # person.save()
+            #
+            # # Create organization
+            # organization = organization_form.instance
+            # organization.organization_type = OrganizationType.objects.get(name='Unknown')
+            # organization.save()
+            #
+            # # Create affiliation
+            # affiliation = affiliation_form.instance
+            # affiliation.person = person
+            # affiliation.organization = organization
+            # affiliation.save()
 
             # Create action by
             action_by = action_by_form.instance
-            action_by.affiliation = affiliation
             action_by.action = action
+            action_by.is_action_lead = True
             action_by.save()
 
             for result_data in results_formset.cleaned_data:
-                if not result_data or result_data['DELETE']:
+                if not result_data:
                     continue
 
-                del result_data['DELETE']
                 # Create Results
                 result = Result(**result_data)
                 result.feature_action = feature_action
                 result.result_type = ResultType.objects.get(name='Time series coverage')
-                result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
+                # result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
                 result.status = Status.objects.get(name='Ongoing')
                 result.value_count = 0
                 result.save()
