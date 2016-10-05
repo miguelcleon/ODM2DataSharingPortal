@@ -1,5 +1,6 @@
 {% extends "dataloaderinterface/base.html" %}
-{% load bootstrap %}
+{% load widget_tweaks %}
+
 
 {% block content %}
     <section class="login-container col-xs-4">
@@ -22,7 +23,17 @@
 
         <form method="post" action="" class="form-horizontal form-group-sm" role="form">
             {% csrf_token %}
-            {{ form|bootstrap_horizontal }}
+
+            {% for field in form %}
+                <div class="form-field">
+                    <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    <div class="col-lg-8">
+                        {{ field|add_class:"form-control" }}
+                    </div>
+                </div>
+{#                  {% if field.field.required %} <span class="required-symbol">*</span> {% endif %}#}
+            {% endfor %}
+
             <input type="hidden" name="next" value="{% url 'home' %}">
             <input type="submit" value="login" class="btn btn-primary">
         </form>
