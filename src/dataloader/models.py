@@ -266,10 +266,10 @@ class Affiliation(models.Model):
     person_link = models.CharField(db_column='personlink', blank=True, max_length=255)
 
     def __str__(self):
-        return str(self.person) + ' (' + self.organization.organization_name + ') - ' + self.primary_email
+        return str(self.person) + ' (' + self.organization.organization_name + ')'
 
     def __unicode__(self):
-        return unicode(self.person) + ' (' + self.organization.organization_name + ') - ' + self.primary_email
+        return unicode(self.person) + ' (' + self.organization.organization_name + ')'
 
     class Meta:
         db_table = 'affiliations'

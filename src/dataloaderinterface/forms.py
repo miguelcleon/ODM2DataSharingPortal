@@ -50,6 +50,11 @@ class SiteForm(forms.ModelForm):
 
 
 class ActionForm(forms.ModelForm):
+    method = forms.ModelChoiceField(
+        queryset=Method.objects.all(),
+        widget=autocomplete.ModelSelect2(url='method-autocomplete')
+    )
+
     class Meta:
         model = Action
         fields = [
@@ -61,6 +66,11 @@ class ActionForm(forms.ModelForm):
 
 
 class ActionByForm(forms.ModelForm):
+    affiliation = forms.ModelChoiceField(
+        queryset=Affiliation.objects.all(),
+        widget=autocomplete.ModelSelect2(url='affiliation-autocomplete')
+    )
+
     class Meta:
         model = ActionBy
         fields = [

@@ -161,6 +161,8 @@
 
 {% block scripts %}
     {{ block.super }}
+    {{ action_form.media }}
+
     <script src="{% static 'dataloaderinterface/js/common.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 

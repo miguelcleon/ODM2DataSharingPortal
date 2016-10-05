@@ -32,27 +32,6 @@ class HomeView(TemplateView):
     template_name = 'dataloaderinterface/index.html'
 
 
-class OrganizationAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        queryset = Organization.objects.all()
-        queryset = queryset.filter(organization_name__istartswith=self.q) if self.q else queryset
-        return queryset
-
-    def post(self, request):
-        organization_name = request.POST['text']
-        organization_type = OrganizationType.objects.get(pk='Research organization')
-        organization = Organization.objects.get_or_create(
-            organization_name=organization_name,
-            organization_code=organization_name,
-            organization_type=organization_type
-        )
-
-        return http.JsonResponse({
-            'id': organization[0].pk,
-            'text': six.text_type(organization_name),
-        })
-
-
 class DevicesListView(LoginRequiredMixin, ListView):
     model = DeviceRegistration
     template_name = 'dataloaderinterface/devices_list.html'
