@@ -134,9 +134,9 @@
                             {% endfor %}
 
 
-                        <div class="col-lg-12 add-result-container">
-                            <button type="button" class="btn btn-success new-result-button">Add Result</button>
-                        </div>
+                            <div class="col-lg-12 add-result-container">
+                                <button type="button" class="btn btn-success new-result-button">Add Result</button>
+                            </div>
                         </fieldset>
 
 
@@ -179,6 +179,6 @@
     {{ block.super }}
     {{ action_form.media }}
 
-    <script src="{% static 'dataloaderinterface/js/common.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/device-form.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}

@@ -4,6 +4,34 @@
   src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
 }
 
+@media only screen and (min-width : 992px) {
+    button.download-data-button {
+        float: right;
+        margin-top: 18px;
+    }
+
+    div.registration-keys h4 {
+        line-height: .5em;
+    }
+}
+
+@media only screen and (max-width : 992px) {
+    button.download-data-button {
+        float: left;
+        clear: left;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+    div.registration-keys h4 {
+        line-height: 1.2em;
+    }
+}
+
+body {
+    margin-bottom: 20px;
+}
+
 span.required-symbol {
     font-size: 1.2em;
     position: relative;
@@ -12,8 +40,16 @@ span.required-symbol {
     float: left;
 }
 
+section.device-data h2, section.device-data h4 {
+    display: inline-block;
+}
+
 .map-container {
-    height: 387px;
+    height: 390px;
+}
+
+.detail-map-container {
+    height: 450px;
 }
 
 #map {
@@ -87,4 +123,157 @@ span.remove-result {
     font-size: 1.3em;
     cursor: pointer;
 
+}
+
+div.registration-keys {
+    padding-left: 30px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+div.registration-keys h4 {
+    font-size: 1.1em;
+    font-weight: 700;
+    font-family: "Lucida Sans Typewriter", "Lucida Console", monaco, "Bitstream Vera Sans Mono", monospace;
+}
+
+div.registration-keys h4 span.key {
+    font-weight: 200;
+}
+
+span.keys-icon {
+    margin-left: 10px;
+    font-size: 1.6em;
+    cursor: pointer;
+}
+
+span.copy-key-icon {
+    margin-right: 10px;
+    font-size: 1.4em;
+    cursor: pointer;
+}
+
+div.registration-data {
+    margin-top: 15px;
+}
+
+div.registration-field {
+    padding: .7em 1em;
+}
+
+div.registration-field span.control-label {
+    text-align: right;
+    font-weight: 700;
+}
+
+div.registration-field span.control-field {
+
+}
+
+.plot_box {
+    border: 1px solid #808080;
+    float: left;
+    width: 100%;
+    margin-bottom: 15px;
+    margin-left: -10px;
+    margin-right: 25px;
+    box-shadow: -2px 2px 5px 1px #ccc;
+    padding: 12px;
+    border-radius: 3px;
+    display: flex;
+}
+
+.plot_box.selected {
+    background-color: rgba(221, 221, 221, .2);
+}
+
+.plot_box:last-of-type {
+    margin-right: 0;
+}
+
+.plot_box:hover {
+    cursor: pointer;
+    box-shadow: -0px 1px 8px 1px #8B8B8B;
+}
+
+.plot_box .variable-data {
+    width: 128px;
+    float: left;
+}
+
+.plot_box .variable-data span {
+    min-width: 128px;
+    float: left;
+    text-align: center;
+    line-height: 16px;
+    padding: 0;
+    margin-bottom: 3px;
+}
+
+.variable-code {
+    font-size: 0.8em;
+    margin-bottom: 3px;
+}
+
+.latest-value {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-top: 5px;
+}
+
+.graph-container {
+    position: relative;
+    float: left;
+    border: 1px solid #808080;
+    width: calc(100% - 128px);
+    align-items: stretch;
+}
+
+.plot_box div p {
+    text-align: center;
+    line-height: 12px;
+    padding: 2px 0 0 0;
+}
+
+.plot_box div p + p {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.plot_box a {
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    color: #444;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}
+
+.line {
+    fill: rgb(232, 237, 240);
+    stroke: steelblue;
+    stroke-width: 2px;
+}
+
+
+.measurements-container {
+    margin-top: 30px;
+}
+
+.measurements-container h3 {
+    margin-bottom: 25px;
+    float: left;
+}
+
+table.data-values, table.dataTable {
+    display: none;
+    margin-top: 0 !important;
 }
