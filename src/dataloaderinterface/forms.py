@@ -1,4 +1,3 @@
-from dal import autocomplete
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.forms.formsets import formset_factory

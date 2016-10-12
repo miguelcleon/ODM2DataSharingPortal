@@ -1,7 +1,6 @@
 from datetime import datetime
 from uuid import uuid4
 
-from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http.response import HttpResponseRedirect
