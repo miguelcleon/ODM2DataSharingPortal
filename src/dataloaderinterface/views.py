@@ -16,7 +16,8 @@ from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFor
 from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
-    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference
+    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
+    ElevationDatum, SiteType
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
     AffiliationForm, ResultFormSet, SiteForm
 from dataloaderinterface.models import DeviceRegistration
@@ -62,17 +63,25 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
     object = None
     fields = []
 
+    def get_default_data(self):
+        data = {
+            'elevation_datum': ElevationDatum.objects.filter(pk='MSL').first(),
+            'site_type': SiteType.objects.filter(pk='Stream').first()
+        }
+        return data
+
     def get_context_data(self, **kwargs):
+        default_data = self.get_default_data()
         context = super(DeviceRegistrationView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
-        context['sampling_feature_form'] = SamplingFeatureForm(data)
-        context['site_form'] = SiteForm(data)
-        context['action_form'] = ActionForm(data)
-        context['action_by_form'] = ActionByForm(data)
-        context['people_form'] = PeopleForm(data)
-        context['organization_form'] = OrganizationForm(data)
-        context['affiliation_form'] = AffiliationForm(data)
-        context['results_formset'] = ResultFormSet(data)
+        context['sampling_feature_form'] = SamplingFeatureForm(data=data, initial=default_data)
+        context['site_form'] = SiteForm(data=data, initial=default_data)
+        context['action_form'] = ActionForm(data=data, initial=default_data)
+        context['action_by_form'] = ActionByForm(data=data, initial=default_data)
+        context['people_form'] = PeopleForm(data=data, initial=default_data)
+        context['organization_form'] = OrganizationForm(data=data, initial=default_data)
+        context['affiliation_form'] = AffiliationForm(data=data, initial=default_data)
+        context['results_formset'] = ResultFormSet(data=data, initial=[default_data])
         return context
 
     def post(self, request, *args, **kwargs):

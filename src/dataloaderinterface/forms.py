@@ -50,11 +50,6 @@ class SiteForm(forms.ModelForm):
 
 
 class ActionForm(forms.ModelForm):
-    method = forms.ModelChoiceField(
-        queryset=Method.objects.all(),
-        widget=autocomplete.ModelSelect2(url='method-autocomplete')
-    )
-
     class Meta:
         model = Action
         fields = [
@@ -66,11 +61,6 @@ class ActionForm(forms.ModelForm):
 
 
 class ActionByForm(forms.ModelForm):
-    affiliation = forms.ModelChoiceField(
-        queryset=Affiliation.objects.all(),
-        widget=autocomplete.ModelSelect2(url='affiliation-autocomplete')
-    )
-
     class Meta:
         model = ActionBy
         fields = [
@@ -100,6 +90,7 @@ class OrganizationForm(forms.ModelForm):
         fields = [
             'organization_code',
             'organization_name',
+            'organization_type'
         ]
 
 
@@ -109,14 +100,12 @@ class AffiliationForm(forms.ModelForm):
         fields = [
             'primary_phone',
             'primary_email',
-            'primary_address',
             'affiliation_start_date',
         ]
         labels = {
             'affiliation_start_date': 'Affiliation Date',
             'primary_phone': 'Phone',
             'primary_email': 'Email',
-            'primary_address': 'Address',
         }
 
 
@@ -129,6 +118,10 @@ class ResultForm(forms.ModelForm):
             'sampled_medium',
             'processing_level',
         ]
+        labels = {
+            'sampled_medium': 'Medium',
+            'processing_level': 'QC Level'
+        }
 
 
 ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, validate_min=True)

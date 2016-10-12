@@ -13,10 +13,11 @@
             <title>Web Streaming Data Loader</title>
         {% endblock %}
 
-        <link rel="stylesheet" href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>
-        <link rel="stylesheet" href="{% static 'dataloaderinterface/css/bootstrap.min.css' %}">
-        <link rel="stylesheet" href="{% static 'dataloaderinterface/css/style.css' %}">
-        <link rel="stylesheet" href="{% static 'dataloaderinterface/css/simple-sidebar.css' %}">
+        {% block styles %}
+            <link rel="stylesheet" href="{% static 'dataloaderinterface/css/bootstrap.min.css' %}">
+            <link rel="stylesheet" href="{% static 'dataloaderinterface/css/style.css' %}">
+            <link rel="stylesheet" href="{% static 'dataloaderinterface/css/simple-sidebar.css' %}">
+        {% endblock %}
 
     </head>
 
@@ -46,9 +47,15 @@
             </div>
         </div>
 
-    {% block scripts %}
-        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    {% endblock %}
+        <div id="services-urls">
+            {% block services_urls %}
+
+            {% endblock %}
+        </div>
+
+        {% block scripts %}
+            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        {% endblock %}
     </body>
 </html>
 
