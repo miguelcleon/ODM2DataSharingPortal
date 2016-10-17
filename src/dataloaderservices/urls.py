@@ -20,7 +20,7 @@ from dataloaderservices.views import TimeSeriesValuesApi, AffiliationApi
 
 urlpatterns = [
     url(r'^api/post_stuff/$', TimeSeriesValuesApi.as_view(), name='api_post'),
-    url(r'^api/afiiliation/$', AffiliationApi.as_view(), name='affiliation_service')
+    url(r'^api/affiliation/$', AffiliationApi.as_view(), name='affiliation_service')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
