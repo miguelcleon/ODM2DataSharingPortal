@@ -21,11 +21,19 @@ function updateSiteElevation(position) {
 function initMap() {
     var defaultZoomLevel = 4;
     var defaultPosition = { lat: 37.0902, lng: -95.7129 };
+    var mapTip = $('<div class="map-info"><span class="map-tip">Click on the map to update coordinates and elevation data</span></div>');
 
     var map = new google.maps.Map(document.getElementById('map'), {
         center: defaultPosition,
         zoom: defaultZoomLevel,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        draggableCursor: 'pointer',
+        disableDefaultUI: true,
+        zoomControl: true,
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.LEFT_BOTTOM
+        },
+        scaleControl: true
     });
 
     var marker = new google.maps.Marker({
@@ -39,6 +47,8 @@ function initMap() {
             map.setZoom(10);
         }, undefined, { timeout: 5000 });
     }
+
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(mapTip.get(0));
 
     map.addListener('click', function(event) {
         marker.setPosition(event.latLng);
@@ -183,7 +193,7 @@ $(document).ready(function() {
     $('button.new-result-button').on('click', addResult);
     bindDeleteResult($('form .result-form'));
 
-    $('.form-field.required-field input, .form-field.required-field select').attr('required', true);
+    //$('.form-field.required-field input, .form-field.required-field select').attr('required', true);
 
     $(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {
         if (event.keyCode == 13) {
