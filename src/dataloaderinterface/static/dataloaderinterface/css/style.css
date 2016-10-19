@@ -45,7 +45,9 @@ section.device-data h2, section.device-data h4 {
 }
 
 .map-container {
-    height: 378px;
+    margin-top: 25px;
+    height: 453px;
+    padding: 0;
 }
 
 .detail-map-container {
@@ -54,6 +56,18 @@ section.device-data h2, section.device-data h4 {
 
 #map {
     height: 100%;
+}
+
+div.map-info {
+    margin: 5px;
+}
+
+span.map-tip {
+    box-shadow: rgba(0, 0, 0, 0.298039) 0 1px 4px -1px;
+    background-color: rgba(255, 255, 255, .96);
+    border-radius: 2px;
+    font-size: 12px;
+    padding: 7px;
 }
 
 .control-row {
@@ -72,11 +86,11 @@ section.device-data h2, section.device-data h4 {
     padding-bottom: 25px;
 }
 
-.form-field.required-field label.control-label:after {
-    content: "*";
-    padding-left: 5px;
-    position: absolute;
-    line-height: 1.5em;
+.form-field:not(.required-field) label.control-label::after {
+    content: "(optional)";
+    margin-left: 5px;
+    font-weight: 400;
+    font-size: 12px;
 }
 
 .form-field.before, .form-field:after {
@@ -98,13 +112,13 @@ div.action-affiliation-fields label.control-label {
     margin-bottom: 5px;
 }
 
-div.action-affiliation-fields div.form-field {
+div.form-field {
     padding-bottom: 15px;
 }
 
 
 .results-fields {
-    margin-top: 32px;
+    margin-top: 25px;
 }
 
 .results-fields label.control-label {
@@ -308,4 +322,15 @@ div.registration-field span.control-field {
 table.data-values, table.dataTable {
     display: none;
     margin-top: 0 !important;
+}
+
+div.measurements-table div.dataTables_scrollBody {
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+}
+
+span.map-help {
+    float: right;
+    font-size: .96em;
+    font-weight: 600;
 }
