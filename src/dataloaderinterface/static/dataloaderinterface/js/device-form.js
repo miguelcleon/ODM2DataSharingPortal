@@ -195,7 +195,13 @@ $(document).ready(function() {
     $('button.new-result-button').on('click', addResult);
     bindDeleteResult($('form .result-form'));
 
-    //$('.form-field.required-field input, .form-field.required-field select').attr('required', true);
+    $('div.form-field div.input-group.date').datepicker({
+        todayBtn: "linked",
+        autoclose: true,
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        maxViewMode: 2
+    });
 
     $(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {
         if (event.keyCode == 13) {

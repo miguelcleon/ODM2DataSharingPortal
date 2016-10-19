@@ -93,9 +93,6 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         action_form = ActionForm(request.POST)
         action_by_form = ActionByForm(request.POST)
         site_form = SiteForm(request.POST)
-        # people_form = PeopleForm(request.POST)
-        # organization_form = OrganizationForm(request.POST)
-        # affiliation_form = AffiliationForm(request.POST)
         results_formset = ResultFormSet(request.POST)
         registration_form = self.get_form()
 
@@ -121,21 +118,6 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             # Create feature action
             feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
             feature_action.save()
-
-            # # Create person
-            # person = people_form.instance
-            # person.save()
-            #
-            # # Create organization
-            # organization = organization_form.instance
-            # organization.organization_type = OrganizationType.objects.get(name='Unknown')
-            # organization.save()
-            #
-            # # Create affiliation
-            # affiliation = affiliation_form.instance
-            # affiliation.person = person
-            # affiliation.organization = organization
-            # affiliation.save()
 
             # Create action by
             action_by = action_by_form.instance
@@ -169,7 +151,8 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(registration_form)
 
-    def all_forms_valid(self, *forms):
+    @staticmethod
+    def all_forms_valid(*forms):
         return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
 
 

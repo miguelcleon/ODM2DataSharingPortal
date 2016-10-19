@@ -22,19 +22,15 @@
                 <legend>Sampling Feature</legend>
                 <div class="form-group col-lg-4 sampling-feature-fields">
                     {% for field in sampling_feature_form %}
-                        <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                            <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            <div class="col-lg-12">
-                                {{ field|add_class:"form-control input-sm" }}
-                            </div>
+                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
                     {% for field in site_form %}
-                        <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                            <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            <div class="col-lg-12">
-                                {{ field|add_class:"form-control input-sm" }}
-                            </div>
+                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
                 </div>
@@ -47,46 +43,42 @@
                 <legend>Deployment Action</legend>
                 <div class="form-group col-lg-4 action-affiliation-fields">
                     {% for field in action_form %}
-                        <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                            <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            <div class="col-lg-12">
-                                {{ field|add_class:"form-control input-sm" }}
-                            </div>
+                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
                     {% for field in action_by_form %}
-                        <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                            <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            <div class="col-lg-12">
-                                {{ field|add_class:"form-control input-sm" }}
-                            </div>
+                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
 
                     <div class="new-person-fields">
                         {% for field in people_form %}
-                            <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                                <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                <div class="col-lg-12">
-                                    {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
-                                </div>
+                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %}">
+                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
                             </div>
                         {% endfor %}
                         {% for field in organization_form %}
-                            <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                                <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                <div class="col-lg-12">
-                                    {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
-                                </div>
+                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %}">
+                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
                             </div>
                         {% endfor %}
 
                         {% for field in affiliation_form %}
-                            <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                                <label class="col-lg-12 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                <div class="col-lg-12">
+                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %}">
+                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if 'date' in field.name %}
+                                    <div class="input-group date">
+                                      {{ field|add_class:"form-control input-sm"|attr:"disabled" }}<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                                    </div>
+                                {% else %}
                                     {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
-                                </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
 
@@ -154,11 +146,13 @@
     {{ block.super }}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker3.min.css" />
 {% endblock %}
 
 {% block scripts %}
     {{ block.super }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/device-form.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}
