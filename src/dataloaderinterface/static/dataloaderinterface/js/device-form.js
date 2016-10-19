@@ -135,7 +135,10 @@ function bindAffiliationChange() {
 
     affiliationSelect.on('change', function() {
         if ($(this).val() == "new") {
-            fillAffiliationFields();
+            fillAffiliationFields({ person: {
+                person_first_name: $('input[name="user_first_name"]').val(),
+                person_last_name: $('input[name="user_last_name"]').val()
+            }});
             newPersonFields.removeAttr('disabled');
             newPersonButton.show();
             return;
@@ -157,6 +160,7 @@ function bindAffiliationChange() {
             fillAffiliationFields()
         });
     });
+    affiliationSelect.trigger('change');
 }
 
 function bindNewPersonButton() {

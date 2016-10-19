@@ -15,6 +15,9 @@
 
         <form method="post" enctype="multipart/form-data" role="form">
             {% csrf_token %}
+            <input name="user_first_name" type="hidden" value="{{ user.first_name }}">
+            <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
+
             <fieldset class="clearfix form-fieldset">
                 <legend>Sampling Feature</legend>
                 <div class="form-group col-lg-4 sampling-feature-fields">
