@@ -57,19 +57,17 @@ function initMap() {
     });
 
     $('input[name="latitude"], input[name="longitude"]').on('change', function() {
-        var input = $(this);
-        var value = parseFloat(input.val());
-        if (!value) {
+        var coordinates = {
+            lat: parseFloat($('input[name="latitude"]').val()),
+            lng: parseFloat($('input[name="longitude"]').val())
+        };
+
+        if (!coordinates.lat || !coordinates.lng) {
             return;
         }
 
-        var markerPosition = {
-            lat: input.prop('name') === 'latitude'? parseFloat(value): marker.getPosition().lat(),
-            lng: input.prop('name') === 'longitude'? parseFloat(value): marker.getPosition().lng()
-        };
-
-        map.panTo(markerPosition);
-        marker.setPosition(markerPosition);
+        map.panTo(coordinates);
+        marker.setPosition(coordinates);
     });
 }
 
