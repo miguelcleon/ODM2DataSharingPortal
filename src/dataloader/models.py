@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import uuid
 
+from datetime import datetime, timedelta
 from django.db import models
 
 # TODO: import settings and get dbs, use reflection to add schema name depending on the type of database.
@@ -381,6 +382,10 @@ class TimeSeriesResultValue(models.Model):
     quality_code = models.ForeignKey('QualityCode', db_column='qualitycodecv')
     time_aggregation_interval = models.FloatField(db_column='timeaggregationinterval')
     time_aggregation_interval_unit = models.ForeignKey('Unit', db_column='timeaggregationintervalunitsid')
+
+    @property
+    def recent(self):
+        return self.objects.filter(value_datetime_gte=datetime.now() - timedelta(days=1)).order_by('-value_datetime')
 
     def __str__(self):
         return str(self.data_value) + ' at ' + str(self.value_datetime) + ' (' + str(self.result) + ')'

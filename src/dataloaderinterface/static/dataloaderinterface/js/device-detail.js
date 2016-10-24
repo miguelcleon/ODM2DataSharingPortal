@@ -77,10 +77,6 @@ $(document).ready(function() {
         }
     }
 
-    $('section.device-data header span.keys-icon').on('click', function() {
-        $('section.device-data header div.registration-keys').toggle();
-    });
-
     plotBoxes.on('click', function(event) {
         var box = $(this);
         var id = box.data('result-id');

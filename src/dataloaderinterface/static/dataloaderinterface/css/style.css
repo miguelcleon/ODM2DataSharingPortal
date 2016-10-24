@@ -173,23 +173,23 @@ span.remove-result {
 div.registration-keys {
     padding-left: 30px;
     margin-bottom: 15px;
-    display: none;
 }
 
 div.registration-keys h4 {
     font-size: 1.1em;
     font-weight: 700;
     font-family: "Lucida Sans Typewriter", "Lucida Console", monaco, "Bitstream Vera Sans Mono", monospace;
+    padding-bottom: .5em;
 }
 
 div.registration-keys h4 span.key {
     font-weight: 200;
 }
 
-span.keys-icon {
-    margin-left: 10px;
-    font-size: 1.6em;
+span.copy-icon {
+    font-size: 1.3em;
     cursor: pointer;
+    vertical-align: text-bottom;
 }
 
 span.copy-key-icon {
@@ -229,7 +229,14 @@ div.registration-field span.control-field {
 }
 
 .plot_box.selected {
-    background-color: rgba(221, 221, 221, .2);
+    background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 20px,
+            rgba(221, 221, 221, 0.4) 20px,
+            rgba(221, 221, 221, .4) 40px
+    );
+    box-shadow: -0px 1px 8px 1px #8B8B8B;
 }
 
 .plot_box:last-of-type {
@@ -314,9 +321,18 @@ div.registration-field span.control-field {
 }
 
 .measurements-container h3 {
-    margin-bottom: 25px;
     float: left;
 }
+
+.measurements-container h4 {
+    margin-bottom: 25px;
+    margin-top: 0;
+    color: #F67400;
+    float: left;
+    clear: left;
+    font-size: 1.2em;
+}
+
 
 table.data-values, table.dataTable {
     display: none;
@@ -341,39 +357,3 @@ span.map-help {
 .has-error .control-label, .has-error .form-control, .device-data span.form-message.error {
     color: rgb(232, 0, 0);
 }
-
-
-/*div.form-field span.error-tooltip {*/
-    /*position: absolute;*/
-    /*color: #FFFFFF;*/
-    /*background: rgba(232, 0, 0, .7);*/
-    /*line-height: 20px;*/
-    /*text-align: center;*/
-    /*border-radius: 5px;*/
-    /*white-space: nowrap;*/
-    /*padding: 0 10px;*/
-    /*margin-left: 15px;*/
-    /*font-size: 13px;*/
-/*}*/
-
-/*div.form-field span.error-tooltip:after {*/
-    /*content: '';*/
-    /*position: absolute;*/
-    /*top: 50%;*/
-    /*right: 99.5%;*/
-    /*margin-top: -8px;*/
-    /*height: 0;*/
-    /*border-right: 8px solid rgba(232, 0, 0, .7);*/
-    /*border-top: 8px solid transparent;*/
-    /*border-bottom: 8px solid transparent;*/
-/*}*/
-
-/*a:hover.tooltips span {*/
-  /*visibility: visible;*/
-  /*opacity: 0.6;*/
-  /*left: 100%;*/
-  /*top: 50%;*/
-  /*margin-top: -12px;*/
-  /*margin-left: 15px;*/
-  /*z-index: 999;*/
-/*}*/

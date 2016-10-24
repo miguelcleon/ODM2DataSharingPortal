@@ -4,10 +4,20 @@
 {% block content %}
     <section class="device-data col-lg-12">
         <header>
-            <h2>{{ sampling_feature.sampling_feature_name }}</h2><span class="glyphicon keys-icon">🔑</span>
+            <h2>
+                {% if sampling_feature.sampling_feature_name %}
+                    {{ sampling_feature.sampling_feature_name }} ({{ sampling_feature.sampling_feature_code }})
+                {% else %}
+                    {{ sampling_feature.sampling_feature_code }}
+                {% endif %}
+            </h2>
             <div class="col-lg-12 registration-keys clearfix">
-                <h4>Registration Token: <span class="key registration-token">{{ object.authentication_token }}</span></h4><br>
-                <h4>Sampling Feature UUID: <span class="key site-uuid">{{ sampling_feature.sampling_feature_uuid }}</span></h4>
+                <h4>
+{#                    <span class="glyphicon copy-icon glyphicon-copy" title="Copy registration token"></span> #}
+                    Registration Token: <span class="key registration-token">{{ object.authentication_token }}</span></h4>
+                <h4>
+{#                    <span class="glyphicon copy-icon glyphicon-copy" title="Copy sampling feature uuid"></span> #}
+                    Sampling Feature UUID: <span class="key site-uuid">{{ sampling_feature.sampling_feature_uuid }}</span></h4>
             </div>
         </header>
         {% if messages %}
@@ -76,6 +86,7 @@
             <div class="col-lg-12">
                 <h3>Recent Measurements</h3>
                 <button type="button" class="btn btn-default download-data-button" data-result-id>Download <span class="variable-name"></span> raw data</button>
+                <h4>Only last 24 hours shown on sparkline plots and tables</h4>
             </div>
 
             <div class="sparkline-plots col-lg-6">
@@ -104,7 +115,7 @@
                     </thead>
 
                     <tbody>
-                        {% for series_value in result.timeseriesresult.timeseriesresultvalue_set.all %}
+                        {% for series_value in result.timeseriesresult.timeseriesresultvalue_set.recent %}
                             <tr>
                                 <td>{{ series_value.value_datetime }}</td>
                                 <td>{{ series_value.data_value }}</td>
