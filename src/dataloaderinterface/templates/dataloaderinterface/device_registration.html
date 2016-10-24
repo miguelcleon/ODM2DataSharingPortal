@@ -6,12 +6,12 @@
     <section class="device-data col-lg-12">
         <header>
             <h2>Device Registration</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="form-message {{ message.tags }}">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
         </header>
-        {% if messages %}
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        {% endif %}
 
         <form method="post" enctype="multipart/form-data" role="form">
             {% csrf_token %}
@@ -19,7 +19,7 @@
             <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
 
             <fieldset class="clearfix form-fieldset">
-                <legend>Sampling Feature</legend>
+                <legend></legend>
                 <div class="form-group col-lg-4 sampling-feature-fields">
                     {% for field in sampling_feature_form %}
                         <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
@@ -35,12 +35,13 @@
                     {% endfor %}
                 </div>
                 <div class="form-group col-lg-8 map-container">
+                    <input type="hidden" name="zoom-level" value="{{ zoom_level}}">
                     <div id="map"></div>
                 </div>
             </fieldset>
 
             <fieldset class="clearfix form-fieldset">
-                <legend>Deployment Action</legend>
+                <legend></legend>
                 <div class="form-group col-lg-4 action-affiliation-fields">
                     {% for field in action_form %}
                         <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">

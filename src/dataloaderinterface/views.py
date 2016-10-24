@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -86,6 +87,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         context['organization_form'] = OrganizationForm(data=data, initial=default_data)
         context['affiliation_form'] = AffiliationForm(data=data, initial=default_data)
         context['results_formset'] = ResultFormSet(data=data, initial=[default_data])
+        context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
     def post(self, request, *args, **kwargs):
@@ -149,6 +151,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             registration_form.instance.save()
             return self.form_valid(registration_form)
         else:
+            messages.error(request, 'There are some required fields that need to be filled out!')
             return self.form_invalid(registration_form)
 
     @staticmethod

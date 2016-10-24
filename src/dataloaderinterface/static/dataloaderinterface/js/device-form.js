@@ -19,13 +19,18 @@ function updateSiteElevation(position) {
 }
 
 function initMap() {
-    var defaultZoomLevel = 4;
-    var defaultPosition = { lat: 37.0902, lng: -95.7129 };
+    const DEFAULT_ZOOM = 4;
+    const DEFAULT_SPECIFIC_ZOOM = 10;
+    const DEFAULT_LATITUDE = 37.0902;
+    const DEFAULT_LONGITUDE = -95.7129;
     var mapTip = $('<div class="map-info"><span class="map-tip">Click on the map to update coordinates and elevation data</span></div>');
+    var mapPosition = { lat: parseFloat($('input[name="latitude"]').val()), lng: parseFloat($('input[name="longitude"]').val()) };
+    var isCompletePosition = mapPosition.lat && mapPosition.lng;
+    var mapZoom = parseInt($('input[name="zoom-level"]').val());
 
     var map = new google.maps.Map(document.getElementById('map'), {
-        center: defaultPosition,
-        zoom: defaultZoomLevel,
+        center: { lat: mapPosition.lat || DEFAULT_LATITUDE, lng: mapPosition.lng || DEFAULT_LONGITUDE },
+        zoom: mapZoom || DEFAULT_ZOOM,
         mapTypeId: google.maps.MapTypeId.TERRAIN,
         draggableCursor: 'pointer',
         disableDefaultUI: true,
@@ -37,14 +42,14 @@ function initMap() {
     });
 
     var marker = new google.maps.Marker({
-        position: undefined,
+        position: (mapPosition.lat && mapPosition.lng)? mapPosition: undefined,
         map: map
     });
 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function getLocation(position){
-            map.setCenter({ lat: position.coords.latitude, lng: position.coords.longitude });
-            map.setZoom(10);
+    if (navigator.geolocation && !isCompletePosition) {
+        navigator.geolocation.getCurrentPosition(function getLocation(locatedPosition) {
+            map.setCenter({ lat: locatedPosition.coords.latitude, lng: locatedPosition.coords.longitude });
+            map.setZoom(DEFAULT_SPECIFIC_ZOOM);
         }, undefined, { timeout: 5000 });
     }
 
@@ -54,6 +59,10 @@ function initMap() {
         marker.setPosition(event.latLng);
         updateSitePosition(map, event.latLng);
         updateSiteElevation(event.latLng);
+    });
+    
+    map.addListener('zoom_changed', function() {
+        $('input[name="zoom-level"]').val(map.getZoom());
     });
 
     $('input[name="latitude"], input[name="longitude"]').on('change', function() {
@@ -191,6 +200,13 @@ $(document).ready(function() {
     initializeSelects(form);
     bindAffiliationChange();
     bindNewPersonButton();
+
+    $('div.form-field.has-error .form-control').on('change keypress', function() {
+        var fieldElement = $(this).parents('div.form-field');
+        if (fieldElement.hasClass('has-error')) {
+            fieldElement.removeClass('has-error');
+        }
+    });
 
     $('button.new-result-button').on('click', addResult);
     bindDeleteResult($('form .result-form'));

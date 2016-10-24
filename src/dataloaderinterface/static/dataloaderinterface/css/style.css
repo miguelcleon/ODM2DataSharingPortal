@@ -32,16 +32,8 @@ body {
     margin-bottom: 20px;
 }
 
-span.required-symbol {
-    font-size: 1.2em;
-    position: relative;
-    top: .5em;
-    left: .5em;
-    float: left;
-}
-
-section.device-data h2, section.device-data h4 {
-    display: inline-block;
+.device-data header {
+    margin-bottom: 10px;
 }
 
 .map-container {
@@ -80,6 +72,12 @@ span.map-tip {
 
 .form-fieldset legend {
     padding: 7px 2px;
+    margin-left: 30px;
+    width: calc(100% - 30px);
+}
+
+.results-fields legend {
+    margin-left: 15px;
 }
 
 .form-field {
@@ -102,6 +100,10 @@ span.map-tip {
     clear: both;
 }
 
+.form-field.has-error, .form-field.has-error label.control-label {
+    cursor: help;
+}
+
 .new-affiliation-button {
     margin-top: -5px;
     display: none;
@@ -118,7 +120,8 @@ div.form-field {
 
 
 .results-fields {
-    margin-top: 25px;
+    margin: 25px 0 0 0;
+    padding: 0;
 }
 
 .results-fields label.control-label {
@@ -136,15 +139,11 @@ div.form-field {
 }
 
 .result-form:not(:first-of-type) {
-    border-top: 1px solid #9d9d9d;
+    border-top: 1px solid #e8e8e8;
 }
 
 .result-form:only-of-type span.remove-result{
     visibility: hidden;
-}
-
-fieldset.form-fieldset {
-    margin-bottom: 20px;
 }
 
 div#formset {
@@ -152,7 +151,7 @@ div#formset {
 }
 
 div#formset.well {
-    padding: 10px 20px 55px 20px;
+    padding: 15px 10px 55px 15px;
     border-radius: 0;
 }
 
@@ -334,3 +333,47 @@ span.map-help {
     font-size: .96em;
     font-weight: 600;
 }
+
+.device-data span.form-message.error {
+    font-weight: 600;
+}
+
+.has-error .control-label, .has-error .form-control, .device-data span.form-message.error {
+    color: rgb(232, 0, 0);
+}
+
+
+/*div.form-field span.error-tooltip {*/
+    /*position: absolute;*/
+    /*color: #FFFFFF;*/
+    /*background: rgba(232, 0, 0, .7);*/
+    /*line-height: 20px;*/
+    /*text-align: center;*/
+    /*border-radius: 5px;*/
+    /*white-space: nowrap;*/
+    /*padding: 0 10px;*/
+    /*margin-left: 15px;*/
+    /*font-size: 13px;*/
+/*}*/
+
+/*div.form-field span.error-tooltip:after {*/
+    /*content: '';*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*right: 99.5%;*/
+    /*margin-top: -8px;*/
+    /*height: 0;*/
+    /*border-right: 8px solid rgba(232, 0, 0, .7);*/
+    /*border-top: 8px solid transparent;*/
+    /*border-bottom: 8px solid transparent;*/
+/*}*/
+
+/*a:hover.tooltips span {*/
+  /*visibility: visible;*/
+  /*opacity: 0.6;*/
+  /*left: 100%;*/
+  /*top: 50%;*/
+  /*margin-top: -12px;*/
+  /*margin-left: 15px;*/
+  /*z-index: 999;*/
+/*}*/
