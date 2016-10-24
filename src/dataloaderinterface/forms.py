@@ -49,14 +49,13 @@ class SiteForm(forms.ModelForm):
 
 
 class ActionForm(forms.ModelForm):
+    method = forms.ModelChoiceField(label='Method', queryset=Method.objects.filter(method_type__name='Instrument deployment'))
+
     class Meta:
         model = Action
         fields = [
             'method',
         ]
-        labels = {
-            'method': 'Method'
-        }
 
 
 class ActionByForm(forms.ModelForm):
