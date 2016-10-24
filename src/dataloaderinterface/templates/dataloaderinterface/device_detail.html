@@ -115,7 +115,7 @@
                     </thead>
 
                     <tbody>
-                        {% for series_value in result.timeseriesresult.timeseriesresultvalue_set.recent %}
+                        {% for series_value in result.timeseriesresult.timeseriesresultvalue_set.all %}
                             <tr>
                                 <td>{{ series_value.value_datetime }}</td>
                                 <td>{{ series_value.data_value }}</td>
