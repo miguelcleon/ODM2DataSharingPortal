@@ -5,18 +5,20 @@ h2.device {
     left: 15%;
     width: 100%;
     padding: 10px;
-    margin: 10px;
+    margin: 5px;
     /*box-shadow: 2px 3px 5px rgba(100, 100, 100, 0.75);*/
 }
 
 li.device_item {
     padding: 10px 10px 30px;
     width: 100%;
-    border-style: groove;
+    border: groove gainsboro;
+    list-style-type: none;
 }
 
 li.device_item:hover, li.device_item:active {
     background-color: gainsboro;
+    list-style-type: none;
 }
 
 #device_name {
@@ -31,11 +33,13 @@ li.device_item:hover, li.device_item:active {
 
 a.li_link {
     width: 80%;
-    padding: 10px;
+    min-width: 400px;
+    padding: 5px;
     text-underline: None;
     font-size: 18px;
-    font-style: normal;
-    font-weight: 400;
+    border-color: gainsboro;
+    -webkit-text-fill-color: black;
+    -moz-text-decoration-color: black;
     line-height: 23px;
     display: inline-block;
     text-decoration: none;
@@ -45,9 +49,9 @@ a.li_link {
 ul.device_list {
     display: inline-block;
     list-style-type: none;
-    padding: 10px;
+    padding: 5px;
     width: 100%;
-    margin: 10px;
+    margin: 5px;
 }
 
 #space {
