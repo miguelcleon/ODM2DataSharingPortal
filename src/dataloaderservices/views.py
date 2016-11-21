@@ -57,22 +57,34 @@ class TimeSeriesValuesApi(APIView):
 
     def post(self, request, format=None):
         #  make sure that the data is in the request (sampling_feature, timestamp(?), ...) if not return error response
-        try:
-            uuid = request.data[u'sampling_feature']
-            datevalue = request.data[u'timestamp']
-        except Exception as e:
-            raise exceptions.ParseError("missing data from request: {}".format(e))
+        if 'sampling_feature' not in request.data or 'timestamp' not in request.data:
+            raise exceptions.ParseError("missing data from request: {}".format('sampling_feature or timestamp values not present in the request.'))
 
-        sampling_feature_queryset = SamplingFeature.objects.filter(sampling_feature_uuid__exact=uuid)
-        if not sampling_feature_queryset.exists():
-            #  return error response
+        uuid = request.data[u'sampling_feature']
+        datevalue = request.data[u'timestamp']
+
+        # try:
+        #     uuid = request.data[u'sampling_feature']
+        #     datevalue = request.data[u'timestamp']
+        # except Exception as e:
+        #     raise exceptions.ParseError("missing data from request: {}".format(e))
+
+        sampling_feature = SamplingFeature.objects.filter(sampling_feature_uuid__exact=uuid).first()
+        if not sampling_feature:
             raise exceptions.ParseError('Sampling Feature does not exist')
-            return
 
-        sampling_feature = sampling_feature_queryset.get()
-        results = sampling_feature.feature_action.get().result_set.all()
+        # sampling_feature_queryset = SamplingFeature.objects.filter(sampling_feature_uuid__exact=uuid)
+        # if not sampling_feature_queryset.exists():
+        #     #  return error response
+        #     raise exceptions.ParseError('Sampling Feature does not exist')
+        #     return
+        #
+        # sampling_feature = sampling_feature_queryset.get()
+
+        results = sampling_feature.feature_action.get().results.all()
         utc = sampling_feature.feature_action.get().action.begin_datetime_utc_offset
-        date = try_parsing_date(datevalue, utc )
+        date = try_parsing_date(datevalue, utc)
+
         for result in results:
             # Create value object and assign all correct values and stuff
             value = TimeSeriesResultValue()
@@ -95,11 +107,12 @@ class TimeSeriesValuesApi(APIView):
             except Exception as e:
                 raise exceptions.ParseError("{c} value not saved {e}".format(c=result_variable_code, e=e))
 
-        result.result_datetime = date
-        result.feature_action.action.end_date_time = date
-        result.save()
+            result.result_datetime = date
+            result.feature_action.action.end_date_time = date
+            result.save()
 
         return Response({}, status.HTTP_201_CREATED)
+
 
 # from dateutil import tz
 # from datetime import timedelta

@@ -47,11 +47,11 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(DeviceDetailView, self).get_context_data()
         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.object.deployment_sampling_feature_uuid)
-        feature_action = sampling_feature.feature_action.first()
+        feature_action = sampling_feature.feature_actions.first()
 
         context['sampling_feature'] = sampling_feature
-        context['results'] = feature_action.result_set.all()
-        context['deployment'] = feature_action.action
+        context['deployment'] = sampling_feature.actions.first()
+        context['results'] = feature_action.results.all()
         context['affiliation'] = context['deployment'].action_by.first().affiliation
         context['site'] = sampling_feature.site
         return context
@@ -142,7 +142,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
 
                 # Create TimeSeriesResults
                 time_series_result = TimeSeriesResult(result=result)
-                time_series_result.aggregation_statistic_cv = AggregationStatistic.objects.get(name='Average')
+                time_series_result.aggregation_statistic = AggregationStatistic.objects.get(name='Average')
                 time_series_result.save()
 
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
