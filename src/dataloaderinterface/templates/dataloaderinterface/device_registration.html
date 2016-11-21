@@ -22,13 +22,13 @@
                 <legend></legend>
                 <div class="form-group col-lg-4 sampling-feature-fields">
                     {% for field in sampling_feature_form %}
-                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                             <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
                     {% for field in site_form %}
-                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                             <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
@@ -44,13 +44,13 @@
                 <legend></legend>
                 <div class="form-group col-lg-4 action-affiliation-fields">
                     {% for field in action_form %}
-                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                             <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
                     {% for field in action_by_form %}
-                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                             <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
@@ -58,20 +58,20 @@
 
                     <div class="new-person-fields">
                         {% for field in people_form %}
-                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %}">
+                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
                                 <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
                             </div>
                         {% endfor %}
                         {% for field in organization_form %}
-                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %}">
+                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
                                 <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
                             </div>
                         {% endfor %}
 
                         {% for field in affiliation_form %}
-                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %}">
+                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
                                 <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 {% if 'date' in field.name %}
                                     <div class="input-group date">
@@ -100,7 +100,7 @@
                                 <div class="result-form clearfix">
                                     <span class="glyphicon glyphicon-remove remove-result"></span>
                                     {% for field in form %}
-                                        <div class="col-lg-6 form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                                        <div class="col-lg-6 form-field{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                                             <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                             <div class="col-lg-8">
                                                 {{ field|add_class:"form-control input-sm" }}
@@ -125,7 +125,7 @@
             <div class="result-form clearfix">
                 <span class="glyphicon glyphicon-remove remove-result"></span>
                 {% for field in results_formset.empty_form %}
-                    <div class="col-lg-6 form-field {% if field.field.required %}required-field{% endif %}">
+                    <div class="col-lg-6 form-field{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
                         <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                         <div class="col-lg-8">
                             {{ field|add_class:"form-control input-sm" }}
