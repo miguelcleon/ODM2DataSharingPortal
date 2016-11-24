@@ -138,9 +138,18 @@ function bindAffiliationChange() {
     var newPersonFields = $('div.new-person-fields input, div.new-person-fields select');
     var newPersonButton = $('button.new-affiliation-button');
 
+    // affiliationSelect.attr('data-placeholder', 'Select the deployment lead').select2();
+
     $('<option value="new">Add New Person</option>').insertAfter(affiliationSelect.children().first());
 
+    affiliationSelect.on('select2:open', function() {
+        var container = $('.select2-container').last();
+        container.addClass('name-dropdown');
+    });
+
     affiliationSelect.on('change', function() {
+        $(this).parents('.form-field').resizeselect();
+
         if ($(this).val() == "new") {
             fillAffiliationFields({ person: {
                 person_first_name: $('input[name="user_first_name"]').val(),
@@ -225,3 +234,36 @@ $(document).ready(function() {
         }
     });
 });
+
+
+(function($, window){
+  var arrowWidth = 30;
+
+  $.fn.resizeselect = function(settings) {
+    return this.each(function() {
+
+      $(this).change(function(){
+        var $this = $(this);
+
+        // create test element
+        var text = $this.find("option:selected").text();
+        var $test = $("<span style='font-size:2.2em;'>").html(text);
+
+        // add to body, get width, and get out
+        $test.appendTo('body');
+        var width = $test.width();
+        $test.remove();
+
+        // set select width
+        $this.width(width + arrowWidth);
+
+        // run on start
+      }).change();
+
+    });
+  };
+
+  // run by default
+  $("select.resizeselect").resizeselect();
+
+})(jQuery, window);

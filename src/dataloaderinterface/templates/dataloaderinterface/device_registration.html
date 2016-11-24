@@ -18,7 +18,9 @@
             <input name="user_first_name" type="hidden" value="{{ user.first_name }}">
             <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
 
-            <fieldset class="clearfix form-fieldset">
+            <div class="separator"></div>
+
+            <fieldset class="form-fieldset col-lg-12">
                 <legend></legend>
                 <div class="form-group col-lg-4 sampling-feature-fields">
                     {% for field in sampling_feature_form %}
@@ -38,101 +40,57 @@
                     <input type="hidden" name="zoom-level" value="{{ zoom_level}}">
                     <div id="map"></div>
                 </div>
+                <div class="clearfix"></div>
             </fieldset>
 
-            <fieldset class="clearfix form-fieldset">
-                <legend></legend>
-                <div class="form-group col-lg-4 action-affiliation-fields">
-                    {% for field in action_form %}
-                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
-                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field|add_class:"form-control input-sm" }}
-                        </div>
-                    {% endfor %}
-                    {% for field in action_by_form %}
-                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
-                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field|add_class:"form-control input-sm" }}
-                        </div>
-                    {% endfor %}
+            <div class="separator"></div>
 
-                    <div class="new-person-fields">
-                        {% for field in people_form %}
-                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
-                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
-                            </div>
-                        {% endfor %}
-                        {% for field in organization_form %}
-                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
-                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
-                            </div>
-                        {% endfor %}
-
-                        {% for field in affiliation_form %}
-                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
-                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {% if 'date' in field.name %}
-                                    <div class="input-group date">
-                                      {{ field|add_class:"form-control input-sm"|attr:"disabled" }}<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                                    </div>
-                                {% else %}
-                                    {{ field|add_class:"form-control input-sm"|attr:"disabled" }}
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-
-                        <div class="col-lg-12">
-                            <button type="button" class="btn btn-success new-affiliation-button">Add Person</button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row col-lg-8 results-fields">
-                    <div id="formset" class="well" data-formset-prefix="{{ results_formset.prefix }}">
+            <fieldset class="form-fieldset col-lg-12">
+                <div class="row col-lg-12 results-fields well">
+                    <div id="formset" class="" data-formset-prefix="{{ results_formset.prefix }}">
                         {{ results_formset.management_form }}
 
                         <fieldset class="center-block formset-container">
-                            <legend>Results</legend>
-                            {% for form in results_formset %}
-                                <div class="result-form clearfix">
-                                    <span class="glyphicon glyphicon-remove remove-result"></span>
-                                    {% for field in form %}
-                                        <div class="col-lg-6 form-field{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
-                                            <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                            <div class="col-lg-8">
+                            <legend>Sensors</legend>
+                            {% for result_form in results_formset %}
+                                <div class="result-form col-lg-6">
+                                    <div class="result-wrapper clearfix">
+                                        <span class="glyphicon glyphicon-remove remove-result"></span>
+                                        {% for field in result_form %}
+                                            <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
+                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                                 {{ field|add_class:"form-control input-sm" }}
                                             </div>
-                                        </div>
-                                    {% endfor %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             {% endfor %}
 
                         </fieldset>
                         <div class="col-lg-12 add-result-container">
-                            <button type="button" class="btn btn-success new-result-button">Add Result</button>
+                            <button type="button" class="btn btn-success new-result-button">Add Sensor</button>
                         </div>
                     </div>
                 </div>
+                <div class="clearfix"></div>
+
+                <input type="submit" value="Register Device" class="btn btn-primary">
             </fieldset>
 
-            <input type="submit" value="Register Device" class="btn btn-primary">
+
         </form>
 
         <div id="results-template">
-            <div class="result-form clearfix">
-                <span class="glyphicon glyphicon-remove remove-result"></span>
-                {% for field in results_formset.empty_form %}
-                    <div class="col-lg-6 form-field{% if field.field.required %} required-field{% endif %}" data-field="{{ field.name }}">
-                        <label class="col-lg-4 control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        <div class="col-lg-8">
+            <div class="result-form col-lg-6">
+                <div class="result-wrapper clearfix">
+                    <span class="glyphicon glyphicon-remove remove-result"></span>
+                    {% for field in results_formset.empty_form %}
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
-                    </div>
-
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </section>
