@@ -16,11 +16,12 @@ Including another URLconf
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from dataloaderservices.views import TimeSeriesValuesApi, AffiliationApi
+from dataloaderservices.views import TimeSeriesValuesApi, AffiliationApi, ModelVariablesApi
 
 urlpatterns = [
     url(r'^api/post_stuff/$', TimeSeriesValuesApi.as_view(), name='api_post'),
-    url(r'^api/affiliation/$', AffiliationApi.as_view(), name='affiliation_service')
+    url(r'^api/affiliation/$', AffiliationApi.as_view(), name='affiliation_service'),
+    url(r'^api/equipment-variables/$', ModelVariablesApi.as_view(), name='model_variables_service')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

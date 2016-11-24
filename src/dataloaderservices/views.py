@@ -9,10 +9,30 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import exceptions
 
-from dataloader.models import SamplingFeature, TimeSeriesResultValue, CensorCode, QualityCode, Unit, Affiliation
+from dataloader.models import SamplingFeature, TimeSeriesResultValue, CensorCode, QualityCode, Unit, Affiliation, \
+    EquipmentModel
 from dataloaderinterface.models import DeviceRegistration
 from dataloaderservices.auth import UUIDAuthentication
-from dataloaderservices.serializers import AffiliationSerializer, PersonSerializer, OrganizationSerializer
+from dataloaderservices.serializers import AffiliationSerializer, PersonSerializer, OrganizationSerializer, \
+    EquipmentModelSerializer
+
+
+class ModelVariablesApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def get(self, request, format=None):
+        if 'equipment_model_id' not in request.GET:
+            return Response({'error': 'Equipment Model Id not received.'})
+
+        equipment_model_id = request.GET['equipment_model_id']
+        if equipment_model_id == '':
+            return Response({'error': 'Empty Equipment Model Id received.'})
+
+        equipment_model = EquipmentModel.objects.filter(pk=equipment_model_id).first()
+        if not equipment_model:
+            return Response({'error': 'Equipment Model not found.'})
+
+        return Response(EquipmentModelSerializer(equipment_model).data)
 
 
 class AffiliationApi(APIView):

@@ -858,13 +858,13 @@ class EquipmentModel(models.Model):
     model_specifications_file_link = models.FileField(db_column='modelspecificationsfilelink', blank=True)
     model_link = models.CharField(db_column='modellink', blank=True, max_length=255)
 
+    output_variables = models.ManyToManyField('Variable', related_name='instrument_models', through='InstrumentOutputVariable')
+    output_units = models.ManyToManyField('Unit', related_name='instrument_models', through='InstrumentOutputVariable')
+
     objects = EquipmentModelManager()
 
     def __str__(self):
-        return '%s%s' % (
-            self.model_name,
-            ' (%s)' % self.model_part_number if self.model_part_number else ''
-        )
+        return '%s: %s' % (self.model_name, self.model_description)
 
     def __repr__(self):
         return "<EquipmentModel('%s', '%s', '%s', Organization[%s, %s])>" % (
