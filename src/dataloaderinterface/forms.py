@@ -4,7 +4,7 @@ from django.forms.formsets import formset_factory
 from djangoformsetjs.utils import formset_media_js
 
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    OrganizationType, Site
+    OrganizationType, Site, EquipmentModel
 
 
 # AUTHORIZATION
@@ -108,18 +108,21 @@ class AffiliationForm(forms.ModelForm):
 
 
 class ResultForm(forms.ModelForm):
+    equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all())
+
     class Meta:
         model = Result
         fields = [
+            'equipment_model',
             'variable',
             'unit',
             'sampled_medium',
-            'processing_level',
         ]
         labels = {
-            'sampled_medium': 'Medium',
-            'processing_level': 'QC Level'
+            'equipment_model': 'Sensor Model',
+            'variable': 'Measured Variable',
+            'sampled_medium': 'Sampled Medium',
         }
 
 
-ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, validate_min=True)
+ResultFormSet = formset_factory(ResultForm, extra=1, can_order=False, min_num=1, validate_min=True)
