@@ -111,6 +111,11 @@ div.separator {
     cursor: help;
 }
 
+
+.select2-results__option[aria-disabled="true"] {
+    display: none !important;
+}
+
 .new-affiliation-button {
     margin-top: -5px;
     display: none;

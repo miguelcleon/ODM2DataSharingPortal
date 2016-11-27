@@ -80,14 +80,82 @@ function initMap() {
     });
 }
 
-function bindDeleteResult(resultForm) {
+function requestFilteredOptions(serviceUrl, data, callback) {
+    $.ajax({ url: serviceUrl, data: data })
+        .done(callback)
+        .fail(function(xhr, error) {
+            console.log(error);
+        })
+        .always(function(xhr) {
+            console.log(xhr.status+": "+xhr.responseText);
+        });
+}
+
+function filterSelectOptions(select, values) {
+    select.children('option').each(function(index, element) {
+        if (values.indexOf(element.value) === -1 && element.value !== '') {
+            $(element).attr('disabled', 'disabled');
+        } else {
+            $(element).removeAttr('disabled');
+        }
+    });
+
+    if (values.indexOf(select.val()) === -1) {
+        select.val('');
+    }
+
+    selectSoloOptions(select);
+    initializeSelect(select);
+}
+
+
+function clearSelectFilter(select) {
+    select.children('option').removeAttr('disabled');
+    initializeSelect(select);
+}
+
+
+function bindResultEvents(resultForm) {
+    var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
+
+    // Delete button
     resultForm.find('span.remove-result').on('click', function() {
         $(this).parents('.result-form').remove();
     });
+
+    // equipment model selection
+    equipmentModelSelect.on('change', function() {
+        var parentForm = $(this).parents('.result-form');
+        var unitSelect = parentForm.find('[name$="unit"]');
+        var variableSelect = parentForm.find('[name$="variable"]');
+
+        var modelId = $(this).val();
+        if (!modelId) {
+            clearSelectFilter(variableSelect.add(unitSelect));
+            return;
+        }
+
+        requestFilteredOptions(
+            $('#model-variables-api').val(),
+            {
+                equipment_model_id: modelId,
+                csrfmiddlewaretoken: $('form').find('[name="csrfmiddlewaretoken"]').val()
+            },
+            function filterEquipmentModelOutput(equipmentModel) {
+                var variables = equipmentModel.output_variables.map(function(variable) { return variable.variable_id + '' });
+                var units = equipmentModel.output_units.map(function(unit) { return unit.unit_id + '' });
+                filterSelectOptions(variableSelect, variables);
+                filterSelectOptions(unitSelect, units);
+            }
+        );
+    });
+
+    equipmentModelSelect.trigger('change');
+
 }
 
-function initializeSelects(form) {
-    form.find('select.form-control').select2({
+function initializeSelect(select) {
+    select.select2({
         theme: "bootstrap",
         containerCssClass : "input-sm",
         dropdownAutoWidth: true,
@@ -95,13 +163,12 @@ function initializeSelects(form) {
     });
 }
 
-function selectSoloOptions(form) {
-    form.find('select').each(function() {
-        var select = $(this);
-        var options = select.children('[value!=""]');
+function selectSoloOptions(select) {
+    select.each(function() {
+        var selectElement = $(this);
+        var options = selectElement.children('[value!=""]:not([disabled])');
         if (options.length === 1) {
-            select.val(options.get(0).value);
-            // select.attr('readonly', true);
+            selectElement.val(options.get(0).value);
         }
     });
 }
@@ -113,9 +180,9 @@ function addResult() {
     var newResultForm = $($('div#results-template').html().replace(new RegExp('__prefix__', 'g'), newIndex));
     $('.formset-container').append(newResultForm);
 
-    bindDeleteResult(newResultForm);
-    selectSoloOptions(newResultForm);
-    initializeSelects(newResultForm);
+    bindResultEvents(newResultForm);
+    selectSoloOptions(newResultForm.find('select'));
+    initializeSelect(newResultForm.find('select.form-control'));
 }
 
 function fillAffiliationFields(data) {
@@ -205,8 +272,8 @@ function bindNewPersonButton() {
 
 $(document).ready(function() {
     var form = $('form');
-    selectSoloOptions(form);
-    initializeSelects(form);
+    selectSoloOptions(form.find('select'));
+    initializeSelect(form.find('select.form-control'));
     bindAffiliationChange();
     bindNewPersonButton();
 
@@ -218,7 +285,7 @@ $(document).ready(function() {
     });
 
     $('button.new-result-button').on('click', addResult);
-    bindDeleteResult($('form .result-form'));
+    bindResultEvents($('form .result-form'));
 
     $('div.form-field div.input-group.date').datepicker({
         todayBtn: "linked",
@@ -265,5 +332,4 @@ $(document).ready(function() {
 
   // run by default
   $("select.resizeselect").resizeselect();
-
 })(jQuery, window);
