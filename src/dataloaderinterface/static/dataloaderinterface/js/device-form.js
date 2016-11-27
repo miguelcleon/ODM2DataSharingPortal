@@ -185,97 +185,10 @@ function addResult() {
     initializeSelect(newResultForm.find('select.form-control'));
 }
 
-function fillAffiliationFields(data) {
-    if (data && data.error) {
-        console.log(data.error);
-    }
-
-    $('input[name="person_first_name"]').val(data && data.person && data.person.person_first_name || '');
-    $('input[name="person_last_name"]').val(data && data.person && data.person.person_last_name || '');
-    $('input[name="organization_code"]').val(data && data.organization && data.organization.organization_code || '');
-    $('input[name="organization_name"]').val(data && data.organization && data.organization.organization_name || '');
-    $('select[name="organization_type"]').val(data && data.organization && data.organization.organization_type || '').trigger('change');
-    $('input[name="primary_phone"]').val(data && data.primary_phone || '');
-    $('input[name="primary_email"]').val(data && data.primary_email || '');
-    $('input[name="affiliation_start_date"]').val(data && data.affiliation_start_date || '');
-}
-
-function bindAffiliationChange() {
-    var affiliationSelect = $('select[name="affiliation"]');
-    var newPersonFields = $('div.new-person-fields input, div.new-person-fields select');
-    var newPersonButton = $('button.new-affiliation-button');
-
-    // affiliationSelect.attr('data-placeholder', 'Select the deployment lead').select2();
-
-    $('<option value="new">Add New Person</option>').insertAfter(affiliationSelect.children().first());
-
-    affiliationSelect.on('select2:open', function() {
-        var container = $('.select2-container').last();
-        container.addClass('name-dropdown');
-    });
-
-    affiliationSelect.on('change', function() {
-        $(this).parents('.form-field').resizeselect();
-
-        if ($(this).val() == "new") {
-            fillAffiliationFields({ person: {
-                person_first_name: $('input[name="user_first_name"]').val(),
-                person_last_name: $('input[name="user_last_name"]').val()
-            }});
-            newPersonFields.removeAttr('disabled');
-            newPersonButton.show();
-            return;
-        } else if (!newPersonFields.attr('disabled')) {
-            newPersonFields.attr('disabled', true);
-            newPersonButton.hide();
-        }
-
-        $.ajax({
-            url: $('#affiliation-api').val(),
-            data: {
-                affiliation_id: $(this).val(),
-                csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val()
-            }
-        }).done(function(data) {
-            fillAffiliationFields(data);
-        }).fail(function(errors) {
-            console.log(errors);
-            fillAffiliationFields()
-        });
-    });
-    affiliationSelect.trigger('change');
-}
-
-function bindNewPersonButton() {
-    $('button.new-affiliation-button').on('click', function() {
-        var data = $('div.new-person-fields input, div.new-person-fields select').toArray().reduce(function(dict, field) {
-            dict[field.name] = field.value;
-            return dict;
-        }, {});
-
-        $.ajax({
-            url: $('#affiliation-api').val(),
-            type: 'post',
-            data: $.extend({
-                csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val()
-            }, data)
-        }).done(function(data) {
-            var newOption = $('<option value="' + data.affiliation_id + '">' +
-                data.person.person_first_name + ' ' + data.person.person_last_name +
-                ' (' + data.organization.organization_name + ')' + '</option>');
-            $('select[name="affiliation"]').append(newOption).val(data.affiliation_id).trigger('change');
-        }).fail(function(errors) {
-            console.log(errors);
-        });
-    });
-}
-
 $(document).ready(function() {
     var form = $('form');
     selectSoloOptions(form.find('select'));
     initializeSelect(form.find('select.form-control'));
-    bindAffiliationChange();
-    bindNewPersonButton();
 
     $('div.form-field.has-error .form-control').on('change keypress', function() {
         var fieldElement = $(this).parents('div.form-field');
@@ -287,49 +200,9 @@ $(document).ready(function() {
     $('button.new-result-button').on('click', addResult);
     bindResultEvents($('form .result-form'));
 
-    $('div.form-field div.input-group.date').datepicker({
-        todayBtn: "linked",
-        autoclose: true,
-        todayHighlight: true,
-        format: 'yyyy-mm-dd',
-        maxViewMode: 2
-    });
-
     $(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {
         if (event.keyCode == 13) {
             event.preventDefault();
         }
     });
 });
-
-
-(function($, window){
-  var arrowWidth = 30;
-
-  $.fn.resizeselect = function(settings) {
-    return this.each(function() {
-
-      $(this).change(function(){
-        var $this = $(this);
-
-        // create test element
-        var text = $this.find("option:selected").text();
-        var $test = $("<span style='font-size:2.2em;'>").html(text);
-
-        // add to body, get width, and get out
-        $test.appendTo('body');
-        var width = $test.width();
-        $test.remove();
-
-        // set select width
-        $this.width(width + arrowWidth);
-
-        // run on start
-      }).change();
-
-    });
-  };
-
-  // run by default
-  $("select.resizeselect").resizeselect();
-})(jQuery, window);
