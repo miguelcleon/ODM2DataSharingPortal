@@ -60,7 +60,11 @@ $(document).ready(function() {
     selectSoloOptions(form.find('select'));
     initializeSelect(form.find('select.form-control'));
     
-    $('div.form-field.has-error .form-control').on('change keypress', function() {
+    $('div.form-field.has-error .form-control').on('change keypress', function(event, wasTriggered) {
+        if (wasTriggered) {
+            return;
+        }
+
         var fieldElement = $(this).parents('div.form-field');
         if (fieldElement.hasClass('has-error')) {
             fieldElement.find('.errorlist').remove();

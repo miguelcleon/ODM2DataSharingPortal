@@ -85,7 +85,9 @@ function bindResultEvents(resultForm) {
 
     // Delete button
     resultForm.find('span.remove-result').on('click', function() {
+        var forms = $('input[name="form-TOTAL_FORMS"]');
         $(this).parents('.result-form').remove();
+        forms.val(forms.val() - 1);
     });
 
     // equipment model selection
@@ -115,7 +117,7 @@ function bindResultEvents(resultForm) {
         );
     });
 
-    equipmentModelSelect.trigger('change');
+    equipmentModelSelect.trigger('change', [true]);
 
 }
 
