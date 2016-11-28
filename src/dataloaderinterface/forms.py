@@ -1,10 +1,11 @@
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 from djangoformsetjs.utils import formset_media_js
 
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    OrganizationType, Site, EquipmentModel
+    OrganizationType, Site, EquipmentModel, Medium
 
 
 # AUTHORIZATION
@@ -109,6 +110,7 @@ class AffiliationForm(forms.ModelForm):
 
 class ResultForm(forms.ModelForm):
     equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all())
+    sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(Q(pk='Air') | Q(pk='Liquid aqueous')))
 
     class Meta:
         model = Result

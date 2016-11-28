@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.db.models.query_utils import Q
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -18,7 +19,7 @@ from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
     ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
-    ElevationDatum, SiteType, Affiliation
+    ElevationDatum, SiteType, Affiliation, Medium
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
     AffiliationForm, ResultFormSet, SiteForm
 from dataloaderinterface.models import DeviceRegistration
@@ -64,14 +65,11 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
     object = None
     fields = []
 
-    def get_default_data(self):
+    @staticmethod
+    def get_default_data():
         data = {
             'elevation_datum': ElevationDatum.objects.filter(pk='MSL').first(),
-            'site_type': SiteType.objects.filter(pk='Stream').first(),
-            'affiliation': Affiliation.objects.filter(
-                person__person_first_name=self.request.user.first_name,
-                person__person_last_name=self.request.user.last_name
-            ).first()
+            'site_type': SiteType.objects.filter(pk='Stream').first()
         }
         return data
 
