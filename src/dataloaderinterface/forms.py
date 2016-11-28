@@ -38,6 +38,8 @@ class UserRegistrationForm(UserCreationForm):
 
 # ODM2
 class SamplingFeatureForm(forms.ModelForm):
+    use_required_attribute = False
+
     class Meta:
         model = SamplingFeature
         fields = [
@@ -54,6 +56,8 @@ class SamplingFeatureForm(forms.ModelForm):
 
 
 class SiteForm(forms.ModelForm):
+    use_required_attribute = False
+
     class Meta:
         model = Site
         fields = [
@@ -64,6 +68,7 @@ class SiteForm(forms.ModelForm):
 
 
 class ActionForm(forms.ModelForm):
+    use_required_attribute = False
     method = forms.ModelChoiceField(label='Method', queryset=Method.objects.filter(method_type__name='Instrument deployment'))
 
     class Meta:
@@ -74,6 +79,8 @@ class ActionForm(forms.ModelForm):
 
 
 class ActionByForm(forms.ModelForm):
+    use_required_attribute = False
+
     class Meta:
         model = ActionBy
         fields = [
@@ -85,6 +92,8 @@ class ActionByForm(forms.ModelForm):
 
 
 class PeopleForm(forms.ModelForm):
+    use_required_attribute = False
+
     class Meta:
         model = People
         fields = [
@@ -98,6 +107,8 @@ class PeopleForm(forms.ModelForm):
 
 
 class OrganizationForm(forms.ModelForm):
+    use_required_attribute = False
+
     class Meta:
         model = Organization
         fields = [
@@ -108,6 +119,8 @@ class OrganizationForm(forms.ModelForm):
 
 
 class AffiliationForm(forms.ModelForm):
+    use_required_attribute = False
+
     class Meta:
         model = Affiliation
         fields = [
@@ -123,6 +136,12 @@ class AffiliationForm(forms.ModelForm):
 
 
 class ResultForm(forms.ModelForm):
+    use_required_attribute = False
+
+    def __init__(self, *args, **kwargs):
+        super(ResultForm, self).__init__(*args, **kwargs)
+        self.empty_permitted = False
+
     equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all())
     sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(Q(pk='Air') | Q(pk='Liquid aqueous')))
 
@@ -141,4 +160,4 @@ class ResultForm(forms.ModelForm):
         }
 
 
-ResultFormSet = formset_factory(ResultForm, extra=1, can_order=False, min_num=1, validate_min=True)
+ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, validate_min=True)
