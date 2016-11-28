@@ -34,7 +34,7 @@ body {
 
 
 
-.device-data header {
+.page-content header {
     margin: 5px 15px 0;
     padding-bottom: 10px;
 }
@@ -85,10 +85,6 @@ div.separator {
     padding: 7px 2px 4px 2px;
     margin: 20px auto;
     width: 100%;
-}
-
-.sampling-feature-fields, .sampling-feature-fields .form-field {
-    padding-left: 0;
 }
 
 .form-field:not(.required-field) label.control-label::after {
@@ -366,11 +362,11 @@ span.map-help {
     font-weight: 600;
 }
 
-.device-data span.form-message.error {
+.page-content span.form-message.error {
     font-weight: 600;
 }
 
-.has-error .control-label, .has-error .form-control, .device-data span.form-message.error {
+.has-error .control-label, .has-error .form-control, .page-content span.form-message.error {
     color: rgb(232, 0, 0);
 }
 
@@ -432,4 +428,15 @@ span.name-dropdown .select2-dropdown {
     border-color: rgb(170, 170, 170);
     border-top: .1em dashed rgb(170,170,170);
     border-radius: 2px 2px 4px 4px;
+}
+
+ul.errorlist {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+    color: rgb(232, 0, 0);
+}
+
+.form-group, .form-group .form-field {
+     padding-left: 0;
 }

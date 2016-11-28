@@ -3,40 +3,35 @@
 
 
 {% block content %}
-    <section class="login-container col-xs-4">
+    <section class="page-content login col-lg-12">
         <header>
             <h2>Login</h2>
+            {% if form.errors %}
+                <span class="form-message error">Your username and password didn't match. Please try again.</span>
+            {% endif %}
         </header>
 
-        {% if form.errors %}
-            <p>Your username and password didn't match. Please try again.</p>
-        {% endif %}
-
-        {% if next %}
-            {% if user.is_authenticated %}
-                <p>Your account doesn't have access to this page. To proceed,
-                    please login with an account that has access.</p>
-            {% else %}
-                <p>Please login to see this page.</p>
-            {% endif %}
-        {% endif %}
-
-        <form method="post" action="" class="form-horizontal form-group-sm" role="form">
+        <form method="post" enctype="multipart/form-data" role="form">
             {% csrf_token %}
-
-            {% for field in form %}
-                <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field|add_class:"form-control input-sm" }}
-                </div>
-            {% endfor %}
-
             <input type="hidden" name="next" value="{% url 'home' %}">
-            <input type="submit" value="login" class="btn btn-primary">
+
+            <div class="separator"></div>
+            <fieldset class="form-fieldset col-lg-12">
+                <legend></legend>
+                <div class="form-group col-lg-6 user-fields">
+                    {% for field in form %}
+                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
+                            {{ field|add_class:"form-control input-sm" }}
+                        </div>
+                    {% endfor %}
+                    <span class="form-message">Don't have an account? <a href="{% url 'user_registration' %}">Create one here</a>.</span>
+                </div>
+            </fieldset>
+            <div class="col-lg-12">
+                <input type="submit" class="btn btn-primary" value="Log in">
+            </div>
         </form>
     </section>
-
-    {# Assumes you setup the password_reset view in your URLconf #}
-    {#<p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
 
 {% endblock %}

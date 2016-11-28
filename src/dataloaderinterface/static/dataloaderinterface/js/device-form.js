@@ -80,41 +80,6 @@ function initMap() {
     });
 }
 
-function requestFilteredOptions(serviceUrl, data, callback) {
-    $.ajax({ url: serviceUrl, data: data })
-        .done(callback)
-        .fail(function(xhr, error) {
-            console.log(error);
-        })
-        .always(function(xhr) {
-            console.log(xhr.status+": "+xhr.responseText);
-        });
-}
-
-function filterSelectOptions(select, values) {
-    select.children('option').each(function(index, element) {
-        if (values.indexOf(element.value) === -1 && element.value !== '') {
-            $(element).attr('disabled', 'disabled');
-        } else {
-            $(element).removeAttr('disabled');
-        }
-    });
-
-    if (values.indexOf(select.val()) === -1) {
-        select.val('');
-    }
-
-    selectSoloOptions(select);
-    initializeSelect(select);
-}
-
-
-function clearSelectFilter(select) {
-    select.children('option').removeAttr('disabled');
-    initializeSelect(select);
-}
-
-
 function bindResultEvents(resultForm) {
     var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
 
@@ -154,25 +119,6 @@ function bindResultEvents(resultForm) {
 
 }
 
-function initializeSelect(select) {
-    select.select2({
-        theme: "bootstrap",
-        containerCssClass : "input-sm",
-        dropdownAutoWidth: true,
-        width: 'auto'
-    });
-}
-
-function selectSoloOptions(select) {
-    select.each(function() {
-        var selectElement = $(this);
-        var options = selectElement.children('[value!=""]:not([disabled])');
-        if (options.length === 1) {
-            selectElement.val(options.get(0).value);
-        }
-    });
-}
-
 function addResult() {
     var newIndex = $('div#formset div.result-form').length;
     $('input[name="form-TOTAL_FORMS"]').val(newIndex + 1);
@@ -186,23 +132,6 @@ function addResult() {
 }
 
 $(document).ready(function() {
-    var form = $('form');
-    selectSoloOptions(form.find('select'));
-    initializeSelect(form.find('select.form-control'));
-
-    $('div.form-field.has-error .form-control').on('change keypress', function() {
-        var fieldElement = $(this).parents('div.form-field');
-        if (fieldElement.hasClass('has-error')) {
-            fieldElement.removeClass('has-error');
-        }
-    });
-
     $('button.new-result-button').on('click', addResult);
     bindResultEvents($('form .result-form'));
-
-    $(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {
-        if (event.keyCode == 13) {
-            event.preventDefault();
-        }
-    });
 });

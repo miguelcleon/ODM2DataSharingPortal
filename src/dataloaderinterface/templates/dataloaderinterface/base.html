@@ -30,9 +30,8 @@
                 <div class="header-content main-container">
                     <div class="logo"><img src="{% static 'dataloaderinterface/images/WikiWatershed_300dpi_white.png' %}" alt="EnviroDIY" width="264" height="55"></div>
                     <nav class="main-navigation right">
-                        <a href="{% url 'devices_list' %}">View Registered Devices</a>
                         <a href="{% url 'device_registration' %}">Register a Device</a>
-                        <a href="{% url 'user_registration' %}">Create a New Account</a>
+                        <a href="{% url 'devices_list' %}">View Registered Devices</a>
                         {% if user.is_authenticated %}
                             <a href="{% url 'logout' %}">Logout</a>
                         {% else %}

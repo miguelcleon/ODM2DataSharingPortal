@@ -1,24 +1,38 @@
-from django.contrib.auth.forms import UserCreationForm
+from datetime import datetime
+
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.db import transaction
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
-from djangoformsetjs.utils import formset_media_js
 
+from dataloaderinterface.models import ODM2User
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    OrganizationType, Site, EquipmentModel, Medium
-
+    Site, EquipmentModel, Medium
 
 # AUTHORIZATION
+
+
 class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
+    organization = forms.ModelChoiceField(queryset=Organization.objects.all(), required=False)
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
+        organization = self.cleaned_data['organization']
+
         if commit:
+            person = People.objects.filter(person_first_name=user.first_name, person_last_name=user.last_name).first() or \
+                People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
+            affiliation = Affiliation.objects.filter(person=person, organization=organization).first() or \
+                Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now())
+
             user.save()
+            ODM2User.objects.create(user=user, affiliation_id=affiliation.affiliation_id)
+
         return user
 
 

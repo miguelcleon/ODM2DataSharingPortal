@@ -5,14 +5,14 @@ from django.db import models
 
 
 # Create your models here.
-from dataloader.models import SamplingFeature
+from dataloader.models import SamplingFeature, Affiliation
 
 
 class DeviceRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
     deployment_sampling_feature_uuid = models.UUIDField(db_column='SamplingFeatureUUID')
     authentication_token = models.CharField(max_length=64, editable=False, db_column='AuthenticationToken')
-    user = models.ForeignKey(User, db_column='User')
+    user = models.ForeignKey('ODM2User', db_column='User')
 
     @property
     def sampling_feature(self):
@@ -27,3 +27,12 @@ class DeviceRegistration(models.Model):
     def __str__(self):
         action = self.sampling_feature.actions.get()
         return '{}\t{}: {}'.format(self.sampling_feature.sampling_feature_code, action.action_type_id, action.begin_datetime.strftime('%Y/%m/%d'))
+
+
+class ODM2User(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    affiliation_id = models.IntegerField()
+
+    @property
+    def affiliation(self):
+        return Affiliation.objects.get(pk=self.odm2_affiliation)

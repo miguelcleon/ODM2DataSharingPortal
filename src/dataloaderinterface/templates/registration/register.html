@@ -3,26 +3,47 @@
 {% load static %}
 
 {% block content %}
-    <section class="user-registration-container col-xs-6">
+    <section class="page-content user-registration col-lg-12">
         <header>
-            <h2>Sign in</h2>
+            <h2>Create New Account</h2>
+            {% if messages %}
+                {% for message in messages %}
+                    <span class="form-message {{ message.tags }}">{{ message }}</span>
+                {% endfor %}
+            {% endif %}
         </header>
 
-        <form method="POST" action="" class="form-horizontal form-group-sm" role="form">{% csrf_token %}
+        <form method="post" enctype="multipart/form-data" role="form">
+            {% csrf_token %}
 
-            {% for field in form %}
-                <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field|add_class:"form-control input-sm" }}
+            <div class="separator"></div>
+
+            <fieldset class="form-fieldset col-lg-12">
+                <legend></legend>
+                <div class="form-group col-lg-6 user-fields">
+                    {% for field in form %}
+                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
+                            {{ field|add_class:"form-control input-sm" }}
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-
-            <input type="submit" class="btn btn-primary" value="Save">
+            </fieldset>
+            <div class="col-lg-12">
+                <input type="submit" class="btn btn-primary" value="Register User">
+            </div>
         </form>
     </section>
 {% endblock %}
 
+{% block styles %}
+    {{ block.super }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block scripts %}
     {{ block.super }}
-    {{ form.media }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
 {% endblock %}

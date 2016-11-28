@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -21,7 +22,7 @@ from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, Or
     ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
     ElevationDatum, SiteType, Affiliation, Medium
 from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
-    AffiliationForm, ResultFormSet, SiteForm
+    AffiliationForm, ResultFormSet, SiteForm, UserRegistrationForm
 from dataloaderinterface.models import DeviceRegistration
 
 
@@ -33,6 +34,21 @@ class LoginRequiredMixin(object):
 
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/index.html'
+
+
+class UserRegistrationView(CreateView):
+    template_name = 'registration/register.html'
+    form_class = UserRegistrationForm
+    success_url = reverse_lazy('home')
+
+    def post(self, request, *args, **kwargs):
+        response = super(UserRegistrationView, self).post(request, *args, **kwargs)
+        form = self.get_form()
+
+        if form.instance.id:
+            login(request, form.instance)
+
+        return response
 
 
 class DevicesListView(LoginRequiredMixin, ListView):
