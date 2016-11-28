@@ -103,9 +103,9 @@ div.separator {
     clear: both;
 }
 
-.form-field.has-error, .form-field.has-error label.control-label {
-    cursor: help;
-}
+/*.form-field.has-error, .form-field.has-error label.control-label {*/
+    /*cursor: help;*/
+/*}*/
 
 
 .select2-results__option[aria-disabled="true"] {
