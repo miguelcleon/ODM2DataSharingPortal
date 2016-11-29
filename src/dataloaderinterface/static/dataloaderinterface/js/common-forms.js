@@ -17,6 +17,7 @@ function selectSoloOptions(select) {
         var options = selectElement.children('[value!=""]:not([disabled])');
         if (options.length === 1) {
             selectElement.val(options.get(0).value);
+            selectElement.trigger('change')
         }
     });
 }
@@ -60,8 +61,8 @@ $(document).ready(function() {
     selectSoloOptions(form.find('select'));
     initializeSelect(form.find('select.form-control'));
     
-    $('div.form-field.has-error .form-control').on('change keypress', function(event, wasTriggered) {
-        if (wasTriggered) {
+    $('div.form-field.has-error .form-control').on('change keypress', function(event, isTriggered) {
+        if (isTriggered) {  // http://i.imgur.com/avHnbUZ.gif
             return;
         }
 

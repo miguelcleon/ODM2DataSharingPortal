@@ -744,7 +744,7 @@ class Result(models.Model):
     valid_datetime_utc_offset = models.BigIntegerField(db_column='validdatetimeutcoffset', blank=True, null=True)
     status = models.ForeignKey('Status', db_column='statuscv', blank=True)
     sampled_medium = models.ForeignKey('Medium', db_column='sampledmediumcv')
-    value_count = models.IntegerField(db_column='valuecount')
+    value_count = models.IntegerField(db_column='valuecount', default=0)
 
     data_sets = models.ManyToManyField('DataSet', related_name='results', through='DataSetResult')
     data_quality_values = models.ManyToManyField('DataQuality', related_name='results', through='ResultDataQuality')

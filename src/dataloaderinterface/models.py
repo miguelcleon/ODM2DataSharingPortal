@@ -35,4 +35,4 @@ class ODM2User(models.Model):
 
     @property
     def affiliation(self):
-        return Affiliation.objects.get(pk=self.odm2_affiliation)
+        return Affiliation.objects.get(pk=self.affiliation_id)

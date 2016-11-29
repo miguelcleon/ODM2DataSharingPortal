@@ -24,12 +24,12 @@ class UserRegistrationForm(UserCreationForm):
         user.last_name = self.cleaned_data['last_name']
         organization = self.cleaned_data['organization']
 
-        if commit:
-            person = People.objects.filter(person_first_name=user.first_name, person_last_name=user.last_name).first() or \
-                People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
-            affiliation = Affiliation.objects.filter(person=person, organization=organization).first() or \
-                Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now())
+        person = People.objects.filter(person_first_name=user.first_name, person_last_name=user.last_name).first() or \
+            People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
+        affiliation = Affiliation.objects.filter(person=person, organization=organization).first() or \
+            Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now())
 
+        if commit:
             user.save()
             ODM2User.objects.create(user=user, affiliation_id=affiliation.affiliation_id)
 
@@ -65,74 +65,6 @@ class SiteForm(forms.ModelForm):
             'latitude',
             'longitude',
         ]
-
-
-class ActionForm(forms.ModelForm):
-    use_required_attribute = False
-    method = forms.ModelChoiceField(label='Method', queryset=Method.objects.filter(method_type__name='Instrument deployment'))
-
-    class Meta:
-        model = Action
-        fields = [
-            'method',
-        ]
-
-
-class ActionByForm(forms.ModelForm):
-    use_required_attribute = False
-
-    class Meta:
-        model = ActionBy
-        fields = [
-            'affiliation',
-        ]
-        labels = {
-            'affiliation': 'Action Lead'
-        }
-
-
-class PeopleForm(forms.ModelForm):
-    use_required_attribute = False
-
-    class Meta:
-        model = People
-        fields = [
-            'person_first_name',
-            'person_last_name',
-        ]
-        labels = {
-            'person_first_name': 'First Name',
-            'person_last_name': 'Last Name',
-        }
-
-
-class OrganizationForm(forms.ModelForm):
-    use_required_attribute = False
-
-    class Meta:
-        model = Organization
-        fields = [
-            'organization_code',
-            'organization_name',
-            'organization_type'
-        ]
-
-
-class AffiliationForm(forms.ModelForm):
-    use_required_attribute = False
-
-    class Meta:
-        model = Affiliation
-        fields = [
-            'primary_phone',
-            'primary_email',
-            'affiliation_start_date',
-        ]
-        labels = {
-            'affiliation_start_date': 'Affiliation Date',
-            'primary_phone': 'Phone',
-            'primary_email': 'Email',
-        }
 
 
 class ResultForm(forms.ModelForm):

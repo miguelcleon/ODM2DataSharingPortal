@@ -20,9 +20,8 @@ from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
     ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
-    ElevationDatum, SiteType, Affiliation, Medium
-from dataloaderinterface.forms import SamplingFeatureForm, ActionForm, ActionByForm, PeopleForm, OrganizationForm, \
-    AffiliationForm, ResultFormSet, SiteForm, UserRegistrationForm
+    ElevationDatum, SiteType, Affiliation, Medium, ActionBy, Action, Method
+from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm
 from dataloaderinterface.models import DeviceRegistration
 
 
@@ -95,24 +94,17 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         data = self.request.POST if self.request.POST else None
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, initial=default_data)
         context['site_form'] = SiteForm(data=data, initial=default_data)
-        context['action_form'] = ActionForm(data=data, initial=default_data)
-        context['action_by_form'] = ActionByForm(data=data, initial=default_data)
-        context['people_form'] = PeopleForm(data=data, initial=default_data)
-        context['organization_form'] = OrganizationForm(data=data, initial=default_data)
-        context['affiliation_form'] = AffiliationForm(data=data, initial=default_data)
         context['results_formset'] = ResultFormSet(data=data, initial=[default_data])
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
     def post(self, request, *args, **kwargs):
         sampling_feature_form = SamplingFeatureForm(request.POST)
-        action_form = ActionForm(request.POST)
-        action_by_form = ActionByForm(request.POST)
         site_form = SiteForm(request.POST)
         results_formset = ResultFormSet(request.POST)
         registration_form = self.get_form()
 
-        if self.all_forms_valid(sampling_feature_form, site_form, action_form, action_by_form, results_formset):
+        if self.all_forms_valid(sampling_feature_form, site_form, results_formset):
             # Create sampling feature
             sampling_feature = sampling_feature_form.instance
             sampling_feature.sampling_feature_type = SamplingFeatureType.objects.get(name='Site')
@@ -125,33 +117,29 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             site.save()
 
             # Create action
-            action = action_form.instance
-            action.action_type = ActionType.objects.get(name='Instrument deployment')
-            action.begin_datetime = datetime.now()
-            action.begin_datetime_utc_offset = -7
+            action = Action(
+                method=Method.objects.filter(method_type_id='Instrument deployment').first(),
+                action_type = ActionType.objects.get(name='Instrument deployment'),
+                begin_datetime = datetime.now(), begin_datetime_utc_offset = -7
+            )
             action.save()
 
             # Create feature action
             feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
             feature_action.save()
 
-            # Create action by
-            action_by = action_by_form.instance
-            action_by.action = action
-            action_by.is_action_lead = True
+            affiliation = request.user.odm2user.affiliation
+            action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
             action_by.save()
 
-            for result_data in results_formset.cleaned_data:
-                if not result_data:
-                    continue
+            for result_form in results_formset.forms:
 
                 # Create Results
-                result = Result(**result_data)
+                result = result_form.instance
                 result.feature_action = feature_action
                 result.result_type = ResultType.objects.get(name='Time series coverage')
-                # result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
+                result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
                 result.status = Status.objects.get(name='Ongoing')
-                result.value_count = 0
                 result.save()
 
                 # Create TimeSeriesResults
@@ -159,13 +147,25 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 time_series_result.aggregation_statistic = AggregationStatistic.objects.get(name='Average')
                 time_series_result.save()
 
+                # maybe create equipments and equipment used for actions so we can keep track of the equipment model
+                # for when we implement the update form.
+                # equipment fields:
+                # code: whatever. an uuid maybe?
+                # name: whatever. same as equipment model name maybe?
+                # equipment type: Sensor
+                # model id: result_form.cleaned_data['equipment model']
+                # serial number: is it relevant?
+                # owner: affiliation.
+                # vendor: is it relevant?
+                # purchase date: definitely not relevant.
+
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
-            registration_form.instance.user_id = self.request.user.id
+            registration_form.instance.user_id = request.user.id
             registration_form.instance.authentication_token = uuid4()
             registration_form.instance.save()
             return self.form_valid(registration_form)
         else:
-            messages.error(request, 'There are some required fields that need to be filled out!')
+            messages.error(request, 'There are still some required fields that need to be filled out!')
             return self.form_invalid(registration_form)
 
     @staticmethod
