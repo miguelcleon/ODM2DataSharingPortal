@@ -54,6 +54,9 @@ class DevicesListView(LoginRequiredMixin, ListView):
     model = DeviceRegistration
     template_name = 'dataloaderinterface/devices_list.html'
 
+    def get_queryset(self):
+        return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.id)
+
 
 class DeviceDetailView(LoginRequiredMixin, DetailView):
     slug_field = 'registration_id'
