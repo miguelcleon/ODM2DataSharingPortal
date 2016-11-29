@@ -112,7 +112,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
 
             # Create sampling feature
             sampling_feature = sampling_feature_form.instance
-            sampling_feature.sampling_feature_type = SamplingFeatureType.objects.get(name='Site')
+            sampling_feature.sampling_feature_type_id = 'Site'
             sampling_feature.save()
 
             # Create Site
@@ -125,7 +125,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 # Create action
                 action = Action(
                     method=Method.objects.filter(method_type_id='Instrument deployment').first(),
-                    action_type=ActionType.objects.get(name='Instrument deployment'),
+                    action_type_id='Instrument deployment',
                     begin_datetime=datetime.now(), begin_datetime_utc_offset=-7
                 )
                 action.save()
@@ -141,14 +141,14 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 # Create Results
                 result = result_form.instance
                 result.feature_action = feature_action
-                result.result_type = ResultType.objects.get(name='Time series coverage')
+                result.result_type_id = 'Time series coverage'
                 result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
-                result.status = Status.objects.get(name='Ongoing')
+                result.status_id = 'Ongoing'
                 result.save()
 
                 # Create TimeSeriesResults
                 time_series_result = TimeSeriesResult(result=result)
-                time_series_result.aggregation_statistic = AggregationStatistic.objects.get(name='Average')
+                time_series_result.aggregation_statistic_id = 'Average'
                 time_series_result.save()
 
                 # maybe create equipments and equipment used for actions so we can keep track of the equipment model
