@@ -108,6 +108,8 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
         registration_form = self.get_form()
 
         if self.all_forms_valid(sampling_feature_form, site_form, results_formset):
+            affiliation = request.user.odm2user.affiliation
+
             # Create sampling feature
             sampling_feature = sampling_feature_form.instance
             sampling_feature.sampling_feature_type = SamplingFeatureType.objects.get(name='Site')
@@ -119,23 +121,22 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             site.spatial_reference = SpatialReference.objects.get(srs_name='WGS84')
             site.save()
 
-            # Create action
-            action = Action(
-                method=Method.objects.filter(method_type_id='Instrument deployment').first(),
-                action_type = ActionType.objects.get(name='Instrument deployment'),
-                begin_datetime = datetime.now(), begin_datetime_utc_offset = -7
-            )
-            action.save()
-
-            # Create feature action
-            feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
-            feature_action.save()
-
-            affiliation = request.user.odm2user.affiliation
-            action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
-            action_by.save()
-
             for result_form in results_formset.forms:
+                # Create action
+                action = Action(
+                    method=Method.objects.filter(method_type_id='Instrument deployment').first(),
+                    action_type=ActionType.objects.get(name='Instrument deployment'),
+                    begin_datetime=datetime.now(), begin_datetime_utc_offset=-7
+                )
+                action.save()
+
+                # Create feature action
+                feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
+                feature_action.save()
+
+                # Create action by
+                action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
+                action_by.save()
 
                 # Create Results
                 result = result_form.instance

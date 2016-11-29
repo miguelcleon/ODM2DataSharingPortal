@@ -28,8 +28,8 @@ function requestFilteredOptions(serviceUrl, data, callback) {
         .fail(function(xhr, error) {
             console.log(error);
         })
-        .always(function(xhr) {
-            console.log(xhr.status+": "+xhr.responseText);
+        .always(function(response, status, xhr) {
+            console.log(status + ": " + xhr.responseText);
         });
 }
 

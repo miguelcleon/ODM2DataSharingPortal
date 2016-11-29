@@ -983,7 +983,7 @@ class EquipmentUsed(models.Model):
 
 @python_2_unicode_compatible
 class MaintenanceAction(models.Model):
-    action = models.OneToOneField(Action, db_column='actionid', related_name='maintenance', primary_key=True)
+    action = models.OneToOneField(Action, related_name='maintenance', db_column='actionid', primary_key=True)
     is_factory_service = models.BooleanField(db_column='isfactoryservice', default=None)
     maintenance_code = models.CharField(db_column='maintenancecode', blank=True, max_length=50)
     maintenance_reason = models.CharField(db_column='maintenancereason', blank=True, max_length=500)

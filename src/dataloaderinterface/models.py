@@ -19,13 +19,13 @@ class DeviceRegistration(models.Model):
         return SamplingFeature.objects.get(sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
 
     def registration_date(self):
-        return self.sampling_feature.actions.get().begin_datetime.strftime('%Y/%m/%d %H:%M:%S')
+        return self.sampling_feature.actions.first().begin_datetime.strftime('%Y/%m/%d %H:%M:%S')
 
     def device_name(self):
         return self.sampling_feature.sampling_feature_code
 
     def __str__(self):
-        action = self.sampling_feature.actions.get()
+        action = self.sampling_feature.actions.first()
         return '{}\t{}: {}'.format(self.sampling_feature.sampling_feature_code, action.action_type_id, action.begin_datetime.strftime('%Y/%m/%d'))
 
 
