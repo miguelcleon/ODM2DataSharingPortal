@@ -10,6 +10,11 @@ class UUIDAuthentication(authentication.BaseAuthentication):
         if request.META['REQUEST_METHOD'] != 'POST':
             return None
 
+        if 'HTTP_TOKEN' not in request.META:
+            raise exceptions.ParseError("Registration Token not present in the request.")
+        elif 'sampling_feature' not in request.data:
+            raise exceptions.ParseError("Sampling feature UUID not present in the request.")
+
         # Get auth_token(uuid) from header, get registration object with auth_token, get the user from that registration, verify sampling_feature uuid is registered by this user, be happy.
         token = request.META['HTTP_TOKEN']
         registration_queryset = DeviceRegistration.objects.using('default').filter(authentication_token=token)

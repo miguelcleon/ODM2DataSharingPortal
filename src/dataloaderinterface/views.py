@@ -66,11 +66,10 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(DeviceDetailView, self).get_context_data()
         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.object.deployment_sampling_feature_uuid)
-        feature_action = sampling_feature.feature_actions.first()
 
         context['sampling_feature'] = sampling_feature
         context['deployment'] = sampling_feature.actions.first()
-        context['results'] = feature_action.results.all()
+        context['feature_actions'] = sampling_feature.feature_actions.all()
         context['affiliation'] = context['deployment'].action_by.first().affiliation
         context['site'] = sampling_feature.site
         return context
