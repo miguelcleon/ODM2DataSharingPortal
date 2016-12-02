@@ -80,10 +80,21 @@ function initMap() {
     });
 }
 
+
+function applyInstrumentOutputFilter(equipmentModelSelect) {
+    var resultForm = equipmentModelSelect.parents('.result-form');
+    var outputVariables = equipmentModelSelect
+        .find('option[value=' + equipmentModelSelect.val() + ']')
+        .data('output_variables');
+
+    filterSelectOptions(resultForm.find('[name$="variable"]'), Object.keys(outputVariables.variables));
+    filterSelectOptions(resultForm.find('[name$="unit"]'), Object.keys(outputVariables.units));
+}
+
 function bindResultEvents(resultForm) {
     var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
 
-    // Delete button
+    // delete button
     resultForm.find('span.remove-result').on('click', function() {
         var forms = $('input[name="form-TOTAL_FORMS"]');
         $(this).parents('.result-form').remove();
@@ -92,27 +103,43 @@ function bindResultEvents(resultForm) {
 
     // equipment model selection
     equipmentModelSelect.on('change', function() {
-        var parentForm = $(this).parents('.result-form');
-        var unitSelect = parentForm.find('[name$="unit"]');
-        var variableSelect = parentForm.find('[name$="variable"]');
+        var resultForm = $(this).parents('.result-form');
 
+        // clear filter if no model was selected.
         var modelId = $(this).val();
         if (!modelId) {
-            clearSelectFilter(variableSelect.add(unitSelect));
+            clearSelectFilter(resultForm.find('[name$="variable"]').add(resultForm.find('[name$="unit"]')));
             return;
         }
 
+        var selectedOption = equipmentModelSelect.find('option[value=' + modelId + ']');
+        // just apply filter if there's a cached map of output variables.
+        if (selectedOption.data('output-variables')) {
+            applyInstrumentOutputFilter(equipmentModelSelect);
+            return;
+        }
+        
+        // request output variables
         requestFilteredOptions(
             $('#model-variables-api').val(),
-            {
-                equipment_model_id: modelId,
-                csrfmiddlewaretoken: $('form').find('[name="csrfmiddlewaretoken"]').val()
-            },
-            function filterEquipmentModelOutput(equipmentModel) {
-                var variables = equipmentModel.output_variables.map(function(variable) { return variable.variable_id + '' });
-                var units = equipmentModel.output_units.map(function(unit) { return unit.unit_id + '' });
-                filterSelectOptions(variableSelect, variables);
-                filterSelectOptions(unitSelect, units);
+            { equipment_model_id: modelId, csrfmiddlewaretoken: $('form').find('[name="csrfmiddlewaretoken"]').val() },
+            function(data) {
+                var variablesMap = data.reduce(function(map, outputVariable) {
+                    var units = map[outputVariable.variable] || [];
+                    units.push(outputVariable.instrument_raw_output_unit);
+                    map[outputVariable.variable] = units;
+                    return map;
+                }, {});
+
+                var unitsMap = data.reduce(function(map, outputUnit) {
+                    var variables = map[outputUnit.instrument_raw_output_unit] || [];
+                    variables.push(outputUnit.variable);
+                    map[outputUnit.instrument_raw_output_unit] = variables;
+                    return map;
+                }, {});
+
+                selectedOption.data('output_variables', { variables: variablesMap, units: unitsMap });
+                applyInstrumentOutputFilter(equipmentModelSelect);
             }
         );
     });

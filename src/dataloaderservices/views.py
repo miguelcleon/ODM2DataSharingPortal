@@ -34,7 +34,9 @@ class ModelVariablesApi(APIView):
         if not equipment_model:
             return Response({'error': 'Equipment Model not found.'})
 
-        return Response(EquipmentModelSerializer(equipment_model).data)
+        output = equipment_model.instrument_output_variables.values('variable', 'instrument_raw_output_unit')
+
+        return Response(output)
 
 
 class AffiliationApi(APIView):

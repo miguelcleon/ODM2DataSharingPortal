@@ -22,8 +22,8 @@ function selectSoloOptions(select) {
     });
 }
 
-function requestFilteredOptions(serviceUrl, data, callback) {
-    $.ajax({ url: serviceUrl, data: data })
+function requestFilteredOptions(serviceUrl, requestOptions, callback) {
+    $.ajax({ url: serviceUrl, data: requestOptions })
         .done(callback)
         .fail(function(xhr, error) {
             console.log(error);
