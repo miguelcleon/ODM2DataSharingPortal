@@ -75,7 +75,11 @@ class ResultForm(forms.ModelForm):
         self.empty_permitted = False
 
     equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all())
-    sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(Q(pk='Air') | Q(pk='Liquid aqueous')))
+    sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(
+        Q(pk='Air') |
+        Q(pk='Soil') |
+        Q(pk='Liquid aqueous')
+    ))
 
     class Meta:
         model = Result
