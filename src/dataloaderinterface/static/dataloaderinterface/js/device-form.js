@@ -81,18 +81,41 @@ function initMap() {
 }
 
 
+// function checkSelectsIntegrity(resultForm) {
+//     var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
+//     var variableSelect = resultForm.find('[name$="variable"]');
+//     var unitSelect = resultForm.find('[name$="unit"]');
+//
+// }
+
+
 function applyInstrumentOutputFilter(equipmentModelSelect) {
     var resultForm = equipmentModelSelect.parents('.result-form');
+    var variableSelect = resultForm.find('[name$="variable"]');
+    var unitSelect = resultForm.find('[name$="unit"]');
+
     var outputVariables = equipmentModelSelect
         .find('option[value=' + equipmentModelSelect.val() + ']')
-        .data('output_variables');
+        .data('output-variables');
 
-    filterSelectOptions(resultForm.find('[name$="variable"]'), Object.keys(outputVariables.variables));
-    filterSelectOptions(resultForm.find('[name$="unit"]'), Object.keys(outputVariables.units));
+    filterSelectOptions(variableSelect, Object.keys(outputVariables.variables));
+    filterSelectOptions(unitSelect, Object.keys(outputVariables.units));
+
+    variableSelect.data('filters-applied', false);
+    unitSelect.data('filters-applied', false);
+
+    if (variableSelect.val()) {
+        variableSelect.trigger('change');
+    } else if (unitSelect.val()) {
+        unitSelect.trigger('change');
+    }
 }
 
 function bindResultEvents(resultForm) {
     var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
+    var variableSelect = resultForm.find('[name$="variable"]');
+    var unitSelect = resultForm.find('[name$="unit"]');
+
 
     // delete button
     resultForm.find('span.remove-result').on('click', function() {
@@ -118,7 +141,7 @@ function bindResultEvents(resultForm) {
             applyInstrumentOutputFilter(equipmentModelSelect);
             return;
         }
-        
+
         // request output variables
         requestFilteredOptions(
             $('#model-variables-api').val(),
@@ -126,26 +149,68 @@ function bindResultEvents(resultForm) {
             function(data) {
                 var variablesMap = data.reduce(function(map, outputVariable) {
                     var units = map[outputVariable.variable] || [];
-                    units.push(outputVariable.instrument_raw_output_unit);
+                    units.push(outputVariable.instrument_raw_output_unit.toString());
                     map[outputVariable.variable] = units;
                     return map;
                 }, {});
 
                 var unitsMap = data.reduce(function(map, outputUnit) {
                     var variables = map[outputUnit.instrument_raw_output_unit] || [];
-                    variables.push(outputUnit.variable);
+                    variables.push(outputUnit.variable.toString());
                     map[outputUnit.instrument_raw_output_unit] = variables;
                     return map;
                 }, {});
 
-                selectedOption.data('output_variables', { variables: variablesMap, units: unitsMap });
+                selectedOption.data('output-variables', { variables: variablesMap, units: unitsMap });
                 applyInstrumentOutputFilter(equipmentModelSelect);
             }
         );
     });
-
     equipmentModelSelect.trigger('change', [true]);
 
+
+    variableSelect.on('change', function() {
+        var resultForm = $(this).parents('.result-form');
+        var modelId = equipmentModelSelect.val();
+        var variableId = $(this).val();
+
+        if ($(this).data('filters-applied') || !modelId) {
+            return;
+        }
+
+        if (!variableId) {
+            resultForm.find('[name$="equipment_model"]').trigger('change', [true]);
+            return;
+        }
+
+        var outputVariableData = equipmentModelSelect.find('option[value=' + modelId + ']').data('output-variables');
+        unitSelect.data('filters-applied', true);
+
+        filterSelectOptions(unitSelect, outputVariableData.variables[variableId]);
+    });
+    variableSelect.trigger('change', [true]);
+
+
+    unitSelect.on('change', function() {
+        var resultForm = $(this).parents('.result-form');
+        var modelId = equipmentModelSelect.val();
+        var unitId = $(this).val();
+
+        if ($(this).data('filters-applied') || !modelId) {
+            return;
+        }
+
+        if (!unitId) {
+            resultForm.find('[name$="equipment_model"]').trigger('change', [true]);
+            return;
+        }
+
+        var outputVariableData = equipmentModelSelect.find('option[value=' + modelId + ']').data('output-variables');
+        variableSelect.data('filters-applied', true);
+
+        filterSelectOptions(variableSelect, outputVariableData.units[unitId]);
+    });
+    unitSelect.trigger('change', [true]);
 }
 
 function addResult() {

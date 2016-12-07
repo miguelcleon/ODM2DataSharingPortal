@@ -3,11 +3,13 @@
  */
 
 function initializeSelect(select) {
-    select.select2({
-        theme: "bootstrap",
-        containerCssClass : "input-sm",
-        dropdownAutoWidth: true,
-        width: 'auto'
+    setTimeout(function () {
+        select.select2({
+            theme: "bootstrap",
+            containerCssClass : "input-sm",
+            dropdownAutoWidth: true,
+            width: 'auto'
+        });
     });
 }
 
