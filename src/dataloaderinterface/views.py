@@ -34,6 +34,11 @@ class LoginRequiredMixin(object):
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/index.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data()
+        context['user'] = User
+        # context['devices'] = DevicesListView.get_queryset().filter(user_id=self.request.user.id)
+
 
 class UserRegistrationView(CreateView):
     template_name = 'registration/register.html'

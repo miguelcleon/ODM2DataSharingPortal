@@ -27,7 +27,7 @@
         <div id="wrapper">
             <header class="main-header header-container">
                 <div class="header-content main-container">
-                    <div class="logo"><img src="{% static 'dataloaderinterface/images/websdl_logo.png' %}" alt="WebSDL" width="264" height="55"></div>
+                    <div class="logo"><a href="{% url 'home' %}"><img src="{% static 'dataloaderinterface/images/websdl_logo.png' %}" alt="WebSDL" width="264" height="55"></a></div>
                     <nav class="main-navigation right">
                         <a href="{% url 'device_registration' %}">Register a Device</a>
                         <a href="{% url 'devices_list' %}">View Registered Devices</a>

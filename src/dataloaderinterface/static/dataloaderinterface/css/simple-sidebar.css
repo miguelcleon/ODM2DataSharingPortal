@@ -106,8 +106,13 @@ nav.main-navigation a:hover {
     line-height: 0;
     position: relative;
     padding: 13px 0;
+    border: none;
 }
 
+.small-text {
+    font-size: small;
+    margin-bottom: 100px;
+}
 
 /* General Rules */
 .left {

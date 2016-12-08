@@ -6,23 +6,38 @@
             <h1>Web Streaming Data Loader</h1>
         </header>
         {% if user.is_authenticated %}
-            <div class="user-info">
+            <div class="user-info content">
                 <header>
-                    <h3>User info</h3>
+                    <h3>
+                        Welcome back, {{ user.first_name }} {{ user.last_name }}.
+                        <a class="small-text" href="{% url 'logout' %}">( Not you? Logout )</a>
+                    </h3>
+
                 </header>
             </div>
-            <div class="devices-info">
+            <div class="devices-info content">
                 <header>
-                    <h3>Devices info - comprehensive list of registered devices</h3>
+                    <h3>Devices info - comprehensive list of registered devices</h3> <br/>
                 </header>
                 <div class="devices-list">
                     <a href="{% url 'devices_list' %}">click here to go to the actual list of devices</a>
                 </div>
             </div>
-            <div class="recent-results">
+            <div class="recent-results content">
                 <header>
-                    <h3>Recent Results - list of last 5-10 time series result values pushed by any device. maybe? not necessary, but would be cool.</h3>
+                    <br/>
+                    <h3>Recent Results - list of last 5-10 time series result values pushed by any device.</h3>
+                    <br/>
                 </header>
+            </div>
+        {% else %}
+            <header>
+                <h3>
+                    <a href="{% url 'login' %}">
+                        Login to get started.
+                    </a>
+                </h3>
+            </header>
             </div>
         {% endif %}
     </section>
