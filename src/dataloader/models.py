@@ -416,7 +416,7 @@ class Organization(ODM2Model):
     people = models.ManyToManyField('People', through='Affiliation')
 
     def __str__(self):
-        return '%s (%s)' % (self.organization_name, self.organization_type_id)
+        return '%s' % self.organization_name
 
     def __repr__(self):
         return "<Organization('%s', '%s', '%s', '%s')>" % (
