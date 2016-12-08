@@ -22,13 +22,7 @@ class DeviceRegistration(models.Model):
         return self.sampling_feature.actions.first().begin_datetime.strftime('%Y/%m/%d %H:%M:%S')
 
     def device_name(self):
-        sampling_feature = SamplingFeature.objects.using('odm2').get(
-                sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
-
-        if sampling_feature.sampling_feature_name is not None and len(sampling_feature.sampling_feature_name) > 0:
-            return sampling_feature.sampling_feature_code + ' at ' + sampling_feature.sampling_feature_name
-
-        return sampling_feature.sampling_feature_code
+        return self.sampling_feature.sampling_feature_code
 
     def __str__(self):
         action = self.sampling_feature.actions.first()

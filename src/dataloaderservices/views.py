@@ -39,40 +39,17 @@ class ModelVariablesApi(APIView):
         return Response(output)
 
 
-class AffiliationApi(APIView):
+class OrganizationApi(APIView):
     authentication_classes = (SessionAuthentication, )
 
-    def get(self, request, format=None):
-        if 'affiliation_id' not in request.GET:
-            return Response({'error': 'Affiliation Id not received.'})
-
-        affiliation_id = request.GET['affiliation_id']
-        if affiliation_id == '':
-            return Response({'error': 'Empty Affiliation Id received.'})
-
-        affiliation = Affiliation.objects.filter(pk=affiliation_id).first()
-        if not affiliation:
-            return Response({'error': 'Affiliation not found.'})
-
-        return Response(AffiliationSerializer(affiliation).data)
-
     def post(self, request, format=None):
-        person_serializer = PersonSerializer(data=request.data)
         organization_serializer = OrganizationSerializer(data=request.data)
-        affiliation_serializer = AffiliationSerializer(data=request.data)
 
-        if person_serializer.is_valid() and organization_serializer.is_valid() and affiliation_serializer.is_valid():
-            person_serializer.save()
+        if organization_serializer.is_valid():
             organization_serializer.save()
-            affiliation_serializer.save(
-                person=person_serializer.instance,
-                organization=organization_serializer.instance
-            )
-            return Response(affiliation_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(organization_serializer.data, status=status.HTTP_201_CREATED)
 
-        error_data = dict(person_serializer.errors, **organization_serializer.errors)
-        error_data.update(affiliation_serializer.errors)
-
+        error_data = dict(organization_serializer.errors)
         return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
 
 
