@@ -37,6 +37,20 @@ class UserRegistrationForm(UserCreationForm):
 
 
 # ODM2
+
+class OrganizationForm(forms.ModelForm):
+    use_required_attribute = False
+
+    class Meta:
+        model = Organization
+        fields = [
+            'organization_code',
+            'organization_name',
+            'organization_type',
+            'organization_description'
+        ]
+
+
 class SamplingFeatureForm(forms.ModelForm):
     use_required_attribute = False
 

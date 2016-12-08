@@ -21,7 +21,8 @@ from django.views.generic.list import ListView
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
     ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
     ElevationDatum, SiteType, Affiliation, Medium, ActionBy, Action, Method
-from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm
+from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
+    OrganizationForm
 from dataloaderinterface.models import DeviceRegistration
 
 
@@ -39,6 +40,11 @@ class UserRegistrationView(CreateView):
     template_name = 'registration/register.html'
     form_class = UserRegistrationForm
     success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserRegistrationView, self).get_context_data(**kwargs)
+        context['organization_form'] = OrganizationForm()
+        return context
 
     def post(self, request, *args, **kwargs):
         response = super(UserRegistrationView, self).post(request, *args, **kwargs)
