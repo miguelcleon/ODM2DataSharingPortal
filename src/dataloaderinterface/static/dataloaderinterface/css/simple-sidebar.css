@@ -14,7 +14,6 @@ header.header-container {
     display: inline-block;
     clear: both;
     width: 100%;
-    z-index: 8999;
 }
 
 .nav-item {

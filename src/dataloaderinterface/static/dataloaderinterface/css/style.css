@@ -109,8 +109,22 @@ div.separator {
 /*}*/
 
 
-.organization-fields {
-    display: none;
+.vertical-alignment-helper {
+    display:table;
+    height: 100%;
+    width: 100%;
+}
+.vertical-align-center {
+    /* To center vertically */
+    display: table-cell;
+    vertical-align: middle;
+}
+.modal-content {
+    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+    width:inherit;
+    height:inherit;
+    /* To center horizontally */
+    margin: 0 auto;
 }
 
 .select2-results__option[aria-disabled="true"] {
@@ -444,4 +458,8 @@ ul.errorlist {
 
 .form-group, .form-group .form-field {
      padding-left: 0;
+}
+
+.organization-fields, .organization-fields .form-field {
+    padding-left: 15px;
 }

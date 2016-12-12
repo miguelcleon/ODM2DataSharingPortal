@@ -28,14 +28,6 @@
                         </div>
                     {% endfor %}
                 </div>
-                <div class="form-group col-lg-6 organization-fields">
-                    {% for field in organization_form %}
-                        <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                            <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
-                            {{ field|add_class:"form-control input-sm" }}
-                        </div>
-                    {% endfor %}
-                </div>
             </fieldset>
 
 
@@ -43,7 +35,40 @@
                 <input type="submit" class="btn btn-primary" value="Register User">
             </div>
         </form>
+
+        <div id="organization-dialog" class="modal fade" role="dialog" aria-hidden="true">
+            <div class="vertical-alignment-helper">
+                <div class="modal-dialog vertical-align-center">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4>New Organization</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group col-lg-12 organization-fields">
+                                {% for field in organization_form %}
+                                    <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                                        <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
+                                        {{ field|add_class:"form-control input-sm" }}
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button id="new-organization-button" type="button" class="btn btn-primary">Add New Organization</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
+{% endblock %}
+
+{% block services_urls %}
+    {{ block.super }}
+    <input id="new-organization-api" type="hidden" value="{% url 'organization_service' %}">
 {% endblock %}
 
 {% block styles %}
@@ -54,6 +79,8 @@
 
 {% block scripts %}
     {{ block.super }}
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/user-form.js' %}"></script>
 {% endblock %}
