@@ -20,7 +20,7 @@ from dataloaderservices.views import TimeSeriesValuesApi, OrganizationApi, Model
 
 urlpatterns = [
     url(r'^api/data-stream/$', TimeSeriesValuesApi.as_view(), name='api_post'),
-    url(r'^api/affiliation/$', OrganizationApi.as_view(), name='organization_service'),
+    url(r'^api/organization/$', OrganizationApi.as_view(), name='organization_service'),
     url(r'^api/equipment-variables/$', ModelVariablesApi.as_view(), name='model_variables_service')
 ]
 
