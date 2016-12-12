@@ -125,3 +125,7 @@ class CalibrationActionManager(models.Manager):
 
 # endregion
 
+# class TimeSeriesResultValuesManager(models.Manager):
+#     def get_queryset(self):
+#         queryset = super(CalibrationActionManager, self).get_queryset()
+#         return queryset.prefetch_related('instrument_output_variable')

@@ -80,7 +80,7 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
 
         context['sampling_feature'] = sampling_feature
         context['deployment'] = sampling_feature.actions.first()
-        context['feature_actions'] = sampling_feature.feature_actions.all()
+        context['feature_actions'] = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
         context['affiliation'] = context['deployment'].action_by.first().affiliation
         context['site'] = sampling_feature.site
         return context

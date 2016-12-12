@@ -96,7 +96,7 @@
                             <div class="variable-data">
                                 <span class="variable-name">{{ result.variable.variable_name_id }}</span>
                                 <span class="variable-code">{{ result.variable.variable_code }}</span>
-                                <span class="latest-value">{{ result.timeseriesresult.timeseriesresultvalue_set.first.data_value|floatformat:-3 }}</span>
+                                <span class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</span>
                                 <span class="unit">{{ result.unit.unit_abbreviation }}</span>
                                 <div class="clearfix"></div>
                             </div>
@@ -118,7 +118,7 @@
                             </thead>
 
                             <tbody>
-                                {% for series_value in result.timeseriesresult.timeseriesresultvalue_set.all %}
+                                {% for series_value in result.timeseriesresult.values.all %}
                                     <tr>
                                         <td>{{ series_value.value_datetime }}</td>
                                         <td>{{ series_value.data_value }}</td>

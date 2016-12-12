@@ -1967,13 +1967,14 @@ class SpectraResultValue(ResultValue, QualityControlComponent, TimeAggregationCo
 
 
 class TimeSeriesResultValue(ResultValue, QualityControlComponent, TimeAggregationComponent):
-    result = models.ForeignKey('TimeSeriesResult', db_column='resultid')
+    result = models.ForeignKey('TimeSeriesResult', related_name='values', db_column='resultid')
     data_value = models.FloatField(db_column='datavalue')
     annotations = models.ManyToManyField('Annotation', related_name='annotated_time_series_values',
                                          through='TimeSeriesResultValueAnnotation')
 
     class Meta:
         db_table = 'timeseriesresultvalues'
+        ordering = ('value_datetime', )
 
 
 class TrajectoryResultValue(ResultValue, XOffsetComponent, YOffsetComponent, ZOffsetComponent, QualityControlComponent, TimeAggregationComponent):
