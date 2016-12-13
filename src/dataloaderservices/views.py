@@ -50,7 +50,7 @@ class OrganizationApi(APIView):
             return Response(organization_serializer.data, status=status.HTTP_201_CREATED)
 
         error_data = dict(organization_serializer.errors)
-        return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
 
 
 class TimeSeriesValuesApi(APIView):

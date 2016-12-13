@@ -32,35 +32,34 @@ $(document).ready(function() {
             data: $.extend({
                 csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val()
             }, data)
-        }).done(function(data) {
-            var newOption = $('<option value="' + data.organization_id + '">' +
-                data.organization_name + '</option>');
-            $('select[name="organization"]').append(newOption).val(data.organization_id);
-            $('#organization-dialog').modal('toggle');
+        }).done(function(data, message, xhr) {
+            if (xhr.status == 201) {
+                var newOption = $('<option value="' + data.organization_id + '">' +
+                    data.organization_name + '</option>');
+                $('select[name="organization"]').append(newOption).val(data.organization_id);
+                $('#organization-dialog').modal('toggle');
+            } else if (xhr.status == 206) {
+                var form = $('.organization-fields');
+                for (var fieldName in data) {
+                    var element = form.find('[name="' + fieldName + '"]');
+                    var field = element.parents('.form-field');
+                    field.addClass('has-error');
+
+                    form.find('div.form-field.has-error .form-control').on('change keypress', function(event, isTriggered) {
+                        if (isTriggered) {  // http://i.imgur.com/avHnbUZ.gif
+                            return;
+                        }
+
+                        var fieldElement = $(this).parents('div.form-field');
+                        if (fieldElement.hasClass('has-error')) {
+                            fieldElement.find('.errorlist').remove();
+                            fieldElement.removeClass('has-error');
+                        }
+                    });
+                }
+            }
         }).fail(function(data) {
-            if (!data.responseJSON || data.status != 400) {
-                console.log(data);
-                return;
-            }
-
-            var form = $('.organization-fields');
-            for (var fieldName in data.responseJSON) {
-                var element = form.find('[name="' + fieldName + '"]');
-                var field = element.parents('.form-field');
-                field.addClass('has-error');
-
-                form.find('div.form-field.has-error .form-control').on('change keypress', function(event, isTriggered) {
-                    if (isTriggered) {  // http://i.imgur.com/avHnbUZ.gif
-                        return;
-                    }
-
-                    var fieldElement = $(this).parents('div.form-field');
-                    if (fieldElement.hasClass('has-error')) {
-                        fieldElement.find('.errorlist').remove();
-                        fieldElement.removeClass('has-error');
-                    }
-                });
-            }
+            console.log(data);
         });
     });
 });
