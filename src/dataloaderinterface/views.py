@@ -37,8 +37,12 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data()
-        context['user'] = User
-        # context['devices'] = DevicesListView.get_queryset().filter(user_id=self.request.user.id)
+        context['device_results'] = []
+        for device in DeviceRegistration.objects.get_queryset().filter(user=self.request.user.id):
+            sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=device.deployment_sampling_feature_uuid)
+            feature_actions = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
+            context['device_results'].append({'device': device, 'feature_actions': feature_actions})
+        return context
 
 
 class UserRegistrationView(CreateView):
@@ -77,7 +81,6 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(DeviceDetailView, self).get_context_data()
         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.object.deployment_sampling_feature_uuid)
-
         context['sampling_feature'] = sampling_feature
         context['deployment'] = sampling_feature.actions.first()
         context['feature_actions'] = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()

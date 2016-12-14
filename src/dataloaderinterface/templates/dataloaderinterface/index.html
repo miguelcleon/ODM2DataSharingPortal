@@ -1,10 +1,8 @@
 {% extends 'dataloaderinterface/base.html' %}
+{% load staticfiles %}
 
 {% block content %}
     <section class="home-content col-lg-12">
-        <header>
-            <h1>Web Streaming Data Loader</h1>
-        </header>
         {% if user.is_authenticated %}
             <div class="user-info content">
                 <header>
@@ -17,18 +15,43 @@
             </div>
             <div class="devices-info content">
                 <header>
-                    <h3>Devices info - comprehensive list of registered devices</h3> <br/>
+                    <h3><a href="{% url 'devices_list' %}">Registered Devices</a></h3>
                 </header>
-                <div class="devices-list">
-                    <a href="{% url 'devices_list' %}">click here to go to the actual list of devices</a>
+                <div id="menu">
+                    <ul class="device-list">
+                    {% for device_data_pair in device_results %}
+                        {%  with device_data_pair.device as registration %}
+                            <li class="device_preview">
+                                <div class="hover-grey float-left device-details" onclick="location.href='{% url 'device_detail' registration.registration_id %}'">
+                                    <a class="darkly-fonted" href="{% url 'device_detail' registration.registration_id %}"> {{ registration.registration_date }} - {{ registration.device_name }} </a>
+                                </div>
+                                <div class="hover-grey plot-preview-toggle" onclick="TogglePlotVisibility({{ registration.registration_id }})">
+                                    <img class="small-icon" src="{% static 'dataloaderinterface/icons/Asset13.png' %}" alt="Expand Preview">
+                                </div>
+                            </li>
+                            {% with device_data_pair.feature_actions as feature_actions %}
+                                <div id="plot_preview_{{ registration.registration_id }}" class="spark-preview sparkline-plots col-lg-6">
+                                    {% for feature_action in feature_actions %}
+                                        {% with feature_action.results.all.0 as result %}
+                                            <div class="plot_box" data-result-id="{{ result.result_id }}"
+                                                 data-variable-name="{{ result.variable.variable_name_id }}">
+                                                <div class="variable-data">
+                                                    <span class="variable-name">{{ result.variable.variable_name_id }}</span>
+                                                    <span class="variable-code">{{ result.variable.variable_code }}</span>
+                                                    <span class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</span>
+                                                    <span class="unit">{{ result.unit.unit_abbreviation }}</span>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                                <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                            </div>
+                                        {% endwith %}
+                                    {% endfor %}
+                                </div>
+                            {% endwith %}
+                        {% endwith %}
+                    {% endfor %}
+                    </ul>
                 </div>
-            </div>
-            <div class="recent-results content">
-                <header>
-                    <br/>
-                    <h3>Recent Results - list of last 5-10 time series result values pushed by any device.</h3>
-                    <br/>
-                </header>
             </div>
         {% else %}
             <header>
@@ -41,4 +64,27 @@
             </div>
         {% endif %}
     </section>
+{% endblock %}
+
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script type="text/javascript">
+        function TogglePlotVisibility(id) {
+            var plot_id = "#plot_preview_".concat(id);
+            if (!$(plot_id).is(":visible")) {
+                $(plot_id).show();
+            } else {
+                $(plot_id).hide();
+            }
+        }
+    </script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
 {% endblock %}

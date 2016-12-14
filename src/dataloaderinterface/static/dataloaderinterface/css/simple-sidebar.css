@@ -75,7 +75,7 @@ header.secondary-header {
 }
 
 div#content-wrapper .main-container {
-    margin: 20px auto;
+    margin: 0 auto 20px;
 }
 
 nav.main-navigation {
