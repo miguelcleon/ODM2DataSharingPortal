@@ -110,4 +110,4 @@ class ResultForm(forms.ModelForm):
         }
 
 
-ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, validate_min=True)
+ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=0)
