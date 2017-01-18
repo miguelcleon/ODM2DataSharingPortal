@@ -73,6 +73,15 @@ class DevicesListView(LoginRequiredMixin, ListView):
         return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.id)
 
 
+class AllSitesListView(LoginRequiredMixin, ListView):
+    model = SamplingFeature
+    context_object_name = 'sites'
+    template_name = 'dataloaderinterface/browse-sites.html'
+
+    def get_queryset(self):
+        return super(AllSitesListView, self).get_queryset().select_related('site').filter()
+
+
 class DeviceDetailView(LoginRequiredMixin, DetailView):
     slug_field = 'registration_id'
     model = DeviceRegistration

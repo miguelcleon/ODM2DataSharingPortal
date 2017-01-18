@@ -81,14 +81,6 @@ function initMap() {
 }
 
 
-// function checkSelectsIntegrity(resultForm) {
-//     var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
-//     var variableSelect = resultForm.find('[name$="variable"]');
-//     var unitSelect = resultForm.find('[name$="unit"]');
-//
-// }
-
-
 function applyInstrumentOutputFilter(equipmentModelSelect) {
     var resultForm = equipmentModelSelect.parents('.result-form');
     var variableSelect = resultForm.find('[name$="variable"]');
@@ -115,14 +107,6 @@ function bindResultEvents(resultForm) {
     var equipmentModelSelect = resultForm.find('[name$="equipment_model"]');
     var variableSelect = resultForm.find('[name$="variable"]');
     var unitSelect = resultForm.find('[name$="unit"]');
-
-
-    // delete button
-    resultForm.find('span.remove-result').on('click', function() {
-        var forms = $('input[name="form-TOTAL_FORMS"]');
-        $(this).parents('.result-form').remove();
-        forms.val(forms.val() - 1);
-    });
 
     // equipment model selection
     equipmentModelSelect.on('change', function() {
@@ -213,21 +197,150 @@ function bindResultEvents(resultForm) {
     unitSelect.trigger('change', [true]);
 }
 
-function addResult() {
-    var newIndex = $('div#formset div.result-form').length;
-    $('input[name="form-TOTAL_FORMS"]').val(newIndex + 1);
+function initializeResultsForm() {
+    var form = $('div#result-dialog .result-form');
+    bindResultEvents(form);
+    selectSoloOptions(form.find('select'));
+    initializeSelect(form.find('select.form-control'));
+    
+    $('div#result-dialog').on('show.bs.modal', function(event) {
+        if (event.relatedTarget && event.relatedTarget.id === 'new-result-button') {
+            $(this).find('#add-sensor-button').show();
+            $(this).find('#edit-sensor-button').hide();
+            var fields = form.find('select');
+            var fieldsParents = fields.parents('div.form-field');
+            clearSelectFilter(fields);
+            fields.val('');
 
-    var newResultForm = $($('div#results-template').html().replace(new RegExp('__prefix__', 'g'), newIndex));
-    $('.formset-container').append(newResultForm);
+            if (fieldsParents.hasClass('has-error')) {
+                fieldsParents.find('.errorlist').remove();
+                fieldsParents.removeClass('has-error');
+            }
 
-    bindResultEvents(newResultForm);
-    selectSoloOptions(newResultForm.find('select'));
-    initializeSelect(newResultForm.find('select.form-control'));
+        } else {
+            $(this).find('#add-sensor-button').hide();
+            $(this).find('#edit-sensor-button').show();
+        }
+    });
+
+    $('div#result-dialog button#add-sensor-button').on('click', function() {
+        // TODO: validate empty fields first.
+        validateResultForm().done(function(data, message, xhr) {
+            if (xhr.status == 200) {
+                // valid
+                var newIndex = $('div#formset tr.result-form').length;
+                $('input[name="form-TOTAL_FORMS"]').val(newIndex + 1);
+        
+                var newRow = $($('#sensor-row').html().replace(new RegExp('__prefix__', 'g'), newIndex));
+                updateRowData(newRow);
+                bindResultEditEvent(newRow);
+        
+                $('div.results-table table').DataTable().row.add(newRow).draw();
+                $('#result-dialog').modal('toggle');
+                
+            } else if (xhr.status == 206) {
+                // not valid
+                var form = $('div#result-dialog div.result-form');
+                for (var fieldName in data) {
+                    var element = form.find('[name*="' + fieldName + '"]');
+                    var field = element.parents('.form-field');
+                    field.addClass('has-error');
+
+                    form.find('div.form-field.has-error .form-control').on('change keypress', function(event, isTriggered) {
+                        if (isTriggered) {  // http://i.imgur.com/avHnbUZ.gif
+                            return;
+                        }
+
+                        var fieldElement = $(this).parents('div.form-field');
+                        if (fieldElement.hasClass('has-error')) {
+                            fieldElement.find('.errorlist').remove();
+                            fieldElement.removeClass('has-error');
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    $('div#result-dialog button#edit-sensor-button').on('click', function() {
+        var dialog = $('#result-dialog');
+        var row = dialog.data('row');
+        updateRowData(row);
+        dialog.modal('toggle');
+    });
+}
+
+function validateResultForm() {
+    var prefixText = '-__prefix__-';
+    var data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
+        var fieldName = field.name.substring(field.name.indexOf(prefixText) + prefixText.length, field.name.length);
+        dict[fieldName] = field.value;
+        return dict;
+    }, {});
+    
+    return $.ajax({
+        url: $('#result-validation-api').val(),
+        type: 'post',
+        data: $.extend({ csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val() }, data)
+    });
+}
+
+function fillFormData(row) {
+    row.find('td[data-field]').each(function(index, column) {
+        var fieldName = $(column).data('field');
+        var selectedValue = $(column).find('input').val();
+        var formSelect = $('div#result-dialog div.result-form .form-control[name*="' + fieldName + '"]');
+        formSelect.val(selectedValue);
+        formSelect.trigger('change');
+    });
+    $('#result-dialog').data('row', row);
+}
+
+function updateRowData(row) {
+    var prefixText = '-__prefix__-';
+    var fields = $('div#result-dialog div.result-form .form-control');
+    for (var index = 0; index < fields.length; index++) {
+        var field = fields.get(index);
+        var selectedOption = $(field).find('option:selected');
+        var fieldName = field.name.substring(field.name.indexOf(prefixText) + prefixText.length, field.name.length);
+        var dataColumn = row.find('td[data-field="' + fieldName + '"]');
+        dataColumn.find('.field-text').text(selectedOption.text());
+        dataColumn.find('.field-value').val(selectedOption.val());
+    }
+}
+
+function bindResultEditEvent(row) {
+    row.find('td[data-behaviour="edit"] button').on('click', function(event) {
+        fillFormData($(this).parents('tr'));
+        $('#result-dialog').modal('toggle');
+    });
 }
 
 $(document).ready(function() {
-    $('button.new-result-button').on('click', addResult);
-    bindResultEvents($('form .result-form'));
-    $('#sensors-table').DataTable();
-    $('sensors-table').show();
+    initializeResultsForm();
+
+    $('table.sensors').dataTable({
+        info: false,
+        ordering: false,
+        paging: false,
+        searching: false,
+        scrollY: '100%',
+        scrollCollapse: true
+    });
+
+    $('#confirm-delete').on('show.bs.modal', function(event) {
+        var sensor = $(event.relatedTarget).parents('tr.result-form');
+        $(event.target).data('to-delete', sensor);
+    });
+
+    $('#btn-confirm-delete').on('click', function(event) {
+        var dialog = $('#confirm-delete');
+        var sensor = dialog.data('to-delete');
+
+        var totalForms = $('input[name="form-TOTAL_FORMS"]');
+        totalForms.val(totalForms.val() - 1);
+
+        $('div.results-table table').DataTable().row(sensor).remove().draw();
+        dialog.modal('toggle');
+    });
 });

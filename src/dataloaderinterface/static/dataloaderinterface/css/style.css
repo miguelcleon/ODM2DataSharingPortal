@@ -144,59 +144,32 @@ div.form-field {
     padding-bottom: 15px;
 }
 
-.results-fields {
-    margin: 20px 0;
-    padding: 0;
-}
-
-.results-fields label.control-label {
-    text-align: left;
-}
-
-.results-fields legend {
-    margin-bottom: 0;
-    margin-left: 15px;
-}
-
-.result-form {
-    position: relative;
-    margin: 10px 0;
-}
-
-.result-form .result-wrapper {
-    padding: 24px 13px 5px;
-    border: 1px solid #e8e8e8;
-}
-
-/*.result-form:not(:first-of-type) {*/
-/*border-top: 1px solid #e8e8e8;*/
+/*#results-template {*/
+    /*display: none;*/
+    /*visibility: hidden;*/
 /*}*/
 
-.result-form:only-of-type span.remove-result {
-    visibility: hidden;
+/*span.remove-result {*/
+    /*font-size: 1.3em;*/
+    /*cursor: pointer;*/
+    /*position: absolute;*/
+    /*top: 14px;*/
+    /*right: 30px;*/
+/*}*/
+
+.results-table h3 {
+    display: inline-block;
 }
 
-div#formset {
-    clear: both;
-    padding: 15px;
-    border-radius: 0;
+#new-result-button {
+    vertical-align: baseline;
+    margin-left: 10px;
+    padding: 4px 10px;
 }
 
-#results-template {
-    display: none;
-    visibility: hidden;
-}
-
-span.remove-result {
-    font-size: 1.3em;
-    cursor: pointer;
-    position: absolute;
-    top: 14px;
-    right: 30px;
-}
-
-div.add-result-container {
-    margin: 10px 0;
+.register-button {
+    margin-top: 25px;
+    margin-left: 15px;
 }
 
 div.registration-keys {
@@ -361,7 +334,8 @@ div.registration-field span.control-field {
     font-size: 1.2em;
 }
 
-table.data-values, table.dataTable {
+
+table.data-values {
     display: none;
     margin-top: 0 !important;
 }
@@ -382,7 +356,7 @@ span.map-help {
 }
 
 .has-error .control-label, .has-error .form-control, .page-content span.form-message.error {
-    color: rgb(232, 0, 0);
+    color: rgb(232, 0, 0) !important;
 }
 
 div.form-group.sampling-feature-fields {

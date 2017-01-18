@@ -13,10 +13,23 @@ from rest_framework import exceptions
 
 from dataloader.models import SamplingFeature, TimeSeriesResultValue, CensorCode, QualityCode, Unit, Affiliation, \
     EquipmentModel
+from dataloaderinterface.forms import ResultForm, ResultFormSet
 from dataloaderinterface.models import DeviceRegistration
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import AffiliationSerializer, PersonSerializer, OrganizationSerializer, \
     EquipmentModelSerializer
+
+
+class ResultApi(APIView):
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request, format=None):
+        form = ResultForm(data=request.POST)
+        if form.is_valid():
+            return Response({}, status=status.HTTP_200_OK)
+
+        error_data = dict(form.errors)
+        return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
 
 
 class ModelVariablesApi(APIView):
