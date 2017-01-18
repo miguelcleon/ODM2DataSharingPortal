@@ -1,0 +1,78 @@
+#banner {
+    width: 100%;
+}
+
+.legend-container {
+    width: 100%;
+    height: 300px;
+    color: #FFF;
+    text-shadow: 1px 1px #4E4E4E;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.banner-legend {
+    position: absolute;
+    width: 100%;
+    top: calc(50% - 80px);
+}
+
+#banner-image-container {
+    width: 100%;
+    height: 300px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 80%;
+}
+
+h3.step {
+    border: 1px solid #222;
+    display: inline-block;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding-top: 6px;
+    background: #fff;
+    position: absolute;
+    top: -40px;
+    left: calc(50% - 20px);
+}
+
+.step-icon {
+    font-size: 8em !important;
+    text-shadow: 0 1px 0 #fff;
+}
+
+.section-gray {
+    background-color: #37474f;
+    color: #FFF;
+    padding: 20px 0;
+}
+
+.section-gray a {
+    color: #64ffda ;
+}
+
+.section-gray a:hover {
+    color: #00bfa5 ;
+    text-decoration: none;
+
+}
+
+.section-gray h1, .section-gray h3, .banner-legend h1, .banner-legend h3 {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 200;
+}
+
+.section-title {
+    opacity: .54;
+        font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: 34px;
+    font-weight: 400;
+    line-height: 40px;
+}
+
+.step-item {
+    border: 1px solid #DDD;
+}

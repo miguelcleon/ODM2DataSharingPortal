@@ -1,10 +1,10 @@
 @font-face {
-  font-family: 'Glyphicons Halflings';
-  src: url('../fonts/glyphicons-halflings-regular.eot');
-  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
+    font-family: 'Glyphicons Halflings';
+    src: url('../fonts/glyphicons-halflings-regular.eot');
+    src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
 }
 
-@media only screen and (min-width : 992px) {
+@media only screen and (min-width: 992px) {
     button.download-data-button {
         float: right;
         margin-top: 18px;
@@ -15,7 +15,7 @@
     }
 }
 
-@media only screen and (max-width : 992px) {
+@media only screen and (max-width: 992px) {
     button.download-data-button {
         float: left;
         clear: left;
@@ -37,7 +37,6 @@ body {
     margin: 5px 15px 0;
     padding-bottom: 10px;
 }
-
 
 .map-container {
     margin-top: 25px;
@@ -104,24 +103,25 @@ div.separator {
 }
 
 /*.form-field.has-error, .form-field.has-error label.control-label {*/
-    /*cursor: help;*/
+/*cursor: help;*/
 /*}*/
 
-
 .vertical-alignment-helper {
-    display:table;
+    display: table;
     height: 100%;
     width: 100%;
 }
+
 .vertical-align-center {
     /* To center vertically */
     display: table-cell;
     vertical-align: middle;
 }
+
 .modal-content {
     /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
-    width:inherit;
-    height:inherit;
+    width: inherit;
+    height: inherit;
     /* To center horizontally */
     margin: 0 auto;
 }
@@ -143,7 +143,6 @@ div.action-affiliation-fields label.control-label {
 div.form-field {
     padding-bottom: 15px;
 }
-
 
 .results-fields {
     margin: 20px 0;
@@ -170,10 +169,10 @@ div.form-field {
 }
 
 /*.result-form:not(:first-of-type) {*/
-    /*border-top: 1px solid #e8e8e8;*/
+/*border-top: 1px solid #e8e8e8;*/
 /*}*/
 
-.result-form:only-of-type span.remove-result{
+.result-form:only-of-type span.remove-result {
     visibility: hidden;
 }
 
@@ -345,7 +344,6 @@ div.registration-field span.control-field {
     stroke-width: 2px;
 }
 
-
 .measurements-container {
     margin-top: 30px;
 }
@@ -362,7 +360,6 @@ div.registration-field span.control-field {
     clear: left;
     font-size: 1.2em;
 }
-
 
 table.data-values, table.dataTable {
     display: none;
@@ -387,7 +384,6 @@ span.map-help {
 .has-error .control-label, .has-error .form-control, .page-content span.form-message.error {
     color: rgb(232, 0, 0);
 }
-
 
 div.form-group.sampling-feature-fields {
     display: -webkit-box;
@@ -444,7 +440,7 @@ span.name-dropdown {
 
 span.name-dropdown .select2-dropdown {
     border-color: rgb(170, 170, 170);
-    border-top: .1em dashed rgb(170,170,170);
+    border-top: .1em dashed rgb(170, 170, 170);
     border-radius: 2px 2px 4px 4px;
 }
 
@@ -456,9 +452,43 @@ ul.errorlist {
 }
 
 .form-group, .form-group .form-field {
-     padding-left: 0;
+    padding-left: 0;
 }
 
 .organization-fields, .organization-fields .form-field {
     padding-left: 15px;
+}
+
+.btn-log-in {
+    width: 100px;
+}
+
+#content-wrapper {
+    padding: 40px 0;
+}
+
+/*NAV BAR STYLING*/
+.navbar-inverse {
+    min-height: 80px;
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.navbar-nav > li > a {
+    line-height: 50px;
+}
+
+.navbar-header {
+    min-height: 80px;
+}
+
+/*DATATABLES STYLING*/
+    table.data-values, table.dataTable {
+        display: table; !important
+    }
+/*FOOTER STYLING*/
+footer {
+    background: #4a586d;
+    color: #FFF;
+    min-height: 300px;
 }

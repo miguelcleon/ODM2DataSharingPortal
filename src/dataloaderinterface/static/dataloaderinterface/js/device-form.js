@@ -23,7 +23,7 @@ function initMap() {
     const DEFAULT_SPECIFIC_ZOOM = 10;
     const DEFAULT_LATITUDE = 37.0902;
     const DEFAULT_LONGITUDE = -95.7129;
-    var mapTip = $('<div class="map-info"><span class="map-tip">Click on the map to update coordinates and elevation data</span></div>');
+    var mapTip = $('<div class="map-info"><span class="map-tip"><i class="fa fa-info-circle" aria-hidden="true"></i> Click on the map to update coordinates and elevation data</span></div>');
     var mapPosition = { lat: parseFloat($('input[name="latitude"]').val()), lng: parseFloat($('input[name="longitude"]').val()) };
     var isCompletePosition = mapPosition.lat && mapPosition.lng;
     var mapZoom = parseInt($('input[name="zoom-level"]').val());
@@ -228,4 +228,6 @@ function addResult() {
 $(document).ready(function() {
     $('button.new-result-button').on('click', addResult);
     bindResultEvents($('form .result-form'));
+    $('#sensors-table').DataTable();
+    $('sensors-table').show();
 });
