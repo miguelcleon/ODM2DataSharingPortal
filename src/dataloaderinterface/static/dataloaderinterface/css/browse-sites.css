@@ -1,0 +1,42 @@
+.map-container {
+    margin-top: 25px;
+    height: 700px;
+    padding: 0;
+}
+
+#map {
+    height: 100%;
+}
+
+div.map-info {
+    margin: 5px;
+}
+
+span.map-tip {
+    box-shadow: rgba(0, 0, 0, 0.298039) 0 1px 4px -1px;
+    background-color: rgba(255, 255, 255, .95);
+    border-radius: 2px;
+    font-size: 13px;
+    padding: 7px 15px;
+}
+
+div#marker-content {
+    padding: 5px;
+}
+
+.site-field, .site-link {
+    padding: 3px;
+}
+
+span.site-label {
+    font-weight: bold;
+}
+
+span.site-label::after {
+    content: ': ';
+}
+
+span.site-data {
+
+}
+

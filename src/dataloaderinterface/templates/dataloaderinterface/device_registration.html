@@ -24,15 +24,13 @@
                 <legend></legend>
                 <div class="form-group col-lg-4 sampling-feature-fields">
                     {% for field in sampling_feature_form %}
-                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                             data-field="{{ field.name }}">
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                             <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
                     {% endfor %}
                     {% for field in site_form %}
-                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                             data-field="{{ field.name }}">
+                        <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}" data-field="{{ field.name }}">
                             <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                             {{ field|add_class:"form-control input-sm" }}
                         </div>
@@ -194,11 +192,9 @@
 
 {% block styles %}
     {{ block.super }}
-    <link href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"
-          rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css"
-          rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block scripts %}
@@ -207,6 +203,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/device-form.js' %}"></script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}
