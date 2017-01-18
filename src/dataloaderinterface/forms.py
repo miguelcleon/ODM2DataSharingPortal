@@ -14,6 +14,8 @@ from dataloader.models import SamplingFeature, Action, People, Organization, Aff
 
 
 class UserRegistrationForm(UserCreationForm):
+    use_required_attribute = False
+
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     organization = forms.ModelChoiceField(queryset=Organization.objects.all(), required=False)
@@ -82,8 +84,6 @@ class SiteForm(forms.ModelForm):
 
 
 class ResultForm(forms.ModelForm):
-    use_required_attribute = False
-
     def __init__(self, *args, **kwargs):
         super(ResultForm, self).__init__(*args, **kwargs)
         self.empty_permitted = False

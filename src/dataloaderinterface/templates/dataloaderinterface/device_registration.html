@@ -189,6 +189,7 @@
 {% block services_urls %}
     {{ block.super }}
     <input id="model-variables-api" type="hidden" value="{% url 'model_variables_service' %}">
+    <input id="result-validation-api" type="hidden" value="{% url 'result_validation_service' %}">
 {% endblock %}
 
 {% block styles %}

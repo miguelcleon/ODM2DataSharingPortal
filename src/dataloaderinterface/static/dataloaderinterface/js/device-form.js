@@ -208,8 +208,15 @@ function initializeResultsForm() {
             $(this).find('#add-sensor-button').show();
             $(this).find('#edit-sensor-button').hide();
             var fields = form.find('select');
+            var fieldsParents = fields.parents('div.form-field');
             clearSelectFilter(fields);
             fields.val('');
+
+            if (fieldsParents.hasClass('has-error')) {
+                fieldsParents.find('.errorlist').remove();
+                fieldsParents.removeClass('has-error');
+            }
+
         } else {
             $(this).find('#add-sensor-button').hide();
             $(this).find('#edit-sensor-button').show();
@@ -218,15 +225,41 @@ function initializeResultsForm() {
 
     $('div#result-dialog button#add-sensor-button').on('click', function() {
         // TODO: validate empty fields first.
-        var newIndex = $('div#formset tr.result-form').length;
-        $('input[name="form-TOTAL_FORMS"]').val(newIndex + 1);
+        validateResultForm().done(function(data, message, xhr) {
+            if (xhr.status == 200) {
+                // valid
+                var newIndex = $('div#formset tr.result-form').length;
+                $('input[name="form-TOTAL_FORMS"]').val(newIndex + 1);
+        
+                var newRow = $($('#sensor-row').html().replace(new RegExp('__prefix__', 'g'), newIndex));
+                updateRowData(newRow);
+                bindResultEditEvent(newRow);
+        
+                $('div.results-table table').DataTable().row.add(newRow).draw();
+                $('#result-dialog').modal('toggle');
+                
+            } else if (xhr.status == 206) {
+                // not valid
+                var form = $('div#result-dialog div.result-form');
+                for (var fieldName in data) {
+                    var element = form.find('[name*="' + fieldName + '"]');
+                    var field = element.parents('.form-field');
+                    field.addClass('has-error');
 
-        var newRow = $($('#sensor-row').html().replace(new RegExp('__prefix__', 'g'), newIndex));
-        updateRowData(newRow);
-        bindResultEditEvent(newRow);
+                    form.find('div.form-field.has-error .form-control').on('change keypress', function(event, isTriggered) {
+                        if (isTriggered) {  // http://i.imgur.com/avHnbUZ.gif
+                            return;
+                        }
 
-        $('div.results-table table').DataTable().row.add(newRow).draw();
-        $('#result-dialog').modal('toggle');
+                        var fieldElement = $(this).parents('div.form-field');
+                        if (fieldElement.hasClass('has-error')) {
+                            fieldElement.find('.errorlist').remove();
+                            fieldElement.removeClass('has-error');
+                        }
+                    });
+                }
+            }
+        });
     });
 
     $('div#result-dialog button#edit-sensor-button').on('click', function() {
@@ -234,6 +267,21 @@ function initializeResultsForm() {
         var row = dialog.data('row');
         updateRowData(row);
         dialog.modal('toggle');
+    });
+}
+
+function validateResultForm() {
+    var prefixText = '-__prefix__-';
+    var data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
+        var fieldName = field.name.substring(field.name.indexOf(prefixText) + prefixText.length, field.name.length);
+        dict[fieldName] = field.value;
+        return dict;
+    }, {});
+    
+    return $.ajax({
+        url: $('#result-validation-api').val(),
+        type: 'post',
+        data: $.extend({ csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val() }, data)
     });
 }
 

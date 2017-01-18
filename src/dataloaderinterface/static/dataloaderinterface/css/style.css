@@ -357,7 +357,7 @@ span.map-help {
 }
 
 .has-error .control-label, .has-error .form-control, .page-content span.form-message.error {
-    color: rgb(232, 0, 0);
+    color: rgb(232, 0, 0) !important;
 }
 
 
