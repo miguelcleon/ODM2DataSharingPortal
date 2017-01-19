@@ -57,7 +57,9 @@
 }
 
 .step-item h4 {
-    padding:20px;
+    padding: 20px;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 300;
 }
 
 .content-section {

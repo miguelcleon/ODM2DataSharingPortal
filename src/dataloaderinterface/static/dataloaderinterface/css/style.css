@@ -28,11 +28,6 @@
     }
 }
 
-body {
-    margin-bottom: 20px;
-}
-
-
 .page-content header {
     margin: 5px 15px 0;
     padding-bottom: 10px;
@@ -441,6 +436,10 @@ ul.errorlist {
     padding: 40px 0;
 }
 
+#wrapper {
+    margin-top: 81px;
+}
+
 /*NAV BAR STYLING*/
 .navbar-inverse {
     min-height: 80px;
@@ -457,12 +456,38 @@ ul.errorlist {
 }
 
 /*DATATABLES STYLING*/
-    table.data-values, table.dataTable {
-        display: table; !important
-    }
+table.data-values, table.dataTable {
+    display: table;  !important
+}
+
 /*FOOTER STYLING*/
 footer {
-    background: #4a586d;
+    background-color: #353535;
     color: #FFF;
     min-height: 300px;
+    padding: 60px 0;
+}
+
+footer h5 {
+    line-height: 20px;
+}
+
+footer a {
+    color: #f9bd16;
+    font-weight: 500;
+}
+
+footer a:hover {
+    color: #b1b1b1;
+    text-decoration: none;
+}
+
+.footer-section-title {
+    margin-bottom: 20px;
+}
+
+footer .license-logo {
+    margin-bottom: 3px;
+    margin-right: 9px;
+    margin-top: 2px;
 }

@@ -33,7 +33,7 @@
     <body>
         <div id="wrapper">
             <header>
-                <nav class="navbar navbar-inverse">
+                <nav class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <div class="navbar-header">
@@ -80,9 +80,21 @@
         <footer>
             <div class="container">
                 <div class="row">
-                    <div class="col-xs-12">
-                        Footer content here
+                    <div class="col-xs-12 col-sm-6">
+                        <h5 class="footer-section-title">SITE LICENSE</h5>
+                        <img class="pull-left license-logo" src="{% static 'dataloaderinterface/images/creative-commons.png' %}">
+                        <h5> All content on this website is licensed as <a href="#">Creative Commons Attribution-ShareAlike 4.0
+                            International (CC-BY-SA)</a>. Hardware designs on this website are released under the <a href="#">CERN Open
+                            Hardware License 1.1</a>. <a href="#">Learn more</a></h5>
                     </div>
+
+                    <div class="col-xs-12 col-sm-6">
+                        <h5 class="footer-section-title">PRESENTED BY</h5>
+                        <h5>EnviroDIY™ is presented by <a href="#">Stroud Water Research Center</a>, which seeks to advance knowledge
+                            and stewardship of fresh water through research, education, and restoration.</h5>
+                        <img src="{% static 'dataloaderinterface/images/logo_stroud.png' %}">
+                    </div>
+
                 </div>
             </div>
         </footer>
