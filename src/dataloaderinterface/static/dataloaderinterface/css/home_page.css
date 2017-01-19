@@ -25,39 +25,57 @@
     background-position: 50% 80%;
 }
 
-h3.step {
-    border: 1px solid #222;
+.step-number {
     display: inline-block;
     border-radius: 50%;
     width: 40px;
     height: 40px;
     text-align: center;
-    padding-top: 6px;
-    background: #fff;
+    padding-top: 8px;
     position: absolute;
     top: -40px;
     left: calc(50% - 20px);
+    box-shadow: 0 1px 1.5px 0 rgba(0,0,0,.12), 0 1px 1px 0 rgba(0,0,0,.24);
+    background: #2687da;
+    color: #FFF;
 }
 
 .step-icon {
     font-size: 8em !important;
-    text-shadow: 0 1px 0 #fff;
+    text-shadow: 0 1px 0 #151d21;
+    width: 100%;
+    padding-top: 20px;
+    color: #FFF;
+    background: #37474f;
+    border-radius: 2px 2px 0 0;
+}
+
+.step-item {
+    border-radius: 2px;
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12);
+    margin-bottom: 50px;
+}
+
+.step-item h4 {
+    padding:20px;
+}
+
+.content-section {
+    padding: 40px 0;
 }
 
 .section-gray {
     background-color: #37474f;
     color: #FFF;
-    padding: 20px 0;
 }
 
 .section-gray a {
-    color: #64ffda ;
+    color: #64ffda;
 }
 
 .section-gray a:hover {
-    color: #00bfa5 ;
+    color: #00bfa5;
     text-decoration: none;
-
 }
 
 .section-gray h1, .section-gray h3, .banner-legend h1, .banner-legend h3 {
@@ -67,12 +85,9 @@ h3.step {
 
 .section-title {
     opacity: .54;
-        font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-size: 34px;
     font-weight: 400;
     line-height: 40px;
-}
-
-.step-item {
-    border: 1px solid #DDD;
+    margin-bottom: 40px;
 }

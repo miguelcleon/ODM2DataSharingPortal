@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
+    <div class="container-fluid content-section">
         <div class="container">
             <div class="row">
                 <section class="col-xs-12">
@@ -29,7 +29,7 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-4 text-center">
                             <div class="step-item">
-                                <h3 class="step">1</h3>
+                                <h3 class="step-number">1</h3>
                                 <i class="fa fa-laptop step-icon" aria-hidden="true"></i>
                                 <h4>Register your compatible datalogger and your sensors.</h4>
                             </div>
@@ -37,17 +37,19 @@
 
                         <div class="col-xs-12 col-sm-4 text-center">
                             <div class="step-item">
-                                <h3 class="step">2</h3>
-                                <h4>Deploy your datalogger and start collecting data.</h4>
+                                <h3 class="step-number">2</h3>
                                 <i class="fa fa-wifi step-icon" aria-hidden="true"></i>
+                                <h4>Deploy your datalogger and start collecting data.</h4>
+
                             </div>
                         </div>
 
                         <div class="col-xs-12 col-sm-4 text-center">
                             <div class="step-item">
-                                <h3 class="step">3</h3>
-                                <h4>Stream your data continuously and view your results online.</h4>
+                                <h3 class="step-number">3</h3>
                                 <i class="fa fa-cloud-upload step-icon" aria-hidden="true"></i>
+                                <h4>Stream your data continuously and view your results online.</h4>
+
                             </div>
                         </div>
                     </div>
@@ -57,7 +59,7 @@
     </div>
 
     {#    {% if not user.is_authenticated %}#}
-    <div class="container-fluid section-gray">
+    <div class="container-fluid section-gray content-section">
         <div class="container">
             <div class="col-xs-12">
                 <section class="col-xs-12 text-center">
@@ -75,7 +77,6 @@
 {% block scripts %}
     {{ block.super }}
     <script type="text/javascript">
-        $('#example').DataTable();
         function TogglePlotVisibility(id) {
             var plot_id = "#plot_preview_".concat(id);
             if (!$(plot_id).is(":visible")) {
@@ -86,6 +87,5 @@
         }
     </script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/vendor/parallax.min.js' %}"></script>
 {% endblock %}
