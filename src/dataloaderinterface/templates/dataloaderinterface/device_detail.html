@@ -2,7 +2,9 @@
 {% load staticfiles %}
 
 {% block content %}
-    <section class="device-data col-lg-12">
+    <div class="container main-content">
+        <div class="row">
+            <section class="device-data col-lg-12">
         <header>
             <h2>
                 {% if sampling_feature.sampling_feature_name %}
@@ -134,6 +136,9 @@
             </div>
         </div>
     </section>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block styles %}

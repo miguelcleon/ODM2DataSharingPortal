@@ -79,12 +79,7 @@
 }
 
 .section-gray a {
-    color: #64ffda;
     font-weight: 300;
-}
-
-.section-gray a:hover {
-    color: #00bfa5;
     text-decoration: none;
 }
 

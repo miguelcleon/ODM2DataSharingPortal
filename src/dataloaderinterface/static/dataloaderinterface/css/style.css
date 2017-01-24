@@ -353,15 +353,15 @@ span.map-help {
 }
 
 span.form-message.error {
-    border: 1px solid #f5d739;
     width: 100%;
     display: block;
     text-align: center;
     padding: 5px;
-    background: #fff2d5;
+    background: #fff4db;
     border-radius: 2px;
     font-weight: 300 !important;
-    color: #715400;
+    color: #565656;
+    margin-top: 5px;
 }
 
 div.form-group.sampling-feature-fields {
@@ -515,6 +515,10 @@ footer .license-logo {
     text-shadow: 1px 1px #4E4E4E;
 }
 
+.btn.sharp {
+  border-radius:0;
+}
+
 /*LOGIN STYLING*/
 
 .panel-login {
@@ -533,6 +537,14 @@ footer .license-logo {
         margin: 0 -1px;
     color: #FFF;
     border: none;
+}
+
+a.orange {
+    color: #e08f26;
+}
+
+a.orange:hover {
+    color: #ffa42e;
 }
 
 /*SIGNUP STYLING*/
