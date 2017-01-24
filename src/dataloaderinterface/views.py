@@ -67,7 +67,7 @@ class UserRegistrationView(CreateView):
 
 class DevicesListView(LoginRequiredMixin, ListView):
     model = DeviceRegistration
-    template_name = 'dataloaderinterface/devices_list.html'
+    template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
         return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.id)

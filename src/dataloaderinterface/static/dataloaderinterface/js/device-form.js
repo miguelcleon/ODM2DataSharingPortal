@@ -224,7 +224,6 @@ function initializeResultsForm() {
     });
 
     $('div#result-dialog button#add-sensor-button').on('click', function() {
-        // TODO: validate empty fields first.
         validateResultForm().done(function(data, message, xhr) {
             if (xhr.status == 200) {
                 // valid
