@@ -6,18 +6,23 @@
         <div class="row">
             <section class="devices-list col-lg-12">
                 <header id="space">
-                    <h2 class="device">{{ user }}'s Registered Devices</h2>
+                    <h2 class="device">Registered Devices</h2>
                 </header>
-                <ul class="device_list" id="menu">
+
+                <div class="row">
                     {% for registration in object_list %}
+
                         <a class="li_link" href="{% url 'device_detail' registration.registration_id %}">
-                            <li class="device_item">
-                                <div id="device_name"> {{ registration.device_name }} </div>
-                                <div id="device_reg"> {{ registration.registration_date }} </div>
-                            </li>
+                            <div class="col-xs-12 col-sm-4">
+                                <div class="card">
+                                    <h3>{{ registration.sampling_feature.sampling_feature_name }}</h3>
+                                    <h2>{{ registration.sampling_feature.sampling_feature_code }}</h2>
+                                    <h2>{{ registration.registration_date }}</h2>
+                                </div>
+                            </div>
                         </a>
-                    {% endfor %}
-                </ul>
+                {% endfor %}
+                </div>
             </section>
         </div>
     </div>

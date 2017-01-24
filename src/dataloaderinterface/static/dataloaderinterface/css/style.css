@@ -519,24 +519,30 @@ footer .license-logo {
   border-radius:0;
 }
 
+.card {
+    border-radius: 2px;
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12);
+    margin-bottom: 50px;
+}
+
+.card h4, .card h3 {
+    padding: 20px;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 300;
+}
+
 /*LOGIN STYLING*/
 
 .panel-login {
-    background: rgba(125, 125, 125, 0.39);
+    background: rgba(0, 0, 0, 0.63);
     color: #FFF;
-    border: 1px solid #757575;
+    border: 1px solid #252525;
 }
 
 .panel-login > .panel-heading {
-    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#7d7e7d+0,0e0e0e+100;Black+3D */
-    background: rgb(125, 126, 125); /* Old browsers */
-    background: -moz-linear-gradient(top, rgba(125, 126, 125, 1) 0%, rgba(14, 14, 14, 1) 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top, rgba(125, 126, 125, 1) 0%, rgba(14, 14, 14, 1) 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom, rgba(125, 126, 125, 1) 0%, rgba(14, 14, 14, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7d7e7d', endColorstr='#0e0e0e', GradientType=0); /* IE6-9 */
-        margin: 0 -1px;
     color: #FFF;
     border: none;
+    background: #353535;
 }
 
 a.orange {
