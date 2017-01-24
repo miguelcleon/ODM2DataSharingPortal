@@ -8,12 +8,14 @@
 
 {% block home_page_banner %}
     <div id="banner">
-        <div class="parallax-window" data-parallax="scroll" data-image-src="{% static "dataloaderinterface/images/banner.jpg" %}" id="banner-image-container">
+        <div class="parallax-window" data-parallax="scroll" data-image-src="{% static "dataloaderinterface/images/banner2.JPG" %}" id="banner-image-container">
             <div class="legend-container">
                 <div class="banner-legend">
-                    <h1 class="text-center">Citizen Science Water Quality Data Portal</h1>
+                    <h1 class="text-center">EnviroDIY Water Quality Data Portal </h1>
+                    <h3 class="text-center">Near Real-Time Data Sharing for the EnviroDIY Community</h3>
+                    <br>
                     <h3 class="text-center">Ready to start sharing your data?</h3>
-                    <h3 class="text-center">Create an account and get started.</h3>
+                    <h3 class="text-center"><a href="{% url 'user_registration' %}">SIGN UP</a></h3>
                 </div>
             </div>
         </div>
@@ -27,33 +29,83 @@
                 <section class="col-xs-12">
                     <div class="text-center section-title">How it works</div>
                     <div class="row">
-                        <div class="col-xs-12 col-sm-4 text-center">
-                            <div class="step-item">
-                                <h3 class="step-number">1</h3>
-                                <i class="fa fa-laptop step-icon" aria-hidden="true"></i>
-                                <h4>Register your compatible datalogger and your sensors.</h4>
+                        <div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2">
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-4 text-center">
+                                    <div class="card">
+                                        <h3 class="step-number">1</h3>
+                                        <i class="fa fa-laptop step-icon" aria-hidden="true"></i>
+                                        <h4>Register your compatible datalogger and your sensors.</h4>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12 col-sm-4 text-center">
+                                    <div class="card">
+                                        <h3 class="step-number">2</h3>
+                                        <i class="fa fa-wifi step-icon" aria-hidden="true"></i>
+                                        <h4>Deploy your datalogger and start collecting data.</h4>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12 col-sm-4 text-center">
+                                    <div class="card">
+                                        <h3 class="step-number">3</h3>
+                                        <i class="fa fa-cloud-upload step-icon" aria-hidden="true"></i>
+                                        <h4>Stream your data continuously and view your results online.</h4>
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
 
-                        <div class="col-xs-12 col-sm-4 text-center">
-                            <div class="step-item">
-                                <h3 class="step-number">2</h3>
-                                <i class="fa fa-wifi step-icon" aria-hidden="true"></i>
-                                <h4>Deploy your datalogger and start collecting data.</h4>
-
-                            </div>
-                        </div>
-
-                        <div class="col-xs-12 col-sm-4 text-center">
-                            <div class="step-item">
-                                <h3 class="step-number">3</h3>
-                                <i class="fa fa-cloud-upload step-icon" aria-hidden="true"></i>
-                                <h4>Stream your data continuously and view your results online.</h4>
-
-                            </div>
-                        </div>
                     </div>
                 </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid content-section section-image">
+        <div class="section-image"
+             style='background-image: url("{% static "dataloaderinterface/images/section_image_1.jpg" %}");
+                     background-position: 50% 9%;'>
+        </div>
+    </div>
+
+    <div class="container-fluid content-section">
+        <div class="container">
+            <div class="col-xs-12">
+                <div class="text-center section-title">Explore our Companion Projects</div>
+
+                <div class="col-xs-12 col-sm-6 col-md-3 col-md-offset-3 text-center">
+                    <div class="card">
+                        <div class="explore-image-container">
+                            <img class="card-header-image" src="{% static 'dataloaderinterface/images/site_logo.png' %}"
+                                 alt="WebSDL">
+                        </div>
+                        <h3 class="text-left">EnviroDIY</h3>
+                        <h4 class="text-left">A community of enthusiasts sharing do-it-yourself ideas for environmental
+                            science and
+                            monitoring
+                        </h4>
+                        <h4 class="visit-link text-left"><a href="#">VISIT SITE <i
+                                class="glyphicon glyphicon-chevron-right"></i></a></h4>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-3 text-center">
+                    <div class="card">
+                        <div class="explore-image-container">
+                            <img class="card-header-image" src="{% static 'dataloaderinterface/images/WikiWatershed_logo.png' %}"
+                                 alt="WebSDL">
+                        </div>
+                        <h3 class="text-left">WikiWatershed</h3>
+                        <h4 class="text-left">Web tools for collaboratively advancing knowledge and stewardship of fresh
+                            water</h4>
+                        <h4 class="visit-link text-left"><a href="#">VISIT SITE <i
+                                class="glyphicon glyphicon-chevron-right"></i></a></h4>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

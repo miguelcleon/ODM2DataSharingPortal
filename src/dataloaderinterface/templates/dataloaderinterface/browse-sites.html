@@ -3,7 +3,9 @@
 {% load site %}
 
 {% block content %}
-    <section class="all-sites-list col-lg-12">
+    <div class="container main-content">
+        <div class="row">
+            <section class="all-sites-list col-lg-12">
         <header>
             <h2>Browse Data Collection Sites</h2>
             <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
@@ -61,6 +63,9 @@
         </script>
 
 </section>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block services_urls %}
