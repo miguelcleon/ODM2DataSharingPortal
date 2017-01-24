@@ -527,12 +527,19 @@ footer .license-logo {
 }
 
 .device-card {
-    margin-top: 20px;
+        margin-top: 20px;
+    margin: 20px;
+    padding: 10px;
+    text-decoration: none;
 }
 
 .device-card h3, .device-card h4 {
     margin: 0;
     padding: 5px;
+}
+
+.li_link:hover {
+    text-decoration: none;
 }
 
 .site-marker {
