@@ -333,11 +333,6 @@ table.data-values {
     margin-top: 0 !important;
 }
 
-div.measurements-table div.dataTables_scrollBody {
-    overflow-y: scroll !important;
-    overflow-x: hidden !important;
-}
-
 span.map-help {
     float: right;
     font-size: .96em;
@@ -531,6 +526,22 @@ footer .license-logo {
     font-weight: 300;
 }
 
+.device-card {
+    margin-top: 20px;
+}
+
+.device-card h3, .device-card h4 {
+    margin: 0;
+    padding: 5px;
+}
+
+.site-marker {
+    margin-top: 40px;
+}
+
+.site-marker::before {
+    color:#DDD;
+}
 /*LOGIN STYLING*/
 
 .panel-login {

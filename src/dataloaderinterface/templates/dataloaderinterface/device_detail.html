@@ -141,15 +141,9 @@
 
 {% endblock %}
 
-{% block styles %}
-    {{ block.super }}
-    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>
-{% endblock %}
-
 {% block scripts %}
     {{ block.super }}
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}

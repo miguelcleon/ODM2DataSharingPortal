@@ -6,23 +6,40 @@
         <div class="row">
             <section class="sites-list col-lg-12">
                 <header id="space">
-                    <h2 class="device">{{ user }}'s Registered Devices</h2>
+                    <h2 class="device">Registered Sites</h2>
                 </header>
 
                 <div class="map-container">
                     <div id="map"></div>
                 </div>
 
-                <ul class="device_list" id="menu">
+                <div class="row">
                     {% for registration in object_list %}
-                        <a class="li_link" href="{% url 'device_detail' registration.registration_id %}">
-                            <li class="device_item">
-                                <div id="device_name"> {{ registration.device_name }} </div>
-{#                                <div id="device_reg"> {{ registration.registration_date }} </div>#}
-                            </li>
-                        </a>
+                        <div class="col-xs-12 col-sm-3">
+                            <a class="li_link" href="{% url 'device_detail' registration.registration_id %}">
+                                <div class="card device-card">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-center">
+                                            <i class="fa fa-map-marker fa-5x site-marker" aria-hidden="true"></i>
+                                        </div>
+                                        <div class="col-xs-8">
+                                            <br>
+                                            <small>Device Name</small>
+                                            <h4><strong>{{ registration.device_name }}</strong></h4>
+                                            <br>
+                                            <small>Sampling Feature </small>
+                                            <h4>{{ registration.sampling_feature }}</h4>
+                                            <br>
+                                            <small>Registration Date</small>
+                                            <h4>{{ registration.registration_date }}</h4>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
                     {% endfor %}
-                </ul>
+                </div>
 
 
                 <script id="sites-data" type="application/json">
