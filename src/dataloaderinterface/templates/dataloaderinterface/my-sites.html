@@ -1,0 +1,63 @@
+{% extends 'dataloaderinterface/base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="container main-content">
+        <div class="row">
+            <section class="sites-list col-lg-12">
+                <header id="space">
+                    <h2 class="device">{{ user }}'s Registered Devices</h2>
+                </header>
+
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+
+                <ul class="device_list" id="menu">
+                    {% for registration in object_list %}
+                        <a class="li_link" href="{% url 'device_detail' registration.registration_id %}">
+                            <li class="device_item">
+                                <div id="device_name"> {{ registration.device_name }} </div>
+{#                                <div id="device_reg"> {{ registration.registration_date }} </div>#}
+                            </li>
+                        </a>
+                    {% endfor %}
+                </ul>
+
+
+                <script id="sites-data" type="application/json">
+                    [
+                    {% for registration in object_list %}
+                        {% with sampling_feature=registration.sampling_feature %}
+                        {
+                            "id": "{{ sampling_feature.sampling_feature_id }}",
+                            "code": "{{ sampling_feature.sampling_feature_code }}",
+                            "name": "{{ sampling_feature.sampling_feature_name }}",
+                            "latitude": {{ sampling_feature.site.latitude }},
+                            "longitude": {{ sampling_feature.site.longitude }},
+                            "elevation": {{ sampling_feature.elevation_m }}
+                        }{% if not forloop.last %},{% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                    ]
+                </script>
+            </section>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block services_urls %}
+    {{ block.super }}
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'dataloaderinterface/css/my-sites.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'dataloaderinterface/js/my-sites.js' %}"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+{% endblock %}
