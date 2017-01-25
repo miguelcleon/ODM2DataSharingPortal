@@ -573,6 +573,11 @@ i.material-icons.site-card-icon {
     font-weight: 500;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
+
+.mdl-card {
+    width: auto !important;
+}
+
 /*LOGIN STYLING*/
 
 .panel-login {
