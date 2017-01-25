@@ -2,42 +2,92 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div class="container main-content">
+    <div class="container">
         <div class="row">
             <section class="sites-list col-lg-12">
-                <header id="space">
-                    <h2 class="device">Registered Sites</h2>
-                </header>
+                <div class="page-title">Registered Sites</div>
+            </section>
+        </div>
+    </div>
 
-                <div class="map-container">
-                    <div id="map"></div>
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="full-width-map-container my-sites">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
 
-                <div class="row">
-                    {% for registration in object_list %}
-                        <div class="col-xs-12 col-sm-4">
-                            <a class="li_link" href="{% url 'device_detail' registration.registration_id %}">
-                                <div class="card device-card">
+    <div class="container main-content">
+        <div class="row">
+            {% for registration in object_list %}
+                <div class="col-xs-12 col-sm-4">
+                    <div class="mdl-card mdl-shadow--2dp site-card">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">{{ registration.device_name }}</h2>
+                        </div>
 
+                        <div class="mdl-card__supporting-text">
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <td><i class="material-icons site-card-icon">multiline_chart</i></td>
+                                    <td>
+                                        <small> Sampling Feature</small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><strong>{{ registration.sampling_feature }}</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <br>
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <td><i class="material-icons site-card-icon">today</i></td>
+                                    <td>
+                                        <small> Registration Date</small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><strong>{{ registration.registration_date }}</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
 
-                                            <br>
-                                            <small>Device Name</small>
-                                            <h4><strong>{{ registration.device_name }}</strong></h4>
-                                            <br>
-                                            <small>Sampling Feature </small>
-                                            <h4>{{ registration.sampling_feature }}</h4>
-                                            <br>
-                                            <small>Registration Date</small>
-                                            <h4>{{ registration.registration_date }}</h4>
-                                            <br>
-                                </div>
+                        </div>
+
+                        <div class="mdl-card__actions mdl-card--border">
+                            <a href="{% url 'device_detail' registration.registration_id %}"
+                               class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+                                VIEW SITE
                             </a>
                         </div>
-                    {% endfor %}
+
+                        <div class="mdl-card__menu">
+                            <!-- Right aligned menu below button -->
+                            <button id="demo-menu-lower-right-{{ forloop.counter0 }}"
+                                    class="mdl-button mdl-js-button mdl-button--icon">
+                                <i class="material-icons">more_vert</i>
+                            </button>
+
+                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+                                for="demo-menu-lower-right-{{ forloop.counter0 }}">
+                                <li class="mdl-menu__item">View on map</li>
+                            </ul>
+                        </div>
+
+
+
+                    </div>
                 </div>
+            {% endfor %}
+        </div>
 
-
-                <script id="sites-data" type="application/json">
+        <script id="sites-data" type="application/json">
                     [
                     {% for registration in object_list %}
                         {% with sampling_feature=registration.sampling_feature %}
@@ -53,8 +103,7 @@
                     {% endfor %}
                     ]
                 </script>
-            </section>
-        </div>
+        </section>
     </div>
 
 {% endblock %}

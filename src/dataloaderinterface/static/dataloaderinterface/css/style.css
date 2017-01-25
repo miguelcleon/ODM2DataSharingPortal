@@ -2,9 +2,11 @@ html {
     height: 100%;
 }
 
-body {
+html > body {
     height: calc(100% - 141px);
+        font-family: "Roboto","Helvetica","Arial",sans-serif;
 }
+
 @font-face {
     font-family: 'Glyphicons Halflings';
     src: url('../fonts/glyphicons-halflings-regular.eot');
@@ -39,6 +41,18 @@ body {
     margin-top: 25px;
     height: 450px;
     padding: 0;
+}
+
+.full-width-map-container {
+    margin-top: 0;
+    height: 450px;
+    padding: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.full-screen-map-container {
+    margin-top: 0 !important;
 }
 
 .detail-map-container {
@@ -155,7 +169,7 @@ div.form-field {
     /*right: 30px;*/
 /*}*/
 
-.results-table h3 {
+.inline {
     display: inline-block;
 }
 
@@ -425,9 +439,6 @@ ul.errorlist {
     color: rgb(232, 0, 0);
 }
 
-.form-group, .form-group .form-field {
-    padding-left: 0;
-}
 
 .organization-fields, .organization-fields .form-field {
     padding-left: 15px;
@@ -520,34 +531,36 @@ footer .license-logo {
     margin-bottom: 50px;
 }
 
-.card h4, .card h3 {
-    padding: 20px;
+.card h4 {
+    font-size: 18px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 300;
 }
 
-.device-card {
-        margin-top: 20px;
-    margin: 20px;
-    padding: 10px;
-    text-decoration: none;
+.card h4, .card h3 {
+    padding: 20px;
 }
 
-.device-card h3, .device-card h4 {
-    margin: 0;
-    padding: 5px;
+.site-card .mdl-card__supporting-text {
+    color: #252525;
 }
 
-.li_link:hover {
-    text-decoration: none;
+.site-card {
+    margin-top: 20px;
 }
 
-.site-marker {
-    margin-top: 40px;
+i.material-icons.site-card-icon {
+    margin-right: 8px;
+    color: #92d050;
 }
 
-.site-marker::before {
-    color:#DDD;
+.page-title {
+    margin: 40px auto;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.541176);
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
 /*LOGIN STYLING*/
 

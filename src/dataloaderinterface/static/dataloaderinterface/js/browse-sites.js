@@ -7,6 +7,7 @@ function initMap() {
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
     var map = new google.maps.Map(document.getElementById('map'), {
         center: DEFAULT_POSITION,
+        scrollwheel: false,
         zoom: DEFAULT_ZOOM,
         disableDefaultUI: true,
         zoomControl: true,

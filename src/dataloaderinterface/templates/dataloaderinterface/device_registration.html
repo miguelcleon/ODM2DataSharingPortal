@@ -7,7 +7,7 @@
         <div class="row">
             <section class="device-data col-lg-12">
                 <header class="section-header">
-                    <h2><i class="fa fa-map-marker" aria-hidden="true"></i> Register a Site</h2>
+                    <div class="page-title">Register a Site</div>
                     {% if messages %}
                         {% for message in messages %}
                             <span class="form-message {{ message.tags }}">{{ message }}</span>
@@ -26,6 +26,7 @@
                             <br>
                             <div class="row">
                                 <div class="form-group col-lg-4 sampling-feature-fields">
+                                    <div class="row">
                                     {% for field in sampling_feature_form %}
                                         <div class="form-field col-lg-12{% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                              data-field="{{ field.name }}">
@@ -42,6 +43,7 @@
                                             {{ field|add_class:"form-control input-sm" }}
                                         </div>
                                     {% endfor %}
+                                    </div>
                                 </div>
                                 <div class="form-group col-lg-8 map-container">
                                     <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
@@ -57,7 +59,9 @@
                             <div class="row">
                                 <div class="col-lg-12 results-table" id="formset"
                                  data-formset-prefix="{{ results_formset.prefix }}">
-                                    <h3>Sensors</h3>
+
+                                    <div class="page-title inline">Sensors</div>
+
                                     <button id="new-result-button" type="button" class="btn btn-default" data-toggle="modal"
                                             data-target="#result-dialog">Add Sensor
                                     </button>

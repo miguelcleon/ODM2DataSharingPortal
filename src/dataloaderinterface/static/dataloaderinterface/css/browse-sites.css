@@ -40,3 +40,18 @@ span.site-data {
 
 }
 
+.browse-sites-header {
+    display: inline-block;
+    position: absolute;
+    z-index: 1;
+    background: #FFF;
+    padding: 24px;
+    margin: 15px;
+    border-radius: 2px;
+    max-width: 350px;
+}
+
+.browse-sites-header .page-title {
+    margin: 0;
+}
+

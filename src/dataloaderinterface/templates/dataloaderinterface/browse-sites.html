@@ -3,65 +3,66 @@
 {% load site %}
 
 {% block content %}
-    <div class="container main-content">
+    <div class="container-fluid">
         <div class="row">
-            <section class="all-sites-list col-lg-12">
-                <header>
-                    <h2>Browse Data Collection Sites</h2>
-                    <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
-                </header>
-                <div class="map-container">
-                    <div id="map"></div>
-                </div>
+            <div class="browse-sites-header mdl-shadow--2dp">
+                <div class="page-title">Browse Data Collection Sites</div>
+                <br>
+                <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
 
-                <script id="sites-data" type="application/json">
-                    [
-                    {% for sampling_feature in sites %}
-                        {% with registration=sampling_feature|get_registration %}
-                        {
-                            "id": "{{ sampling_feature.sampling_feature_id }}",
-                            "code": "{{ sampling_feature.sampling_feature_code }}",
-                            "name": "{{ sampling_feature.sampling_feature_name }}",
-                            "latitude": {{ sampling_feature.site.latitude }},
-                            "longitude": {{ sampling_feature.site.longitude }},
-                            "elevation": {{ sampling_feature.elevation_m }},
-                            "detail_link": "{% if registration %}{% url 'device_detail' registration.registration_id %}{% endif %}"
-                        }{% if not forloop.last %},{% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                    ]
-                </script>
+            </div>
 
-                <script id="site-marker-content" type="text/plain">
-                    <div>
-                        <div id="marker-content">
-                            <div data-field="code" class="site-field">
-                                <span class="site-label">Site Code</span>
-                                <span class="site-data"></span>
-                            </div>
-                            <div data-field="name" class="site-field">
-                                <span class="site-label">Site Name</span>
-                                <span class="site-data"></span>
-                            </div>
-                            <div data-field="latitude" class="site-field">
-                                <span class="site-label">Latitude</span>
-                                <span class="site-data"></span>
-                            </div>
-                            <div data-field="longitude" class="site-field">
-                                <span class="site-label">Longitude</span>
-                                <span class="site-data"></span>
-                            </div>
-                            <div data-field="elevation" class="site-field">
-                                <span class="site-label">Elevation</span>
-                                <span class="site-data"></span> <span class="elevation-units">m</span>
-                            </div>
-                            <div class="site-link">
-                                <a>View data for this site</a>
-                            </div>
+            <div class="map-container full-screen-map-container">
+                <div id="map"></div>
+            </div>
+
+            <script id="sites-data" type="application/json">
+                [
+                {% for sampling_feature in sites %}
+                    {% with registration=sampling_feature|get_registration %}
+                    {
+                        "id": "{{ sampling_feature.sampling_feature_id }}",
+                        "code": "{{ sampling_feature.sampling_feature_code }}",
+                        "name": "{{ sampling_feature.sampling_feature_name }}",
+                        "latitude": {{ sampling_feature.site.latitude }},
+                        "longitude": {{ sampling_feature.site.longitude }},
+                        "elevation": {{ sampling_feature.elevation_m }},
+                        "detail_link": "{% if registration %}{% url 'device_detail' registration.registration_id %}{% endif %}"
+                    }{% if not forloop.last %},{% endif %}
+                    {% endwith %}
+                {% endfor %}
+                ]
+            </script>
+
+            <script id="site-marker-content" type="text/plain">
+                <div>
+                    <div id="marker-content">
+                        <div data-field="code" class="site-field">
+                            <span class="site-label">Site Code</span>
+                            <span class="site-data"></span>
+                        </div>
+                        <div data-field="name" class="site-field">
+                            <span class="site-label">Site Name</span>
+                            <span class="site-data"></span>
+                        </div>
+                        <div data-field="latitude" class="site-field">
+                            <span class="site-label">Latitude</span>
+                            <span class="site-data"></span>
+                        </div>
+                        <div data-field="longitude" class="site-field">
+                            <span class="site-label">Longitude</span>
+                            <span class="site-data"></span>
+                        </div>
+                        <div data-field="elevation" class="site-field">
+                            <span class="site-label">Elevation</span>
+                            <span class="site-data"></span> <span class="elevation-units">m</span>
+                        </div>
+                        <div class="site-link">
+                            <a>View data for this site</a>
                         </div>
                     </div>
-                </script>
-            </section>
+                </div>
+            </script>
         </div>
     </div>
 

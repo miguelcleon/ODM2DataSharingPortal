@@ -1,26 +1,3 @@
-
-h2.device {
-    /*position: fixed;*/
-    top: 10%;
-    left: 15%;
-    width: 100%;
-    padding: 10px;
-    margin: 5px;
-    /*box-shadow: 2px 3px 5px rgba(100, 100, 100, 0.75);*/
-}
-
-li.device_item {
-    padding: 5px;
-    width: 100%;
-    border: groove gainsboro;
-    list-style-type: none;
-}
-
-li.device_item:hover, li.device_item:active {
-    border: solid 2px #DDD;
-    background-color: #DDD;
-}
-
 .device-details {
     display: inline-block;
     overflow: auto;
