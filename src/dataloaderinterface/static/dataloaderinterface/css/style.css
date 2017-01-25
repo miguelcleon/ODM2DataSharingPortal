@@ -409,7 +409,6 @@ span.form-message.error {
     padding: 5px;
     background: #fff4db;
     border-radius: 2px;
-    font-weight: 300 !important;
     color: #565656;
     margin-top: 5px;
 }
@@ -627,6 +626,11 @@ i.material-icons.site-card-icon {
     width: auto !important;
 }
 
+#new-result-button {
+    margin-left: 20px;
+    margin-bottom: -10px;
+}
+
 /*LOGIN STYLING*/
 
 .panel-login {
@@ -653,4 +657,8 @@ a.orange:hover {
 /*SIGNUP STYLING*/
 .register-title {
     color: #FFF;
+}
+
+#btn-login {
+    background-color: rgb(101, 101, 101);
 }
