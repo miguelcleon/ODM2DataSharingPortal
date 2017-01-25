@@ -7,9 +7,8 @@
         <div class="row">
             <div class="browse-sites-header mdl-shadow--2dp">
                 <div class="page-title">Browse Data Collection Sites</div>
-                <br>
-                <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
-
+                <br class="hidden-xs">
+                <span class="subtitle hidden-xs">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
             </div>
 
             <div class="map-container full-screen-map-container">
@@ -65,8 +64,9 @@
             </script>
         </div>
     </div>
-
 {% endblock %}
+
+{% block footer %}{% endblock %}
 
 {% block services_urls %}
     {{ block.super }}

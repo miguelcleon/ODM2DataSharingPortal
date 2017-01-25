@@ -32,6 +32,7 @@ function initMap() {
         center: { lat: mapPosition.lat || DEFAULT_LATITUDE, lng: mapPosition.lng || DEFAULT_LONGITUDE },
         zoom: mapZoom || DEFAULT_ZOOM,
         mapTypeId: google.maps.MapTypeId.TERRAIN,
+        scrollwheel: false,
         draggableCursor: 'pointer',
         disableDefaultUI: true,
         zoomControl: true,
