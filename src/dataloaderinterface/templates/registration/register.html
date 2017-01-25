@@ -21,8 +21,8 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="register-title text-shadow">
-                            <h2 class="text-center">The Portal for Citizen Collected Water Quality Data</h2>
-                            <h4 class="text-center">Share your data and view data contributed by others.</h4>
+                            <h1 class="text-center">The Portal for Citizen Collected Water Quality Data</h1>
+                            <h3 class="text-center">Share your data and view data contributed by others.</h3>
                             <br>
                         </div>
 
@@ -40,79 +40,50 @@
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-6">
                                                     <div class="form-field required-field ">
-                                                        <label class="control-label" for="id_first_name"><i
-                                                                class="fa fa-user" aria-hidden="true"></i> Enter a first
-                                                            name</label>
-                                                        <input class="form-control input-sm" id="id_first_name"
-                                                               maxlength="50" autofocus=""
-                                                               placeholder="First Name" name="first_name" type="text"
-                                                               required="">
+                                                        <label class="control-label" for="id_first_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a first name</label>
+                                                        {{ form.first_name|add_class:"form-control input-sm"|attr:"placeholder: First Name" }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-6">
                                                     <div class="form-field required-field">
-                                                        <label class="control-label" for="id_last_name"><i
-                                                                class="fa fa-user" aria-hidden="true"></i> Enter a last
-                                                            name</label>
-                                                        <input class="form-control input-sm" id="id_last_name"
-                                                               maxlength="50"
-                                                               placeholder="Last Name" name="last_name" type="text"
-                                                               required="">
+                                                        <label class="control-label" for="id_last_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a last name</label>
+                                                        {{ form.last_name|add_class:"form-control input-sm"|attr:"placeholder: Last Name" }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
                                                     <div class="form-field required-field">
-                                                        <label class="control-label" for="id_email_address"><i class="fa fa-envelope" aria-hidden="true"></i> Enter your
-                                                            email
-                                                            address</label>
-                                                        <input class="form-control input-sm" id="id_email_address"
-                                                               maxlength="50"
-                                                               placeholder="Email Address" name="email_address"
-                                                               type="text" required="">
+                                                        <label class="control-label" for="id_email_address"><i class="fa fa-envelope" aria-hidden="true"></i> Enter your email address</label>
+                                                        {{ form.email_address|add_class:"form-control input-sm"|attr:"placeholder: Email Address" }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
                                                     <div class="form-field required-field">
-                                                        <label class="control-label" for="id_username"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Choose a
-                                                            username</label>
-                                                        <input class="form-control input-sm"
-                                                               id="id_username"
-                                                               maxlength="150" placeholder="Username" name="username"
-                                                               type="text" required="">
+                                                        <label class="control-label" for="id_username"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Choose a username</label>
+                                                        {{ form.username|add_class:"form-control input-sm"|attr:"placeholder: Username" }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
                                                     <div class="form-field required-field ">
-                                                        <label class="control-label" for="id_password1"><i class="fa fa-lock" aria-hidden="true"></i> Choose a
-                                                            password</label>
-                                                        <input class="form-control input-sm" id="id_password1"
-                                                               name="password1"
-                                                               placeholder="Password" type="password" required="">
+                                                        <label class="control-label" for="id_password1"><i class="fa fa-lock" aria-hidden="true"></i> Choose a password</label>
+                                                        {{ form.password1|add_class:"form-control input-sm"|attr:"placeholder: Password" }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
                                                     <div class="form-field required-field ">
-                                                        <input class="form-control input-sm" id="id_password2"
-                                                               placeholder="Password Confirmation" name="password2"
-                                                               type="password" required="">
+                                                        {{ form.password2|add_class:"form-control input-sm"|attr:"placeholder: Password Confirmation" }}
                                                     </div>
                                                 </div>
 
 
                                                 <div class="col-xs-12">
                                                     <div class="form-field  ">
-                                                        <label class="control-label"
-                                                               for="id_organization"><i class="fa fa-building" aria-hidden="true"></i> Organization</label>
-                                                        <select class="form-control input-sm select2-hidden-accessible"
-                                                                id="id_organization" name="organization" tabindex="-1"
-                                                                aria-hidden="true">
-                                                            <option value="" selected="selected">---------</option>
-                                                        </select>
+                                                        <label class="control-label" for="id_organization"><i class="fa fa-building" aria-hidden="true"></i> Organization</label>
+                                                        {{ form.organization|add_class:"form-control input-sm select2-hidden-accessible"|attr:"placeholder: Choose an organization" }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -120,10 +91,7 @@
                                     </fieldset>
 
                                     <div class="text-center">
-                                        <button type="submit" id="btn-login" value="Register User"
-                                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                            Register User
-                                        </button>
+                                        <input type="submit" class="btn btn-default" value="Register User">
                                     </div>
                                 </form>
                             </div>
