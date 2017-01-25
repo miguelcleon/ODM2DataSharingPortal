@@ -462,8 +462,13 @@ ul.errorlist {
 
 .navbar-nav > li > a {
     line-height: 50px !important;
+    border-bottom: 3px solid transparent;
     -webkit-transition: all 0.2s; /* Safari */
     transition: all 0.2s;
+}
+
+.navbar-nav > li > a:hover {
+    border-bottom: 3px solid #FFF;
 }
 
 .navbar-header {
@@ -540,6 +545,11 @@ footer .license-logo {
 
 .card h4, .card h3 {
     padding: 20px;
+        margin: 0;
+}
+
+.card h3 {
+    font-size: 24px;
 }
 
 .site-card .mdl-card__supporting-text {
