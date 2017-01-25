@@ -561,6 +561,15 @@ footer .license-logo {
     margin-top: 2px;
 }
 
+footer .separator {
+    border-top: 1px solid #505050;
+    margin: 30px 0;
+}
+
+#stroud-logo {
+    margin-bottom: 20px;
+}
+
 /*GENERAL STYLING*/
 
 .main-content {
