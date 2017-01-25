@@ -7,7 +7,6 @@ function initMap() {
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
     var map = new google.maps.Map(document.getElementById('map'), {
         center: DEFAULT_POSITION,
-        scrollwheel: false,
         zoom: DEFAULT_ZOOM,
         disableDefaultUI: true,
         zoomControl: true,
@@ -43,3 +42,14 @@ function initMap() {
         })
     });
 }
+
+$(document).ready(function () {
+    $("#wrapper").css("height", "calc(100% - 81px)");
+    $(".map-container").css("height", $("#wrapper").height());
+    $("body").css("overflow", "hidden")
+});
+
+$( window ).resize(function() {
+  $(".map-container").css("height", $("#wrapper").height());
+    $("body").css("overflow", "hidden")
+});
