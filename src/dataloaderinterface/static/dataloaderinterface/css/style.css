@@ -593,7 +593,8 @@ footer .license-logo {
 
 .card h4, .card h3 {
     padding: 20px;
-        margin: 0;
+    margin: 0;
+    line-height: 30px;
 }
 
 .card h3 {
