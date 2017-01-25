@@ -11,12 +11,11 @@
         <div class="parallax-window" data-parallax="scroll" data-image-src="{% static "dataloaderinterface/images/banner2.JPG" %}" id="banner-image-container">
             <div class="legend-container">
                 <div class="banner-legend">
-                    <h1 class="text-center">EnviroDIY Water Quality Data Portal </h1>
-                    <h3 class="text-center">Near Real-Time Data Sharing for the EnviroDIY Community</h3>
+                    <h2 class="text-center">EnviroDIY Water Quality Data Portal </h2>
+                    <h4 class="text-center">Near Real-Time Data Sharing for the EnviroDIY Community</h4>
                     {% if not user.is_authenticated %}
-                        <br>
-                        <h3 class="text-center">Ready to start sharing your data?</h3>
-                        <h3 class="text-center"><a href="{% url 'user_registration' %}">SIGN UP</a></h3>
+                        <h4 class="text-center">Ready to start sharing your data?</h4>
+                        <h4 class="text-center"><a href="{% url 'user_registration' %}">SIGN UP</a></h4>
                     {% endif %}
                 </div>
             </div>
@@ -118,9 +117,9 @@
             <div class="container">
                 <div class="col-xs-12">
                     <section class="col-xs-12 text-center">
-                        <h1>Ready to join?</h1>
-                        <h3>Create an account for free.</h3>
-                        <h3><a class="orange" href="{% url 'user_registration' %}">SIGN UP</a></h3>
+                        <h3>Ready to join?</h3>
+                        <h5>Create an account for free.</h5>
+                        <h5><a class="orange" href="{% url 'user_registration' %}">SIGN UP</a></h5>
                     </section>
                 </div>
             </div>
