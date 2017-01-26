@@ -9,7 +9,7 @@ from dataloader.querysets import AffiliationQuerySet, RelatedActionManager, Resu
     DataLoggerFileManager, EquipmentModelManager, DataLoggerFileColumnManager, InstrumentOutputVariableManager, \
     EquipmentManager, CalibrationReferenceEquipmentManager, EquipmentUsedManager, MaintenanceActionManager, \
     RelatedEquipmentManager, CalibrationActionManager, ODM2QuerySet, ActionQuerySet, ActionByQuerySet, \
-    FeatureActionQuerySet
+    FeatureActionQuerySet, TimeSeriesValuesQuerySet
 
 
 # TODO: function to handle the file upload folder for file fields.
@@ -1971,6 +1971,8 @@ class TimeSeriesResultValue(ResultValue, QualityControlComponent, TimeAggregatio
     data_value = models.FloatField(db_column='datavalue')
     annotations = models.ManyToManyField('Annotation', related_name='annotated_time_series_values',
                                          through='TimeSeriesResultValueAnnotation')
+
+    objects = TimeSeriesValuesQuerySet.as_manager()
 
     class Meta:
         db_table = 'timeseriesresultvalues'

@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import abc
 
+import datetime
 from django.db import models
 
 # region ODM2 Core models
@@ -44,6 +45,9 @@ class ActionByQuerySet(ODM2QuerySet):
 class FeatureActionQuerySet(ODM2QuerySet):
     def for_display(self):
         return self.select_related('action').prefetch_related('sampling_feature')
+
+    def with_results(self):
+        return self.prefetch_related('results__timeseriesresult__values', 'results__variable')
 
 
 class RelatedActionManager(models.Manager):
@@ -125,7 +129,7 @@ class CalibrationActionManager(models.Manager):
 
 # endregion
 
-# class TimeSeriesResultValuesManager(models.Manager):
-#     def get_queryset(self):
-#         queryset = super(CalibrationActionManager, self).get_queryset()
-#         return queryset.prefetch_related('instrument_output_variable')
+
+class TimeSeriesValuesQuerySet(ODM2QuerySet):
+    def recent(self):
+        return self.filter(value_datetime__gte=datetime.datetime.now() - datetime.timedelta(days=1))

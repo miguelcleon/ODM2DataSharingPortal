@@ -92,7 +92,7 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.object.deployment_sampling_feature_uuid)
         context['sampling_feature'] = sampling_feature
         context['deployment'] = sampling_feature.actions.first()
-        context['feature_actions'] = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
+        context['feature_actions'] = sampling_feature.feature_actions.with_results().all()
         context['affiliation'] = context['deployment'].action_by.first().affiliation
         context['site'] = sampling_feature.site
         return context
