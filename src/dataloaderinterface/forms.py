@@ -7,7 +7,8 @@ from django.forms.formsets import formset_factory
 
 from dataloaderinterface.models import ODM2User
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    Site, EquipmentModel, Medium
+    Site, EquipmentModel, Medium, OrganizationType
+
 
 # AUTHORIZATION
 
@@ -18,7 +19,7 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(queryset=Organization.objects.all(), required=False)
+    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False)
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
@@ -43,6 +44,7 @@ class UserRegistrationForm(UserCreationForm):
 
 class OrganizationForm(forms.ModelForm):
     use_required_attribute = False
+    organization_type = forms.ModelChoiceField(queryset=OrganizationType.objects.all().exclude(name__in=['Vendor', 'Manufacturer']), required=False)
 
     class Meta:
         model = Organization
