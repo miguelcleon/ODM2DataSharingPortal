@@ -655,6 +655,15 @@ footer .separator {
     color: #252525;
 }
 
+.site-card .mdl-card__title {
+    background-color: #92d050;
+    color: #FFF;
+}
+
+.site-card .mdl-card__menu {
+    color: #FFF;
+}
+
 .site-card {
     margin-top: 20px;
     width: auto;
