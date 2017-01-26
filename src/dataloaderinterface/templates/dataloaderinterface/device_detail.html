@@ -110,41 +110,38 @@
                         </table>
                     </div>
 
-                    <div class="sparkline-plots col-xs-6">
+                    <div class="sparkline-plots col-xs-12 col-sm-6">
                         <div class="alert alert-warning" role="alert">Only last 24 hours shown on sparkline plots and tables</div>
                         {% for feature_action in feature_actions %}
                             {% with feature_action.results.all.0 as result %}
                                 <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
                                      data-variable-name="{{ result.variable.variable_name_id }}">
                                     <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                        <small class="pull-right">result uuid: {{ result.result_uuid }}</small>
+                                        <span class="pull-right">Result UUID: {{ result.result_uuid }}</span>
                                     </div>
-                                    <div class="">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <div class="variable-data">
-                                                        <span class="variable-name">{{ result.variable.variable_name_id }}</span>
-                                                        <span class="variable-code">{{ result.variable.variable_code }}</span>
-                                                        <span class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</span>
-                                                        <span class="unit">{{ result.unit.unit_abbreviation }}</span>
-                                                        <div class="clearfix">
 
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                                    <table class="full-width">
+                                        <tr>
+                                            <td class="variable-description">
+                                                <div class="variable-data">
+                                                    <div class="variable-name"><strong>{{ result.variable.variable_name_id }}</strong></div>
+                                                    <div class="variable-code">{{ result.variable.variable_code }}</div>
+                                                    <br>
+                                                    <div class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</div>
+                                                    <div class="unit">{{ result.unit.unit_abbreviation }}</div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             {% endwith %}
                         {% endfor %}
                     </div>
 
-                    <div class="measurements-table col-xs-6">
+                    <div class="measurements-table col-xs-12 col-sm-6">
                         <button data-result-id
                                 class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect pull-right download-data-button">
                             <i class="fa fa-download" aria-hidden="true"></i> Download <span
@@ -170,12 +167,6 @@
                                         </tr>
                                     {% endfor %}
                                     </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    </tfoot>
                                 </table>
                             {% endwith %}
                         {% endfor %}

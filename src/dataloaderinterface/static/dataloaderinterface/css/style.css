@@ -73,7 +73,6 @@ button.navbar-toggle.collapsed {
 .map-container {
     margin-top: 25px;
     height: 450px;
-    padding: 0;
 }
 
 .full-width-map-container {
@@ -171,6 +170,17 @@ div.separator {
     margin: 0 auto;
 }
 
+.modal-header h4 {
+    margin: 0;
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    background-color: #337ab7;
+    color: #FFF;
+}
+
 .select2-results__option[aria-disabled="true"] {
     display: none !important;
 }
@@ -258,13 +268,11 @@ div.registration-field span.control-field {
     cursor: pointer;
 }
 
-.plot_box .variable-data {
-    width: 128px;
-    float: left;
+.variable-description {
+    width: 150px;
+    padding: 20px;
 }
-
 .plot_box .variable-data span {
-    min-width: 128px;
     float: left;
     text-align: center;
     line-height: 16px;
@@ -286,7 +294,6 @@ div.registration-field span.control-field {
 .graph-container {
     border: 1px solid #DDD;
     height: 110px;
-    width: 350px;
     margin: 10px;
 }
 
@@ -517,12 +524,19 @@ footer .separator {
 
 /*GENERAL STYLING*/
 
+.full-width {
+    width: 100%;
+}
 .mdl-data-table td:last-of-type {
     white-space: normal;
 }
 
 .mdl-data-table-no-hover tbody tr:hover {
     background-color: #FFF;
+}
+
+.mdl-button--raised {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .listing-table tr td {
@@ -631,11 +645,6 @@ i.material-icons.site-card-icon {
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
 
-
-
-.mdl-card {
-    width: auto !important;
-}
 
 #new-result-button {
     margin-left: 20px;
