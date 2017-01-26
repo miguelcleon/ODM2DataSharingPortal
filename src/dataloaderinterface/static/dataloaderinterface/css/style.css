@@ -245,10 +245,9 @@ div.registration-field span.control-field {
     float: left;
     width: 100%;
     margin-bottom: 15px;
-    padding: 12px;
-    border-radius: 3px;
-    display: flex;
+    border-radius: 2px;
     border: 1px solid #DDD;
+    min-height: 174px;
 }
 
 .plot_box.selected {
@@ -285,11 +284,10 @@ div.registration-field span.control-field {
 }
 
 .graph-container {
-    position: relative;
-    float: left;
     border: 1px solid #DDD;
-    width: calc(100% - 128px);
-    align-items: stretch;
+    height: 110px;
+    width: 350px;
+    margin: 10px;
 }
 
 .plot_box div p {
@@ -519,6 +517,10 @@ footer .separator {
     white-space: normal;
 }
 
+.mdl-data-table-no-hover tbody tr:hover {
+    background-color: #FFF;
+}
+
 .listing-table tr {
     line-height: 40px;
 }
@@ -530,13 +532,8 @@ footer .separator {
 .listing-table .material-icons {
     font-size: 14px;
 }
-.site-details-content {
-    padding: 80px 56px;
-    margin-bottom: 80px;
-    margin-top: 115px;
-}
 
-.site-details-content .page-title {
+.ribbon-content .page-title {
     margin: 0;
     margin-top: -40px;
     margin-bottom: 20px;
@@ -558,6 +555,9 @@ footer .separator {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
     flex-shrink: 0;
+    padding: 80px 56px;
+    margin-bottom: 80px;
+    border-radius: 2px;
 }
 
 .main-content {

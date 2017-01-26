@@ -46,7 +46,7 @@
                     <div class="registration-data col-xs-12 col-sm-6">
                         {# Deployment fields #}
 
-                        <table class="mdl-data-table mdl-js-data-table">
+                        <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                             <tr>
                                 <td class="mdl-data-table__cell--non-numeric">Deployment by: </td>
                                 <td class="mdl-data-table__cell--non-numeric"s>{{ affiliation }}</td>
@@ -107,16 +107,31 @@
                         <div class="alert alert-warning" role="alert">Only last 24 hours shown on sparkline plots and tables</div>
                         {% for feature_action in feature_actions %}
                             {% with feature_action.results.all.0 as result %}
-                                <div class="plot_box" data-result-id="{{ result.result_id }}"
+                                <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
                                      data-variable-name="{{ result.variable.variable_name_id }}">
-                                    <div class="variable-data">
-                                        <span class="variable-name">{{ result.variable.variable_name_id }}</span>
-                                        <span class="variable-code">{{ result.variable.variable_code }}</span>
-                                        <span class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</span>
-                                        <span class="unit">{{ result.unit.unit_abbreviation }}</span>
-                                        <div class="clearfix"></div>
+                                    <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                        <small class="pull-right">result uuid: {{ result.result_uuid }}</small>
                                     </div>
-                                    <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                    <div class="">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <div class="variable-data">
+                                                        <span class="variable-name">{{ result.variable.variable_name_id }}</span>
+                                                        <span class="variable-code">{{ result.variable.variable_code }}</span>
+                                                        <span class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</span>
+                                                        <span class="unit">{{ result.unit.unit_abbreviation }}</span>
+                                                        <div class="clearfix">
+
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             {% endwith %}
                         {% endfor %}
@@ -148,7 +163,7 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <td>result uuid: <span class="result-uuid">{{ result.result_uuid }}</span>
+                                        <td>
                                         </td>
                                     </tr>
                                     </tfoot>
