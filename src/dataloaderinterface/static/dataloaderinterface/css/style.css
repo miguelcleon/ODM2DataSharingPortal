@@ -356,7 +356,11 @@ span.map-help {
 }
 
 .has-error .control-label, .has-error .form-control {
-    color: rgb(232, 0, 0) !important;
+    color: rgb(232, 0, 0);
+}
+
+.user-fields .has-error .control-label {
+    color: inherit;
 }
 
 span.form-message.error {

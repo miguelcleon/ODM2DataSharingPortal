@@ -39,51 +39,58 @@
                                         <div class="form-group user-fields">
                                             <div class="row">
                                                 <div class="col-xs-12 col-sm-6">
-                                                    <div class="form-field required-field ">
+                                                    <div class="form-field required-field {% if form.first_name.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_first_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a first name</label>
                                                         {{ form.first_name|add_class:"form-control input-sm"|attr:"placeholder: First Name" }}
+                                                        {{ form.first_name.errors }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12 col-sm-6">
-                                                    <div class="form-field required-field">
+                                                    <div class="form-field required-field {% if form.last_name.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_last_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a last name</label>
                                                         {{ form.last_name|add_class:"form-control input-sm"|attr:"placeholder: Last Name" }}
+                                                        {{ form.last_name.errors }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="form-field required-field">
+                                                    <div class="form-field required-field {% if form.email.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_email_address"><i class="fa fa-envelope" aria-hidden="true"></i> Enter your email address</label>
                                                         {{ form.email|add_class:"form-control input-sm"|attr:"placeholder: Email Address" }}
+                                                        {{ form.email.errors }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="form-field required-field">
+                                                    <div class="form-field required-field {% if form.username.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_username"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Choose a username</label>
                                                         {{ form.username|add_class:"form-control input-sm"|attr:"placeholder: Username" }}
+                                                        {{ form.username.errors }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="form-field required-field ">
+                                                    <div class="form-field required-field {% if form.password1.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_password1"><i class="fa fa-lock" aria-hidden="true"></i> Choose a password</label>
                                                         {{ form.password1|add_class:"form-control input-sm"|attr:"placeholder: Password" }}
+                                                        {{ form.password1.errors }}
                                                     </div>
                                                 </div>
 
                                                 <div class="col-xs-12">
-                                                    <div class="form-field required-field ">
+                                                    <div class="form-field required-field {% if form.password2.errors %}has-error{% endif %}">
                                                         {{ form.password2|add_class:"form-control input-sm"|attr:"placeholder: Password Confirmation" }}
+                                                        {{ form.password2.errors }}
                                                     </div>
                                                 </div>
 
 
                                                 <div class="col-xs-12">
-                                                    <div class="form-field  ">
+                                                    <div class="form-field {% if form.organization.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_organization"><i class="fa fa-building" aria-hidden="true"></i> Organization</label>
                                                         {{ form.organization|add_class:"form-control input-sm select2-hidden-accessible"|attr:"placeholder: Choose an organization" }}
+                                                        {{ form.organization.errors }}
                                                     </div>
                                                 </div>
 {#                                                <div class="col-xs-12">#}
@@ -134,8 +141,8 @@
                                     <div class="clearfix"></div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button id="new-organization-button" type="button" id="btn-login" class="btn btn-primary">Add New
+                                    <button id="organization-modal-close" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button id="new-organization-button" type="button" class="btn btn-primary">Add New
                                         Organization
                                     </button>
                                 </div>

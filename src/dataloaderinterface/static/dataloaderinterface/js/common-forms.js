@@ -58,6 +58,13 @@ function clearSelectFilter(select) {
     initializeSelect(select);
 }
 
+function clearFieldErrors(field) {
+    if (field.hasClass('has-error')) {
+        field.find('.errorlist').remove();
+        field.removeClass('has-error');
+    }
+}
+
 $(document).ready(function() {
     var form = $('form');
     selectSoloOptions(form.find('select'));
@@ -69,10 +76,7 @@ $(document).ready(function() {
         }
 
         var fieldElement = $(this).parents('div.form-field');
-        if (fieldElement.hasClass('has-error')) {
-            fieldElement.find('.errorlist').remove();
-            fieldElement.removeClass('has-error');
-        }
+        clearFieldErrors(fieldElement);
     });
 
     $(document).on("keypress", ":input:not(textarea):not([type=submit])", function(event) {

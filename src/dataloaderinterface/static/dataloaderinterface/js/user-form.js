@@ -7,6 +7,15 @@ function cleanOrganizationForm() {
     $('.organization-fields input, .organization-fields select').val('');
 }
 
+function generateErrorList(errors) {
+    var list = $('<ul class="errorlist"></ul>');
+    errors.forEach(function(error) {
+        list.append($('<li>' + error + '</li>'));
+    });
+
+    return list;
+}
+
 $(document).ready(function() {
     var organizationForm = $('.organization-fields');
     var organizationSelect = $('form').find('[name="organization"]');
@@ -21,6 +30,7 @@ $(document).ready(function() {
     });
 
     $('#new-organization-button').on('click', function() {
+        clearFieldErrors($('.organization-fields .has-error'));
         var data = $('.organization-fields input, .organization-fields select').toArray().reduce(function(dict, field) {
             dict[field.name] = field.value;
             return dict;
@@ -34,32 +44,43 @@ $(document).ready(function() {
             }, data)
         }).done(function(data, message, xhr) {
             if (xhr.status == 201) {
-                var newOption = $('<option value="' + data.organization_id + '">' +
-                    data.organization_name + '</option>');
-                $('select[name="organization"]').append(newOption).val(data.organization_id);
+                // organization created
+                var newOption = $('<option value="' + data.organization_id + '">' + data.organization_name + '</option>');
+                $('.organization-fields select[name="organization"]').append(newOption).val(data.organization_id);
                 $('#organization-dialog').modal('toggle');
             } else if (xhr.status == 206) {
+                // organization form error
                 var form = $('.organization-fields');
+
                 for (var fieldName in data) {
+                    if (!data.hasOwnProperty(fieldName)) {
+                        continue;
+                    }
+
                     var element = form.find('[name="' + fieldName + '"]');
                     var field = element.parents('.form-field');
+                    var errors = generateErrorList(data[fieldName]);
                     field.addClass('has-error');
+                    field.append(errors);
 
-                    form.find('div.form-field.has-error .form-control').on('change keypress', function(event, isTriggered) {
+                    element.on('change keypress', function(event, isTriggered) {
                         if (isTriggered) {  // http://i.imgur.com/avHnbUZ.gif
                             return;
                         }
 
                         var fieldElement = $(this).parents('div.form-field');
-                        if (fieldElement.hasClass('has-error')) {
-                            fieldElement.find('.errorlist').remove();
-                            fieldElement.removeClass('has-error');
-                        }
+                        clearFieldErrors(fieldElement);
                     });
                 }
             }
         }).fail(function(data) {
             console.log(data);
         });
+    });
+
+    $('#organization-modal-close').on('click', function() {
+        var organizationSelect = $('.user-fields select[name="organization"]');
+        organizationSelect.val('');
+        initializeSelect(organizationSelect);
     });
 });
