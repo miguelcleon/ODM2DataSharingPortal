@@ -548,6 +548,26 @@ footer .separator {
 
 /*GENERAL STYLING*/
 
+.btn-copy {
+    background-color: #FFF !important;
+    cursor: default;
+}
+
+.input-group-copy .material-icons {
+    font-size: 14px;
+}
+
+.input-group-copy .input-group-addon {
+    background-color: #FFF !important;
+}
+
+.btn-copy:hover {
+    background-color: #eeeeee  !important;
+}
+
+.btn-copy:active {
+    background-color: #DDD  !important;
+}
 .full-width {
     width: 100%;
 }
