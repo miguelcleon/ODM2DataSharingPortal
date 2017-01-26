@@ -186,7 +186,7 @@ div.separator {
 .modal-header {
     padding: 15px;
     border-bottom: 1px solid #e5e5e5;
-    background-color: #337ab7;
+    background-color: #353535;
     color: #FFF;
 }
 
@@ -493,6 +493,13 @@ table.data-values, table.dataTable {
     display: table;  !important
 }
 
+table.dataTable {
+    margin-bottom: 0;
+}
+
+table.dataTable.table-bordered > thead > tr > th {
+    border-bottom-width: 1px;
+}
 /*FOOTER STYLING*/
 footer {
     background-color: #353535;
@@ -598,6 +605,10 @@ footer .separator {
     border-radius: 2px;
 }
 
+.ribbon-container {
+    padding: 0 15px;
+}
+
 .main-content {
     margin-bottom: 60px;
 }
@@ -677,7 +688,7 @@ i.material-icons.site-card-icon {
 .panel-login > .panel-heading {
     color: #FFF;
     border: none;
-    background: #353535;
+    background-color: #353535;
 }
 
 a.orange {
