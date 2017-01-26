@@ -105,23 +105,22 @@
         </div>
 
         <script id="sites-data" type="application/json">
-                    [
-                    {% for registration in object_list %}
-                        {% with sampling_feature=registration.sampling_feature %}
-                        {
-                            "id": "{{ sampling_feature.sampling_feature_id }}",
-                            "code": "{{ sampling_feature.sampling_feature_code }}",
-                            "name": "{{ sampling_feature.sampling_feature_name }}",
-                            "latitude": {{ sampling_feature.site.latitude|default_if_none:0 }},
-                            "longitude": {{ sampling_feature.site.longitude|default_if_none:0 }},
-                            "elevation": {{ sampling_feature.elevation_m|default_if_none:'""' }},
-                            "detail_link": "{% if registration %}{% url 'site_detail' registration.registration_id %}{% endif %}"
-                        }{% if not forloop.last %},{% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                    ]
-                </script>
-        </section>
+            [
+            {% for registration in object_list %}
+                {% with sampling_feature=registration.sampling_feature %}
+                {
+                    "id": "{{ sampling_feature.sampling_feature_id }}",
+                    "code": "{{ sampling_feature.sampling_feature_code }}",
+                    "name": "{{ sampling_feature.sampling_feature_name }}",
+                    "latitude": {{ sampling_feature.site.latitude|default_if_none:0 }},
+                    "longitude": {{ sampling_feature.site.longitude|default_if_none:0 }},
+                    "elevation": {{ sampling_feature.elevation_m|default_if_none:'""' }},
+                    "detail_link": "{% if registration %}{% url 'site_detail' registration.registration_id %}{% endif %}"
+                }{% if not forloop.last %},{% endif %}
+                {% endwith %}
+            {% endfor %}
+            ]
+        </script>
     </div>
 
 {% endblock %}
