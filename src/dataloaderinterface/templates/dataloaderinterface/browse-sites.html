@@ -26,7 +26,7 @@
                         "latitude": {{ sampling_feature.site.latitude }},
                         "longitude": {{ sampling_feature.site.longitude }},
                         "elevation": {{ sampling_feature.elevation_m }},
-                        "detail_link": "{% if registration %}{% url 'device_detail' registration.registration_id %}{% endif %}"
+                        "detail_link": "{% if registration %}{% url 'site_detail' registration.registration_id %}{% endif %}"
                     }{% if not forloop.last %},{% endif %}
                     {% endwith %}
                 {% endfor %}

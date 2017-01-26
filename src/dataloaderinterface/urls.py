@@ -16,13 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 
 from dataloaderinterface.views import DevicesListView, DeviceDetailView, DeviceRegistrationView, DeviceUpdateView, \
-    HomeView, AllSitesListView
+    HomeView, BrowseSitesListView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^devices/$', DevicesListView.as_view(), name='devices_list'),
-    url(r'^sites/browse/$', AllSitesListView.as_view(), name='sites_list'),
-    url(r'^devices/register/$', DeviceRegistrationView.as_view(), name='device_registration'),
-    url(r'^devices/register/update/(?P<slug>[-_\w]+)/$', DeviceUpdateView.as_view(), name='device_update'),
-    url(r'^devices/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='device_detail'),
+    url(r'^sites/$', DevicesListView.as_view(), name='sites_list'),
+    url(r'^sites/browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
+    url(r'^sites/register/$', DeviceRegistrationView.as_view(), name='site_registration'),
+    url(r'^sites/register/update/(?P<slug>[-_\w]+)/$', DeviceUpdateView.as_view(), name='site_update'),
+    url(r'^sites/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='site_detail'),
 ]
