@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.db import transaction
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 
@@ -18,7 +17,7 @@ class UserRegistrationForm(UserCreationForm):
 
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
-    email_address = forms.EmailField(required=False, max_length=254)
+    email = forms.EmailField(required=True, max_length=254)
     organization = forms.ModelChoiceField(queryset=Organization.objects.all(), required=False)
 
     def save(self, commit=True):

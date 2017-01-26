@@ -25,9 +25,6 @@ except IOError:
     print("You need to setup the settings data file (see instructions in base.py file.)")
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
     SECRET_KEY = data["secret_key"]
@@ -36,6 +33,7 @@ except KeyError:
     exit(1)
 
 ALLOWED_HOSTS = []
+
 
 # Application definition
 
@@ -144,3 +142,16 @@ USE_TZ = True
 LOGIN_URL = 'login'
 
 DATABASE_ROUTERS = ['WebSDL.db_routers.WebSDLRouter']
+
+
+# Security and SSL
+#
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#
+# SECURE_SSL_REDIRECT = True
+
+RECAPTCHA_KEY = data["recaptcha_secret_key"] if "recaptcha_secret_key" in data else ""
+
+RECAPTCHA_USER_KEY = data["recaptcha_user_key"] if "recaptcha_user_key" in data else ""
+
+RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
