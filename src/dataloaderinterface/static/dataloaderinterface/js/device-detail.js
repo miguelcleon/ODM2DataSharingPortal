@@ -1,3 +1,16 @@
+$(document).ready(function () {
+    var dialog = document.querySelector('#data-table-dialog');
+    var showDialogButton = document.querySelector('.table-trigger');
+    if (!dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+    showDialogButton.addEventListener('click', function () {
+        dialog.showModal();
+    });
+    dialog.querySelector('.dialog-close').addEventListener('click', function () {
+        dialog.close();
+    });
+});
 
 
 function initMap() {
@@ -74,8 +87,6 @@ $(document).ready(function() {
         scrollY: plotBoxes.parent().height() - 47,
         scrollCollapse: true
     });
-
-
 
     for (var index = 0; index < tables.length; index++) {
         var table = $(tables.get(index));

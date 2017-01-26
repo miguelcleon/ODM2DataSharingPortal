@@ -273,6 +273,10 @@ div.registration-field span.control-field {
     min-height: 174px;
 }
 
+.plot_box .mdl-card__actions {
+    border-top: 0;
+}
+
 .plot_box.selected {
     box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
 }
@@ -285,6 +289,7 @@ div.registration-field span.control-field {
     width: 150px;
     padding: 20px;
 }
+
 .plot_box .variable-data span {
     float: left;
     text-align: center;
@@ -553,8 +558,24 @@ footer .separator {
     cursor: default;
 }
 
+.plot_box .input-group-copy {
+    width: calc(100% - 50px);
+}
 .input-group-copy .material-icons {
     font-size: 14px;
+}
+
+.plot_box .table-trigger {
+    margin-left: 13px;
+    margin-top: 2px;
+}
+
+dialog#data-table-dialog {
+    width: 480px;
+}
+
+dialog#data-table-dialog .mdl-dialog__content {
+    color: #555;
 }
 
 .input-group-copy .input-group-addon {
