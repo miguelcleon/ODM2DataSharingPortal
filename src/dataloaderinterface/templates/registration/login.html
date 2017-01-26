@@ -30,14 +30,11 @@
                                 <fieldset class="form-fieldset">
                                     <div class="form-group user-fields">
                                         <div class="form-field required-field ">
-                                            <input autofocus="" class="form-control input-sm" id="id_username"
-                                                   placeholder="Username" maxlength="254" name="username" type="text"
-                                                   required="">
+                                            {{ form.username|add_class:"form-control input-sm"|attr:"placeholder: Username"|attr:"autofocus" }}
                                         </div>
 
                                         <div class="form-field required-field ">
-                                            <input class="form-control input-sm" id="id_password" name="password"
-                                                   placeholder="Password" type="password" required="">
+                                            {{ form.password|add_class:"form-control input-sm"|attr:"placeholder: Password" }}
                                         </div>
                                     </div>
                                 </fieldset>
