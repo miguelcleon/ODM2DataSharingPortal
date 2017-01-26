@@ -2,8 +2,8 @@
 
 function initMap() {
     var defaultZoomLevel = 18;
-    var latitude = parseFloat($('#field-latitude').text());
-    var longitude = parseFloat($('#field-longitude').text());
+    var latitude = parseFloat($('#site-latitude').val());
+    var longitude = parseFloat($('#site-longitude').val());
     var sitePosition = { lat: latitude, lng: longitude };
 
     var map = new google.maps.Map(document.getElementById('map'), {
