@@ -33,3 +33,7 @@ function initMap() {
         })
     });
 }
+
+$(document).ready(function() {
+    $('nav .menu-sites-list').addClass('active');
+});

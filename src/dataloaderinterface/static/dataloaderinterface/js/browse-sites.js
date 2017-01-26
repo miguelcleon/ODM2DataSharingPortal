@@ -44,6 +44,8 @@ function initMap() {
 }
 
 $(document).ready(function () {
+    $('nav .menu-browse-sites').addClass('active');
+
     $("#wrapper").css("height", "calc(100% - 81px)");
     $(".map-container").css("height", $("#wrapper").height());
     $("body").css("overflow", "hidden")

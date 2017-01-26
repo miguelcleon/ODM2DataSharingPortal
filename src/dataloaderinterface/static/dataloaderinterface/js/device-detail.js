@@ -52,6 +52,8 @@ function drawSparklinePlots(tableData) {
 }
 
 $(document).ready(function() {
+    $('nav .menu-sites-list').addClass('active');
+    
     var resizeTimer;
     var tablesData = [];
     var plotBoxes = $('div.plot_box');

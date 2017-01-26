@@ -317,6 +317,8 @@ function bindResultEditEvent(row) {
 }
 
 $(document).ready(function() {
+    $('nav .menu-register-site').addClass('active');
+
     initializeResultsForm();
 
     $('table.sensors').dataTable({
