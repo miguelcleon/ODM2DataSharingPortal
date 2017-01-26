@@ -26,28 +26,38 @@
                             {% endif %}
                         </div>
 
-                        <table class="listing-table">
-                            <tr>
-                                <td class="text-muted">
-                                    <i class="material-icons">local_offer</i>
-                                    <span>Registration Token:</span>
-                                </td>
-                                <td>{{ object.authentication_token }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-muted">
-                                    <i class="material-icons">settings_remote</i>
-                                    <span>Sampling Feature UUID:</span>
-                                </td>
-                                <td>{{ sampling_feature.sampling_feature_uuid }}</td>
-                            </tr>
-                        </table>
+                        {% if messages %}
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="input-group input-group-copy">
+                                    <span class="input-group-addon"><i class="material-icons">local_offer</i> Registration Token</span>
+                                    <input type="text" id="authToken" class="form-control click-select-all" readonly
+                                           aria-label="Registration Token"
+                                           value="{{ object.authentication_token }}">
+                                    <span class="input-group-addon clipboard-copy btn-copy"
+                                          data-target="authToken">Copy</span>
+                                </div>
+
+                                <br>
+
+                                <div class="input-group input-group-copy">
+                                    <span class="input-group-addon"><i class="material-icons">settings_remote</i> Sampling Feature UUID</span>
+                                    <input type="text" id="featureUUID" class="form-control click-select-all" readonly
+                                           aria-label="Sampling Feature UUID"
+                                           value="{{ sampling_feature.sampling_feature_uuid }}">
+                                    <span class="input-group-addon clipboard-copy btn-copy"
+                                          data-target="featureUUID">Copy</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <br>
                     </header>
-                    {% if messages %}
-                        {% for message in messages %}
-                            <p>{{ message }}</p>
-                        {% endfor %}
-                    {% endif %}
 
 
                     <div class="row">
@@ -118,7 +128,12 @@
                                     <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
                                          data-variable-name="{{ result.variable.variable_name_id }}">
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                            <span class="pull-right">Result UUID: {{ result.result_uuid }}</span>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">Result UUID</span>
+                                                <input type="text" id="resultUUID" class="form-control click-select-all" readonly
+                                                       aria-label="Amount (to the nearest dollar)" value="{{ result.result_uuid }}">
+                                                <span class="input-group-addon clipboard-copy btn-copy" data-target="resultUUID">Copy</span>
+                                            </div>
                                         </div>
 
                                         <table class="full-width">
@@ -178,7 +193,10 @@
         </div>
     </div>
 
-
+    <div id="clipboard-snackbar" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action hidden" type="button"></button>
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -186,6 +204,7 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}
