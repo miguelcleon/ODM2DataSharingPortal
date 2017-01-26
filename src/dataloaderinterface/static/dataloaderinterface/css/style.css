@@ -15,12 +15,8 @@ html > body {
 
 @media only screen and (min-width: 992px) {
     button.download-data-button {
-        float: right;
         margin-top: 18px;
-    }
-
-    div.registration-keys h4 {
-        line-height: .5em;
+        margin-bottom: 20px;
     }
 }
 
@@ -30,10 +26,6 @@ html > body {
         clear: left;
         margin-top: 0;
         margin-bottom: 20px;
-    }
-
-    div.registration-keys h4 {
-        line-height: 1.2em;
     }
 }
 
@@ -220,22 +212,6 @@ div.form-field {
     padding: 4px 10px;
 }
 
-div.registration-keys {
-    padding-left: 30px;
-    margin-bottom: 15px;
-}
-
-div.registration-keys h4 {
-    font-size: 1.1em;
-    font-weight: 700;
-    font-family: "Lucida Sans Typewriter", "Lucida Console", monaco, "Bitstream Vera Sans Mono", monospace;
-    padding-bottom: .5em;
-}
-
-div.registration-keys h4 span.key {
-    font-weight: 200;
-}
-
 span.copy-icon {
     font-size: 1.3em;
     cursor: pointer;
@@ -266,36 +242,21 @@ div.registration-field span.control-field {
 }
 
 .plot_box {
-    border: 1px solid #808080;
     float: left;
     width: 100%;
     margin-bottom: 15px;
-    margin-left: -10px;
-    margin-right: 25px;
-    box-shadow: -2px 2px 5px 1px #ccc;
     padding: 12px;
     border-radius: 3px;
     display: flex;
+    border: 1px solid #DDD;
 }
 
 .plot_box.selected {
-    background: repeating-linear-gradient(
-            45deg,
-            transparent,
-            transparent 20px,
-            rgba(221, 221, 221, 0.4) 20px,
-            rgba(221, 221, 221, .4) 40px
-    );
-    box-shadow: -0px 1px 8px 1px #8B8B8B;
-}
-
-.plot_box:last-of-type {
-    margin-right: 0;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
 }
 
 .plot_box:hover {
     cursor: pointer;
-    box-shadow: -0px 1px 8px 1px #8B8B8B;
 }
 
 .plot_box .variable-data {
@@ -326,7 +287,7 @@ div.registration-field span.control-field {
 .graph-container {
     position: relative;
     float: left;
-    border: 1px solid #808080;
+    border: 1px solid #DDD;
     width: calc(100% - 128px);
     align-items: stretch;
 }
@@ -364,24 +325,6 @@ div.registration-field span.control-field {
     stroke: steelblue;
     stroke-width: 2px;
 }
-
-.measurements-container {
-    margin-top: 30px;
-}
-
-.measurements-container h3 {
-    float: left;
-}
-
-.measurements-container h4 {
-    margin-bottom: 25px;
-    margin-top: 0;
-    color: #F67400;
-    float: left;
-    clear: left;
-    font-size: 1.2em;
-}
-
 
 table.data-values {
     display: none;
@@ -561,7 +504,61 @@ footer .license-logo {
     margin-top: 2px;
 }
 
+footer .separator {
+    border-top: 1px solid #505050;
+    margin: 30px 0;
+}
+
+#stroud-logo {
+    margin-bottom: 20px;
+}
+
 /*GENERAL STYLING*/
+
+.mdl-data-table td:last-of-type {
+    white-space: normal;
+}
+
+.listing-table tr {
+    line-height: 40px;
+}
+
+.listing-table tr td:first-child {
+    padding-right: 30px;
+}
+
+.listing-table .material-icons {
+    font-size: 14px;
+}
+.site-details-content {
+    padding: 80px 56px;
+    margin-bottom: 80px;
+    margin-top: 115px;
+}
+
+.site-details-content .page-title {
+    margin: 0;
+    margin-top: -40px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #DDD;
+}
+
+.ribbon {
+    width: 100%;
+    height: 40vh;
+    background-color: #62843e;
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
+
+.ribbon-content {
+    margin-top: -35vh;
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
 
 .main-content {
     margin-bottom: 60px;
@@ -614,7 +611,7 @@ i.material-icons.site-card-icon {
     color: #92d050;
 }
 
-.page-title {
+.page-title, .section-title {
     margin: 40px auto;
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.541176);
@@ -622,6 +619,8 @@ i.material-icons.site-card-icon {
     font-weight: 500;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
+
+
 
 .mdl-card {
     width: auto !important;
