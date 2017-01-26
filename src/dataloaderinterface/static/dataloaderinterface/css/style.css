@@ -225,7 +225,7 @@ span.copy-key-icon {
 }
 
 div.registration-data {
-    margin-top: 15px;
+    margin-bottom: 20px;
 }
 
 div.registration-field {
@@ -448,6 +448,10 @@ ul.errorlist {
     transition: all 0.2s;
 }
 
+.navbar-nav > li > a.user-info {
+    pointer-events: none;
+}
+
 .navbar-nav > li > a:hover {
     border-bottom: 3px solid #FFF;
 }
@@ -521,8 +525,8 @@ footer .separator {
     background-color: #FFF;
 }
 
-.listing-table tr {
-    line-height: 40px;
+.listing-table tr td {
+    padding-bottom: 20px;
 }
 
 .listing-table tr td:first-child {
@@ -544,10 +548,17 @@ footer .separator {
 .ribbon {
     width: 100%;
     height: 40vh;
-    background-color: #62843e;
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
     flex-shrink: 0;
+}
+
+.ribbon-blue {
+    background-color: #337ab7
+}
+
+.ribbon-green {
+    background-color: #62843e;
 }
 
 .ribbon-content {
@@ -555,7 +566,7 @@ footer .separator {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    padding: 80px 56px;
+    padding: 80px 56px !important;
     margin-bottom: 80px;
     border-radius: 2px;
 }

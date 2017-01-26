@@ -1,12 +1,19 @@
 {% extends 'dataloaderinterface/base.html' %}
 {% load staticfiles %}
 
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>
+{% endblock %}
+
 {% block content %}
-    <div class="ribbon">
+    <div class="ribbon ribbon-green">
 
     </div>
 
-    <div class="container ribbon-content site-details-content mdl-color--white mdl-shadow--4dp">
+    <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
         <div class="row">
             <section class="device-data col-lg-12">
                 <header>
@@ -138,10 +145,12 @@
                     </div>
 
                     <div class="measurements-table col-xs-6">
-                        <button type="button" class="btn btn-default download-data-button pull-right" data-result-id>
+                        <button data-result-id
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect pull-right download-data-button">
                             <i class="fa fa-download" aria-hidden="true"></i> Download <span
                                 class="variable-name"></span> Raw Data
                         </button>
+
                         {% for feature_action in feature_actions %}
                             {% with feature_action.results.first as result %}
                                 <table class="table table-striped table-bordered data-values {{ result.variable.variable_code }}"
