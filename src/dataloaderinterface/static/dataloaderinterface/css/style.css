@@ -557,6 +557,10 @@ footer .separator {
     font-size: 14px;
 }
 
+.input-group-copy .input-group-addon {
+    background-color: #FFF !important;
+}
+
 .btn-copy:hover {
     background-color: #eeeeee  !important;
 }
