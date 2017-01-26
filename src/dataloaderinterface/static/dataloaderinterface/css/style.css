@@ -84,6 +84,10 @@ button.navbar-toggle {
     height: 450px;
 }
 
+.detail-map-container {
+    margin-bottom: 30px;
+}
+
 .full-width-map-container {
     margin-top: 0;
     height: 450px;
@@ -97,7 +101,7 @@ button.navbar-toggle {
 }
 
 .detail-map-container {
-    height: 450px;
+    height: 350px;
 }
 
 #map {
