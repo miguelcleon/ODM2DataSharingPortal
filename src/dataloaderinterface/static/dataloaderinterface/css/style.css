@@ -561,6 +561,11 @@ footer .separator {
     background-color: #FFF !important;
 }
 
+.site-tokens .input-group-copy .input-group-addon:first-child {
+    width: 186px;
+    text-align: left;
+}
+
 .btn-copy:hover {
     background-color: #eeeeee  !important;
 }

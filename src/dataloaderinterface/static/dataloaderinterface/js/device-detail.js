@@ -22,24 +22,32 @@ function initMap() {
 function plotValues(result_id, values) {
     var plotBox = $('div.plot_box[data-result-id="' + result_id + '"] div.graph-container');
 
-    var margin = {top: 3, right: 10, bottom: 3, left: 3};
+    var margin = {top: 0, right: 0, bottom: 0, left: 0};
     var width = plotBox.width() - margin.left - margin.right;
     var height = plotBox.height() - margin.top - margin.bottom;
 
     var xAxis = d3.scaleTime().range([0, width]);
     var yAxis = d3.scaleLinear().range([height, 0]);
 
+    xAxis.domain(d3.extent(values, function (d) {
+        return d.index;
+    }));
+    yAxis.domain(d3.extent(values, function (d) {
+        return parseFloat(d.value);
+    }));
+
     var line = d3.line()
-        .x(function(d) { return xAxis(d.index); })
-        .y(function(d) { return yAxis(d.value); });
+        .x(function(d) {
+            return xAxis(d.index);
+        })
+        .y(function(d) {
+            return yAxis(d.value);
+        });
     var svg = d3.select(plotBox.get(0)).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    xAxis.domain(d3.extent(values, function(d) { return d.index; }));
-    yAxis.domain(d3.extent(values, function(d) { return d.value; }));
 
     svg.append("path").data([values]).attr("class", "line").attr("d", line);
 }
