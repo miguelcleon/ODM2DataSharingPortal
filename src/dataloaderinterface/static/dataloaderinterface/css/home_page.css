@@ -48,10 +48,10 @@
 }
 
 .step-icon {
-    font-size: 8em !important;
+    font-size: 6em !important;
     text-shadow: 0 1px 0 #151d21;
     width: 100%;
-    padding-top: 20px;
+    padding: 30px;
     color: #FFF;
     background: #37474f;
     border-radius: 2px 2px 0 0;
@@ -109,4 +109,8 @@ div.image-container {
 
 .visit-link a {
     color: #e08f26;
+}
+
+.card-header-image {
+    width: 100%;
 }
