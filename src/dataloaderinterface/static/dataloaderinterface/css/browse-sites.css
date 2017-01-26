@@ -36,10 +36,6 @@ span.site-label::after {
     content: ': ';
 }
 
-span.site-data {
-
-}
-
 .browse-sites-header {
     display: inline-block;
     position: absolute;

@@ -36,7 +36,7 @@
             </div>
 
             {% for registration in object_list %}
-                <div class="col-xs-12 col-sm-3">
+                <div class="col-xs-12 col-sm-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
                         <div class="mdl-card__title">
                             <h2 class="mdl-card__title-text">{{ registration.device_name }}</h2>
@@ -90,7 +90,7 @@
 
                             <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
                                 for="site-card-menu-{{ forloop.counter0 }}">
-                                <li class="mdl-menu__item">
+                                <li class="mdl-menu__item view-on-map">
                                     <span class="mdl-list__item-primary-content">
                                         View on map
                                     </span>
@@ -120,6 +120,36 @@
                 {% endwith %}
             {% endfor %}
             ]
+        </script>
+
+        <script id="site-marker-content" type="text/plain">
+            <div>
+                <div id="marker-content">
+                    <div data-field="code" class="site-field">
+                        <span class="site-label">Site Code</span>
+                        <span class="site-data"></span>
+                    </div>
+                    <div data-field="name" class="site-field">
+                        <span class="site-label">Site Name</span>
+                        <span class="site-data"></span>
+                    </div>
+                    <div data-field="latitude" class="site-field">
+                        <span class="site-label">Latitude</span>
+                        <span class="site-data"></span>
+                    </div>
+                    <div data-field="longitude" class="site-field">
+                        <span class="site-label">Longitude</span>
+                        <span class="site-data"></span>
+                    </div>
+                    <div data-field="elevation" class="site-field">
+                        <span class="site-label">Elevation</span>
+                        <span class="site-data"></span> <span class="elevation-units">m</span>
+                    </div>
+                    <div class="site-link">
+                        <a>View data for this site</a>
+                    </div>
+                </div>
+            </div>
         </script>
     </div>
 

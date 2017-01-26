@@ -39,7 +39,7 @@ function initMap() {
             var infoContent = $('<div></div>').append(contentElement.html()).html();
             infoWindow.setContent(infoContent);
             infoWindow.open(marker.get('map'), marker);
-        })
+        });
     });
 }
 
