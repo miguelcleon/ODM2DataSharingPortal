@@ -277,7 +277,7 @@ div.registration-field span.control-field {
     border-top: 0;
 }
 
-.plot_box:hover {
+.table-trigger {
     cursor: pointer;
 }
 

@@ -85,7 +85,7 @@ function copyToClipboard(elem, event) {
             Math.floor(Math.random() * 0xFFFFFF).toString(16);
         var data = {
             message: 'Copied to clipboard.',
-            timeout: 2000,
+            timeout: 3000,
             actionHandler: handler,
             actionText: 'Dismiss'
         };
