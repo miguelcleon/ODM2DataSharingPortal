@@ -407,7 +407,7 @@ class People(ODM2Model):
 class Organization(ODM2Model):
     organization_id = models.AutoField(db_column='organizationid', primary_key=True)
     organization_type = models.ForeignKey('OrganizationType', db_column='organizationtypecv')
-    organization_code = models.CharField(db_column='organizationcode', max_length=50)
+    organization_code = models.CharField(db_column='organizationcode', max_length=50, unique=True)
     organization_name = models.CharField(db_column='organizationname', max_length=255)
     organization_description = models.CharField(db_column='organizationdescription', blank=True, max_length=500)
     organization_link = models.CharField(db_column='organizationlink', blank=True, max_length=255)
@@ -447,7 +447,7 @@ class Affiliation(ODM2Model):
         return 'Primary contact' if self.is_primary_organization_contact else 'Secondary contact'
 
     def __str__(self):
-        return '%s (%s) - %s' % (self.person, self.primary_email, self.organization)
+        return '%s - %s' % (self.person, self.organization)
 
     def __repr__(self):
         return "<Affiliation('%s', Person['%s', '%s'], Organization['%s', '%s'], '%s', '%s', '%s')>" % (

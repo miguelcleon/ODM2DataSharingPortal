@@ -31,7 +31,7 @@ class UserRegistrationForm(UserCreationForm):
         person = People.objects.filter(person_first_name=user.first_name, person_last_name=user.last_name).first() or \
             People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
         affiliation = Affiliation.objects.filter(person=person, organization=organization).first() or \
-            Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now())
+            Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now(), primary_email=user.email)
 
         if commit:
             user.save()
