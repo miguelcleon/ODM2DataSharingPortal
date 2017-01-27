@@ -70,7 +70,7 @@ class DevicesListView(LoginRequiredMixin, ListView):
     template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
-        return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.id)
+        return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.odm2user.pk)
 
 
 class BrowseSitesListView(LoginRequiredMixin, ListView):
@@ -186,7 +186,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 # purchase date: definitely not relevant.
 
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
-            registration_form.instance.user_id = request.user.id
+            registration_form.instance.user_id = request.user.odm2user.pk
             registration_form.instance.authentication_token = uuid4()
             registration_form.instance.save()
             return self.form_valid(registration_form)

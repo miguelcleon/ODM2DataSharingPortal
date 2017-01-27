@@ -30,6 +30,7 @@ class DeviceRegistration(models.Model):
 
 
 class ODM2User(models.Model):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
 
