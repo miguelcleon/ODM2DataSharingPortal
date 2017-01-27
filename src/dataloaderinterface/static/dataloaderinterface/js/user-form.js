@@ -5,6 +5,7 @@
 
 function cleanOrganizationForm() {
     $('.organization-fields input, .organization-fields select').val('');
+    initializeSelect($('.organization-fields select'));
 }
 
 function generateErrorList(errors) {
