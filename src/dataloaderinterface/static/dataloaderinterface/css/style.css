@@ -282,8 +282,16 @@ div.registration-field span.control-field {
 }
 
 .variable-description {
-    width: 150px;
+    width: 200px;
     padding: 20px;
+}
+
+.variable-name {
+    padding: 8px 20px;
+}
+
+.variable-data {
+    width: 100%;
 }
 
 .plot_box .variable-data span {

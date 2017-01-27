@@ -13,8 +13,6 @@ $(document).ready(function () {
     });
 });
 
-
-
 function copyToClipboard(elem, event) {
 	  // create hidden text element, if it doesn't already exist
     var targetId = "_hiddenCopyText_";
@@ -91,5 +89,4 @@ function copyToClipboard(elem, event) {
         };
         snackbarContainer.MaterialSnackbar.showSnackbar(data);
     });
-
 }());
