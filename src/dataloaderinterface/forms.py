@@ -19,7 +19,7 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False)
+    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False, help_text='Choose your affiliated organization')
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
@@ -44,10 +44,15 @@ class UserRegistrationForm(UserCreationForm):
 
 class OrganizationForm(forms.ModelForm):
     use_required_attribute = False
-    organization_type = forms.ModelChoiceField(queryset=OrganizationType.objects.all().exclude(name__in=['Vendor', 'Manufacturer']), required=False)
+    organization_type = forms.ModelChoiceField(queryset=OrganizationType.objects.all().exclude(name__in=['Vendor', 'Manufacturer']), required=False, help_text='Choose the type of organization')
 
     class Meta:
         model = Organization
+        help_texts = {
+            'organization_code': 'Enter an organization code',
+            'organization_name': 'Enter the name of your organization',
+            'organization_description': 'Enter a description for your organization'
+        }
         fields = [
             'organization_code',
             'organization_name',
@@ -56,11 +61,18 @@ class OrganizationForm(forms.ModelForm):
         ]
 
 
+
 class SamplingFeatureForm(forms.ModelForm):
     use_required_attribute = False
 
     class Meta:
         model = SamplingFeature
+        help_texts = {
+            'sampling_feature_code': 'Enter a Site code',
+            'sampling_feature_name': 'Enter a Site name',
+            'elevation_m': 'Enter the elevation of the Site',
+            'elevation_datum': 'Enter the datum for the site\'s elevation'
+        }
         fields = [
             'sampling_feature_code',
             'sampling_feature_name',
@@ -79,6 +91,11 @@ class SiteForm(forms.ModelForm):
 
     class Meta:
         model = Site
+        help_texts = {
+            'site_type': 'Enter the type of Site',
+            'latitude': 'Enter latitude of the Site',
+            'longitude': 'Enter the longitude of the Site',
+        }
         fields = [
             'site_type',
             'latitude',
@@ -91,15 +108,21 @@ class ResultForm(forms.ModelForm):
         super(ResultForm, self).__init__(*args, **kwargs)
         self.empty_permitted = False
 
-    equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all())
+    equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all(), help_text='Choose the model of your sensor')
     sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(
         Q(pk='Air') |
         Q(pk='Soil') |
         Q(pk='Liquid aqueous')
-    ))
+    ), help_text='Choose the sampled medium')
 
     class Meta:
         model = Result
+        help_texts = {
+            'equipment_model': 'Choose the model of your sensor',
+            'variable': 'Choose the measured variable',
+            'unit': 'Choose the measured units',
+            'sampled_medium': 'Choose the sampled medium'
+        }
         fields = [
             'equipment_model',
             'variable',

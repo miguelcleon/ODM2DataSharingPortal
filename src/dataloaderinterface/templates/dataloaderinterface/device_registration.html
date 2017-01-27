@@ -34,17 +34,19 @@
                                         {% for field in sampling_feature_form %}
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">
-                                                <label class="control-label"
-                                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                {{ field|add_class:"form-control input-sm" }}
+                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                {% with "placeholder:"|add:field.help_text as placeholder %}
+                                                    {{ field|add_class:"form-control input-sm"|attr:placeholder }}
+                                                {% endwith %}
                                             </div>
                                         {% endfor %}
                                         {% for field in site_form %}
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">
-                                                <label class="control-label"
-                                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                {{ field|add_class:"form-control input-sm" }}
+                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                {% with "placeholder:"|add:field.help_text as placeholder %}
+                                                    {{ field|add_class:"form-control input-sm"|attr:placeholder }}
+                                                {% endwith %}
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -94,9 +96,7 @@
                                                         {% for field in result_form %}
                                                             <td data-field="{{ field.name }}">
                                                                 <span class="field-text">{{ field.data }}</span>
-                                                                <input type="hidden" name="{{ field.html_name }}"
-                                                                       class="field-value"
-                                                                       value=""/>
+                                                                <input type="hidden" name="{{ field.html_name }}" class="field-value" value=""/>
                                                             </td>
                                                         {% endfor %}
                                                         <td data-behaviour="edit">
@@ -174,9 +174,10 @@
                             <div class="form-group col-lg-12 result-form">
                             {% for field in results_formset.empty_form %}
                                 <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                                    <label class="control-label"
-                                           for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
-                                    {{ field|add_class:"form-control input-sm" }}
+                                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
+                                    {% with "placeholder:"|add:field.help_text as placeholder %}
+                                        {{ field|add_class:"form-control input-sm"|attr:placeholder }}
+                                    {% endwith %}
                                 </div>
                             {% endfor %}
                         </div>
