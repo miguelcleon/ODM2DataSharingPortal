@@ -33,31 +33,34 @@
                             {% endfor %}
                         {% endif %}
 
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6 site-tokens">
-                                <div class="input-group input-group-copy">
-                                    <span class="input-group-addon"><i class="material-icons">local_offer</i> Registration Token</span>
-                                    <input type="text" id="authToken" class="form-control click-select-all" readonly
-                                           aria-label="Registration Token"
-                                           value="{{ object.authentication_token }}">
-                                    <span class="input-group-addon clipboard-copy btn-copy"
-                                          data-target="authToken">Copy</span>
-                                </div>
 
-                                <br>
+                        {% if object.user_id == request.user.id %}
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-6 site-tokens">
+                                    <div class="input-group input-group-copy">
+                                        <span class="input-group-addon"><i class="material-icons">local_offer</i> Registration Token</span>
+                                        <input type="text" id="authToken" class="form-control click-select-all" readonly
+                                               aria-label="Registration Token"
+                                               value="{{ object.authentication_token }}">
+                                        <span class="input-group-addon clipboard-copy btn-copy"
+                                              data-target="authToken">Copy</span>
+                                    </div>
 
-                                <div class="input-group input-group-copy">
-                                    <span class="input-group-addon"><i class="material-icons">settings_remote</i> Sampling Feature UUID</span>
-                                    <input type="text" id="featureUUID" class="form-control click-select-all" readonly
-                                           aria-label="Sampling Feature UUID"
-                                           value="{{ sampling_feature.sampling_feature_uuid }}">
-                                    <span class="input-group-addon clipboard-copy btn-copy"
-                                          data-target="featureUUID">Copy</span>
+                                    <br>
+
+                                    <div class="input-group input-group-copy">
+                                        <span class="input-group-addon"><i class="material-icons">settings_remote</i> Sampling Feature UUID</span>
+                                        <input type="text" id="featureUUID" class="form-control click-select-all" readonly
+                                               aria-label="Sampling Feature UUID"
+                                               value="{{ sampling_feature.sampling_feature_uuid }}">
+                                        <span class="input-group-addon clipboard-copy btn-copy"
+                                              data-target="featureUUID">Copy</span>
+                                    </div>
                                 </div>
                             </div>
+                            <br>
+                        {% endif %}
 
-                        </div>
-                        <br>
                     </header>
 
 
@@ -135,18 +138,20 @@
                                                  data-variable-code="{{ result.variable.variable_code }}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    <div class="input-group input-group-copy pull-left">
-                                                        <span class="input-group-addon">Result UUID</span>
-                                                        <input type="text" id="resultUUID{{ forloop.counter }}"
-                                                               class="form-control click-select-all" readonly
-                                                               aria-label="Amount (to the nearest dollar)"
-                                                               value="{{ result.result_uuid }}">
-                                                        <span class="input-group-addon clipboard-copy btn-copy"
-                                                              data-target="resultUUID{{ forloop.counter }}">Copy</span>
-                                                    </div>
+                                                    {% if object.user_id == request.user.id %}
+                                                        <div class="input-group input-group-copy pull-left">
+                                                            <span class="input-group-addon">Result UUID</span>
+                                                            <input type="text" id="resultUUID{{ forloop.counter }}"
+                                                                   class="form-control click-select-all" readonly
+                                                                   aria-label="Amount (to the nearest dollar)"
+                                                                   value="{{ result.result_uuid }}">
+                                                            <span class="input-group-addon clipboard-copy btn-copy"
+                                                                  data-target="resultUUID{{ forloop.counter }}">Copy</span>
+                                                        </div>
+                                                    {% endif %}
 
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table fa-2x table-trigger"
+                                                          class="fa fa-table fa-2x table-trigger pull-right"
                                                           aria-hidden="true"></span>
                                                     <div class="mdl-tooltip"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
