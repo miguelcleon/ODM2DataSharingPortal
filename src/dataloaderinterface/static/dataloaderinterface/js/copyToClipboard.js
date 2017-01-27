@@ -3,6 +3,16 @@
  */
 
 $(document).ready(function () {
+    var snackbarContainer = document.querySelector('#clipboard-snackbar');
+
+    $(".btn-copy").click(function () {
+        var data = {
+            message: 'Copied to clipboard.',
+            timeout: 3000
+        };
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+    });
+
     $(".click-select-all").click(function () {
         $(this).select();
     });
@@ -14,7 +24,7 @@ $(document).ready(function () {
 });
 
 function copyToClipboard(elem, event) {
-	  // create hidden text element, if it doesn't already exist
+    // create hidden text element, if it doesn't already exist
     var targetId = "_hiddenCopyText_";
     var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
     var origSelectionStart, origSelectionEnd;
@@ -44,8 +54,8 @@ function copyToClipboard(elem, event) {
     // copy the selection
     var succeed;
     try {
-    	  succeed = document.execCommand("copy");
-    } catch(e) {
+        succeed = document.execCommand("copy");
+    } catch (e) {
         succeed = false;
     }
     // restore original focus
@@ -68,25 +78,3 @@ function copyToClipboard(elem, event) {
 
     return succeed;
 }
-
-(function() {
-    'use strict';
-    var snackbarContainer = document.querySelector('#clipboard-snackbar');
-    var showSnackbarButton = document.querySelector('.btn-copy');
-    var handler = function (event) {
-        showSnackbarButton.style.backgroundColor = '';
-    };
-
-    $(".btn-copy").click(function () {
-        'use strict';
-        showSnackbarButton.style.backgroundColor = '#' +
-            Math.floor(Math.random() * 0xFFFFFF).toString(16);
-        var data = {
-            message: 'Copied to clipboard.',
-            timeout: 3000,
-            actionHandler: handler,
-            actionText: 'Dismiss'
-        };
-        snackbarContainer.MaterialSnackbar.showSnackbar(data);
-    });
-}());
