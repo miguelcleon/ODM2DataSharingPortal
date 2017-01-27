@@ -165,8 +165,8 @@
                                                     </tr>
                                                 </table>
 
-                                                <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    {% if object.user_id == request.user.id %}
+                                                {% if object.user_id == request.user.id %}
+                                                    <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                                         <div class="input-group input-group-copy">
                                                             <span class="input-group-addon">Result UUID</span>
                                                             <input type="text" id="resultUUID{{ forloop.counter }}"
@@ -176,8 +176,8 @@
                                                             <span class="input-group-addon clipboard-copy btn-copy"
                                                                   data-target="resultUUID{{ forloop.counter }}">Copy</span>
                                                         </div>
-                                                    {% endif %}
-                                                </div>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     {% endwith %}
