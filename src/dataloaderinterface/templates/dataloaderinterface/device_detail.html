@@ -138,18 +138,10 @@
                                                  data-variable-code="{{ result.variable.variable_code }}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    {% if object.user_id == request.user.id %}
-                                                        <div class="input-group input-group-copy pull-left">
-                                                            <span class="input-group-addon">Result UUID</span>
-                                                            <input type="text" id="resultUUID{{ forloop.counter }}"
-                                                                   class="form-control click-select-all" readonly
-                                                                   aria-label="Amount (to the nearest dollar)"
-                                                                   value="{{ result.result_uuid }}">
-                                                            <span class="input-group-addon clipboard-copy btn-copy"
-                                                                  data-target="resultUUID{{ forloop.counter }}">Copy</span>
-                                                        </div>
-                                                    {% endif %}
-
+                                                    <div class="variable-name pull-left">
+                                                        <strong>{{ result.variable.variable_name_id }} </strong><span
+                                                            class="variable-code">({{ result.variable.variable_code }})</span>
+                                                    </div>
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
                                                           class="fa fa-table fa-2x table-trigger pull-right"
                                                           aria-hidden="true"></span>
@@ -157,11 +149,6 @@
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
                                                         View Data Table
                                                     </div>
-                                                </div>
-
-                                                <div class="variable-name">
-                                                    <strong>{{ result.variable.variable_name_id }} </strong><span
-                                                        class="variable-code">({{ result.variable.variable_code }})</span>
                                                 </div>
 
                                                 <table class="full-width">
@@ -177,6 +164,20 @@
                                                         </td>
                                                     </tr>
                                                 </table>
+
+                                                <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                                    {% if object.user_id == request.user.id %}
+                                                        <div class="input-group input-group-copy">
+                                                            <span class="input-group-addon">Result UUID</span>
+                                                            <input type="text" id="resultUUID{{ forloop.counter }}"
+                                                                   class="form-control click-select-all" readonly
+                                                                   aria-label="Amount (to the nearest dollar)"
+                                                                   value="{{ result.result_uuid }}">
+                                                            <span class="input-group-addon clipboard-copy btn-copy"
+                                                                  data-target="resultUUID{{ forloop.counter }}">Copy</span>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
                                     {% endwith %}

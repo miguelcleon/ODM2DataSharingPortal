@@ -288,6 +288,7 @@ div.registration-field span.control-field {
 
 .variable-name {
     padding: 8px 20px;
+    width: calc(100% - 50px);
 }
 
 .variable-data {
@@ -562,9 +563,7 @@ footer .separator {
     cursor: default;
 }
 
-.plot_box .input-group-copy {
-    width: calc(100% - 50px);
-}
+
 .input-group-copy .material-icons {
     font-size: 14px;
 }
