@@ -1,12 +1,21 @@
 $(document).ready(function () {
     var dialog = document.querySelector('#data-table-dialog');
-    var showDialogButton = document.querySelector('.table-trigger');
     if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
     }
-    showDialogButton.addEventListener('click', function () {
+
+    $(".table-trigger").click(function(){
+        var box = $(this).parents('.plot_box');
+        var id = box.data('result-id');
+        var tables = $('table.data-values');
+        tables.hide();
+
+        tables.filter('[data-result-id="' + id + '"]').show();
+        $(dialog).find('.mdl-dialog__title').text(box.data('variable-name') + ' (' + box.data('variable-code') + ')');
+
         dialog.showModal();
     });
+
     dialog.querySelector('.dialog-close').addEventListener('click', function () {
         dialog.close();
     });
@@ -72,6 +81,17 @@ function drawSparklinePlots(tableData) {
     }
 }
 
+function initializeTable(table) {
+    return table.dataTable({
+        info: false,
+        ordering: true,
+        paging: false,
+        searching: false,
+        scrollY: '700',
+        scrollCollapse: true
+    });
+}
+
 $(document).ready(function() {
     $('nav .menu-sites-list').addClass('active');
     
@@ -79,14 +99,7 @@ $(document).ready(function() {
     var tablesData = [];
     var plotBoxes = $('div.plot_box');
 
-    var tables = $('table.data-values').dataTable({
-        info: false,
-        ordering: false,
-        paging: false,
-        searching: false,
-        scrollY: plotBoxes.parent().height() - 47,
-        scrollCollapse: true
-    });
+    var tables = initializeTable($('table.data-values'));
 
     for (var index = 0; index < tables.length; index++) {
         var table = $(tables.get(index));
@@ -98,21 +111,7 @@ $(document).ready(function() {
             })
         }
     }
-
-    plotBoxes.on('click', function(event) {
-        var box = $(this);
-        var id = box.data('result-id');
-        var selected = $('div.plot_box.selected');
-        var tables = $('table.data-values');
-
-        
-        tables.hide();
-        selected.removeClass('selected');
-        box.addClass('selected');
-        tables.filter('[data-result-id="' + id + '"]').show();
-        $('button.download-data-button').data('result-id', id);
-        $('button.download-data-button span.variable-name').text(box.data('variable-name'));
-    });
+    tables.api().destroy();
 
     $(window).on('resize', function(event) {
       clearTimeout(resizeTimer);

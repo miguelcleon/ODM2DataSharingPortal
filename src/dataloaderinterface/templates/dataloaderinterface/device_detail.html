@@ -68,7 +68,7 @@
                             <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">Deployment by: </td>
-                                    <td class="mdl-data-table__cell--non-numeric"s>{{ affiliation }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ affiliation }}</td>
                                 </tr>
 
                                 <tr>
@@ -131,17 +131,18 @@
                                     {% with feature_action.results.all.0 as result %}
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
-                                                 data-variable-name="{{ result.variable.variable_name_id }}">
+                                                 data-variable-name="{{ result.variable.variable_name_id }}"
+                                                 data-variable-code="{{ result.variable.variable_code }}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                                     <div class="input-group input-group-copy pull-left">
                                                         <span class="input-group-addon">Result UUID</span>
-                                                        <input type="text" id="resultUUID"
+                                                        <input type="text" id="resultUUID{{ forloop.counter }}"
                                                                class="form-control click-select-all" readonly
                                                                aria-label="Amount (to the nearest dollar)"
                                                                value="{{ result.result_uuid }}">
                                                         <span class="input-group-addon clipboard-copy btn-copy"
-                                                              data-target="resultUUID">Copy</span>
+                                                              data-target="resultUUID{{ forloop.counter }}">Copy</span>
                                                     </div>
 
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
@@ -167,8 +168,7 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div id="graph{{ forloop.counter0 }}"
-                                                                 class="graph-container"></div>
+                                                            <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
                                                         </td>
                                                     </tr>
                                                 </table>
