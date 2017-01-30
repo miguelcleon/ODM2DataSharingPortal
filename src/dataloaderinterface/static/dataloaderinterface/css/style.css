@@ -417,6 +417,10 @@ div.form-field[data-field="elevation_m"], div.form-field[data-field="elevation_d
     order: 2;
 }
 
+.select2-selection__rendered {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+}
+
 div.form-field[data-field="affiliation"] .select2-selection {
     border: none;
     border-radius: 0;
@@ -424,15 +428,9 @@ div.form-field[data-field="affiliation"] .select2-selection {
     font-size: 2em;
 }
 
-div.form-field[data-field="affiliation"] .select2-selection__arrow b {
-    border-width: 8px 6px;
-    margin-left: -14px !important;
-    margin-top: 9px;
-}
-
-div.form-field[data-field="affiliation"] .select2-container--bootstrap.select2-container--open .select2-selection__arrow b {
-    border-width: 8px 6px;
-    margin-top: 1px;
+span.select2-selection__clear {
+    font-size: 1.4em;
+    line-height: 1.1em;
 }
 
 span.name-dropdown {
