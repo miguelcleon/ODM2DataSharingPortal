@@ -5,15 +5,15 @@
 
 function updateSitePosition(map, position) {
     map.panTo(position);
-    $('input[name="latitude"]').val(Math.round(position.lat() * 100000) / 100000);
-    $('input[name="longitude"]').val(Math.round(position.lng() * 100000) / 100000);
+    $('input[name="latitude"]').val(Math.round(position.lat() * 100000) / 100000).trigger('keypress');
+    $('input[name="longitude"]').val(Math.round(position.lng() * 100000) / 100000).trigger('keypress');
 }
 
 function updateSiteElevation(position) {
     var elevator = new google.maps.ElevationService();
      elevator.getElevationForLocations({'locations':[position]}, function(results, status) {
           if (status == google.maps.ElevationStatus.OK && results[0]) {
-              $('input[name="elevation_m"]').val(Math.round(results[0].elevation));
+              $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
           }
      });
 }
