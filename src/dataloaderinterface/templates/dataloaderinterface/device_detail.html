@@ -3,9 +3,9 @@
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>
+{#    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">#}
+{#    <link rel="stylesheet"#}
+{#          href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>#}
     <link rel="stylesheet" href="{% static 'dataloaderinterface/css/dialog-polyfill.css' %}">
 {% endblock %}
 
@@ -34,7 +34,7 @@
                         {% endif %}
 
 
-                        {% if object.user_id == request.user.id %}
+                        {% if object.user_id == request.user.odm2user.id %}
                             <div class="row">
                                 <div class="col-xs-12 col-sm-6 site-tokens">
                                     <div class="input-group input-group-copy">
@@ -131,7 +131,7 @@
                             </div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
-                                    {% with feature_action.results.all.0 as result %}
+                                    {% with feature_action.results.first as result %}
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
                                                  data-variable-name="{{ result.variable.variable_name_id }}"
@@ -152,20 +152,26 @@
                                                 </div>
 
                                                 <table class="full-width">
-                                                    <tr>
-                                                        <td class="variable-description">
-                                                            <div class="variable-data text-center">
-                                                                <div class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</div>
-                                                                <div class="unit">{{ result.unit.unit_abbreviation }}</div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
-                                                        </td>
-                                                    </tr>
+                                                    {% with result.timeseriesresult.values.recent.last as latest_value %}
+                                                        {% if latest_value %}
+                                                            <tr>
+                                                                <td class="variable-description">
+                                                                    <div class="variable-data text-center">
+                                                                        <div class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</div>
+                                                                        <div class="unit">{{ result.unit.unit_abbreviation }}</div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                                                </td>
+                                                            </tr>
+                                                        {% else %}
+                                                            <tr><td><span class="no-data-message">NOTHING TO LOOK AT HERE!</span></td></tr>
+                                                        {% endif %}
+                                                    {% endwith %}
                                                 </table>
 
-                                                {% if object.user_id == request.user.id %}
+                                                {% if object.user_id == request.user.odm2user.id %}
                                                     <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                                         <div class="input-group input-group-copy">
                                                             <span class="input-group-addon">Result UUID</span>
@@ -196,7 +202,7 @@
     </div>
 
     <dialog class="mdl-dialog" id="data-table-dialog">
-        <h4 class="mdl-dialog__title">Temperature (Mayfly-Temp)</h4>
+        <h4 class="mdl-dialog__title"></h4>
 
         <div class="mdl-dialog__content">
             <div class="measurements-table">
@@ -208,23 +214,12 @@
 
                 {% for feature_action in feature_actions %}
                     {% with feature_action.results.first as result %}
-                        <table class="table table-striped table-bordered data-values {{ result.variable.variable_code }}"
-                               cellspacing="0" width="100%" data-result-id="{{ result.result_id }}">
+                        <table class="table table-striped table-bordered data-values" cellspacing="0"
+                               width="100%" data-result-id="{{ result.result_id }}">
                             <thead>
-                            <tr>
-                                <th>Timestamp</th>
-                                <th>Value</th>
-                            </tr>
+                                <tr><th>Timestamp</th><th>Value</th></tr>
                             </thead>
-
-                            <tbody>
-                            {% for series_value in result.timeseriesresult.values.recent %}
-                                <tr>
-                                    <td>{{ series_value.value_datetime }}</td>
-                                    <td>{{ series_value.data_value }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     {% endwith %}
                 {% endfor %}
@@ -235,15 +230,27 @@
         </div>
     </dialog>
 
+    <script id="sensors-data" type="application/json">
+        [
+        {% for feature_action in feature_actions %}
+            {% with feature_action.results.first as result %}
+            {
+                "id": "{{ result.result_id }}",
+                "recent-values": [{% for series_value in result.timeseriesresult.values.recent %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime }}", "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
+            }{% if not forloop.last %},{% endif %}
+            {% endwith %}
+        {% endfor %}
+        ]
+    </script>
+
 {% endblock %}
 
 {% block scripts %}
     {{ block.super }}
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+{#    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>#}
     <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}

@@ -44,7 +44,7 @@ function initMap() {
 function plotValues(result_id, values) {
     var plotBox = $('div.plot_box[data-result-id="' + result_id + '"] div.graph-container');
 
-    var margin = {top: 0, right: 0, bottom: 0, left: 0};
+    var margin = { top: 5, right: 1, bottom: 5, left: 1 };
     var width = plotBox.width() - margin.left - margin.right;
     var height = plotBox.height() - margin.top - margin.bottom;
 
@@ -55,7 +55,7 @@ function plotValues(result_id, values) {
         return d.index;
     }));
     yAxis.domain(d3.extent(values, function (d) {
-        return parseFloat(d.value);
+        return d.value;
     }));
 
     var line = d3.line()
@@ -74,52 +74,41 @@ function plotValues(result_id, values) {
     svg.append("path").data([values]).attr("class", "line").attr("d", line);
 }
 
-function drawSparklinePlots(tableData) {
+function drawSparklinePlots(timeSeriesData) {
     $('div.graph-container').empty();
-    for (var index = 0; index < tableData.length; index++) {
-        plotValues(tableData[index]['id'], tableData[index]['data']);
+    for (var index = 0; index < timeSeriesData.length; index++) {
+        var timeSeries = timeSeriesData[index];
+        if (timeSeries['recent-values'].length === 0) {
+            continue;
+        }
+        plotValues(timeSeries['id'], timeSeries['recent-values']);
     }
 }
 
-function initializeTable(table) {
-    return table.dataTable({
-        info: false,
-        ordering: true,
-        paging: false,
-        searching: false,
-        scrollY: '700',
-        scrollCollapse: true
-    });
+function fillValueTables(tables, data) {
+    for (var index = 0; index < data.length; index++) {
+        var result = data[index];
+        var table = tables.filter('[data-result-id=' + result.id + ' ]');
+        var rows = result['recent-values'].map(function(dataValue) {
+            return $("<tr><td>" + dataValue.timestamp + "</td><td>" + dataValue.value + "</td></tr>");
+        });
+        table.append(rows);
+    }
 }
 
 $(document).ready(function() {
     $('nav .menu-sites-list').addClass('active');
     
     var resizeTimer;
-    var tablesData = [];
-    var plotBoxes = $('div.plot_box');
-
-    var tables = initializeTable($('table.data-values'));
-
-    for (var index = 0; index < tables.length; index++) {
-        var table = $(tables.get(index));
-        tablesData[index] = {
-            table: table,
-            id: table.data('result-id'),
-            data: tables.api().table(index).data().map(function(data, index) {
-                return { index: index, value: data[1] }
-            })
-        }
-    }
-    tables.api().destroy();
+    var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
+    fillValueTables($('table.data-values'), timeSeriesData);
 
     $(window).on('resize', function(event) {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function() {
-          drawSparklinePlots(tablesData);
+          drawSparklinePlots(timeSeriesData);
       }, 500);
     });
 
-    drawSparklinePlots(tablesData);
-    plotBoxes.first().trigger('click');
+    drawSparklinePlots(timeSeriesData);
 });
