@@ -153,7 +153,7 @@
 
                                                 <table class="full-width">
                                                     {% with result.timeseriesresult.values.recent.last as latest_value %}
-                                                        {% if latest_value %}
+{#                                                        {% if latest_value %}#}
                                                             <tr>
                                                                 <td class="variable-description">
                                                                     <div class="variable-data text-center">
@@ -165,9 +165,9 @@
                                                                     <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
                                                                 </td>
                                                             </tr>
-                                                        {% else %}
-                                                            <tr><td><span class="no-data-message">NOTHING TO LOOK AT HERE!</span></td></tr>
-                                                        {% endif %}
+{#                                                        {% else %}#}
+{#                                                            <tr><td><span class="no-data-message">NOTHING TO LOOK AT HERE!</span></td></tr>#}
+{#                                                        {% endif %}#}
                                                     {% endwith %}
                                                 </table>
 
