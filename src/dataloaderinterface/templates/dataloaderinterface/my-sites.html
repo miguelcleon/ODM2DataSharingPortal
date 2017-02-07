@@ -4,9 +4,16 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <section class="sites-list col-lg-12">
+            <section class="sites-list col-lg-6">
                 <div class="page-title">Registered Sites</div>
             </section>
+            <div class="col-xs-12 col-lg-6">
+                <br><br>
+                <a href="{% url 'site_registration' %}"
+                   class="button-link pull-right mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                    <i class="material-icons">add_circle_outline</i> Register A New Site
+                </a>
+            </div>
         </div>
     </div>
 
@@ -20,21 +27,6 @@
 
     <div class="container main-content">
         <div class="row">
-            <div class="col-xs-12">
-                <br>
-                <a href="{% url 'site_registration' %}">
-                    <button id="btn-add-new-site"
-                            class="mdl-button mdl-js-button mdl-button--fab
-                   mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
-                        <i class="material-icons">add</i>
-                    </button>
-                </a>
-
-                <div class="mdl-tooltip" data-mdl-for="btn-add-new-site">
-                    Add New Site
-                </div>
-            </div>
-
             {% for registration in object_list %}
                 <div class="col-xs-12 col-sm-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
