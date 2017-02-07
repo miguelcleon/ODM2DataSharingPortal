@@ -280,6 +280,11 @@ div.registration-field span.control-field {
     cursor: pointer;
 }
 
+.measurements-table {
+    max-height: 350px;
+    overflow: auto;
+}
+
 .variable-description {
     width: 120px;
     padding: 20px;
@@ -499,18 +504,6 @@ ul.errorlist {
     min-height: 80px;
 }
 
-/*DATATABLES STYLING*/
-table.data-values, table.dataTable {
-    display: table;  !important
-}
-
-table.dataTable {
-    margin-bottom: 0;
-}
-
-table.dataTable.table-bordered > thead > tr > th {
-    border-bottom-width: 1px;
-}
 /*FOOTER STYLING*/
 footer {
     background-color: #353535;

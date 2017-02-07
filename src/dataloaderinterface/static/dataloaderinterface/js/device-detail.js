@@ -90,7 +90,7 @@ function fillValueTables(tables, data) {
         var result = data[index];
         var table = tables.filter('[data-result-id=' + result.id + ' ]');
         var rows = result['recent-values'].map(function(dataValue) {
-            return $("<tr><td>" + dataValue.timestamp + "</td><td>" + dataValue.value + "</td></tr>");
+            return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp + "</td><td>" + dataValue.value + "</td></tr>");
         });
         table.append(rows);
     }
