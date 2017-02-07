@@ -276,6 +276,11 @@ div.registration-field span.control-field {
     border-top: 0;
 }
 
+.help-icon {
+    font-size: 18px;
+    line-height: 0;
+}
+
 .table-trigger {
     cursor: pointer;
 }

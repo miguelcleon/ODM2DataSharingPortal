@@ -235,7 +235,7 @@ function initializeResultsForm() {
                 updateRowData(newRow);
                 bindResultEditEvent(newRow);
         
-                $('div.results-table table').DataTable().row.add(newRow).draw();
+                $('div.results-table table').append(newRow);
                 $('#result-dialog').modal('toggle');
                 
             } else if (xhr.status == 206) {
@@ -321,15 +321,6 @@ $(document).ready(function() {
 
     initializeResultsForm();
 
-    $('table.sensors').dataTable({
-        info: false,
-        ordering: false,
-        paging: false,
-        searching: false,
-        scrollY: '100%',
-        scrollCollapse: true
-    });
-
     $('#confirm-delete').on('show.bs.modal', function(event) {
         var sensor = $(event.relatedTarget).parents('tr.result-form');
         $(event.target).data('to-delete', sensor);
@@ -342,7 +333,7 @@ $(document).ready(function() {
         var totalForms = $('input[name="form-TOTAL_FORMS"]');
         totalForms.val(totalForms.val() - 1);
 
-        $('div.results-table table').DataTable().row(sensor).remove().draw();
+        // $('div.results-table table').DataTable().row(sensor).remove().draw();
         dialog.modal('toggle');
     });
 });

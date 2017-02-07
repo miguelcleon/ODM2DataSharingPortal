@@ -35,6 +35,10 @@
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">
                                                 <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                <i id="tt{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
+                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--right" data-mdl-for="tt{{ forloop.counter0 }}">
+                                                    Enter a brief and unique text string to identify your site (e.g., "Del_Phil").
+                                                </div>
                                                 {% with "placeholder:"|add:field.help_text as placeholder %}
                                                     {{ field|add_class:"form-control input-sm"|attr:placeholder }}
                                                 {% endwith %}
