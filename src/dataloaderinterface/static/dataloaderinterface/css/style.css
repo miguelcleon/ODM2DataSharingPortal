@@ -557,6 +557,10 @@ footer .separator {
 
 /*GENERAL STYLING*/
 
+a#btn-new-site {
+    margin-top: 40px;
+}
+
 .btn-copy {
     background-color: #FFF !important;
     cursor: default;
