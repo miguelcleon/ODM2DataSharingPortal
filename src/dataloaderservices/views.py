@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db.models.expressions import F
 from django.shortcuts import render
 
 # Create your views here.
+from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
@@ -72,17 +73,27 @@ class TimeSeriesValuesApi(APIView):
     def post(self, request, format=None):
         #  make sure that the data is in the request (sampling_feature, timestamp(?), ...) if not return error response
         # if 'sampling_feature' not in request.data or 'timestamp' not in request.data:
-        if not all(key in request.data for key in ('timestamp', )):
-            raise exceptions.ParseError("Keys sampling_feature or timestamp values not present in the request.")
+        if not all(key in request.data for key in ('timestamp', 'sampling_feature')):
+            raise exceptions.ParseError("Required data not found in request.")
 
         # parse the received timestamp
-        values_timestamp = try_parsing_date(request.data['timestamp'])
+        try:
+            measurement_datetime = parse_datetime(request.data['timestamp'])
+        except ValueError:
+            raise exceptions.ParseError('The timestamp value is not valid.')
+
+        if not measurement_datetime:
+            raise exceptions.ParseError('The timestamp value is not well formatted.')
+
+        if not measurement_datetime.utcoffset():
+            raise exceptions.ParseError('The timestamp value requires timezone information.')
+
+        utc_offset = int(measurement_datetime.utcoffset().total_seconds() / timedelta(hours=1).total_seconds())
 
         # get odm2 sampling feature if it matches sampling feature uuid sent
-        sampling_feature_uuid = request.data['sampling_feature']
-        sampling_feature = SamplingFeature.objects.filter(sampling_feature_uuid__exact=sampling_feature_uuid).first()
+        sampling_feature = SamplingFeature.objects.filter(sampling_feature_uuid__exact=request.data['sampling_feature']).first()
         if not sampling_feature:
-            raise exceptions.ParseError('Sampling Feature UUID does not match any existing Sampling Feature')
+            raise exceptions.ParseError('Sampling Feature code does not match any existing site.')
 
         # get all feature actions related to the sampling feature, along with the results, results variables, and actions.
         feature_actions = sampling_feature.feature_actions.prefetch_related('results__variable', 'action').all()
@@ -95,8 +106,8 @@ class TimeSeriesValuesApi(APIView):
 
             result_value = TimeSeriesResultValue(
                 result_id=result.result_id,
-                value_datetime_utc_offset=feature_action.action.begin_datetime_utc_offset,
-                value_datetime=values_timestamp,
+                value_datetime_utc_offset=utc_offset,
+                value_datetime=measurement_datetime,
                 censor_code_id='Not censored',
                 quality_code_id='None',
                 time_aggregation_interval=1,
@@ -112,8 +123,8 @@ class TimeSeriesValuesApi(APIView):
                 ))
 
             result.value_count = F('value_count') + 1
-            result.result_datetime = values_timestamp
-            result.result_datetime_utc_offset = feature_action.action.begin_datetime_utc_offset
+            result.result_datetime = measurement_datetime
+            result.result_datetime_utc_offset = utc_offset
             result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset'])
 
         return Response({}, status.HTTP_201_CREATED)
