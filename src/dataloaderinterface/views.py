@@ -148,7 +148,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 action = Action(
                     method=Method.objects.filter(method_type_id='Instrument deployment').first(),
                     action_type_id='Instrument deployment',
-                    begin_datetime=datetime.now(), begin_datetime_utc_offset=-7
+                    begin_datetime=datetime.utcnow(), begin_datetime_utc_offset=0
                 )
                 action.save()
 
