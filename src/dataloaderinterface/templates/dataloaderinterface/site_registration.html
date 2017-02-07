@@ -35,6 +35,10 @@
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">
                                                 <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                <i id="tt{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
+                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--right" data-mdl-for="tt{{ forloop.counter0 }}">
+                                                    Enter a brief and unique text string to identify your site (e.g., "Del_Phil").
+                                                </div>
                                                 {% with "placeholder:"|add:field.help_text as placeholder %}
                                                     {{ field|add_class:"form-control input-sm"|attr:placeholder }}
                                                 {% endwith %}
@@ -78,15 +82,15 @@
                                         </div>
 
                                         {{ results_formset.management_form }}
-                                        <table class="table table-striped table-bordered sensors">
+                                        <table class="table table-stripped table-bordered sensors full-width">
                                             <thead>
                                             <tr>
-                                                <th>Equipment Model</th>
-                                                <th>Measured Variable</th>
-                                                <th>Units</th>
-                                                <th>Sampled Medium</th>
-                                                <th>Edit</th>
-                                                <th>Delete</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Equipment Model</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Measured Variable</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Units</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Sampled Medium</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Edit</th>
+                                                <th class="mdl-data-table__cell--non-numeric">Delete</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -94,17 +98,17 @@
                                                 {% if result_form.is_bound %}
                                                     <tr class="result-form" data-result="{{ result_form.prefix }}">
                                                         {% for field in result_form %}
-                                                            <td data-field="{{ field.name }}">
+                                                            <td data-field="{{ field.name }}" class="mdl-data-table__cell--non-numeric">
                                                                 <span class="field-text">{{ field.data }}</span>
                                                                 <input type="hidden" name="{{ field.html_name }}" class="field-value" value=""/>
                                                             </td>
                                                         {% endfor %}
-                                                        <td data-behaviour="edit">
+                                                        <td data-behaviour="edit" class="mdl-data-table__cell--non-numeric">
                                                             <button class="btn btn-primary btn-xs" type="button">
                                                                 <span class="glyphicon glyphicon-pencil"></span>
                                                             </button>
                                                         </td>
-                                                        <td data-behaviour="delete">
+                                                        <td data-behaviour="delete" class="mdl-data-table__cell--non-numeric">
                                                             <button class="btn btn-danger btn-xs" type="button">
                                                                 <span class="glyphicon glyphicon-trash"></span>
                                                             </button>
@@ -117,35 +121,33 @@
 
                                         <script id="sensor-row" type="text/plain">
                                             <tr class="result-form" data-result="">
-                                                <td data-field="equipment_model">
+                                                <td data-field="equipment_model" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
                                                     <input type="hidden" name="form-__prefix__-equipment_model" class="field-value" value="" />
                                                 </td>
-                                                <td data-field="variable">
+                                                <td data-field="variable" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
                                                     <input type="hidden" name="form-__prefix__-variable" class="field-value" value="" />
                                                 </td>
-                                                <td data-field="unit">
+                                                <td data-field="unit" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
                                                     <input type="hidden" name="form-__prefix__-unit" class="field-value" value="" />
                                                 </td>
-                                                <td data-field="sampled_medium">
+                                                <td data-field="sampled_medium" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
                                                     <input type="hidden" name="form-__prefix__-sampled_medium" class="field-value" value="" />
                                                 </td>
-                                                <td data-behaviour="edit">
+                                                <td data-behaviour="edit" class="mdl-data-table__cell--non-numeric">
                                                     <button class="btn btn-primary btn-xs" type="button">
                                                         <span class="glyphicon glyphicon-pencil"></span>
                                                     </button>
                                                 </td>
-                                                <td data-behaviour="delete">
+                                                <td data-behaviour="delete" class="mdl-data-table__cell--non-numeric">
                                                     <button class="btn btn-danger btn-xs" type="button" data-toggle="modal" data-target="#confirm-delete">
                                                         <span class="glyphicon glyphicon-trash"></span>
                                                     </button>
                                                 </td>
                                             </tr>
-
-
                                         </script>
                                     </div>
                                 </div>
@@ -240,7 +242,6 @@
 
 {% block scripts %}
     {{ block.super }}
-    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/device-form.js' %}"></script>

@@ -211,13 +211,12 @@
                 {#                                <i class="fa fa-download" aria-hidden="true"></i> Download <span#}
                 {#                                    class="variable-name"></span> Raw Data#}
                 {#                            </button>#}
-
                 {% for feature_action in feature_actions %}
                     {% with feature_action.results.first as result %}
-                        <table class="table table-striped table-bordered data-values" cellspacing="0"
+                        <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
                                width="100%" data-result-id="{{ result.result_id }}">
                             <thead>
-                                <tr><th>Timestamp</th><th>Value</th></tr>
+                                <tr><th class="mdl-data-table__cell--non-numeric">Timestamp</th><th>Value</th></tr>
                             </thead>
                             <tbody></tbody>
                         </table>

@@ -99,7 +99,7 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
 
 
 class DeviceRegistrationView(LoginRequiredMixin, CreateView):
-    template_name = 'dataloaderinterface/device_registration.html'
+    template_name = 'dataloaderinterface/site_registration.html'
     success_url = reverse_lazy('sites_list')
     model = DeviceRegistration
     object = None
