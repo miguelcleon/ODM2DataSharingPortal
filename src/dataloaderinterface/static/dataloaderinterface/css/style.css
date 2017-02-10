@@ -713,6 +713,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 
 .site-card .mdl-card__title-text a {
     color: #FFF;
+    font-weight: 300;
 }
 
 .site-card .mdl-card__title {
