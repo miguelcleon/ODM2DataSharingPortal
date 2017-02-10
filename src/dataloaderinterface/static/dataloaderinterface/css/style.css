@@ -189,8 +189,8 @@ div.separator {
 .modal-header {
     padding: 15px;
     border-bottom: 1px solid #e5e5e5;
-    background-color: #353535;
-    color: #FFF;
+    background-color: #ffffff;
+    color: #000;
 }
 
 .select2-results__option[aria-disabled="true"] {
