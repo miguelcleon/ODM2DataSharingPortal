@@ -744,6 +744,10 @@ i.material-icons.site-card-icon {
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
 
+.section-subtitle {
+    margin-top: -30px;
+    margin-bottom: 30px;
+}
 
 #new-result-button {
     margin-left: 20px;
