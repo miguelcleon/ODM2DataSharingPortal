@@ -31,7 +31,7 @@
                 <div class="col-xs-12 col-sm-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
                         <div class="mdl-card__title">
-                            <h2 class="mdl-card__title-text">{{ registration.device_name }}</h2>
+                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' registration.registration_id %}">{{ registration.device_name }}</a></h2>
                         </div>
 
                         <div class="mdl-card__supporting-text">
@@ -64,13 +64,6 @@
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-
-                        <div class="mdl-card__actions mdl-card--border">
-                            <a href="{% url 'site_detail' registration.registration_id %}"
-                               class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                                VIEW SITE
-                            </a>
                         </div>
 
                         <div class="mdl-card__menu">

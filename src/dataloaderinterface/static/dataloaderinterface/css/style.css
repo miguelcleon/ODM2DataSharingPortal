@@ -644,7 +644,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 }
 
 .ribbon-blue {
-    background-color: #337ab7
+    background-color: #337ab7;
 }
 
 .ribbon-green {
@@ -709,6 +709,10 @@ dialog#data-table-dialog .mdl-dialog__content {
 
 .site-card .mdl-card__supporting-text {
     color: #252525;
+}
+
+.site-card .mdl-card__title-text a {
+    color: #FFF;
 }
 
 .site-card .mdl-card__title {
