@@ -562,6 +562,12 @@ class SamplingFeature(models.Model):
     external_identifiers = models.ManyToManyField('ExternalIdentifierSystem', related_name='sampling_features',
                                                   through='SamplingFeatureExternalIdentifier')
 
+    @property
+    def latest_updated_result(self):
+        return self.feature_actions.with_results()\
+            .filter(results__value_count__gt=0)\
+            .latest('results__result_datetime').results.first()
+
     def __str__(self):
         return '%s %s' % (self.sampling_feature_code, self.sampling_feature_name)
 

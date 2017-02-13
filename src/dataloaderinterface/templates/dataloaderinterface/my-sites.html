@@ -65,6 +65,7 @@
                                 </tbody>
                             </table>
                             <br>
+                            {% if registration.sampling_feature.latest_updated_result %}
                             <table>
                                 <tbody>
                                 <tr>
@@ -75,10 +76,11 @@
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td><strong>Last update here</strong></td>
+                                    <td><strong>{{ registration.sampling_feature.latest_updated_result.result_datetime }}</strong></td>
                                 </tr>
                                 </tbody>
                             </table>
+                            {% endif %}
                         </div>
 
                         <div class="mdl-card__menu">
