@@ -86,18 +86,12 @@
                         <div class="mdl-card__menu">
                             <!-- Right aligned menu below button -->
                             <button id="site-card-menu-{{ forloop.counter0 }}"
-                                    class="mdl-button mdl-js-button mdl-button--icon">
-                                <i class="material-icons">more_vert</i>
+                                    class="mdl-button mdl-js-button mdl-button--icon view-on-map">
+                                <i class="material-icons">map</i>
                             </button>
-
-                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                                for="site-card-menu-{{ forloop.counter0 }}">
-                                <li class="mdl-menu__item view-on-map">
-                                    <span class="mdl-list__item-primary-content">
-                                        View on map
-                                    </span>
-                                </li>
-                            </ul>
+                            <div class="mdl-tooltip" data-mdl-for="site-card-menu-{{ forloop.counter0 }}">
+                                View on map
+                            </div>
                         </div>
                     </div>
                 </div>

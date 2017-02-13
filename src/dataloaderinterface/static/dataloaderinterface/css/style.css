@@ -720,6 +720,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 }
 
 .site-card .mdl-card__title {
+    padding-right: 60px;
     background-color: #92d050;
     color: #FFF;
 }
@@ -731,11 +732,21 @@ dialog#data-table-dialog .mdl-dialog__content {
 .site-card {
     margin-top: 20px;
     width: auto;
+    height: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.site {
+    flex-shrink: 0;
 }
 
 i.material-icons.site-card-icon {
     margin-right: 8px;
     color: #92d050;
+    max-width: 24px;
 }
 
 .page-title, .section-title {

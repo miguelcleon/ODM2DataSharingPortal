@@ -46,6 +46,10 @@ function initMap() {
             var infoContent = createInfoWindowContent(data);
             event.data['info-window'].setContent(infoContent);
             event.data['info-window'].open(marker.get('map'), marker);
+
+            $('html, body').animate({
+                scrollTop: 0
+            }, 150);
         });
     });
 }
@@ -66,7 +70,6 @@ function createInfoWindowContent(siteInfo) {
 function fixViewPort() {
     var cards = $('.site-card');
 
-    cards.height("initial");   // Reset height
     var maxHeight = 0;
     for (var i = 0; i < cards.length; i++) {
         maxHeight = Math.max($(cards[i]).height(), maxHeight);
@@ -82,11 +85,13 @@ $(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
     // Executes when page loads
-    fixViewPort(ResponsiveBootstrapToolkit.current());
+    $('.site-card').height("initial");   // Reset height
+    fixViewPort();
 
     // Executes each time window size changes
     $(window).resize(
         ResponsiveBootstrapToolkit.changed(function () {
+            $('.site-card').height("initial");   // Reset height
             fixViewPort();
         })
     );
