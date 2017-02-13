@@ -62,7 +62,38 @@ function createInfoWindowContent(siteInfo) {
     return $('<div></div>').append(contentElement.html()).html();
 }
 
-$(document).ready(function() {
+// Makes all site cards have the same height.
+function fixViewPort() {
+    $('.site-card').height("initial");   // Reset height
+
+    var cards = $('.site-card');
+
+    var maxHeight = 0;
+    for (var i = 0; i < cards.length; i++) {
+        maxHeight = Math.max($(cards[i]).height(), maxHeight);
+    }
+
+    // set to new max height
+    for (var i = 0; i < cards.length; i++) {
+        $(cards[i]).height(maxHeight);
+    }
+}
+
+$(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
+    // Uses bootstrap toolkit to trigger FixViewPort on bootstrap responsive breakpoints
+    (function ($, viewport) {
+        $(document).ready(function () {
+            // Executes when page loads
+            fixViewPort(viewport.current());
+
+            // Executes each time window size changes
+            $(window).resize(
+                viewport.changed(function () {
+                    fixViewPort();
+                })
+            );
+        });
+    })(jQuery, ResponsiveBootstrapToolkit);
 });

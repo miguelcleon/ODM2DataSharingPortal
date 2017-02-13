@@ -189,8 +189,9 @@ div.separator {
 .modal-header {
     padding: 15px;
     border-bottom: 1px solid #e5e5e5;
-    background-color: #ffffff;
+    background-color: #f6f7f9;
     color: #000;
+    border-radius: 4px;
 }
 
 .select2-results__option[aria-disabled="true"] {
@@ -709,6 +710,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 
 .site-card .mdl-card__supporting-text {
     color: #252525;
+    width: 100%;
 }
 
 .site-card .mdl-card__title-text a {
