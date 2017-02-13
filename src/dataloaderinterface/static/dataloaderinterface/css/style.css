@@ -568,9 +568,12 @@ a#btn-new-site {
     cursor: default;
 }
 
-
-.input-group-copy .material-icons {
+.site-tokens .material-icons {
     font-size: 14px;
+}
+
+.site-tokens {
+    margin-bottom: 20px;
 }
 
 .plot_box .table-trigger {
@@ -584,10 +587,6 @@ dialog#data-table-dialog {
 
 dialog#data-table-dialog .mdl-dialog__content {
     color: #555;
-}
-
-.input-group-copy .input-group-addon {
-    background-color: #FFF !important;
 }
 
 .site-tokens .input-group-copy .input-group-addon:first-child {
