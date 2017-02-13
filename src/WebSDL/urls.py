@@ -22,7 +22,7 @@ from django.views.generic.edit import CreateView
 
 from dataloader.models import Organization
 from dataloaderinterface.forms import UserRegistrationForm
-from dataloaderinterface.views import UserRegistrationView
+from dataloaderinterface.views import UserRegistrationView, UserAccountView
 
 BASE_URL = settings.SITE_URL[1:]
 
@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^' + BASE_URL + 'login/$', auth_views.login, login_configuration, name='login'),
     url(r'^' + BASE_URL + 'logout/$', auth_views.logout, logout_configuration, name='logout'),
     url(r'^' + BASE_URL + 'register/$', UserRegistrationView.as_view(), name='user_registration'),
+    url(r'^' + BASE_URL + 'account/$', UserAccountView.as_view(), name='user_account'),
     url(r'^' + BASE_URL + 'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(BASE_URL, include('dataloaderinterface.urls')),
     url(BASE_URL, include('dataloaderservices.urls')),

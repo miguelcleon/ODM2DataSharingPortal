@@ -45,6 +45,10 @@ class HomeView(TemplateView):
         return context
 
 
+class UserAccountView(TemplateView):
+    template_name = 'registration/account.html'
+
+
 class UserRegistrationView(CreateView):
     template_name = 'registration/register.html'
     form_class = UserRegistrationForm
