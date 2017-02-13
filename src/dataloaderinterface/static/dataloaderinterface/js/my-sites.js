@@ -64,10 +64,9 @@ function createInfoWindowContent(siteInfo) {
 
 // Makes all site cards have the same height.
 function fixViewPort() {
-    $('.site-card').height("initial");   // Reset height
-
     var cards = $('.site-card');
 
+    cards.height("initial");   // Reset height
     var maxHeight = 0;
     for (var i = 0; i < cards.length; i++) {
         maxHeight = Math.max($(cards[i]).height(), maxHeight);
@@ -82,18 +81,13 @@ function fixViewPort() {
 $(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
-    // Uses bootstrap toolkit to trigger FixViewPort on bootstrap responsive breakpoints
-    (function ($, viewport) {
-        $(document).ready(function () {
-            // Executes when page loads
-            fixViewPort(viewport.current());
+    // Executes when page loads
+    fixViewPort(ResponsiveBootstrapToolkit.current());
 
-            // Executes each time window size changes
-            $(window).resize(
-                viewport.changed(function () {
-                    fixViewPort();
-                })
-            );
-        });
-    })(jQuery, ResponsiveBootstrapToolkit);
+    // Executes each time window size changes
+    $(window).resize(
+        ResponsiveBootstrapToolkit.changed(function () {
+            fixViewPort();
+        })
+    );
 });
