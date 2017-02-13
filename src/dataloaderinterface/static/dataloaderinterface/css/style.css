@@ -568,6 +568,10 @@ a#btn-new-site {
     cursor: default;
 }
 
+.result-uuid {
+    border-bottom: 0 !important;
+}
+
 .site-tokens .material-icons {
     font-size: 14px;
 }
