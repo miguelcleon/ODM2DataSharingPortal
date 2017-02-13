@@ -85,7 +85,6 @@ $(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
     // Executes when page loads
-    $('.site-card').height("initial");   // Reset height
     fixViewPort();
 
     // Executes each time window size changes
