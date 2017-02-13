@@ -96,12 +96,39 @@ function fillValueTables(tables, data) {
     }
 }
 
+// Makes all site cards have the same height.
+function fixViewPort() {
+    var cards = $('.plot_box');
+
+    var maxHeight = 0;
+    for (var i = 0; i < cards.length; i++) {
+        maxHeight = Math.max($(cards[i]).height(), maxHeight);
+    }
+
+    // set to new max height
+    for (var i = 0; i < cards.length; i++) {
+        $(cards[i]).height(maxHeight);
+    }
+}
+
+
 $(document).ready(function() {
     $('nav .menu-sites-list').addClass('active');
     
     var resizeTimer;
     var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
     fillValueTables($('table.data-values'), timeSeriesData);
+
+    // Executes when page loads
+    fixViewPort();
+
+    // Executes each time window size changes
+    $(window).resize(
+        ResponsiveBootstrapToolkit.changed(function () {
+            $('.plot_box').height("initial");   // Reset height
+            fixViewPort();
+        })
+    );
 
     $(window).on('resize', function(event) {
       clearTimeout(resizeTimer);
