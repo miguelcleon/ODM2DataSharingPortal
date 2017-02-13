@@ -281,6 +281,7 @@ div.registration-field span.control-field {
     font-size: 18px;
     line-height: 0;
     vertical-align: sub;
+    cursor: default;
 }
 
 .button-link:hover {
