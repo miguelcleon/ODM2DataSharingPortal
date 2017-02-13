@@ -63,12 +63,12 @@ class OrganizationForm(forms.ModelForm):
 
 class SamplingFeatureForm(forms.ModelForm):
     use_required_attribute = False
+    sampling_feature_name = forms.CharField(required=True, label='Site Name', help_text='Enter a brief but descriptive name for your site (e.g., "Delaware River near Phillipsburg")')
 
     class Meta:
         model = SamplingFeature
         help_texts = {
             'sampling_feature_code': 'Enter a brief and unique text string to identify your site (e.g., "Del_Phil")',
-            'sampling_feature_name': 'Enter a brief but descriptive name for your site (e.g., "Delaware River near Phillipsburg")',
             'elevation_m': 'Enter the elevation of your site in meters',
             'elevation_datum': 'Choose the elevation datum for your site\'s elevation. If you don\'t know it, choose "MSL"'
         }
@@ -80,7 +80,6 @@ class SamplingFeatureForm(forms.ModelForm):
         ]
         labels = {
             'sampling_feature_code': 'Site Code',
-            'sampling_feature_name': 'Site Name',
             'elevation_m': 'Elevation',
         }
 
