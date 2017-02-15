@@ -7,7 +7,7 @@ from django.forms.formsets import formset_factory
 
 from dataloaderinterface.models import ODM2User
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    Site, EquipmentModel, Medium, OrganizationType
+    Site, EquipmentModel, Medium, OrganizationType, DataLoggerProgramFile
 
 
 # AUTHORIZATION
@@ -28,13 +28,10 @@ class UserRegistrationForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         organization = self.cleaned_data['organization']
 
-        person = People.objects.filter(person_first_name=user.first_name, person_last_name=user.last_name).first() or \
-            People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
-        affiliation = Affiliation.objects.filter(person=person, organization=organization).first() or \
-            Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now(), primary_email=user.email)
-
         if commit:
             user.save()
+            person = People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
+            affiliation = Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now(), primary_email=user.email)
             ODM2User.objects.create(user=user, affiliation_id=affiliation.affiliation_id)
 
         return user
