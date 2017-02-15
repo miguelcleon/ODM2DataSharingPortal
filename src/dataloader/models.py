@@ -783,7 +783,7 @@ class Result(models.Model):
 @python_2_unicode_compatible
 class DataLoggerProgramFile(models.Model):
     program_id = models.AutoField(db_column='programid', primary_key=True)
-    affiliation_id = models.ForeignKey('Affiliation', db_column='affiliationid')
+    affiliation = models.ForeignKey('Affiliation', db_column='affiliationid')
     program_name = models.CharField(db_column='programname', max_length=255)
     program_description = models.CharField(db_column='programdescription', blank=True, max_length=500)
     program_version = models.CharField(db_column='programversion', blank=True, max_length=50)
@@ -838,8 +838,6 @@ class DataLoggerFileColumn(models.Model):
     recording_interval = models.FloatField(db_column='recordinginterval', blank=True, null=True)
     recording_interval_unit = models.ForeignKey('Unit', related_name='recording_interval_data_logger_file_columns', db_column='recordingintervalunitsid', blank=True, null=True)
     aggregation_statistic = models.ForeignKey('AggregationStatistic', related_name='data_logger_file_columns', db_column='aggregationstatisticcv', blank=True)
-
-    objects = DataLoggerFileColumnManager()
 
     def __str__(self):
         return '%s %s' % (self.column_label, self.column_description)

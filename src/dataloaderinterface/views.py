@@ -20,7 +20,9 @@ from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
     ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
-    ElevationDatum, SiteType, Affiliation, Medium, ActionBy, Action, Method
+    ElevationDatum, SiteType, Affiliation, Medium, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
+    InstrumentOutputVariable, DataLoggerFileColumn
+from dataloader.querysets import DataLoggerFileColumnManager
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm
 from dataloaderinterface.models import DeviceRegistration
@@ -147,6 +149,17 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
             site.spatial_reference = SpatialReference.objects.get(srs_name='WGS84')
             site.save()
 
+            # Create Data Logger file
+            data_logger_program = DataLoggerProgramFile.objects.create(
+                affiliation=affiliation,
+                program_name='%s data collection' % sampling_feature.sampling_feature_code
+            )
+
+            data_logger_file = DataLoggerFile.objects.create(
+                program=data_logger_program,
+                data_logger_file_name='%s' % sampling_feature.sampling_feature_code
+            )
+
             for result_form in results_formset.forms:
                 # Create action
                 action = Action(
@@ -177,17 +190,19 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
                 time_series_result.aggregation_statistic_id = 'Average'
                 time_series_result.save()
 
-                # maybe create equipments and equipment used for actions so we can keep track of the equipment model
-                # for when we implement the update form.
-                # equipment fields:
-                # code: whatever. an uuid maybe?
-                # name: whatever. same as equipment model name maybe?
-                # equipment type: Sensor
-                # model id: result_form.cleaned_data['equipment model']
-                # serial number: is it relevant?
-                # owner: affiliation.
-                # vendor: is it relevant?
-                # purchase date: definitely not relevant.
+                # Create Data Logger file column
+                instrument_output_variable = InstrumentOutputVariable.objects.filter(
+                    model=result_form.cleaned_data['equipment_model'],
+                    variable=result_form.cleaned_data['variable'],
+                    instrument_raw_output_unit=result_form.cleaned_data['unit'],
+                ).first()
+
+                DataLoggerFileColumn.objects.create(
+                    result=result,
+                    data_logger_file=data_logger_file,
+                    instrument_output_variable=instrument_output_variable,
+                    column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
+                )
 
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
             registration_form.instance.user_id = request.user.odm2user.pk
