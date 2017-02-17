@@ -95,16 +95,47 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DeviceDetailView, self).get_context_data()
-        sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.object.deployment_sampling_feature_uuid)
-        context['sampling_feature'] = sampling_feature
-        context['deployment'] = sampling_feature.actions.first()
-        context['feature_actions'] = sampling_feature.feature_actions.with_results().all()
-        context['affiliation'] = context['deployment'].action_by.first().affiliation
-        context['site'] = sampling_feature.site
+        context['sampling_feature'] = self.object.sampling_feature
+        context['feature_actions'] = self.object.sampling_feature.feature_actions.with_results().all()
+        context['affiliation'] = self.request.user.odm2user.affiliation
+        context['site'] = self.object.sampling_feature.site
         return context
 
 
-class DeviceRegistrationView(LoginRequiredMixin, CreateView):
+class SiteUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'dataloaderinterface/site_registration.html'
+    model = DeviceRegistration
+    slug_field = 'registration_id'
+    fields = []
+
+    def get_formset_initial_data(self):
+        sampling_feature = self.object.sampling_feature
+        results = Result.objects.filter(feature_action__in=(sampling_feature.feature_actions.values_list('feature_action_id')))
+        result_form_data = [
+            {
+                'result_id': result.result_id,
+                'equipment_model': result.data_logger_file_columns.first().instrument_output_variable.model,
+                'variable': result.variable,
+                'unit': result.unit,
+                'sampled_medium': result.sampled_medium
+            }
+            for result in results.prefetch_related('data_logger_file_columns__instrument_output_variable__model')
+        ]
+        return result_form_data
+
+    def get_context_data(self, **kwargs):
+        context = super(SiteUpdateView, self).get_context_data()
+        data = self.request.POST if self.request.POST else None
+        sampling_feature = self.object.sampling_feature
+
+        context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
+        context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
+        context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
+        context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
+        return context
+
+
+class SiteRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/site_registration.html'
     success_url = reverse_lazy('sites_list')
     model = DeviceRegistration
@@ -121,7 +152,7 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         default_data = self.get_default_data()
-        context = super(DeviceRegistrationView, self).get_context_data()
+        context = super(SiteRegistrationView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, initial=default_data)
         context['site_form'] = SiteForm(data=data, initial=default_data)
@@ -216,7 +247,3 @@ class DeviceRegistrationView(LoginRequiredMixin, CreateView):
     @staticmethod
     def all_forms_valid(*forms):
         return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
-
-
-class DeviceUpdateView(LoginRequiredMixin, UpdateView):
-    pass

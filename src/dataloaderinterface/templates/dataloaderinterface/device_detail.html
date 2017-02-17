@@ -67,13 +67,14 @@
 
                             <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Deployment by: </td>
+                                    <td class="mdl-data-table__cell--non-numeric">Deployment By</td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ affiliation }}</td>
                                 </tr>
 
+                                {# we can add deployment date to the registration table, which makes more sense. #}
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">Deployment Date</td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ deployment.begin_datetime }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ object.registration_date }}</td>
                                 </tr>
 
                                 <tr>
@@ -96,10 +97,12 @@
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.site_type_id }}</td>
                                 </tr>
 
-                                <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Deployment Method</td>
-                                    <td class="mdl-data-table__cell--non-numeric"><span>{{ deployment.method }}</span></td>
-                                </tr>
+                                {# is this really necessary? it's gonna be the same method always. #}
+{#                                <tr>#}
+{#                                    <td class="mdl-data-table__cell--non-numeric">Deployment Method</td>#}
+{#                                    <td class="mdl-data-table__cell--non-numeric"><span>{{ deployment.method }}</span></td>#}
+{#                                </tr>#}
+
 
                             </table>
                         </div>
@@ -128,7 +131,7 @@
                             </div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
-                                    {% with feature_action.results.first as result %}
+                                    {% with feature_action.results.all.0 as result %}
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
                                                  data-variable-name="{{ result.variable.variable_name_id }}"
@@ -149,23 +152,26 @@
                                                 </div>
 
                                                 <table class="full-width">
-                                                    {% with result.timeseriesresult.values.recent.last as latest_value %}
+                                                    <tr>
+                                                        <td class="variable-description">
+                                                            <div class="variable-data text-center">
+                                                                <div class="latest-value"></div>
+                                                                <div class="unit">{{ result.unit.unit_abbreviation }}</div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                                        </td>
+                                                    </tr>
+
+{#                                                    {% with result.timeseriesresult.values.all.last as latest_value %}#}
 {#                                                        {% if latest_value %}#}
-                                                            <tr>
-                                                                <td class="variable-description">
-                                                                    <div class="variable-data text-center">
-                                                                        <div class="latest-value">{{ result.timeseriesresult.values.last.data_value|floatformat:-3 }}</div>
-                                                                        <div class="unit">{{ result.unit.unit_abbreviation }}</div>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
-                                                                </td>
-                                                            </tr>
+{#                                                            #}
 {#                                                        {% else %}#}
 {#                                                            <tr><td><span class="no-data-message">NOTHING TO LOOK AT HERE!</span></td></tr>#}
 {#                                                        {% endif %}#}
-                                                    {% endwith %}
+{#                                                    {% endwith %}#}
+
                                                 </table>
 
                                                 {% if object.user_id == request.user.odm2user.id %}
@@ -209,7 +215,7 @@
                 {#                                    class="variable-name"></span> Raw Data#}
                 {#                            </button>#}
                 {% for feature_action in feature_actions %}
-                    {% with feature_action.results.first as result %}
+                    {% with feature_action.results.all.0 as result %}
                         <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
                                width="100%" data-result-id="{{ result.result_id }}">
                             <thead>
@@ -229,10 +235,10 @@
     <script id="sensors-data" type="application/json">
         [
         {% for feature_action in feature_actions %}
-            {% with feature_action.results.first as result %}
+            {% with feature_action.results.all.0 as result %}
             {
                 "id": "{{ result.result_id }}",
-                "recent-values": [{% for series_value in result.timeseriesresult.values.recent %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime }}", "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
+                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime }}", "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
             }{% if not forloop.last %},{% endif %}
             {% endwith %}
         {% endfor %}

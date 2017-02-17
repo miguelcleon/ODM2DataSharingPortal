@@ -78,10 +78,14 @@ function drawSparklinePlots(timeSeriesData) {
     $('div.graph-container').empty();
     for (var index = 0; index < timeSeriesData.length; index++) {
         var timeSeries = timeSeriesData[index];
-        if (timeSeries['recent-values'].length === 0) {
+        var dataValues = timeSeries['values'];
+        if (dataValues.length === 0) {
             continue;
         }
-        plotValues(timeSeries['id'], timeSeries['recent-values']);
+
+        $('.plot_box[data-result-id=' + timeSeries.id + ' ]').find('.latest-value').text(dataValues[dataValues.length - 1].value);
+
+        plotValues(timeSeries['id'], timeSeries['values']);
     }
 }
 
@@ -89,7 +93,7 @@ function fillValueTables(tables, data) {
     for (var index = 0; index < data.length; index++) {
         var result = data[index];
         var table = tables.filter('[data-result-id=' + result.id + ' ]');
-        var rows = result['recent-values'].map(function(dataValue) {
+        var rows = result['values'].map(function(dataValue) {
             return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp + "</td><td>" + dataValue.value + "</td></tr>");
         });
         table.append(rows);

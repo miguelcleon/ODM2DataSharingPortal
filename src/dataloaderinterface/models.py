@@ -5,7 +5,7 @@ from django.db import models
 
 
 # Create your models here.
-from dataloader.models import SamplingFeature, Affiliation
+from dataloader.models import SamplingFeature, Affiliation, FeatureAction
 
 
 class DeviceRegistration(models.Model):
@@ -13,10 +13,11 @@ class DeviceRegistration(models.Model):
     deployment_sampling_feature_uuid = models.UUIDField(db_column='SamplingFeatureUUID')
     authentication_token = models.CharField(max_length=64, editable=False, db_column='AuthenticationToken')
     user = models.ForeignKey('ODM2User', db_column='User')
+    # deployment_date = models.DateTimeField(db_column='DeploymentDate')
 
-    @property
-    def sampling_feature(self):
-        return SamplingFeature.objects.get(sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
+    def __init__(self, *args, **kwargs):
+        super(DeviceRegistration, self).__init__(*args, **kwargs)
+        self.sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
 
     def registration_date(self):
         return self.sampling_feature.actions.first().begin_datetime

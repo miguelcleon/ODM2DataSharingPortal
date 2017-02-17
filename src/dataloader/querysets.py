@@ -47,7 +47,7 @@ class FeatureActionQuerySet(ODM2QuerySet):
         return self.select_related('action').prefetch_related('sampling_feature')
 
     def with_results(self):
-        return self.prefetch_related('results__timeseriesresult__values', 'results__variable')
+        return self.prefetch_related('results__timeseriesresult__values', 'results__variable', 'results__unit')
 
 
 class RelatedActionManager(models.Manager):
