@@ -17,6 +17,7 @@ function initMap() {
         scaleControl: true
     });
 
+    var bounds = new google.maps.LatLngBounds();
     var infoWindow = new google.maps.InfoWindow({
         content: ''
     });
@@ -26,6 +27,8 @@ function initMap() {
             position: { lat: site.latitude, lng: site.longitude },
             map: map
         });
+
+        bounds.extend(marker.getPosition());
 
         marker.addListener('click', function() {
             var contentElement = $('<div></div>').append($('#site-marker-content').html());
@@ -41,6 +44,8 @@ function initMap() {
             infoWindow.open(marker.get('map'), marker);
         });
     });
+    
+    map.fitBounds(bounds);
 }
 
 $(document).ready(function () {
