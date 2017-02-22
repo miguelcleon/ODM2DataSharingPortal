@@ -32,7 +32,7 @@ function initMap() {
         center: sitePosition,
         scrollwheel: false,
         zoom: defaultZoomLevel,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.SATELLITE
     });
 
     var marker = new google.maps.Marker({
