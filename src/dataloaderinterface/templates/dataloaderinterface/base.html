@@ -54,7 +54,9 @@
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
+                                {% if user.is_authenticated %}
                                 <li class="menu-sites-list"><a href="{% url 'sites_list' %}">My Sites</a></li>
+                                {% endif %}
                                 <li class="menu-browse-sites"><a href="{% url 'browse_sites' %}">Browse Sites</a></li>
                             </ul>
 

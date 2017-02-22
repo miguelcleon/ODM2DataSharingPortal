@@ -79,7 +79,7 @@ class DevicesListView(LoginRequiredMixin, ListView):
         return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.odm2user.pk)
 
 
-class BrowseSitesListView(LoginRequiredMixin, ListView):
+class BrowseSitesListView(ListView):
     model = SamplingFeature
     context_object_name = 'sites'
     template_name = 'dataloaderinterface/browse-sites.html'
@@ -88,7 +88,7 @@ class BrowseSitesListView(LoginRequiredMixin, ListView):
         return super(BrowseSitesListView, self).get_queryset().select_related('site').filter()
 
 
-class DeviceDetailView(LoginRequiredMixin, DetailView):
+class DeviceDetailView(DetailView):
     slug_field = 'registration_id'
     model = DeviceRegistration
     template_name = 'dataloaderinterface/device_detail.html'
@@ -97,7 +97,7 @@ class DeviceDetailView(LoginRequiredMixin, DetailView):
         context = super(DeviceDetailView, self).get_context_data()
         context['sampling_feature'] = self.object.sampling_feature
         context['feature_actions'] = self.object.sampling_feature.feature_actions.with_results().all()
-        context['affiliation'] = self.request.user.odm2user.affiliation
+        context['affiliation'] = self.object.user.affiliation
         context['site'] = self.object.sampling_feature.site
         return context
 
