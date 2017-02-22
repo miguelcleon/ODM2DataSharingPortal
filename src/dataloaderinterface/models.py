@@ -15,15 +15,15 @@ class DeviceRegistration(models.Model):
     user = models.ForeignKey('ODM2User', db_column='User')
     # deployment_date = models.DateTimeField(db_column='DeploymentDate')
 
-    def __init__(self, *args, **kwargs):
-        super(DeviceRegistration, self).__init__(*args, **kwargs)
-        self.sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
-
     def registration_date(self):
         return self.sampling_feature.actions.first().begin_datetime
 
     def device_name(self):
         return self.sampling_feature.sampling_feature_code
+
+    @property
+    def sampling_feature(self):
+        return SamplingFeature.objects.get(sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
 
     def __str__(self):
         action = self.sampling_feature.actions.first()
