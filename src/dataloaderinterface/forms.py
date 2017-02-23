@@ -48,7 +48,7 @@ class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
         help_texts = {
-            'organization_code': 'Enter an organization code',
+            'organization_code': 'Enter a brief, but unique code to identify your organization (e.g., "USU" or "USGS")',
             'organization_name': 'Enter the name of your organization',
             'organization_description': 'Enter a description for your organization'
         }
