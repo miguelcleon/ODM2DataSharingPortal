@@ -1,6 +1,6 @@
 function initMap() {
-    const DEFAULT_ZOOM = 6;
-    const DEFAULT_LATITUDE = 37.0902;
+    const DEFAULT_ZOOM = 5;
+    const DEFAULT_LATITUDE = 40.0902;
     const DEFAULT_LONGITUDE = -95.7129;
     const DEFAULT_POSITION = { lat: DEFAULT_LATITUDE, lng: DEFAULT_LONGITUDE };
 
@@ -17,7 +17,6 @@ function initMap() {
         scaleControl: true
     });
 
-    var bounds = new google.maps.LatLngBounds();
     var infoWindow = new google.maps.InfoWindow({
         content: ''
     });
@@ -27,8 +26,6 @@ function initMap() {
             position: { lat: site.latitude, lng: site.longitude },
             map: map
         });
-
-        bounds.extend(marker.getPosition());
 
         marker.addListener('click', function() {
             var contentElement = $('<div></div>').append($('#site-marker-content').html());
@@ -44,8 +41,6 @@ function initMap() {
             infoWindow.open(marker.get('map'), marker);
         });
     });
-    
-    map.fitBounds(bounds);
 }
 
 $(document).ready(function () {
