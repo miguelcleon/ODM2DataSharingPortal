@@ -103,7 +103,7 @@ class ResultForm(forms.ModelForm):
         super(ResultForm, self).__init__(*args, **kwargs)
         self.empty_permitted = False
 
-    equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all(), help_text='Choose the model of your sensor')
+    equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.for_display(), help_text='Choose the model of your sensor')
     sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(
         Q(pk='Air') |
         Q(pk='Soil') |

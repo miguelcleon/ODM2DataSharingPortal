@@ -6,10 +6,10 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 from dataloader.querysets import AffiliationQuerySet, RelatedActionManager, ResultManager, \
-    DataLoggerFileManager, EquipmentModelManager, DataLoggerFileColumnManager, InstrumentOutputVariableManager, \
+    DataLoggerFileManager, InstrumentOutputVariableManager, \
     EquipmentManager, CalibrationReferenceEquipmentManager, EquipmentUsedManager, MaintenanceActionManager, \
     RelatedEquipmentManager, CalibrationActionManager, ODM2QuerySet, ActionQuerySet, ActionByQuerySet, \
-    FeatureActionQuerySet, TimeSeriesValuesQuerySet
+    FeatureActionQuerySet, TimeSeriesValuesQuerySet, EquipmentModelQuerySet
 
 
 # TODO: function to handle the file upload folder for file fields.
@@ -696,7 +696,7 @@ class Unit(models.Model):
     unit_link = models.CharField(db_column='unitslink', blank=True, max_length=255)
 
     def __str__(self):
-        return '%s: %s (%s)' % (self.unit_type_id, self.unit_abbreviation, self.unit_name)
+        return '%s: %s (%s)' % (self.unit_type_id, self.unit_name, self.unit_abbreviation)
 
     def __repr__(self):
         return "<Unit('%s', '%s', '%s', '%s')>" % (
@@ -723,7 +723,7 @@ class Variable(models.Model):
                                                   through='VariableExternalIdentifier')
 
     def __str__(self):
-        return '%s: %s (%s)' % (self.variable_name_id, self.variable_code, self.variable_type_id)
+        return '%s: %s' % (self.variable_name_id, self.variable_code)
 
     def __repr__(self):
         return "<Variable('%s', '%s', '%s', '%s')>" % (
@@ -865,10 +865,10 @@ class EquipmentModel(models.Model):
     output_variables = models.ManyToManyField('Variable', related_name='instrument_models', through='InstrumentOutputVariable')
     output_units = models.ManyToManyField('Unit', related_name='instrument_models', through='InstrumentOutputVariable')
 
-    objects = EquipmentModelManager()
+    objects = EquipmentModelQuerySet.as_manager()
 
     def __str__(self):
-        return '%s: %s' % (self.model_name, self.model_description)
+        return '%s %s' % (self.model_manufacturer, self.model_name)
 
     def __repr__(self):
         return "<EquipmentModel('%s', '%s', '%s', Organization[%s, %s])>" % (
