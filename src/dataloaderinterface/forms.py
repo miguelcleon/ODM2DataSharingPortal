@@ -4,6 +4,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
+from django.forms.models import ModelChoiceField
+from django.forms.widgets import Select
 
 from dataloaderinterface.models import ODM2User
 from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
@@ -19,7 +21,7 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False, help_text='Choose your affiliated organization')
+    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
