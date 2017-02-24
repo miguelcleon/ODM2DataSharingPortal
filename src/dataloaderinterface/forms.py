@@ -109,7 +109,8 @@ class ResultForm(forms.ModelForm):
     sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(
         Q(pk='Air') |
         Q(pk='Soil') |
-        Q(pk='Liquid aqueous')
+        Q(pk='Liquid aqueous') |
+        Q(pk='Not Applicable')
     ), help_text='Choose the sampled medium')
 
     class Meta:
