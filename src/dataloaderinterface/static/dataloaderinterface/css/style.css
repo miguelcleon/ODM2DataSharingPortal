@@ -774,3 +774,7 @@ a.orange:hover {
 label.checkbox-label {
     color: #FFF !important;
 }
+
+#agreement-icon {
+    margin-left: 18px;
+}
