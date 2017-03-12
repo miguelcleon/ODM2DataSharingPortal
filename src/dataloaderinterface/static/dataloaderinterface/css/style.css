@@ -770,3 +770,7 @@ a.orange:hover {
 #btn-login {
     background-color: rgb(101, 101, 101);
 }
+
+label.checkbox-label {
+    color: #FFF !important;
+}
