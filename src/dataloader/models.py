@@ -1,9 +1,12 @@
 from __future__ import unicode_literals
 
+import inspect
 import uuid
 
+import sys
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
+from django.conf import settings
 
 from dataloader.querysets import AffiliationQuerySet, RelatedActionManager, ResultManager, \
     DataLoggerFileManager, InstrumentOutputVariableManager, \
@@ -2072,3 +2075,18 @@ class TransectResultValueAnnotation(ResultValueAnnotation):
         db_table = 'transectresultvalueannotations'
 
 # endregion
+
+
+# TODO: make something more sophisticated than this later on
+schema_fix = 'odm2].['
+clsmembers = inspect.getmembers(sys.modules[__name__], inspect.isclass)
+classes = [model for name, model in clsmembers if issubclass(model, models.Model)]
+database_manager = settings.DATABASES['odm2']['ENGINE']
+
+for model in classes:
+    if database_manager == u'sql_server.pyodbc':
+        model._meta.db_table = schema_fix.upper() + model._meta.db_table
+    elif database_manager == u'django.db.backends.postgresql_psycopg2':
+        model._meta.db_table = schema_fix + model._meta.db_table
+
+            # can add more fixes there depending on the database engine
