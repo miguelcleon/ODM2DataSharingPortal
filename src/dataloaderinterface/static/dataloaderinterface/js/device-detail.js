@@ -21,7 +21,6 @@ $(document).ready(function () {
     });
 });
 
-
 function initMap() {
     var defaultZoomLevel = 18;
     var latitude = parseFloat($('#site-latitude').val());
@@ -115,9 +114,9 @@ function fixViewPort() {
     }
 }
 
-
 $(document).ready(function() {
     $('nav .menu-sites-list').addClass('active');
+    $('textarea#code-output').hide();
     
     var resizeTimer;
     var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
@@ -141,5 +140,11 @@ $(document).ready(function() {
       }, 500);
     });
 
+    $('#code-visiblity-toggle').click( function () {
+            $('textarea#code-output').slideToggle();
+        }
+    );
+
+    // $('div#code-output-div').hide();
     drawSparklinePlots(timeSeriesData);
 });
