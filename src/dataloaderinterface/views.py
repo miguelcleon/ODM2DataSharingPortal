@@ -151,7 +151,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         if all_forms_valid(sampling_feature_form, site_form, results_formset):
             affiliation = request.user.odm2user.affiliation
             data_logger_program = DataLoggerProgramFile.objects.filter(
-                affiliation=affiliation, program_name__contains=sampling_feature.sampling_feature_code
+                affiliation=affiliation, program_name__contains=registration.sampling_feature.sampling_feature_code
             ).first()
             data_logger_file = data_logger_program.data_logger_files.first()
 
