@@ -194,6 +194,9 @@ class XIntendedComponent(models.Model):
     intended_x_spacing = models.FloatField(db_column='intendedxspacing')
     intended_x_spacing_unit = models.ForeignKey('Unit', related_name='+', db_column='intendedxspacingunitsid', blank=True, null=True)
 
+    class Meta:
+        abstract = True
+
 
 class YIntendedComponent(models.Model):
     intended_y_spacing = models.FloatField(db_column='intendedyspacing')
@@ -550,7 +553,7 @@ class SamplingFeature(models.Model):
     sampling_feature_id = models.AutoField(db_column='samplingfeatureid', primary_key=True)
     sampling_feature_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='samplingfeatureuuid')
     sampling_feature_type = models.ForeignKey('SamplingFeatureType', db_column='samplingfeaturetypecv')
-    sampling_feature_code = models.CharField(db_column='samplingfeaturecode', max_length=50)
+    sampling_feature_code = models.CharField(db_column='samplingfeaturecode', max_length=50, unique=True)
     sampling_feature_name = models.CharField(db_column='samplingfeaturename', blank=True, max_length=255)
     sampling_feature_description = models.CharField(db_column='samplingfeaturedescription', blank=True, max_length=500)
     sampling_feature_geo_type = models.ForeignKey('SamplingFeatureGeoType', db_column='samplingfeaturegeotypecv', blank=True, null=True)
@@ -807,7 +810,7 @@ class DataLoggerProgramFile(models.Model):
 @python_2_unicode_compatible
 class DataLoggerFile(models.Model):
     data_logger_file_id = models.AutoField(db_column='dataloggerfileid', primary_key=True)
-    program = models.ForeignKey('DataLoggerProgramFile', db_column='programid')
+    program = models.ForeignKey('DataLoggerProgramFile', db_column='programid', related_name='data_logger_files')
     data_logger_file_name = models.CharField(db_column='dataloggerfilename', max_length=255)
     data_logger_file_description = models.CharField(db_column='dataloggerfiledescription', blank=True, max_length=500)
     data_logger_file_link = models.FileField(db_column='dataloggerfilelink', blank=True)
@@ -1856,7 +1859,7 @@ class PointCoverageResult(ExtendedResult, AggregatedComponent, ZOffsetComponent,
         db_table = 'pointcoverageresults'
 
 
-class ProfileResult(ExtendedResult, AggregatedComponent, XOffsetComponent, YOffsetComponent, YIntendedComponent, ZIntendedComponent, TimeIntendedComponent):
+class ProfileResult(ExtendedResult, AggregatedComponent, XOffsetComponent, YOffsetComponent, ZIntendedComponent, TimeIntendedComponent):
     class Meta:
         db_table = 'profileresults'
 

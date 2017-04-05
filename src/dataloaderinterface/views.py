@@ -106,15 +106,20 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'dataloaderinterface/site_registration.html'
     model = DeviceRegistration
     slug_field = 'registration_id'
+    object = None
     fields = []
 
-    def get_formset_initial_data(self):
-        sampling_feature = self.object.sampling_feature
+    def get_success_url(self):
+        return reverse_lazy('site_detail', kwargs=self.kwargs)
+
+    def get_formset_initial_data(self, *args):
+        sampling_feature = self.get_object().sampling_feature
         results = Result.objects.filter(feature_action__in=(sampling_feature.feature_actions.values_list('feature_action_id')))
         result_form_data = [
             {
                 'result_id': result.result_id,
-                'equipment_model': result.data_logger_file_columns.first().instrument_output_variable.model,
+                # this is kinda ugly as shit but works. keep it to be safe, or don't in case there's results without datalogger column.
+                'equipment_model': result.data_logger_file_columns.first() and result.data_logger_file_columns.first().instrument_output_variable.model,
                 'variable': result.variable,
                 'unit': result.unit,
                 'sampled_medium': result.sampled_medium
@@ -126,7 +131,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SiteUpdateView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
-        sampling_feature = self.object.sampling_feature
+        sampling_feature = self.get_object().sampling_feature
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
@@ -134,13 +139,93 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
+    def post(self, request, *args, **kwargs):
+        registration = DeviceRegistration.objects.filter(pk=self.kwargs['slug']).first()
+        sampling_feature = registration.sampling_feature
+
+        sampling_feature_form = SamplingFeatureForm(data=self.request.POST, instance=sampling_feature)
+        site_form = SiteForm(data=self.request.POST, instance=sampling_feature.site)
+        results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
+        registration_form = self.get_form()
+
+        if all_forms_valid(sampling_feature_form, site_form, results_formset):
+            affiliation = request.user.odm2user.affiliation
+            data_logger_program = DataLoggerProgramFile.objects.filter(
+                affiliation=affiliation, program_name__contains=sampling_feature.sampling_feature_code
+            ).first()
+            data_logger_file = data_logger_program.data_logger_files.first()
+
+            # Update sampling feature
+            sampling_feature_form.instance.save()
+
+            # Update Site
+            site_form.instance.save()
+
+            # Update datalogger program and datalogger file names
+            data_logger_program.program_name = '%s data collection' % sampling_feature.sampling_feature_code
+            data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
+            data_logger_program.save()
+            data_logger_file.save()
+
+            for result_form in results_formset.forms:
+                is_new_result = 'result_id' not in result_form.initial
+                to_delete = result_form['DELETE'].data
+
+                if is_new_result and to_delete:
+                    continue
+                elif is_new_result:
+                    create_result(result_form, sampling_feature, affiliation, data_logger_file)
+                    continue
+                elif to_delete:
+                    result = Result.objects.get(result_id=result_form.initial['result_id'])
+                    feature_action = result.feature_action
+                    action = feature_action.action
+
+                    result.data_logger_file_columns.all().delete()
+                    result.timeseriesresult.values.all().delete()
+                    result.timeseriesresult.delete()
+
+                    action.action_by.all().delete()
+                    result.delete()
+
+                    feature_action.delete()
+                    action.delete()
+                    continue
+
+                # Update Result
+                result = Result.objects.get(result_id=result_form.initial['result_id'])
+                result.variable = result_form.cleaned_data['variable']
+                result.sampled_medium = result_form.cleaned_data['sampled_medium']
+                result.unit = result_form.cleaned_data['unit']
+                result.save()
+
+                # Update Data Logger file column
+                instrument_output_variable = InstrumentOutputVariable.objects.filter(
+                    model=result_form.cleaned_data['equipment_model'],
+                    instrument_raw_output_unit=result.unit,
+                    variable=result.variable,
+                ).first()
+
+                data_logger_file_column = result.data_logger_file_columns.first()
+                data_logger_file_column.instrument_output_variable = instrument_output_variable
+                data_logger_file_column.column_label = '%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
+                data_logger_file_column.save()
+
+            messages.success(request, 'The site has been updated successfully.')
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            messages.error(request, 'There are still some required fields that need to be filled out.')
+            return self.form_invalid(registration_form)
+
 
 class SiteRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/site_registration.html'
-    success_url = reverse_lazy('sites_list')
     model = DeviceRegistration
     object = None
     fields = []
+
+    def get_success_url(self):
+        return reverse_lazy('site_detail', kwargs={'slug': self.object.pk})
 
     @staticmethod
     def get_default_data():
@@ -154,9 +239,10 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         default_data = self.get_default_data()
         context = super(SiteRegistrationView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
-        context['sampling_feature_form'] = SamplingFeatureForm(data=data, initial=default_data)
-        context['site_form'] = SiteForm(data=data, initial=default_data)
-        context['results_formset'] = ResultFormSet(data=data, initial=[default_data])
+        context['sampling_feature_form'] = SamplingFeatureForm(data, initial=default_data)
+        context['site_form'] = SiteForm(data, initial=default_data)
+        context['results_formset'] = ResultFormSet(data)
+
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
@@ -166,7 +252,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         results_formset = ResultFormSet(request.POST)
         registration_form = self.get_form()
 
-        if self.all_forms_valid(sampling_feature_form, site_form, results_formset):
+        if all_forms_valid(sampling_feature_form, site_form, results_formset):
             affiliation = request.user.odm2user.affiliation
 
             # Create sampling feature
@@ -192,48 +278,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             )
 
             for result_form in results_formset.forms:
-                # Create action
-                action = Action(
-                    method=Method.objects.filter(method_type_id='Instrument deployment').first(),
-                    action_type_id='Instrument deployment',
-                    begin_datetime=datetime.utcnow(), begin_datetime_utc_offset=0
-                )
-                action.save()
-
-                # Create feature action
-                feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
-                feature_action.save()
-
-                # Create action by
-                action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
-                action_by.save()
-
-                # Create Results
-                result = result_form.instance
-                result.feature_action = feature_action
-                result.result_type_id = 'Time series coverage'
-                result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
-                result.status_id = 'Ongoing'
-                result.save()
-
-                # Create TimeSeriesResults
-                time_series_result = TimeSeriesResult(result=result)
-                time_series_result.aggregation_statistic_id = 'Average'
-                time_series_result.save()
-
-                # Create Data Logger file column
-                instrument_output_variable = InstrumentOutputVariable.objects.filter(
-                    model=result_form.cleaned_data['equipment_model'],
-                    variable=result_form.cleaned_data['variable'],
-                    instrument_raw_output_unit=result_form.cleaned_data['unit'],
-                ).first()
-
-                DataLoggerFileColumn.objects.create(
-                    result=result,
-                    data_logger_file=data_logger_file,
-                    instrument_output_variable=instrument_output_variable,
-                    column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
-                )
+                create_result(result_form, sampling_feature, affiliation, data_logger_file)
 
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
             registration_form.instance.user_id = request.user.odm2user.pk
@@ -244,6 +289,53 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             messages.error(request, 'There are still some required fields that need to be filled out!')
             return self.form_invalid(registration_form)
 
-    @staticmethod
-    def all_forms_valid(*forms):
-        return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
+
+def all_forms_valid(*forms):
+    return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
+
+
+def create_result(result_form, sampling_feature, affiliation, data_logger_file):
+    # Create action
+    action = Action(
+        method=Method.objects.filter(method_type_id='Instrument deployment').first(),
+        action_type_id='Instrument deployment',
+        begin_datetime=datetime.utcnow(), begin_datetime_utc_offset=0
+    )
+    action.save()
+
+    # Create feature action
+    feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
+    feature_action.save()
+
+    # Create action by
+    action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
+    action_by.save()
+
+    # Create Results
+    result = result_form.instance
+    result.feature_action = feature_action
+    result.result_type_id = 'Time series coverage'
+    result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
+    result.status_id = 'Ongoing'
+    result.save()
+
+    # Create TimeSeriesResults
+    time_series_result = TimeSeriesResult(result=result)
+    time_series_result.aggregation_statistic_id = 'Average'
+    time_series_result.save()
+
+    # Create Data Logger file column
+    instrument_output_variable = InstrumentOutputVariable.objects.filter(
+        model=result_form.cleaned_data['equipment_model'],
+        variable=result_form.cleaned_data['variable'],
+        instrument_raw_output_unit=result_form.cleaned_data['unit'],
+    ).first()
+
+    DataLoggerFileColumn.objects.create(
+        result=result,
+        data_logger_file=data_logger_file,
+        instrument_output_variable=instrument_output_variable,
+        column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
+    )
+
+    return result

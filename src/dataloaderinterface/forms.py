@@ -122,6 +122,7 @@ class ResultForm(forms.ModelForm):
             'sampled_medium': 'Choose the sampled medium'
         }
         fields = [
+            'result_id',
             'equipment_model',
             'variable',
             'unit',
@@ -134,4 +135,4 @@ class ResultForm(forms.ModelForm):
         }
 
 
-ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=0)
+ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, can_delete=True)
