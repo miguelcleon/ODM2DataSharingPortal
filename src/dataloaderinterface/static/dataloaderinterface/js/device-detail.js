@@ -4,7 +4,7 @@ $(document).ready(function () {
         dialogPolyfill.registerDialog(dialog);
     }
 
-    $(".table-trigger").click(function(){
+    $(".table-trigger").click(function () {
         var box = $(this).parents('.plot_box');
         var id = box.data('result-id');
         var tables = $('table.data-values');
@@ -25,7 +25,7 @@ function initMap() {
     var defaultZoomLevel = 18;
     var latitude = parseFloat($('#site-latitude').val());
     var longitude = parseFloat($('#site-longitude').val());
-    var sitePosition = { lat: latitude, lng: longitude };
+    var sitePosition = {lat: latitude, lng: longitude};
 
     var map = new google.maps.Map(document.getElementById('map'), {
         center: sitePosition,
@@ -43,7 +43,7 @@ function initMap() {
 function plotValues(result_id, values) {
     var plotBox = $('div.plot_box[data-result-id="' + result_id + '"] div.graph-container');
 
-    var margin = { top: 5, right: 1, bottom: 5, left: 1 };
+    var margin = {top: 5, right: 1, bottom: 5, left: 1};
     var width = plotBox.width() - margin.left - margin.right;
     var height = plotBox.height() - margin.top - margin.bottom;
 
@@ -58,10 +58,10 @@ function plotValues(result_id, values) {
     }));
 
     var line = d3.line()
-        .x(function(d) {
+        .x(function (d) {
             return xAxis(d.index);
         })
-        .y(function(d) {
+        .y(function (d) {
             return yAxis(d.value);
         });
     var svg = d3.select(plotBox.get(0)).append("svg")
@@ -92,7 +92,7 @@ function fillValueTables(tables, data) {
     for (var index = 0; index < data.length; index++) {
         var result = data[index];
         var table = tables.filter('[data-result-id=' + result.id + ' ]');
-        var rows = result['values'].map(function(dataValue) {
+        var rows = result['values'].map(function (dataValue) {
             return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp + "</td><td>" + dataValue.value + "</td></tr>");
         });
         table.append(rows);
@@ -114,10 +114,65 @@ function fixViewPort() {
     }
 }
 
-$(document).ready(function() {
+// leanModal display from  https://github.com/FinelySliced/leanModal.js
+(function ($) {
+    $.fn.extend({
+        leanModal: function (options) {
+            var defaults = {
+                top: 100,
+                closeButton: null
+            };
+
+            var overlay = $("<div id='lean_overlay'></div>");
+            $("body").append(overlay);
+            options = $.extend(defaults, options);
+            return this.each(function () {
+                var o = options;
+                $(this).click(function (e) {
+                    var modal_id = $(this).attr("href");
+                    $('textarea#code-output.form-control.click-select-all').click(function () {
+                        event.stopPropagation();
+                    });
+
+                    $("#lean_overlay").click(function (e) {
+                        event.stopPropagation();
+                        close_modal(modal_id);
+                    });
+                    $(o.closeButton).click(function (e) {
+                        close_modal(modal_id);
+                    });
+                    var modal_height = $(modal_id).outerHeight();
+                    var modal_width = $(modal_id).outerWidth();
+                    $('#lean_overlay').css({'display': 'block', 'background': 'rgba(0, 0, 0, 0.5);'});
+                    $('#lean_overlay').fadeTo(200, o.overlay);
+                    $(modal_id).css({
+                        'display': 'block',
+                        'position': 'fixed',
+                        'z-index': 11000,
+                        'left': 50 + '%',
+                        'margin-left': -(modal_width / 2) + "px",
+                        'top': o.top + "px"
+                    });
+                    $(modal_id).fadeTo(200, 1);
+                    $('textarea#code-output').fadeIn(200);
+                    e.preventDefault();
+                });
+            });
+
+            function close_modal(modal_id) {
+                $("#lean_overlay").fadeOut(200);
+                $('textarea#code-output').fadeOut(200);
+                $(modal_id).css({'display': 'none'});
+            }
+        }
+    });
+
+})(jQuery);
+
+$(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
-    $('textarea#code-output').hide();
-    
+
+
     var resizeTimer;
     var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
     fillValueTables($('table.data-values'), timeSeriesData);
@@ -133,18 +188,14 @@ $(document).ready(function() {
         })
     );
 
-    $(window).on('resize', function(event) {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function() {
-          drawSparklinePlots(timeSeriesData);
-      }, 500);
+    $(window).on('resize', function (event) {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            drawSparklinePlots(timeSeriesData);
+        }, 500);
     });
 
-    $('#code-visiblity-toggle').click( function () {
-            $('textarea#code-output').slideToggle();
-        }
-    );
+    $("#code-visiblity-toggle").leanModal();
 
-    // $('div#code-output-div').hide();
     drawSparklinePlots(timeSeriesData);
 });
