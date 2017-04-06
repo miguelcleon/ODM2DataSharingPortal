@@ -35,7 +35,8 @@ button.navbar-toggle {
 
 @media (max-width: 890px) {
     .navbar-header {
-        float: none; !important;
+        float: none;
+    !important;
     }
 
     .navbar-left, .navbar-right {
@@ -53,7 +54,8 @@ button.navbar-toggle {
 
     .navbar-fixed-top {
         top: 0;
-        border-width: 0 0 1px; !important;
+        border-width: 0 0 1px;
+    !important;
     }
 
     .navbar-collapse.collapse {
@@ -66,12 +68,14 @@ button.navbar-toggle {
     }
 
     .navbar-nav > li {
-        float: none; !important;
+        float: none;
+    !important;
     }
 
     .navbar-nav > li > a {
         padding-top: 10px;
-        padding-bottom: 10px; !important;
+        padding-bottom: 10px;
+    !important;
     }
 
     .collapse.in {
@@ -212,16 +216,16 @@ div.form-field {
 }
 
 /*#results-template {*/
-    /*display: none;*/
-    /*visibility: hidden;*/
+/*display: none;*/
+/*visibility: hidden;*/
 /*}*/
 
 /*span.remove-result {*/
-    /*font-size: 1.3em;*/
-    /*cursor: pointer;*/
-    /*position: absolute;*/
-    /*top: 14px;*/
-    /*right: 30px;*/
+/*font-size: 1.3em;*/
+/*cursor: pointer;*/
+/*position: absolute;*/
+/*top: 14px;*/
+/*right: 30px;*/
 /*}*/
 
 .inline {
@@ -467,7 +471,6 @@ ul.errorlist {
     color: rgb(232, 0, 0);
 }
 
-
 .organization-fields, .organization-fields .form-field {
     padding-left: 15px;
 }
@@ -599,15 +602,17 @@ dialog#data-table-dialog .mdl-dialog__content {
 }
 
 .btn-copy:hover {
-    background-color: #eeeeee  !important;
+    background-color: #eeeeee !important;
 }
 
 .btn-copy:active {
-    background-color: #DDD  !important;
+    background-color: #DDD !important;
 }
+
 .full-width {
     width: 100%;
 }
+
 .mdl-data-table td:last-of-type {
     white-space: normal;
 }
@@ -675,7 +680,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 }
 
 .shadow {
-    box-shadow: 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.2);
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12), 0 2px 4px -1px rgba(0, 0, 0, .2);
 }
 
 .text-shadow {
@@ -683,7 +688,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 }
 
 .btn.sharp {
-  border-radius:0;
+    border-radius: 0;
 }
 
 .card {
@@ -811,7 +816,6 @@ div.code-display-controls {
     margin: 20px -200px 5px 30px;
 }
 
-
 span.clickable-float-left {
     background-color: #FFFFFF;
     position: inherit;
@@ -829,6 +833,10 @@ span.clickable-float-left {
     text-shadow: none;
     -webkit-transition: all 0.2s;
     transition: all 0.2s;
+}
+
+.buttons-toolbar {
+    margin-bottom: 50px;
 }
 
 i.clickable-float-left {
@@ -858,7 +866,6 @@ span.code-copy-button {
     transition: all 0.2s;
 }
 
-
 span.clickable-float-left:hover, span.clickable-copy-right:hover {
     background-color: #eee;
     color: #444444;
@@ -867,12 +874,13 @@ span.clickable-float-left:hover, span.clickable-copy-right:hover {
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
-       -moz-user-select: none; /* Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome and Opera */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                     supported by Chrome and Opera */
 }
 
 textarea#code-output {
@@ -920,11 +928,11 @@ textarea#code-output {
 
 #lean_overlay {
     position: fixed;
-    z-index:100;
+    z-index: 100;
     top: 0px;
     left: 0px;
-    height:100%;
-    width:100%;
+    height: 100%;
+    width: 100%;
     background: rgba(0, 0, 0, 0.5);
     display: none;
     overflow: hidden;
