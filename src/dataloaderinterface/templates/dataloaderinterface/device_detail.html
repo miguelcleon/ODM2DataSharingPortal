@@ -103,7 +103,6 @@
                                     <i class="material-icons clickable-float-left">code</i>
                                     View code snippet
                                 </span>
-                                <span class="code-copy-right clipboard-copy btn-copy noselect" data-target="code-output">Copy</span>
                             </div>
                         {% endif %}
 
@@ -202,7 +201,6 @@
 
                         {% if object.user_id == request.user.odm2user.id %}
                             <div class="device-code" id="lean_overlay" style="display: none">
-{#                                <textarea class="form-control click-select-all modal" id="code-output" readonly style="display: none">#}
                                 <textarea class="form-control click-select-all" id="code-output" readonly style="display: none">
 const char *REGISTRATION_TOKEN = "{{ object.authentication_token }}";   // Device registration token
 const char *SAMPLING_FEATURE = "{{ sampling_feature.sampling_feature_uuid }}";     // Sampling feature UUID
@@ -210,7 +208,7 @@ const char *UUIDs[] =                                                      // UU
 {{% for feature_action in feature_actions %} {% with feature_action.results.all.0 as result %}
     "{{ result.result_uuid }}"{% if not forloop.last %},  {% else %}   {% endif %} // {{ result.variable.variable_name_id }} ({{ result.variable.variable_code }}){% endwith %}{% endfor %}
 };</textarea>
-{#                            <span class="code-copy-whole clipboard-copy btn-copy noselect" data-target="code-output">Copy</span>#}
+                            <span class="code-copy-button clipboard-copy btn-copy noselect" data-target="code-output">Copy</span>
                             </div>
                     {% endif %}
 {% endblock %}

@@ -13,12 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from patterns import patterns
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import CreateView
+
+from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
 from dataloader.models import Organization
 from dataloaderinterface.forms import UserRegistrationForm
@@ -34,7 +37,19 @@ logout_configuration = {
     'next_page': reverse_lazy('home')
 }
 
+password_reset_configuration = {
+    'post_reset_redirect': 'password_reset_done'
+}
+
+password_done_configuration = {
+    'post_reset_redirect': 'password_reset_complete'
+}
+
 urlpatterns = [
+    url(r'^' + BASE_URL + 'password-reset/$', auth_views.password_reset, password_reset_configuration, name='password_reset'),
+    url(r'^' + BASE_URL + 'password-reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
+    url(r'^' + BASE_URL + 'password-reset/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', auth_views.password_reset_confirm, password_done_configuration, name='password_reset_confirm'),
+    url(r'^' + BASE_URL + 'password-reset/completed/$', auth_views.password_reset_complete, name='password_reset_complete'),
     url(r'^' + BASE_URL + 'admin/', admin.site.urls),
     url(r'^' + BASE_URL + 'login/$', auth_views.login, login_configuration, name='login'),
     url(r'^' + BASE_URL + 'logout/$', auth_views.logout, logout_configuration, name='logout'),
