@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 
 from dataloaderinterface.views import DevicesListView, DeviceDetailView, SiteRegistrationView,\
-    HomeView, BrowseSitesListView, SiteUpdateView
+    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^sites/browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
     url(r'^sites/update/(?P<slug>[-_\w]+)/$', SiteUpdateView.as_view(), name='site_update'),
+    url(r'^sites/delete/(?P<slug>[-_\w]+)/$', SiteDeleteView.as_view(), name='site_delete'),
     url(r'^sites/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='site_detail'),
+
 ]

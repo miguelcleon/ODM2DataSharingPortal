@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models.query_utils import Q
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, Http404
 from django.shortcuts import render
 
 # Create your views here.
@@ -15,7 +15,7 @@ from django import http
 from django.utils import six
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFormMixin
+from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFormMixin, DeleteView
 from django.views.generic.list import ListView
 
 from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
@@ -102,6 +102,43 @@ class DeviceDetailView(DetailView):
         return context
 
 
+class SiteDeleteView(LoginRequiredMixin, DeleteView):
+    model = DeviceRegistration
+    slug_field = 'registration_id'
+    success_url = reverse_lazy('sites_list')
+
+    def post(self, request, *args, **kwargs):
+        registration = self.get_object()
+        if not registration:
+            raise Http404
+
+        if request.user != registration.user.user:
+            # temporary error. TODO: do something a little bit more elaborate.
+            raise Http404
+
+        sampling_feature = registration.sampling_feature
+        data_logger_program = DataLoggerProgramFile.objects.filter(
+            affiliation=request.user.odm2user.affiliation,
+            program_name__contains=sampling_feature.sampling_feature_code
+        ).first()
+        data_logger_file = data_logger_program.data_logger_files.first()
+
+        feature_actions = sampling_feature.feature_actions.with_results().all()
+        for feature_action in feature_actions:
+            result = feature_action.results.first()
+            delete_result(result)
+
+        data_logger_file.delete()
+        data_logger_program.delete()
+        sampling_feature.site.delete()
+        sampling_feature.delete()
+        registration.delete()
+        return HttpResponseRedirect(self.success_url)
+
+    def get(self, request, *args, **kwargs):
+        raise Http404
+
+
 class SiteUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'dataloaderinterface/site_registration.html'
     model = DeviceRegistration
@@ -178,18 +215,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                     continue
                 elif to_delete:
                     result = Result.objects.get(result_id=result_form.initial['result_id'])
-                    feature_action = result.feature_action
-                    action = feature_action.action
-
-                    result.data_logger_file_columns.all().delete()
-                    result.timeseriesresult.values.all().delete()
-                    result.timeseriesresult.delete()
-
-                    action.action_by.all().delete()
-                    result.delete()
-
-                    feature_action.delete()
-                    action.delete()
+                    delete_result(result)
                     continue
 
                 # Update Result
@@ -339,3 +365,18 @@ def create_result(result_form, sampling_feature, affiliation, data_logger_file):
     )
 
     return result
+
+
+def delete_result(result):
+    feature_action = result.feature_action
+    action = feature_action.action
+
+    result.data_logger_file_columns.all().delete()
+    result.timeseriesresult.values.all().delete()
+    result.timeseriesresult.delete()
+
+    action.action_by.all().delete()
+    result.delete()
+
+    feature_action.delete()
+    action.delete()

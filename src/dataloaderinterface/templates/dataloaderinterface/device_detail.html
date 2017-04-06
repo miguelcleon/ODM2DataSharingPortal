@@ -199,6 +199,26 @@
         </div>
     </dialog>
 
+     <dialog class="mdl-dialog" id="site-delete-dialog">
+        <h4 class="mdl-dialog__title">Delete Site</h4>
+        <div class="mdl-dialog__content">
+            <div>
+                <p>
+                    <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
+                    <strong>Are you really really really sure you want to do this?</strong>
+                </p>
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+            <form method="POST" action="{% url 'site_delete' object.registration_id %}">
+                {% csrf_token %}
+                <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
+            </form>
+
+            <button type="button" class="mdl-button dialog-close">Close</button>
+        </div>
+    </dialog>
+
     <script id="sensors-data" type="application/json">
         [
         {% for feature_action in feature_actions %}

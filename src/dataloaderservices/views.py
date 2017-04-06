@@ -67,6 +67,21 @@ class OrganizationApi(APIView):
         return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
 
 
+class ResultValuesApi(APIView):
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request, format=None):
+        if 'result_ids' not in request.GET:
+            return Response({'error': 'No result id received.'})
+
+        results = request.GET.getlist('result_ids')
+        values = TimeSeriesResultValue.objects.filter(result_id__in=results)
+
+        output = values.instrument_output_variables.values('variable', 'instrument_raw_output_unit')
+
+        return Response(output)
+
+
 class TimeSeriesValuesApi(APIView):
     authentication_classes = (UUIDAuthentication, )
 

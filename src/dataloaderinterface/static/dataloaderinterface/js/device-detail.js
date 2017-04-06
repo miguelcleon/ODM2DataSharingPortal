@@ -169,6 +169,27 @@ function fixViewPort() {
 
 })(jQuery);
 
+function bindDeleteDialogEvents() {
+    var deleteDialog = document.querySelector('#site-delete-dialog');
+    var deleteButton = document.querySelector('#btn-delete-site');
+
+    if (!deleteDialog.showModal) {
+      dialogPolyfill.registerDialog(deleteDialog);
+    }
+
+    deleteButton.addEventListener('click', function() {
+      deleteDialog.showModal();
+    });
+
+    deleteDialog.querySelector('.dialog-close').addEventListener('click', function() {
+      deleteDialog.close();
+    });
+
+    deleteDialog.querySelector('.confirm-delete').addEventListener('click', function() {
+      deleteDialog.close();
+    });
+}
+
 $(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
@@ -176,6 +197,7 @@ $(document).ready(function () {
     var resizeTimer;
     var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
     fillValueTables($('table.data-values'), timeSeriesData);
+    bindDeleteDialogEvents();
 
     // Executes when page loads
     fixViewPort();
