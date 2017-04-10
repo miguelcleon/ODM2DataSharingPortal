@@ -19,13 +19,16 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False)
+    organization = forms.ModelChoiceField(
+        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False)
+    agreement = forms.BooleanField(required=True)
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
+        user.agreement = self.cleaned_data['agreement']
         organization = self.cleaned_data['organization']
 
         person = People.objects.filter(person_first_name=user.first_name, person_last_name=user.last_name).first() or \
