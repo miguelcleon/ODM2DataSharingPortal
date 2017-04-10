@@ -155,3 +155,12 @@ RECAPTCHA_KEY = data["recaptcha_secret_key"] if "recaptcha_secret_key" in data e
 RECAPTCHA_USER_KEY = data["recaptcha_user_key"] if "recaptcha_user_key" in data else ""
 
 RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
+
+
+EMAIL_SENDER = data['email_sender'] if 'email_sender' in data else '',
+
+DEFAULT_FROM_EMAIL = EMAIL_SENDER[0] if isinstance(EMAIL_SENDER, tuple) else EMAIL_SENDER
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = data['email_host'] if 'email_host' in data else '',
