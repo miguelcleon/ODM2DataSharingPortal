@@ -21,13 +21,16 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
+    organization = forms.ModelChoiceField(
+        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
+    agreement = forms.BooleanField(required=True)
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
+        user.agreement = self.cleaned_data['agreement']
         organization = self.cleaned_data['organization']
 
         if commit:

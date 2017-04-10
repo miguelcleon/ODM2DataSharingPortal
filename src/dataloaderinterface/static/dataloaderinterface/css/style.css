@@ -262,6 +262,7 @@ span.copy-key-icon {
 
 div.registration-data {
     margin-bottom: 20px;
+    overflow: auto;
 }
 
 div.registration-field {
@@ -676,7 +677,7 @@ dialog#data-table-dialog .mdl-dialog__content {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    padding: 80px 56px !important;
+    padding: 80px 4vw !important;
     margin-bottom: 80px;
     border-radius: 2px;
 }
@@ -967,4 +968,12 @@ textarea#code-output {
     display: none;
     overflow: hidden;
     text-align: center;
+}
+
+label.checkbox-label {
+    color: #FFF !important;
+}
+
+#agreement-icon {
+    margin-left: 18px;
 }
