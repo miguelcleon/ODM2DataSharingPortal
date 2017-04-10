@@ -93,7 +93,7 @@ function fillValueTables(tables, data) {
         var result = data[index];
         var table = tables.filter('[data-result-id=' + result.id + ' ]');
         var rows = result['values'].map(function (dataValue) {
-            return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp + "</td><td>" + dataValue.value + "</td></tr>");
+            return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp_utc_offset + "</td><td>" + dataValue.value + "</td></tr>");
         });
         table.append(rows);
     }
@@ -172,6 +172,10 @@ function fixViewPort() {
 function bindDeleteDialogEvents() {
     var deleteDialog = document.querySelector('#site-delete-dialog');
     var deleteButton = document.querySelector('#btn-delete-site');
+
+    if (!deleteButton) {
+        return;
+    }
 
     if (!deleteDialog.showModal) {
       dialogPolyfill.registerDialog(deleteDialog);

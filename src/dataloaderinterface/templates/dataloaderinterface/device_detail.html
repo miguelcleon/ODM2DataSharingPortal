@@ -186,7 +186,7 @@
                         <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
                                width="100%" data-result-id="{{ result.result_id }}">
                             <thead>
-                                <tr><th class="mdl-data-table__cell--non-numeric">Timestamp</th><th>Value</th></tr>
+                                <tr><th class="mdl-data-table__cell--non-numeric">Timestamp</th><th class="mdl-data-table__cell--non-numeric">UTC Offset</th><th>Value</th></tr>
                             </thead>
                             <tbody></tbody>
                         </table>
@@ -225,7 +225,7 @@
             {% with feature_action.results.all.0 as result %}
             {
                 "id": "{{ result.result_id }}",
-                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime }}", "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
+                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime }}", "timestamp_utc_offset": {{ series_value.value_datetime_utc_offset }}, "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
             }{% if not forloop.last %},{% endif %}
             {% endwith %}
         {% endfor %}
