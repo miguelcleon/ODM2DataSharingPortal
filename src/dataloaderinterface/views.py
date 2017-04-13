@@ -80,12 +80,12 @@ class DevicesListView(LoginRequiredMixin, ListView):
 
 
 class BrowseSitesListView(ListView):
-    model = SamplingFeature
-    context_object_name = 'sites'
+    model = DeviceRegistration
+    context_object_name = 'registrations'
     template_name = 'dataloaderinterface/browse-sites.html'
 
-    def get_queryset(self):
-        return super(BrowseSitesListView, self).get_queryset().select_related('site').filter()
+    # def get_queryset(self):
+    #     return super(BrowseSitesListView, self).get_queryset().select_related('site').filter()
 
 
 class DeviceDetailView(DetailView):
