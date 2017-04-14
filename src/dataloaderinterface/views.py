@@ -24,7 +24,7 @@ from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, Or
     InstrumentOutputVariable, DataLoggerFileColumn
 from dataloader.querysets import DataLoggerFileColumnManager
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm
+    OrganizationForm, UserUpdateForm
 from dataloaderinterface.models import DeviceRegistration
 
 
@@ -47,8 +47,34 @@ class HomeView(TemplateView):
         return context
 
 
-class UserAccountView(TemplateView):
+class UserUpdateView(UpdateView):
+    form_class = UserUpdateForm
     template_name = 'registration/account.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_form(self, form_class=None):
+        user = self.get_object()
+        organization = user.odm2user.affiliation.organization
+        form = UserUpdateForm(instance=user, initial={'organization': organization})
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super(UserUpdateView, self).get_context_data(**kwargs)
+        context['organization_form'] = OrganizationForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user = User.objects.get(pk=request.user.pk)
+        form = UserUpdateForm(request.POST, instance=user, initial={'organization': user.odm2user.affiliation.organization})
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your information has been updated successfully.')
+            return HttpResponseRedirect(reverse('home'))
+        else:
+            messages.error(request, 'There were some errors in the form.')
+            return render(request, self.template_name, {'form': form})
 
 
 class UserRegistrationView(CreateView):

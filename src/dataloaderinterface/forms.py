@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 from django.forms.models import ModelChoiceField
@@ -40,6 +41,45 @@ class UserRegistrationForm(UserCreationForm):
             ODM2User.objects.create(user=user, affiliation_id=affiliation.affiliation_id)
 
         return user
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'organization']
+
+
+class UserUpdateForm(UserChangeForm):
+        use_required_attribute = False
+
+        first_name = forms.CharField(required=True, max_length=50)
+        last_name = forms.CharField(required=True, max_length=50)
+        email = forms.EmailField(required=True, max_length=254)
+        organization = forms.ModelChoiceField(
+            queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']),
+            required=False,
+            help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
+
+        def save(self, commit=True):
+            user = super(UserUpdateForm, self).save(commit=False)
+            organization = self.cleaned_data['organization']
+
+            if commit:
+                affiliation = user.odm2user.affiliation
+                person = affiliation.person
+
+                person.person_first_name = user.first_name
+                person.person_last_name = user.last_name
+                affiliation.primary_email = user.email
+                affiliation.organization = organization
+
+                user.save()
+                person.save()
+                affiliation.save()
+
+            return user
+
+        class Meta:
+            model = User
+            fields = ['first_name', 'last_name', 'email', 'password', 'username', 'organization']
 
 
 # ODM2

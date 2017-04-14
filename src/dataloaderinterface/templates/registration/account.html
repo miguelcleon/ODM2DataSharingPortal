@@ -1,10 +1,168 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "dataloaderinterface/base.html" %}
+{% load widget_tweaks %}
+{% load static %}
 
-</body>
-</html>
+{% block page_title %}
+    <title>Join the EnviroDIY Data Portal</title>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <section class="page-content user-registration col-lg-12">
+                <header>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <span class="form-message {{ message.tags }}">{{ message }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </header>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="register-title text-shadow">
+                            <h2 class="text-center">The Portal for Citizen Collected Water Quality Data</h2>
+                            <h4 class="text-center">Share your data and view data contributed by others.</h4>
+                            <br>
+                        </div>
+
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-sm-offset-4">
+                        <div class="panel panel-default panel-login shadow">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Sign Up</h3>
+                            </div>
+                            <div class="panel-body">
+                                <form method="post" enctype="multipart/form-data" role="form">
+                                    {% csrf_token %}
+                                    <fieldset class="form-fieldset">
+                                        <div class="form-group user-fields">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-6">
+                                                    <div class="form-field required-field {% if form.first_name.errors %}has-error{% endif %}">
+                                                        <label class="control-label" for="id_first_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a first name</label>
+                                                        {{ form.first_name|add_class:"form-control input-sm"|attr:"placeholder: First Name"|attr:"autofocus" }}
+                                                        {{ form.first_name.errors }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12 col-sm-6">
+                                                    <div class="form-field required-field {% if form.last_name.errors %}has-error{% endif %}">
+                                                        <label class="control-label" for="id_last_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a last name</label>
+                                                        {{ form.last_name|add_class:"form-control input-sm"|attr:"placeholder: Last Name" }}
+                                                        {{ form.last_name.errors }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="form-field required-field {% if form.email.errors %}has-error{% endif %}">
+                                                        <label class="control-label" for="id_email_address"><i class="fa fa-envelope" aria-hidden="true"></i> Enter your email address</label>
+                                                        {{ form.email|add_class:"form-control input-sm"|attr:"placeholder: Email Address" }}
+                                                        {{ form.email.errors }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="form-field required-field {% if form.username.errors %}has-error{% endif %}">
+                                                        <label class="control-label" for="id_username"><i class="fa fa-user-circle-o" aria-hidden="true"></i> Choose a username</label>
+                                                        {{ form.username|add_class:"form-control input-sm"|attr:"placeholder: Username" }}
+                                                        {{ form.username.errors }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-xs-12">
+                                                    <div class="form-field {% if form.organization.errors %}has-error{% endif %}">
+                                                        <label class="control-label" for="id_organization"><i class="fa fa-building" aria-hidden="true"></i> Organization</label>
+                                                        <i id="organization-help" class="material-icons text-muted help-icon">help</i>
+                                                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--right" data-mdl-for="organization-help">
+                                                            {{ form.organization.help_text }}
+                                                        </div>
+                                                        {{ form.organization|add_class:"form-control input-sm select2-hidden-accessible"|attr:"placeholder: Choose your affiliated organization" }}
+                                                        {{ form.organization.errors }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+
+                                    <div class="text-center">
+                                        <button type="submit" id="btn-login" value="Register User"
+                                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                            Update User
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="organization-dialog" class="modal fade" role="dialog" aria-hidden="true">
+                    <div class="vertical-alignment-helper">
+                        <div class="modal-dialog vertical-align-center">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>New Organization</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group col-lg-12 organization-fields">
+                                        {% for field in organization_form %}
+                                            <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
+                                                {% with "placeholder:"|add:field.help_text as placeholder %}
+                                                    {{ field|add_class:"form-control input-sm"|attr:placeholder }}
+                                                {% endwith %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="organization-modal-close" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button id="new-organization-button" type="button" class="btn btn-primary">Add New
+                                        Organization
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <span id="bg-image" data-image-url="{% static "dataloaderinterface/images/signup_bg.jpg" %}" class="hidden"></span>
+
+
+{% endblock %}
+
+{% block services_urls %}
+    {{ block.super }}
+    <input id="new-organization-api" type="hidden" value="{% url 'organization_service' %}">
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css"
+          rel="stylesheet"/>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/user-form.js' %}"></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+
+    <script>
+        $(document).ready(function () {
+            var path = $("#bg-image").attr("data-image-url");
+            $("#wrapper").css('background-image', 'url("' + path + '")');
+            $("#wrapper").css('background-size', 'cover');
+            $("#wrapper").css('background-repeat', 'no-repeat');
+        });
+    </script>
+{% endblock %}

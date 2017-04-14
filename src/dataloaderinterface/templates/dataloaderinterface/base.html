@@ -62,7 +62,7 @@
 
                             <ul class="nav navbar-nav navbar-right">
                                 {% if user.is_authenticated %}
-                                     <li><a href="#" class="user-info"><i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}</a></li>
+                                     <li><a href="{% url 'user_account' %}"><i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}</a></li>
                                     <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 {% else %}
                                     <li><a href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a></li>
