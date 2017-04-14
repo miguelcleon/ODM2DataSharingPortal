@@ -113,7 +113,7 @@ class ResultForm(forms.ModelForm):
         Q(pk='Air') |
         Q(pk='Soil') |
         Q(pk='Liquid aqueous') |
-        Q(pk='Not Applicable')
+        Q(pk='Not applicable')
     ), help_text='Choose the sampled medium')
 
     class Meta:
