@@ -261,8 +261,9 @@ span.copy-key-icon {
 }
 
 div.registration-data {
+    margin-top: 2px;
     margin-bottom: 20px;
-    overflow: auto;
+    overflow: visible;
 }
 
 div.registration-field {
@@ -821,10 +822,11 @@ a.orange:hover {
 }
 
 div.code-display-controls {
-    position: inherit;
-    float: right;
+    position: absolute;
+    position: absolute;
+    float: left;
     width: 40%;
-    margin: 20px -200px 5px 30px;
+    margin: -40px 0px 0px 15px;
 }
 
 span.clickable-float-left {
@@ -862,7 +864,6 @@ span.clickable-float-left {
     color: #555;
     text-align: center;
     border: 1px solid #ccc;
-    border-right: 0;
     border-radius: 2px;
     box-sizing: border-box;
     text-shadow: none;
