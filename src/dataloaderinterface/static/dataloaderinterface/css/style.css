@@ -673,6 +673,10 @@ dialog#data-table-dialog .mdl-dialog__content {
     background-color: #62843e;
 }
 
+.ribbon-dark {
+    background-color: #494949;
+}
+
 .ribbon-content {
     margin-top: -35vh;
     -webkit-flex-shrink: 0;
@@ -977,4 +981,35 @@ label.checkbox-label {
 
 #agreement-icon {
     margin-left: 18px;
+}
+
+/*PROFILE STYLING*/
+#profile-banner {
+    height: 35vh;
+    background: #e08f26;
+    margin-left: -4vw;
+    margin-right: -4vw;
+    padding-right: 4vw;
+    padding-left: 4vw;
+    margin-top: -80px;
+    display: flex;
+    color: #FFF;
+}
+
+.profile-name {
+    align-self: flex-end;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.profile-name > i {
+    font-size: 100px;
+    display: block;
+}
+
+#btn-edit-profile {
+    margin-top: -28px;
+}
+
+#profile-details-table tr td:first-child {
+    padding-right: 24px;
 }
