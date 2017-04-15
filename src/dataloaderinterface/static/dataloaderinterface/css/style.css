@@ -1026,6 +1026,12 @@ label.checkbox-label {
     display: block;
 }
 
+.alert-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
 /*TRANSITIONS*/
 .mdl-button--trans {
 	-webkit-transition: all 300ms;

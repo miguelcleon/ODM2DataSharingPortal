@@ -27,7 +27,7 @@
                 Edit Profile Information
             </div>
 
-            <span id="btn-cancel-profile-edit" value="Register User"
+            <span id="btn-cancel-profile-edit"
                   class="pull-right mdl-button--trans mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
                                 Cancel
             </span>
@@ -144,17 +144,6 @@
                                 </div>
                             </div>
                         </fieldset>
-
-{#                        <div>#}
-{#                            <span id="btn-cancel-profile-edit" value="Register User"#}
-{#                                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">#}
-{#                                Cancel#}
-{#                            </span>#}
-{#                            <button id="btn-update-user" type="submit" value="Register User"#}
-{#                                    class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">#}
-{#                                Update User#}
-{#                            </button>#}
-{#                        </div>#}
                     </form>
                 </div>
             </div>
@@ -218,22 +207,35 @@
     <script src='https://www.google.com/recaptcha/api.js'></script>
 
     <script>
-        $(document).ready(function () {
-            $("#btn-edit-profile").on("click", function(){
+        function setMode(mode) {
+            if (mode == "edit") {
                 $("[data-profile-mode='view']").toggleClass("hidden", true);
                 $("[data-profile-mode='edit']").toggleClass("hidden", false);
                 $("#btn-edit-profile").removeClass("fab-trans");
                 $("#btn-cancel-profile-edit").addClass("fab-trans");
                 $("#btn-update-user").addClass("fab-trans");
-            });
-
-            $("#btn-cancel-profile-edit").on("click", function(){
+            }
+            else {
                 $("[data-profile-mode='edit']").toggleClass("hidden", true);
                 $("[data-profile-mode='view']").toggleClass("hidden", false);
                 $("#btn-edit-profile").addClass("fab-trans");
                 $("#btn-cancel-profile-edit").removeClass("fab-trans");
                 $("#btn-update-user").removeClass("fab-trans");
+            }
+        }
+
+        $(document).ready(function () {
+            $("#btn-edit-profile").on("click", function(){
+                setMode("edit");
             });
+
+            $("#btn-cancel-profile-edit").on("click", function(){
+                setMode("view");
+            });
+
+            if ($(".user-registration .alert-error").length > 0) {
+                setMode("edit");
+            }
 
             $("#btn-update-user").on("click", function() {
                 $("#profile-form").submit();
