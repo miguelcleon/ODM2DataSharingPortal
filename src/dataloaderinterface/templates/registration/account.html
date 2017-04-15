@@ -18,8 +18,8 @@
                 <h3 data-profile-mode="edit" class="display-3 hidden">Edit Profile Information</h3>
             </div>
 
-            <button id="btn-edit-profile" data-profile-mode="view"
-                    class="pull-right mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--2dp">
+            <button id="btn-edit-profile"
+                    class="mdl-button--fab fab-trans pull-right mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--2dp">
                 <i class="material-icons">mode_edit</i>
             </button>
 
@@ -212,11 +212,19 @@
             $("#btn-edit-profile").on("click", function(){
                 $("[data-profile-mode='view']").toggleClass("hidden", true);
                 $("[data-profile-mode='edit']").toggleClass("hidden", false);
+
+                setTimeout(function () {
+                    $("#btn-edit-profile").removeClass("fab-trans");
+                }, 200);
             });
 
             $("#btn-cancel-profile-edit").on("click", function(){
                 $("[data-profile-mode='edit']").toggleClass("hidden", true);
                 $("[data-profile-mode='view']").toggleClass("hidden", false);
+
+                setTimeout(function () {
+                    $("#btn-edit-profile").addClass("fab-trans");
+                }, 200);
             });
         });
     </script>

@@ -1016,3 +1016,17 @@ label.checkbox-label {
 .d-block {
     display: block;
 }
+
+/*TRANSITIONS*/
+.mdl-button--fab {
+	-webkit-transition: all 300ms;
+	-moz-transition: all 300ms;
+	-ms-transition: all 300ms;
+	-o-transition: all 300ms;
+	transition: all 300ms;
+	transform: scale(0);
+}
+
+.fab-trans {
+	transform: scale(1);
+}
