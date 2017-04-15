@@ -1012,3 +1012,7 @@ label.checkbox-label {
 #profile-details-table tr td:first-child {
     padding-right: 24px;
 }
+
+.d-block {
+    display: block;
+}
