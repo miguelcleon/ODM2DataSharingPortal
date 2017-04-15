@@ -987,16 +987,15 @@ label.checkbox-label {
 #profile-banner {
     height: 35vh;
     background: #e08f26;
-    margin-left: -4vw;
-    margin-right: -4vw;
+    margin: -80px -4vw 40px -4vw ;
     padding-right: 4vw;
     padding-left: 4vw;
-    margin-top: -80px;
     display: flex;
     color: #FFF;
+
 }
 
-.profile-name {
+#profile-banner h3 {
     align-self: flex-end;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 }
@@ -1007,7 +1006,7 @@ label.checkbox-label {
 }
 
 #btn-edit-profile {
-    margin-top: -28px;
+    margin-top: -68px;
 }
 
 #profile-details-table tr td:first-child {
