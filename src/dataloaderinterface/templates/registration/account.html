@@ -19,8 +19,18 @@
             </div>
 
             <button id="btn-edit-profile"
-                    class="mdl-button--fab fab-trans pull-right mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--2dp">
+                    class="mdl-button--trans fab-trans pull-right mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--2dp">
                 <i class="material-icons">mode_edit</i>
+            </button>
+
+            <span id="btn-cancel-profile-edit" value="Register User"
+                  class="pull-right mdl-button--trans mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                                Cancel
+            </span>
+
+            <button id="btn-update-user" type="submit" value="Register User"
+                    class="pull-right mdl-button--trans mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                Update User
             </button>
 
             <div class="row">
@@ -67,7 +77,7 @@
 
             <div class="row hidden" data-profile-mode="edit">
                 <div class="col-xs-12 col-sm-4">
-                    <form method="post" enctype="multipart/form-data" role="form">
+                    <form id="profile-form" method="post" enctype="multipart/form-data" role="form">
                         {% csrf_token %}
                         <fieldset class="form-fieldset">
                             <div class="form-group user-fields">
@@ -135,16 +145,16 @@
                             </div>
                         </fieldset>
 
-                        <div>
-                            <span id="btn-cancel-profile-edit" value="Register User"
-                                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-                                Cancel
-                            </span>
-                            <button type="submit" value="Register User"
-                                    class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                Update User
-                            </button>
-                        </div>
+{#                        <div>#}
+{#                            <span id="btn-cancel-profile-edit" value="Register User"#}
+{#                                    class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">#}
+{#                                Cancel#}
+{#                            </span>#}
+{#                            <button id="btn-update-user" type="submit" value="Register User"#}
+{#                                    class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">#}
+{#                                Update User#}
+{#                            </button>#}
+{#                        </div>#}
                     </form>
                 </div>
             </div>
@@ -212,19 +222,21 @@
             $("#btn-edit-profile").on("click", function(){
                 $("[data-profile-mode='view']").toggleClass("hidden", true);
                 $("[data-profile-mode='edit']").toggleClass("hidden", false);
-
-                setTimeout(function () {
-                    $("#btn-edit-profile").removeClass("fab-trans");
-                }, 200);
+                $("#btn-edit-profile").removeClass("fab-trans");
+                $("#btn-cancel-profile-edit").addClass("fab-trans");
+                $("#btn-update-user").addClass("fab-trans");
             });
 
             $("#btn-cancel-profile-edit").on("click", function(){
                 $("[data-profile-mode='edit']").toggleClass("hidden", true);
                 $("[data-profile-mode='view']").toggleClass("hidden", false);
+                $("#btn-edit-profile").addClass("fab-trans");
+                $("#btn-cancel-profile-edit").removeClass("fab-trans");
+                $("#btn-update-user").removeClass("fab-trans");
+            });
 
-                setTimeout(function () {
-                    $("#btn-edit-profile").addClass("fab-trans");
-                }, 200);
+            $("#btn-update-user").on("click", function() {
+                $("#profile-form").submit();
             });
         });
     </script>
