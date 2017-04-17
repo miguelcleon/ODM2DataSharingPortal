@@ -248,22 +248,10 @@ tr.deleted-row {
     padding: 4px 10px;
 }
 
-span.copy-icon {
-    font-size: 1.3em;
-    cursor: pointer;
-    vertical-align: text-bottom;
-}
-
-span.copy-key-icon {
-    margin-right: 10px;
-    font-size: 1.4em;
-    cursor: pointer;
-}
-
 div.registration-data {
     margin-top: 2px;
     margin-bottom: 20px;
-    overflow: visible;
+    overflow: auto;
 }
 
 div.registration-field {
