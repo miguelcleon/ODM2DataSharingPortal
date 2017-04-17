@@ -74,7 +74,7 @@ class UserUpdateView(UpdateView):
             return HttpResponseRedirect(reverse('home'))
         else:
             messages.error(request, 'There were some errors in the form.')
-            return render(request, self.template_name, {'form': form})
+            return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
 
 
 class UserRegistrationView(CreateView):
