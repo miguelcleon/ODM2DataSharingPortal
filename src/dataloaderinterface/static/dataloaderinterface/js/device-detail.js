@@ -114,61 +114,6 @@ function fixViewPort() {
     }
 }
 
-// leanModal display from  https://github.com/FinelySliced/leanModal.js
-(function ($) {
-    $.fn.extend({
-        leanModal: function (options) {
-            var defaults = {
-                top: 100,
-                closeButton: null
-            };
-
-            var overlay = $("<div id='lean_overlay'></div>");
-            $("body").append(overlay);
-            options = $.extend(defaults, options);
-            return this.each(function () {
-                var o = options;
-                $(this).click(function (e) {
-                    var modal_id = $(this).attr("href");
-                    $('textarea#code-output.form-control.click-select-all').click(function () {
-                        event.stopPropagation();
-                    });
-
-                    $("#lean_overlay").click(function (e) {
-                        event.stopPropagation();
-                        close_modal(modal_id);
-                    });
-                    $(o.closeButton).click(function (e) {
-                        close_modal(modal_id);
-                    });
-                    var modal_height = $(modal_id).outerHeight();
-                    var modal_width = $(modal_id).outerWidth();
-                    $('#lean_overlay').css({'display': 'block', 'background': 'rgba(0, 0, 0, 0.5);'});
-                    $('#lean_overlay').fadeTo(200, o.overlay);
-                    $(modal_id).css({
-                        'display': 'block',
-                        'position': 'fixed',
-                        'z-index': 11000,
-                        'left': 50 + '%',
-                        'margin-left': -(modal_width / 2) + "px",
-                        'top': o.top + "px"
-                    });
-                    $(modal_id).fadeTo(200, 1);
-                    $('textarea#code-output').fadeIn(200);
-                    e.preventDefault();
-                });
-            });
-
-            function close_modal(modal_id) {
-                $("#lean_overlay").fadeOut(200);
-                $('textarea#code-output').fadeOut(200);
-                $(modal_id).css({'display': 'none'});
-            }
-        }
-    });
-
-})(jQuery);
-
 function bindDeleteDialogEvents() {
     var deleteDialog = document.querySelector('#site-delete-dialog');
     var deleteButton = document.querySelector('#btn-delete-site');
@@ -197,7 +142,6 @@ function bindDeleteDialogEvents() {
 $(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
-
     var resizeTimer;
     var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
     fillValueTables($('table.data-values'), timeSeriesData);
@@ -220,8 +164,6 @@ $(document).ready(function () {
             drawSparklinePlots(timeSeriesData);
         }, 500);
     });
-
-    $("#code-visiblity-toggle").leanModal();
 
     drawSparklinePlots(timeSeriesData);
 });
