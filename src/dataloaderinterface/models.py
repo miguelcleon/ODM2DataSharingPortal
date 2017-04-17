@@ -16,10 +16,8 @@ class DeviceRegistration(models.Model):
     # deployment_date = models.DateTimeField(db_column='DeploymentDate')
 
     def registration_date(self):
-        return self.sampling_feature.actions.first().begin_datetime
-
-    def device_name(self):
-        return self.sampling_feature.sampling_feature_code
+        action = self.sampling_feature.actions.first()
+        return action and action.begin_datetime
 
     @property
     def sampling_feature(self):

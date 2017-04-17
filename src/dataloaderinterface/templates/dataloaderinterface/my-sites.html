@@ -31,7 +31,7 @@
                 <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
                         <div class="mdl-card__title">
-                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' registration.registration_id %}">{{ registration.device_name }}</a></h2>
+                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' registration.registration_id %}">{{ registration.sampling_feature.sampling_feature_name }}</a></h2>
                         </div>
 
                         <div class="mdl-card__supporting-text">
@@ -60,7 +60,7 @@
                                 </tr>
                                 <tr>
                                     <td></td>
-{#                                    <td><strong>{{ registration.registration_date }}</strong></td>#}
+                                    <td><strong>{{ registration.registration_date }}</strong></td>
                                 </tr>
                                 </tbody>
                             </table>

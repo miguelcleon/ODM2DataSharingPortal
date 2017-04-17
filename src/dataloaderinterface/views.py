@@ -139,7 +139,7 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
             raise Http404
 
         if request.user != registration.user.user:
-            # temporary error. TODO: do something a little bit more elaborate.
+            # temporary error. TODO: do something a little bit more elaborate. or maybe not...
             raise Http404
 
         sampling_feature = registration.sampling_feature
