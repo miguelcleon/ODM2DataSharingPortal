@@ -407,6 +407,11 @@ span.form-message.error {
     margin-top: 5px;
 }
 
+.sampling-feature-fields .help-icon {
+    float: right;
+    margin-top: 10px;
+}
+
 div.form-group.sampling-feature-fields {
     display: -webkit-box;
     display: -moz-box;
