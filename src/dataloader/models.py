@@ -789,7 +789,7 @@ class Result(models.Model):
 @python_2_unicode_compatible
 class DataLoggerProgramFile(models.Model):
     program_id = models.AutoField(db_column='programid', primary_key=True)
-    affiliation = models.ForeignKey('Affiliation', db_column='affiliationid')
+    affiliation = models.ForeignKey('Affiliation', db_column='affiliationid', related_name='data_logger_programs')
     program_name = models.CharField(db_column='programname', max_length=255)
     program_description = models.CharField(db_column='programdescription', blank=True, max_length=500)
     program_version = models.CharField(db_column='programversion', blank=True, max_length=50)

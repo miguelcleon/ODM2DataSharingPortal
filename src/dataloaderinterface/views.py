@@ -321,7 +321,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             # Create Data Logger file
             data_logger_program = DataLoggerProgramFile.objects.create(
                 affiliation=affiliation,
-                program_name='%s data collection' % sampling_feature.sampling_feature_code
+                program_name='%s' % sampling_feature.sampling_feature_code
             )
 
             data_logger_file = DataLoggerFile.objects.create(
