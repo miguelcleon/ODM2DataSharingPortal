@@ -757,7 +757,7 @@ i.material-icons.site-card-icon {
     margin: 40px auto;
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.541176);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
@@ -825,17 +825,8 @@ a.orange:hover {
 
 #site-table-header {
     font-weight: 500;
-    font-size: 14px;
-}
-
-#table-background-accent {
-    background-color: rgba(98, 132, 62, 0.70);
-    position: inherit;
-    float: left;
-    width: 515px;
-    height: 6px;
-    margin: -35px -25px -40px -25px; /* Displays on top */
-    /*margin: 8px -25px -15px -25px;*/ /* Displays on bottom */
+    font-size: 16px;
+    border-top: 6px solid #90a877;
 }
 
 label.checkbox-label {
