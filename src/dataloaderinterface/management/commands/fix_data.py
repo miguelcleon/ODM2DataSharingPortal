@@ -65,6 +65,7 @@ class Command(BaseCommand):
                     print("- action by instance deleted.")
                     action.delete()
                     print("- action instance deleted.")
+                    continue
 
                 print("- retrieving result %s." % result)
                 action = feature_action.action
