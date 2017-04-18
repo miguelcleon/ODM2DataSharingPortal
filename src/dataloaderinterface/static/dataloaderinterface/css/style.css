@@ -248,22 +248,10 @@ tr.deleted-row {
     padding: 4px 10px;
 }
 
-span.copy-icon {
-    font-size: 1.3em;
-    cursor: pointer;
-    vertical-align: text-bottom;
-}
-
-span.copy-key-icon {
-    margin-right: 10px;
-    font-size: 1.4em;
-    cursor: pointer;
-}
-
 div.registration-data {
     margin-top: 2px;
     margin-bottom: 20px;
-    overflow: visible;
+    overflow: auto;
 }
 
 div.registration-field {
@@ -417,6 +405,11 @@ span.form-message.error {
     border-radius: 2px;
     color: #565656;
     margin-top: 5px;
+}
+
+.sampling-feature-fields .help-icon {
+    float: right;
+    margin-top: 10px;
 }
 
 div.form-group.sampling-feature-fields {
@@ -578,9 +571,9 @@ a#btn-new-site {
     margin-top: 32px;
 }
 
-.btn-copy {
-    background-color: #FFF !important;
-    cursor: default;
+#btn-delete-site {
+    background-color: #d9534f;
+    border-color: #d43f3a;
 }
 
 .result-uuid {
@@ -611,14 +604,6 @@ dialog#data-table-dialog .mdl-dialog__content {
 .site-tokens .input-group-copy .input-group-addon:first-child {
     width: 186px;
     text-align: left;
-}
-
-.btn-copy:hover {
-    background-color: #eeeeee !important;
-}
-
-.btn-copy:active {
-    background-color: #DDD !important;
 }
 
 .full-width {
@@ -777,7 +762,7 @@ i.material-icons.site-card-icon {
     margin: 40px auto;
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.541176);
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
 }
@@ -825,88 +810,8 @@ a.orange:hover {
     background-color: rgb(101, 101, 101);
 }
 
-div.code-display-controls {
-    position: absolute;
-    position: absolute;
-    float: left;
-    width: 40%;
-    margin: -40px 0px 0px 15px;
-}
-
-span.clickable-float-left {
-    background-color: #FFFFFF;
-    position: inherit;
-    float: left;
-    padding: 10px 12px 8px 12px;
-    margin: 10px 0px 5px 50px;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1;
-    color: #555;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 2px;
-    box-sizing: border-box;
-    text-shadow: none;
-    -webkit-transition: all 0.2s;
-    transition: all 0.2s;
-}
-
 .buttons-toolbar {
     margin-bottom: 50px;
-}
-
-span.clickable-float-left {
-    background-color: #FFFFFF;
-    position: inherit;
-    float: left;
-    padding: 10px 12px 8px 12px;
-    margin: 10px 0 5px 0;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1;
-    color: #555;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 2px;
-    box-sizing: border-box;
-    text-shadow: none;
-    -webkit-transition: all 0.2s;
-    transition: all 0.2s;
-}
-
-i.clickable-float-left {
-    font-size: 20px;
-    margin-top: -2px;
-    margin-right: 3px;
-    color: #555;
-    vertical-align: middle;
-    -webkit-transition: all 0.2s; /* Safari */
-    transition: all 0.2s;
-}
-
-span.code-copy-button {
-    position: inherit;
-    display: inline-block;
-    padding: 12px 12px 10px 14px;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1;
-    color: #555;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 2px;
-    box-sizing: border-box;
-    text-shadow: none;
-    -webkit-transition: all 0.2s;
-    transition: all 0.2s;
-}
-
-span.clickable-float-left:hover, span.clickable-copy-right:hover {
-    background-color: #eee;
-    color: #444444;
-    border-color: #aaaaaa;
-    cursor: pointer;
 }
 
 .noselect {
@@ -915,64 +820,18 @@ span.clickable-float-left:hover, span.clickable-copy-right:hover {
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none;
-    /* Non-prefixed version, currently
-                                     supported by Chrome and Opera */
+    /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
-textarea#code-output {
-    width: 1060px;
-    position: relative;
-    display: block;
-    height: 150px;
-    padding: 8px 4px;
-    margin-top: 15%;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: #00072d;
-    font-family: monospace;
-    font-size: 14px;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 400;
-    line-height: 20px;
-    outline: none;
-    background: rgba(255, 255, 255, 1);
-    resize: none;
-    overflow: auto;
-    animation: move 2s ease;
+#code-output {
+    height: auto;
+    font-size: 12px;
 }
 
 #site-table-header {
-    /*text-align: center;*/
     font-weight: 500;
-    font-size: 14px;
-}
-
-#table-background-accent {
-    background-color: rgba(98, 132, 62, 0.70);
-    position: inherit;
-    float: left;
-    width: 515px;
-    height: 6px;
-    margin: -35px -25px -40px -25px; /* Displays on top */
-    /*margin: 8px -25px -15px -25px;*/ /* Displays on bottom */
-}
-
-#lean_overlay {
-    position: fixed;
-    z-index: 100;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
-    overflow: hidden;
-    text-align: center;
+    font-size: 16px;
+    border-top: 6px solid #90a877;
 }
 
 label.checkbox-label {
