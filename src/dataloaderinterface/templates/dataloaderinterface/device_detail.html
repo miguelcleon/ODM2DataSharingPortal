@@ -114,9 +114,7 @@
                         </div>
 
                         <div class="sparkline-plots col-xs-12">
-                            <div class="alert alert-info" role="alert">Only last 24 hours shown on sparkline plots
-                                and tables
-                            </div>
+                            <div class="alert alert-info" role="alert">Only last 24 hours shown on sparkline plots.</div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
                                     {% with feature_action.results.all.0 as result %}
@@ -218,7 +216,7 @@
             {% with feature_action.results.all.0 as result %}
             {
                 "id": "{{ result.result_id }}",
-                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime }}", "timestamp_utc_offset": {{ series_value.value_datetime_utc_offset }}, "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
+                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime|date:'N j, Y, H:m' }}", "timestamp_utc_offset": {{ series_value.value_datetime_utc_offset }}, "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
             }{% if not forloop.last %},{% endif %}
             {% endwith %}
         {% endfor %}

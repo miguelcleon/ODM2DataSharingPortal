@@ -139,11 +139,25 @@ function bindDeleteDialogEvents() {
     });
 }
 
+function getRecentTimeSeries(timeSeriesData) {
+    var lastDay = new Date(new Date() - 1000 * 60 * 60 * 24);
+
+    return timeSeriesData.map(function(timeSeries) {
+        var series = Object.assign({}, timeSeries);
+        series.values = timeSeries.values.filter(function(value) {
+            return (new Date(value.timestamp)) >= lastDay;
+        });
+        return series;
+    });
+}
+
+
 $(document).ready(function () {
     $('nav .menu-sites-list').addClass('active');
 
     var resizeTimer;
     var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
+    var recentData = getRecentTimeSeries(timeSeriesData);
     fillValueTables($('table.data-values'), timeSeriesData);
     bindDeleteDialogEvents();
 
@@ -161,9 +175,9 @@ $(document).ready(function () {
     $(window).on('resize', function (event) {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function () {
-            drawSparklinePlots(timeSeriesData);
+            drawSparklinePlots(recentData);
         }, 500);
     });
 
-    drawSparklinePlots(timeSeriesData);
+    drawSparklinePlots(recentData);
 });
