@@ -163,6 +163,8 @@ DEFAULT_FROM_EMAIL = EMAIL_SENDER[0] if isinstance(EMAIL_SENDER, tuple) else EMA
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = data['email_host'] if 'email_host' in data else '',
+EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
+
+EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
 DATETIME_FORMAT = "N j, Y, H:m"
