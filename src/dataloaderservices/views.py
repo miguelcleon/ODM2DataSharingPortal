@@ -26,6 +26,7 @@ class ResultApi(APIView):
 
     allowed_methods = ('POST',)
 
+    # Not clear what the purpose of this POST request
     def post(self, request, format=None):
         # request.POST can possibly be empty
         # always use request.data for all http methods
@@ -38,6 +39,28 @@ class ResultApi(APIView):
 
 
 class ModelVariablesApi(APIView):
+    """
+    Gets a list of instrument variables
+
+    REST URL: api/equipment-variables/
+    HTTP method: GET
+
+    Supported query parameters:
+    :type   equipment_model_id: str
+    :param  equipment_model_id: id of the equipment model for which variable data is needed
+    :rtype: json string
+    :return: a list of variables
+
+    example return JSON format:
+        [
+            {'variable': 'name of the variable',
+             'instrument_raw_output_unit': 'out put unit'
+             },
+             {'variable': 'name of the variable',
+             'instrument_raw_output_unit': 'out put unit'
+             },
+        ]
+    """
     authentication_classes = (SessionAuthentication, )
 
     allowed_methods = ('GET',)
@@ -106,7 +129,7 @@ class TimeSeriesValuesApi(APIView):
         # parse the received timestamp
         try:
             measurement_datetime = parse_datetime(request.data['timestamp'])
-        except ValueError:
+        except exceptions.ParseError:
             return Response({'error': 'The timestamp value is not valid.'}, status=status.HTTP_400_BAD_REQEST)
 
         if not measurement_datetime:
@@ -128,6 +151,8 @@ class TimeSeriesValuesApi(APIView):
         # get all feature actions related to the sampling feature, along with the results, results variables,
         # and actions.
         feature_actions = sampling_feature.feature_actions.prefetch_related('results__variable', 'action').all()
+        # Pabitra: Do we know how big this list (feature_actions) can be? If this can be a huge list then there may
+        # be a way to filter more before entering this for loop so that we don't have to use the if statement inside
         for feature_action in feature_actions:
             result = feature_action.results.all().first()
 
