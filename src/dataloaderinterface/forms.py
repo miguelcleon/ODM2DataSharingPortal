@@ -1,16 +1,14 @@
 from datetime import datetime
 
+from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
+    OrganizationType
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
-from django.forms.models import ModelChoiceField
-from django.forms.widgets import Select
 
 from dataloaderinterface.models import ODM2User
-from dataloader.models import SamplingFeature, Action, People, Organization, Affiliation, Result, ActionBy, Method, \
-    Site, EquipmentModel, Medium, OrganizationType, DataLoggerProgramFile
 
 
 # AUTHORIZATION

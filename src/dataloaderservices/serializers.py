@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from dataloader.models import People, Organization, Affiliation, EquipmentModel, Variable, Unit
+from rest_framework import serializers
+
 
 
 class VariableSerializer(serializers.ModelSerializer):

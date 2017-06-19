@@ -1,6 +1,6 @@
+from dataloader.models import SamplingFeature
 from django import template
 
-from dataloader.models import SamplingFeature
 from dataloaderinterface.models import DeviceRegistration
 
 register = template.Library()

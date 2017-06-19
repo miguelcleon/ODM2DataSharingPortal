@@ -1,11 +1,9 @@
 from __future__ import unicode_literals
 
+# Create your models here.
+from dataloader.models import SamplingFeature, Affiliation
 from django.contrib.auth.models import User
 from django.db import models
-
-
-# Create your models here.
-from dataloader.models import SamplingFeature, Affiliation, FeatureAction
 
 
 class DeviceRegistration(models.Model):

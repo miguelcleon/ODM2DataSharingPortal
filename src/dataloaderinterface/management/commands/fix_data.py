@@ -1,8 +1,8 @@
-import sys
-from django.core.management.base import BaseCommand, CommandError
 
 from dataloader.models import DataLoggerProgramFile, DataLoggerFile, ActionBy, TimeSeriesResult, DataLoggerFileColumn, \
-    EquipmentModel, InstrumentOutputVariable
+    InstrumentOutputVariable
+from django.core.management.base import BaseCommand
+
 from dataloaderinterface.models import DeviceRegistration
 
 

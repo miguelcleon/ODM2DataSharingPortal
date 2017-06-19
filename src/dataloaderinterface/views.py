@@ -1,31 +1,27 @@
 from datetime import datetime
 from uuid import uuid4
 
+from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
+    SpatialReference, \
+    ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
+    InstrumentOutputVariable, DataLoggerFileColumn
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.db.models.query_utils import Q
 from django.http.response import HttpResponseRedirect, Http404
 from django.shortcuts import render
-
 # Create your views here.
-from django import http
-from django.utils import six
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView, UpdateView, CreateView, ModelFormMixin, DeleteView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
-from dataloader.models import FeatureAction, SamplingFeatureType, ActionType, OrganizationType, Result, ResultType, \
-    ProcessingLevel, Status, TimeSeriesResult, AggregationStatistic, SamplingFeature, Organization, SpatialReference, \
-    ElevationDatum, SiteType, Affiliation, Medium, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
-    InstrumentOutputVariable, DataLoggerFileColumn
-from dataloader.querysets import DataLoggerFileColumnManager
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm
 from dataloaderinterface.models import DeviceRegistration
+
 
 
 class LoginRequiredMixin(object):

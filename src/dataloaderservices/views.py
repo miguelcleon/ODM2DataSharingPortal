@@ -1,24 +1,18 @@
 from datetime import datetime, timedelta
 
+from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel
 from django.db.models.expressions import F
-from django.shortcuts import render
-
 # Create your views here.
 from django.utils.dateparse import parse_datetime
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework import exceptions
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import exceptions
 
-from dataloader.models import SamplingFeature, TimeSeriesResultValue, CensorCode, QualityCode, Unit, Affiliation, \
-    EquipmentModel
-from dataloaderinterface.forms import ResultForm, ResultFormSet
-from dataloaderinterface.models import DeviceRegistration
+from dataloaderinterface.forms import ResultForm
 from dataloaderservices.auth import UUIDAuthentication
-from dataloaderservices.serializers import AffiliationSerializer, PersonSerializer, OrganizationSerializer, \
-    EquipmentModelSerializer
+from dataloaderservices.serializers import OrganizationSerializer
 
 
 class ResultApi(APIView):

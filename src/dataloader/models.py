@@ -1,18 +1,17 @@
 from __future__ import unicode_literals
 
 import inspect
-import uuid
-
 import sys
-from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from django.conf import settings
+import uuid
 
 from dataloader.querysets import AffiliationQuerySet, RelatedActionManager, ResultManager, \
     DataLoggerFileManager, InstrumentOutputVariableManager, \
     EquipmentManager, CalibrationReferenceEquipmentManager, EquipmentUsedManager, MaintenanceActionManager, \
     RelatedEquipmentManager, CalibrationActionManager, ODM2QuerySet, ActionQuerySet, ActionByQuerySet, \
     FeatureActionQuerySet, TimeSeriesValuesQuerySet, EquipmentModelQuerySet
+from django.conf import settings
+from django.db import models
+from django.utils.encoding import python_2_unicode_compatible
 
 
 # TODO: function to handle the file upload folder for file fields.

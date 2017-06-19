@@ -13,19 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from patterns import patterns
 from django.conf import settings
-from django.contrib.auth import views as auth_views
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse_lazy
-from django.views.generic.edit import CreateView
 
-from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
-
-from dataloader.models import Organization
-from dataloaderinterface.forms import UserRegistrationForm
 from dataloaderinterface.views import UserRegistrationView, UserUpdateView
+
 
 BASE_URL = settings.SITE_URL[1:]
 
