@@ -1,5 +1,6 @@
 function initMap() {
     const DEFAULT_ZOOM = 5;
+    const DEFAULT_SPECIFIC_ZOOM = 12;
     const DEFAULT_LATITUDE = 40.0902;
     const DEFAULT_LONGITUDE = -95.7129;
     const DEFAULT_POSITION = { lat: DEFAULT_LATITUDE, lng: DEFAULT_LONGITUDE };
@@ -20,6 +21,13 @@ function initMap() {
     var infoWindow = new google.maps.InfoWindow({
         content: ''
     });
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function getLocation(locatedPosition) {
+            map.setCenter({ lat: locatedPosition.coords.latitude, lng: locatedPosition.coords.longitude });
+            map.setZoom(DEFAULT_SPECIFIC_ZOOM);
+        }, undefined, { timeout: 5000 });
+    }
 
     markerData.forEach(function(site) {
         var marker = new google.maps.Marker({
