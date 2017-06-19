@@ -216,7 +216,7 @@
             {% with feature_action.results.all.0 as result %}
             {
                 "id": "{{ result.result_id }}",
-                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime|date:'N j, Y, H:m' }}", "timestamp_utc_offset": {{ series_value.value_datetime_utc_offset }}, "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
+                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime|date }}, {{ series_value.value_datetime|time }}", "timestamp_utc_offset": {{ series_value.value_datetime_utc_offset }}, "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
             }{% if not forloop.last %},{% endif %}
             {% endwith %}
         {% endfor %}
