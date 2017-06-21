@@ -1,25 +1,5 @@
-$(document).ready(function () {
-    var dialog = document.querySelector('#data-table-dialog');
-    if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog);
-    }
-
-    $(".table-trigger").click(function () {
-        var box = $(this).parents('.plot_box');
-        var id = box.data('result-id');
-        var tables = $('table.data-values');
-        tables.hide();
-
-        tables.filter('[data-result-id="' + id + '"]').show();
-        $(dialog).find('.mdl-dialog__title').text(box.data('variable-name') + ' (' + box.data('variable-code') + ')');
-
-        dialog.showModal();
-    });
-
-    dialog.querySelector('.dialog-close').addEventListener('click', function () {
-        dialog.close();
-    });
-});
+const EXTENT_HOURS = 72;
+var lastDay = new Date(new Date() - 1000 * 60 * 60 * EXTENT_HOURS);
 
 function initMap() {
     var defaultZoomLevel = 18;
@@ -50,27 +30,30 @@ function plotValues(result_id, values) {
     var xAxis = d3.scaleTime().range([0, width]);
     var yAxis = d3.scaleLinear().range([height, 0]);
 
-    xAxis.domain(d3.extent(values, function (d) {
-        return d.index;
-    }));
+    xAxis.domain([lastDay, new Date()]);
     yAxis.domain(d3.extent(values, function (d) {
         return d.value;
     }));
 
     var line = d3.line()
         .x(function (d) {
-            return xAxis(d.index);
+            var date = new Date(d.timestamp);
+            return xAxis(date);
         })
         .y(function (d) {
             return yAxis(d.value);
         });
+
     var svg = d3.select(plotBox.get(0)).append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.append("path").data([values]).attr("class", "line").attr("d", line);
+    svg.append("path")
+        .data([values])
+        .attr("class", "line").attr("d", line)
+        .attr("stroke", "steelblue");
 }
 
 function drawSparklinePlots(timeSeriesData) {
@@ -79,11 +62,25 @@ function drawSparklinePlots(timeSeriesData) {
         var timeSeries = timeSeriesData[index];
         var dataValues = timeSeries['values'];
         if (dataValues.length === 0) {
+            // Append message when there is no data
+            var plotBox = $('div.plot_box[data-result-id="' + timeSeries['id'] + '"] div.graph-container');
+            var margin = {top: 5, right: 1, bottom: 5, left: 1};
+            var width = plotBox.width() - margin.left - margin.right;
+            var height = plotBox.height() - margin.top - margin.bottom;
+
+            var svg = d3.select(plotBox.get(0)).append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("text")
+                    .text("No data in the last 72 hours.")
+                    .attr("font-size", "12px")
+                    .attr("fill", "#AAA")
+                    .attr("text-anchor", "left")
+                    .attr("transform", "translate(" + (margin.left + 10) + "," + (margin.top + 20) + ")");
+
             continue;
         }
-
         $('.plot_box[data-result-id=' + timeSeries.id + ' ]').find('.latest-value').text(dataValues[dataValues.length - 1].value);
-
         plotValues(timeSeries['id'], timeSeries['values']);
     }
 }
@@ -123,36 +120,54 @@ function bindDeleteDialogEvents() {
     }
 
     if (!deleteDialog.showModal) {
-      dialogPolyfill.registerDialog(deleteDialog);
+        dialogPolyfill.registerDialog(deleteDialog);
     }
 
-    deleteButton.addEventListener('click', function() {
-      deleteDialog.showModal();
+    deleteButton.addEventListener('click', function () {
+        deleteDialog.showModal();
     });
 
-    deleteDialog.querySelector('.dialog-close').addEventListener('click', function() {
-      deleteDialog.close();
+    deleteDialog.querySelector('.dialog-close').addEventListener('click', function () {
+        deleteDialog.close();
     });
 
-    deleteDialog.querySelector('.confirm-delete').addEventListener('click', function() {
-      deleteDialog.close();
+    deleteDialog.querySelector('.confirm-delete').addEventListener('click', function () {
+        deleteDialog.close();
     });
 }
 
 function getRecentTimeSeries(timeSeriesData) {
-    var lastDay = new Date(new Date() - 1000 * 60 * 60 * 24);
-
-    return timeSeriesData.map(function(timeSeries) {
+    return timeSeriesData.map(function (timeSeries) {
         var series = Object.assign({}, timeSeries);
-        series.values = timeSeries.values.filter(function(value) {
+        series.values = timeSeries.values.filter(function (value) {
             return (new Date(value.timestamp)) >= lastDay;
         });
         return series;
     });
 }
 
-
 $(document).ready(function () {
+    var dialog = document.querySelector('#data-table-dialog');
+    if (!dialog.showModal) {
+        dialogPolyfill.registerDialog(dialog);
+    }
+
+    $(".table-trigger").click(function () {
+        var box = $(this).parents('.plot_box');
+        var id = box.data('result-id');
+        var tables = $('table.data-values');
+        tables.hide();
+
+        tables.filter('[data-result-id="' + id + '"]').show();
+        $(dialog).find('.mdl-dialog__title').text(box.data('variable-name') + ' (' + box.data('variable-code') + ')');
+
+        dialog.showModal();
+    });
+
+    dialog.querySelector('.dialog-close').addEventListener('click', function () {
+        dialog.close();
+    });
+
     $('nav .menu-sites-list').addClass('active');
 
     var resizeTimer;
