@@ -108,6 +108,7 @@ class TimeSeriesValuesApi(APIView):
         feature_actions = sampling_feature.feature_actions.prefetch_related('results__variable', 'action').all()
         for feature_action in feature_actions:
             result = feature_action.results.all().first()
+            is_first_value = result.value_count == 0
 
             # don't create a new TimeSeriesValue for results that are not included in the request
             if str(result.result_uuid) not in request.data:
@@ -134,7 +135,12 @@ class TimeSeriesValuesApi(APIView):
             result.value_count = F('value_count') + 1
             result.result_datetime = measurement_datetime
             result.result_datetime_utc_offset = utc_offset
-            result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset'])
+
+            if is_first_value:
+                result.valid_datetime = measurement_datetime
+                result.valid_datetime_utc_offset = utc_offset
+
+            result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset', 'valid_datetime', 'valid_datetime_utc_offset'])
 
         return Response({}, status.HTTP_201_CREATED)
 

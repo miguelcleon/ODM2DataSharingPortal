@@ -122,7 +122,7 @@ class ResultValue(models.Model):
     value_datetime_utc_offset = models.IntegerField(db_column='valuedatetimeutcoffset')
 
     def __str__(self):
-        return '%s %s' % self.value_datetime, self.data_value
+        return '%s %s' % (self.value_datetime, self.data_value)
 
     def __repr__(self):
         return "<%s('%s', '%s', Result['%s', '%s'], '%s')>" % (
@@ -139,7 +139,7 @@ class ResultValueAnnotation(models.Model):
     annotation = models.ForeignKey('Annotation', db_column='annotationid')
 
     def __str__(self):
-        return '%s %s' % self.value_datetime, self.data_value
+        return '%s %s' % (self.value_datetime, self.data_value)
 
     def __repr__(self):
         return "<%s('%s', Annotation['%s', '%s'], ResultValue['%s', '%s')>" % (

@@ -43,7 +43,6 @@ class Command(BaseCommand):
     def delete_entire_registration():
         pass
 
-
     def handle(self, *args, **options):
         registrations = DeviceRegistration.objects.all()
         print("%s site registrations found." % registrations.count())

@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 # Create your models here.
+from django.db.models.aggregates import Min
+
 from dataloader.models import SamplingFeature, Affiliation
 from django.contrib.auth.models import User
 from django.db import models
@@ -16,6 +18,12 @@ class DeviceRegistration(models.Model):
     def registration_date(self):
         action = self.sampling_feature.actions.first()
         return action and action.begin_datetime
+
+    @property
+    def deployment_date(self):
+        sampling_feature = self.sampling_feature
+        min_datetime = sampling_feature.feature_actions.aggregate(first_light=Min('results__valid_datetime'))
+        return min_datetime['first_light']
 
     @property
     def sampling_feature(self):
