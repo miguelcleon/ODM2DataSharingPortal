@@ -272,7 +272,6 @@ div.registration-field span.control-field {
     width: 100%;
     margin-bottom: 15px;
     border-radius: 2px;
-    border: 1px solid #DDD;
     min-height: 174px;
 }
 
@@ -369,7 +368,6 @@ div.registration-field span.control-field {
 
 .line {
     fill: rgb(232, 237, 240);
-    stroke: steelblue;
     stroke-width: 2px;
 }
 

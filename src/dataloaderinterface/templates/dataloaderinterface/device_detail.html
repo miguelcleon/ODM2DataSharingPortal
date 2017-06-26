@@ -119,12 +119,12 @@
                         </div>
 
                         <div class="sparkline-plots col-xs-12">
-                            <div class="alert alert-info" role="alert">Only last 24 hours shown on sparkline plots.</div>
+                            <div class="alert alert-info" role="alert">Only last 72 hours shown on sparkline plots.</div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
                                     {% with feature_action.results.all.0 as result %}
                                         <div class="col-xs-12 col-sm-6">
-                                            <div class="plot_box mdl-card" data-result-id="{{ result.result_id }}"
+                                            <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ result.result_id }}"
                                                  data-variable-name="{{ result.variable.variable_name_id }}"
                                                  data-variable-code="{{ result.variable.variable_code }}">
 
