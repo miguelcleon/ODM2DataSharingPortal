@@ -7,19 +7,40 @@ function initMap() {
     const DEFAULT_LATITUDE = 37.0902;
     const DEFAULT_LONGITUDE = -95.7129;
     const DEFAULT_POSITION = { lat: DEFAULT_LATITUDE, lng: DEFAULT_LONGITUDE };
+    var ZOOM_LEVEL = sessionStorage && parseInt(sessionStorage.getItem('MY_CURRENT_ZOOM')) || DEFAULT_ZOOM;
+    var temp = sessionStorage.getItem('MY_CURRENT_CENTER');
+
+    if(sessionStorage.getItem('MY_CURRENT_CENTER')){
+        var CUR_CENTER = getLatLngFromString(temp);
+        var MAP_CENTER =  CUR_CENTER;
+    }
+    else{
+        var MAP_CENTER = DEFAULT_POSITION;
+    }
+
+    console.log(MAP_CENTER);
 
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
+
     var map = new google.maps.Map(document.getElementById('map'), {
-        center: DEFAULT_POSITION,
-        zoom: DEFAULT_ZOOM,
-        scrollwheel: false,
+        center: MAP_CENTER,
+        zoom: ZOOM_LEVEL,
         disableDefaultUI: true,
         zoomControl: true,
         zoomControlOptions: {
-          position: google.maps.ControlPosition.LEFT_BOTTOM
+            position: google.maps.ControlPosition.LEFT_BOTTOM
         },
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         scaleControl: true
+    });
+
+    map.addListener('zoom_changed', function(){
+        var CURRENT_ZOOM = map.getZoom();
+        var CURRENT_CENTER = map.getCenter();
+
+        sessionStorage.setItem('MY_CURRENT_CENTER', CURRENT_CENTER);
+        sessionStorage.setItem('MY_CURRENT_ZOOM', CURRENT_ZOOM);
+
     });
 
     var bounds = new google.maps.LatLngBounds();
@@ -56,7 +77,9 @@ function initMap() {
         });
     });
 
-    map.fitBounds(bounds);
+    if (!sessionStorage.getItem('MY_CURRENT_CENTER')){
+        map.fitBounds(bounds);
+    }
 }
 
 function createInfoWindowContent(siteInfo) {
@@ -100,3 +123,10 @@ $(document).ready(function () {
         })
     );
 });
+
+function getLatLngFromString(location) {
+    var latlang = location.replace(/[()]/g,'');
+    var latlng = latlang.split(',');
+    var locate = new google.maps.LatLng(parseFloat(latlng[0]) , parseFloat(latlng[1]));
+    return locate;
+}
