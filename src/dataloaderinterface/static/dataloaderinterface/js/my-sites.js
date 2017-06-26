@@ -36,11 +36,14 @@ function initMap() {
 
     map.addListener('zoom_changed', function(){
         var CURRENT_ZOOM = map.getZoom();
+
+        sessionStorage.setItem('MY_CURRENT_ZOOM', CURRENT_ZOOM);
+    });
+
+    map.addListener('center_changed', function(){
         var CURRENT_CENTER = map.getCenter();
 
         sessionStorage.setItem('MY_CURRENT_CENTER', CURRENT_CENTER);
-        sessionStorage.setItem('MY_CURRENT_ZOOM', CURRENT_ZOOM);
-
     });
 
     var bounds = new google.maps.LatLngBounds();
