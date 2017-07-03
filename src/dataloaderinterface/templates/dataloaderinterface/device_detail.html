@@ -3,9 +3,6 @@
 
 {% block styles %}
     {{ block.super }}
-{#    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/dataTables.bootstrap.min.css">#}
-{#    <link rel="stylesheet"#}
-{#          href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/fh-3.1.2/r-2.1.0/sc-1.4.2/datatables.min.css"/>#}
     <link rel="stylesheet" href="{% static 'dataloaderinterface/css/dialog-polyfill.css' %}">
 {% endblock %}
 
@@ -19,7 +16,7 @@
             <div class="row">
                 <section class="device-data col-sm-12">
                     <header>
-                        {% if object.user_id == request.user.odm2user.id %}
+                        {% if object.user_id == request.user.odm2user.id or request.user.is_staff %} {# TODO: make and use template tag  #}
                         <div class="text-right buttons-toolbar">
                             <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
@@ -228,7 +225,7 @@
         ]
     </script>
 
-    {% if object.user_id == request.user.odm2user.id %}
+    {% if object.user_id == request.user.odm2user.id or request.user.is_staff %}
     <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">
         <div class="vertical-alignment-helper">
             <div class="modal-dialog vertical-align-center">

@@ -35,10 +35,12 @@ class DeviceRegistration(models.Model):
 
 
 class ODM2User(models.Model):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
 
     @property
     def affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
+
+    def can_administer_site(self, registration):
+        return self.user.is_staff or registration.user == self
