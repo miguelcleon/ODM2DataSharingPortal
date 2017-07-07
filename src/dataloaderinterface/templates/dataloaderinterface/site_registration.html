@@ -30,6 +30,22 @@
                                 <br>
                                 <div class="row">
                                     <div class="form-group col-sm-4 col-xs-12 sampling-feature-fields">
+
+                                        {% if user.is_staff %}
+                                            {% for field in action_by_form %}
+                                                <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
+                                                     data-field="{{ field.name }}">
+                                                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                    <i id="sampling-feature-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
+                                                    {{ field.errors }}
+                                                    <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="sampling-feature-help{{ forloop.counter0 }}">
+                                                        {{ field.help_text }}
+                                                    </div>
+                                                    {{ field|add_class:"form-control input-sm" }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+
                                         {% for field in sampling_feature_form %}
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">

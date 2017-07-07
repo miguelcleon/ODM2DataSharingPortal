@@ -19,9 +19,8 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm
-from dataloaderinterface.models import DeviceRegistration
-
+    OrganizationForm, UserUpdateForm, ActionByForm
+from dataloaderinterface.models import DeviceRegistration, ODM2User
 
 
 class LoginRequiredMixin(object):
@@ -290,6 +289,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         context['sampling_feature_form'] = SamplingFeatureForm(data, initial=default_data)
         context['site_form'] = SiteForm(data, initial=default_data)
         context['results_formset'] = ResultFormSet(data)
+        context['action_by_form'] = ActionByForm(data)
 
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
@@ -298,10 +298,11 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         sampling_feature_form = SamplingFeatureForm(request.POST)
         site_form = SiteForm(request.POST)
         results_formset = ResultFormSet(request.POST)
+        action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(sampling_feature_form, site_form, results_formset):
-            affiliation = request.user.odm2user.affiliation
+        if all_forms_valid(sampling_feature_form, site_form, action_by_form, results_formset):
+            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
 
             # Create sampling feature
             sampling_feature = sampling_feature_form.instance
@@ -329,7 +330,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
                 create_result(result_form, sampling_feature, affiliation, data_logger_file)
 
             registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
-            registration_form.instance.user_id = request.user.odm2user.pk
+            registration_form.instance.user = ODM2User.objects.filter(affiliation_id=affiliation.pk).first()
             registration_form.instance.authentication_token = uuid4()
             registration_form.instance.save()
             return self.form_valid(registration_form)

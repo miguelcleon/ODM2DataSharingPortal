@@ -444,13 +444,6 @@ div.form-field[data-field="elevation_m"], div.form-field[data-field="elevation_d
     font-family: Roboto, Helvetica, Arial, sans-serif;
 }
 
-div.form-field[data-field="affiliation"] .select2-selection {
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    font-size: 2em;
-}
-
 span.select2-selection__clear {
     font-size: 1.4em;
     line-height: 1.1em;

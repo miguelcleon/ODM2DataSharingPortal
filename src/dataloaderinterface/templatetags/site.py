@@ -12,3 +12,9 @@ def get_registration(sampling_feature):
         return
 
     return DeviceRegistration.objects.filter(deployment_sampling_feature_uuid__exact=sampling_feature.sampling_feature_uuid).first()
+
+
+@register.filter(name='can_administer_site')
+def can_administer_site():
+    pass
+    # return DeviceRegistration.objects.filter(deployment_sampling_feature_uuid__exact=sampling_feature.sampling_feature_uuid).first()
