@@ -18,6 +18,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
+from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
 from dataloaderinterface.models import DeviceRegistration, ODM2User
@@ -386,6 +387,11 @@ def create_result(result_form, sampling_feature, affiliation, data_logger_file):
         instrument_output_variable=instrument_output_variable,
         column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
     )
+
+    # Create csv file to hold the sensor data.
+    # TODO: have this send a signal and the call to create the file be somewhere else.
+    serializer = SiteResultSerializer(result)
+    serializer.build_csv()
 
     return result
 
