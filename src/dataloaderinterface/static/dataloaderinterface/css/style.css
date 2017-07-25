@@ -306,7 +306,7 @@ div.registration-field span.control-field {
 
 .variable-name {
     padding: 8px 20px;
-    width: calc(100% - 50px);
+    width: calc(100% - 100px);
 }
 
 .variable-data {
@@ -579,7 +579,7 @@ a#btn-new-site {
     margin-bottom: 20px;
 }
 
-.plot_box .table-trigger {
+.plot_box .fa {
     margin-left: 13px;
     margin-top: 2px;
 }

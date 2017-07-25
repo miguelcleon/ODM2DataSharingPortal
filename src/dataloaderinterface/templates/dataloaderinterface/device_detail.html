@@ -133,12 +133,21 @@
                                                             class="variable-code">({{ result.variable.variable_code }})</span>
                                                     </div>
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table fa-2x table-trigger pull-right"
+                                                          class="fa fa-table table-trigger"
                                                           aria-hidden="true"></span>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                    <div class="mdl-tooltip mdl-tooltip--bottom"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
                                                         View Data Table
                                                     </div>
+
+                                                    {#  Download data button  #}
+                                                    <a href="{% static result|get_result_csv_path %}">
+                                                        <span id="download-trigger-{{ forloop.counter0 }}" class="fa fa-cloud-download"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--bottom" data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                        Download Data
+                                                    </div>
+
                                                 </div>
 
                                                 <table class="full-width">
