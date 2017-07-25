@@ -15,18 +15,18 @@
 # Latitude: {sampling_feature.site.latitude}
 # Longitude: {sampling_feature.site.longitude}
 # Elevation: {sampling_feature.elevation_m}
-# VerticalDatum: {sampling_feature.elevation_datum}
-# SiteType: {sampling_feature.site.site_type}
+# VerticalDatum: {sampling_feature.elevation_datum_id}
+# SiteType: {sampling_feature.site.site_type_id}
 #
 # Variable and Unit Information
 # -----------------------------
 # VariableCode: {variable.variable_code}
-# VariableName: {variable.variable_name}
-# VariableType: {variable.variable_type}
+# VariableName: {variable.variable_name_id}
+# VariableType: {variable.variable_type_id}
 # VariableDefinition: {variable.variable_definition}
 # NoDataValue: {variable.no_data_value}
 # VariableUnitsName: {unit.unit_name}
-# VariableUnitsType: {unit.unit_type}
+# VariableUnitsType: {unit.unit_type_id}
 # VariableUnitsAbbreviation: {unit.unit_abbreviation}
 #
 # Result Information
@@ -36,13 +36,13 @@
 # ProcessingLevelDefinition: {result.processing_level.definition}
 # ProcessingLevelExplanation: {result.processing_level.explanation}
 # ResultStatus: {result.status}
-# SampledMedium: {result.sampled_medium}
+# SampledMedium: {result.sampled_medium_id}
 # ValueCount: {result.value_count}
 #
 # Instrument Deployment Information
 # ---------------------------------
 # SensorModel: {model}
-# MethodTypeCV: {action.method.method_type}
+# MethodTypeCV: {action.method.method_type_id}
 # MethodCode: {action.method.method_code}
 # MethodName: {action.method.method_name}
 # MethodDescription: {action.method.method_description}
