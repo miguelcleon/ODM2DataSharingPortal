@@ -13,6 +13,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import ResultForm
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import OrganizationSerializer
@@ -129,5 +130,10 @@ class TimeSeriesValuesApi(APIView):
                 result.valid_datetime_utc_offset = utc_offset
 
             result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset', 'valid_datetime', 'valid_datetime_utc_offset'])
+
+            # Write data to result's csv file
+            # TODO: have this send a signal and the call to add data to the file be somewhere else.
+            serializer = SiteResultSerializer(result)
+            serializer.add_data_value(result_value)
 
         return Response({}, status.HTTP_201_CREATED)
