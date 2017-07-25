@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
 
-from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel
+from django.http.response import Http404
+from rest_framework_csv.renderers import CSVRenderer
+
+from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel, TimeSeriesResult
 from django.db.models.expressions import F
 # Create your views here.
 from django.utils.dateparse import parse_datetime
@@ -59,21 +62,6 @@ class OrganizationApi(APIView):
 
         error_data = dict(organization_serializer.errors)
         return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
-
-
-class ResultValuesApi(APIView):
-    authentication_classes = (SessionAuthentication,)
-
-    def get(self, request, format=None):
-        if 'result_ids' not in request.GET:
-            return Response({'error': 'No result id received.'})
-
-        results = request.GET.getlist('result_ids')
-        values = TimeSeriesResultValue.objects.filter(result_id__in=results)
-
-        output = values.instrument_output_variables.values('variable', 'instrument_raw_output_unit')
-
-        return Response(output)
 
 
 class TimeSeriesValuesApi(APIView):
@@ -143,13 +131,3 @@ class TimeSeriesValuesApi(APIView):
             result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset', 'valid_datetime', 'valid_datetime_utc_offset'])
 
         return Response({}, status.HTTP_201_CREATED)
-
-
-def try_parsing_date(text):
-    for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d'):
-        try:
-            return datetime.strptime(text, fmt)
-        except ValueError:
-            continue
-
-    raise exceptions.ParseError('no valid date format found')
