@@ -9,12 +9,9 @@ from unicodecsv.py2 import UnicodeWriter
 class SiteResultSerializer:
     headers = ('DateTime', 'TimeOffset', 'DateTimeUTC', 'Value', 'CensorCode', 'QualifierCode', )
     date_format = '%Y-%m-%d %H:%M:%S'
-    metadata_template = ''
 
     def __init__(self, result):
         self.result = result
-        with open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r') as metadata_file:
-            self.metadata_template = metadata_file.read()
 
     def get_file_path(self):
         filename = "{0}_{1}_{2}.csv".format(self.result.feature_action.sampling_feature.sampling_feature_code, self.result.variable.variable_code, self.result.result_id)
@@ -24,11 +21,15 @@ class SiteResultSerializer:
         csv_file = staticfiles_storage.open(self.get_file_path(), 'ab+')
         return csv_file
 
+    def get_metadata_template(self):
+        with open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r') as metadata_file:
+            return metadata_file.read()
+
     def generate_metadata(self):
         action = self.result.feature_action.action
         equipment_model = self.result.data_logger_file_columns.first().instrument_output_variable.model
         affiliation = action.action_by.filter(is_action_lead=True).first().affiliation
-        return self.metadata_template.format(
+        return self.get_metadata_template().format(
             sampling_feature=self.result.feature_action.sampling_feature,
             variable=self.result.variable,
             unit=self.result.unit,

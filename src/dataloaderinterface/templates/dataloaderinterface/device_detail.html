@@ -1,5 +1,6 @@
 {% extends 'dataloaderinterface/base.html' %}
 {% load staticfiles %}
+{% load site %}
 
 {% block styles %}
     {{ block.super }}
@@ -123,7 +124,8 @@
                                         <div class="col-xs-12 col-sm-6">
                                             <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ result.result_id }}"
                                                  data-variable-name="{{ result.variable.variable_name_id }}"
-                                                 data-variable-code="{{ result.variable.variable_code }}">
+                                                 data-variable-code="{{ result.variable.variable_code }}"
+                                                 data-csv-path="{% static result|get_result_csv_path %}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                                     <div class="variable-name pull-left">
