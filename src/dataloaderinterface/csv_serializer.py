@@ -1,3 +1,4 @@
+import csv
 import os
 
 from datetime import timedelta
@@ -7,6 +8,7 @@ from unicodecsv.py2 import UnicodeWriter
 
 class SiteResultSerializer:
     headers = ('DateTime', 'TimeOffset', 'DateTimeUTC', 'Value', 'CensorCode', 'QualifierCode', )
+    date_format = '%Y-%m-%d %H:%M:%S'
     metadata_template = ''
 
     def __init__(self, result):
@@ -46,11 +48,11 @@ class SiteResultSerializer:
         self.add_data_values([data_value])
 
     def add_data_values(self, data_values):
-        data = [(data_value.value_datetime,
-                 data_value.value_datetime_utc_offset,
-                 data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset),
-                 data_value.censor_code,
-                 data_value.quality_code)
+        data = [(data_value.value_datetime.strftime(self.date_format),
+                 '{0}:00'.format(data_value.value_datetime_utc_offset),
+                 (data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset)).strftime(self.date_format),
+                 data_value.censor_code_id,
+                 data_value.quality_code_id)
                 for data_value in data_values]
         with self.open_csv_file() as output_file:
             csv_writer = UnicodeWriter(output_file)
