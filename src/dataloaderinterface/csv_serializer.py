@@ -31,14 +31,14 @@ class SiteResultSerializer:
         equipment_model = self.result.data_logger_file_columns.first().instrument_output_variable.model
         affiliation = action.action_by.filter(is_action_lead=True).first().affiliation
         return self.get_metadata_template().format(
-            sampling_feature=unicode(self.result.feature_action.sampling_feature),
-            variable=unicode(self.result.variable),
-            unit=unicode(self.result.unit),
-            model=unicode(equipment_model),
-            result=unicode(self.result),
-            action=unicode(action),
-            affiliation=unicode(affiliation)
-        )
+            sampling_feature=self.result.feature_action.sampling_feature,
+            variable=self.result.variable,
+            unit=self.result.unit,
+            model=equipment_model,
+            result=self.result,
+            action=action,
+            affiliation=affiliation
+        ).encode('utf-8')
 
     def build_csv(self):
         with self.open_csv_file() as output_file:
