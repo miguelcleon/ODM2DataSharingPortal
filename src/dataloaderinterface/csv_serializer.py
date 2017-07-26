@@ -18,7 +18,7 @@ class SiteResultSerializer:
         return os.path.join('data', filename)
 
     def open_csv_file(self):
-        csv_file = staticfiles_storage.open(self.get_file_path(), 'ab+', encoding='utf-8')
+        csv_file = staticfiles_storage.open(self.get_file_path(), 'ab+')
         return csv_file
 
     def get_metadata_template(self):
