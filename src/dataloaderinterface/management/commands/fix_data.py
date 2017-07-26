@@ -1,6 +1,6 @@
 
 from dataloader.models import DataLoggerProgramFile, DataLoggerFile, ActionBy, TimeSeriesResult, DataLoggerFileColumn, \
-    InstrumentOutputVariable
+    InstrumentOutputVariable, Result
 from django.core.management.base import BaseCommand
 
 from dataloaderinterface.models import DeviceRegistration
@@ -109,20 +109,23 @@ class Command(BaseCommand):
                 print("- time series result instance found." if not created else "* no time series result instance found for this site. creating.")
 
                 column = result.data_logger_file_columns.first()
+                column_label = '%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
                 if not column:
                     print("* no data logger file column associated with this result. creating.")
                     DataLoggerFileColumn.objects.create(
                         result=result,
                         data_logger_file=data_logger_file,
                         instrument_output_variable=self.guess_equipment_model(result),
-                        column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
+                        column_label=column_label
                     )
-                elif column.data_logger_file != data_logger_file:
-                    print("* data logger column doesn't belong to retrieved data logger file. matching up.")
-                    column.data_logger_file = data_logger_file
-                    column.save()
-                elif column.column_label != "":
-                    pass
+                else:
+                    if column.data_logger_file != data_logger_file:
+                        print("* data logger column doesn't belong to retrieved data logger file. matching up.")
+                        column.data_logger_file = data_logger_file
+                        column.save()
+                    if column.column_label != column_label:
+                        column.column_label = column_label
+                        column.save()
 
                     # data_logger_file_column = result.data_logger_file_columns.first()
                     # data_logger_file_column.instrument_output_variable = instrument_output_variable
@@ -132,4 +135,14 @@ class Command(BaseCommand):
             if sampling_feature.feature_actions.count() == 0:
                 # TODO: delete sampling feature.
                 pass
+
+        # Remove rogue Time Series Results.
+        site_registrations = [str(uuid['deployment_sampling_feature_uuid']) for uuid in DeviceRegistration.objects.all().values('deployment_sampling_feature_uuid')]
+        rogue_results = Result.objects.exclude(feature_action__sampling_feature__sampling_feature_uuid__in=(site_registrations))
+        for rogue_result in rogue_results:
+            rogue_result.timeseriesresult and rogue_result.timeseriesresult.values.all().delete()
+            rogue_result.timeseriesresult and rogue_result.timeseriesresult.delete()
+            rogue_result.delete()
+
+
         print("check complete!")
