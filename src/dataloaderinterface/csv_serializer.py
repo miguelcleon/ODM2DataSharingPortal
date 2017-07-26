@@ -1,3 +1,4 @@
+import codecs
 import csv
 import os
 
@@ -22,7 +23,7 @@ class SiteResultSerializer:
         return csv_file
 
     def get_metadata_template(self):
-        with open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
+        with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
             return metadata_file.read()
 
     def generate_metadata(self):
