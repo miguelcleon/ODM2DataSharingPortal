@@ -1,8 +1,5 @@
 from datetime import datetime, timedelta
 
-from django.http.response import Http404
-from rest_framework_csv.renderers import CSVRenderer
-
 from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel, TimeSeriesResult
 from django.db.models.expressions import F
 # Create your views here.
