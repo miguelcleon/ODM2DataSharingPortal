@@ -223,19 +223,6 @@
         </div>
     </dialog>
 
-    <script id="sensors-data" type="application/json">
-        [
-        {% for feature_action in feature_actions %}
-            {% with feature_action.results.all.0 as result %}
-            {
-                "id": "{{ result.result_id }}",
-                "values": [{% for series_value in result.timeseriesresult.values.all %}{ "index":{{ forloop.counter }}, "timestamp": "{{ series_value.value_datetime|date }}, {{ series_value.value_datetime|time }}", "timestamp_utc_offset": {{ series_value.value_datetime_utc_offset }}, "value": {{ series_value.data_value }} }{% if not forloop.last %},{% endif %}{% endfor %}]
-            }{% if not forloop.last %},{% endif %}
-            {% endwith %}
-        {% endfor %}
-        ]
-    </script>
-
     {% if object.user_id == request.user.odm2user.id or request.user.is_staff %}
     <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">
         <div class="vertical-alignment-helper">
@@ -277,7 +264,7 @@ const char *UUIDs[] =                                                      // UU
     {{ block.super }}
     <script src="{% static 'dataloaderinterface/js/bootstrap-toolkit.min.js' %}"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-{#    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.3.5/papaparse.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>

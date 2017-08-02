@@ -1,5 +1,5 @@
 const EXTENT_HOURS = 72;
-var lastDay = new Date(new Date() - 1000 * 60 * 60 * EXTENT_HOURS);
+const DATA_TIME_OFFSET = new Date(new Date() - 1000 * 60 * 60 * EXTENT_HOURS);
 
 function initMap() {
     var defaultZoomLevel = 18;
@@ -18,82 +18,6 @@ function initMap() {
         position: sitePosition,
         map: map
     });
-}
-
-function plotValues(result_id, values) {
-    var plotBox = $('div.plot_box[data-result-id="' + result_id + '"] div.graph-container');
-
-    var margin = {top: 5, right: 1, bottom: 5, left: 1};
-    var width = plotBox.width() - margin.left - margin.right;
-    var height = plotBox.height() - margin.top - margin.bottom;
-
-    var xAxis = d3.scaleTime().range([0, width]);
-    var yAxis = d3.scaleLinear().range([height, 0]);
-
-    xAxis.domain([lastDay, new Date()]);
-    yAxis.domain(d3.extent(values, function (d) {
-        return d.value;
-    }));
-
-    var line = d3.line()
-        .x(function (d) {
-            var date = new Date(d.timestamp);
-            return xAxis(date);
-        })
-        .y(function (d) {
-            return yAxis(d.value);
-        });
-
-    var svg = d3.select(plotBox.get(0)).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    svg.append("path")
-        .data([values])
-        .attr("class", "line").attr("d", line)
-        .attr("stroke", "steelblue");
-}
-
-function drawSparklinePlots(timeSeriesData) {
-    $('div.graph-container').empty();
-    for (var index = 0; index < timeSeriesData.length; index++) {
-        var timeSeries = timeSeriesData[index];
-        var dataValues = timeSeries['values'];
-        if (dataValues.length === 0) {
-            // Append message when there is no data
-            var plotBox = $('div.plot_box[data-result-id="' + timeSeries['id'] + '"] div.graph-container');
-            var margin = {top: 5, right: 1, bottom: 5, left: 1};
-            var width = plotBox.width() - margin.left - margin.right;
-            var height = plotBox.height() - margin.top - margin.bottom;
-
-            var svg = d3.select(plotBox.get(0)).append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("text")
-                    .text("No data in the last 72 hours.")
-                    .attr("font-size", "12px")
-                    .attr("fill", "#AAA")
-                    .attr("text-anchor", "left")
-                    .attr("transform", "translate(" + (margin.left + 10) + "," + (margin.top + 20) + ")");
-
-            continue;
-        }
-        $('.plot_box[data-result-id=' + timeSeries.id + ' ]').find('.latest-value').text(dataValues[dataValues.length - 1].value);
-        plotValues(timeSeries['id'], timeSeries['values']);
-    }
-}
-
-function fillValueTables(tables, data) {
-    for (var index = 0; index < data.length; index++) {
-        var result = data[index];
-        var table = tables.filter('[data-result-id=' + result.id + ' ]');
-        var rows = result['values'].map(function (dataValue) {
-            return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.timestamp_utc_offset + "</td><td>" + dataValue.value + "</td></tr>");
-        });
-        table.append(rows);
-    }
 }
 
 // Makes all site cards have the same height.
@@ -136,13 +60,94 @@ function bindDeleteDialogEvents() {
     });
 }
 
-function getRecentTimeSeries(timeSeriesData) {
-    return timeSeriesData.map(function (timeSeries) {
-        var series = Object.assign({}, timeSeries);
-        series.values = timeSeries.values.filter(function (value) {
-            return (new Date(value.timestamp)) >= lastDay;
+function getRecentData(timeSeriesData) {
+    return timeSeriesData.filter(function (value) {
+        return (new Date(value.DateTime)) >= DATA_TIME_OFFSET;
+    });
+}
+
+function fillValueTable(table, data) {
+    var rows = data.map(function (dataValue) {
+        return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.DateTime + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.TimeOffset + "</td><td>" + dataValue.Value + "</td></tr>");
+    });
+    table.append(rows);
+}
+
+function drawSparklineOnResize(seriesInfo, seriesData) {
+    var resizeTimer;
+    window.addEventListener('resize', function (event) {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            drawSparklinePlot(seriesInfo, seriesData);
+        }, 500);
+    });
+}
+
+function drawSparklinePlot(seriesInfo, seriesData) {
+    var plotBox = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] div.graph-container');
+    plotBox.empty();
+
+    var margin = {top: 5, right: 1, bottom: 5, left: 1};
+    var width = plotBox.width() - margin.left - margin.right;
+    var height = plotBox.height() - margin.top - margin.bottom;
+
+    if (seriesData.length === 0) {
+        // Append message when there is no data
+        d3.select(plotBox.get(0)).append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("text")
+                .text("No data in the last 72 hours.")
+                .attr("font-size", "12px")
+                .attr("fill", "#AAA")
+                .attr("text-anchor", "left")
+                .attr("transform", "translate(" + (margin.left + 10) + "," + (margin.top + 20) + ")");
+        return;
+    }
+
+    $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
+
+    var xAxis = d3.scaleTime().range([0, width]);
+    var yAxis = d3.scaleLinear().range([height, 0]);
+
+    xAxis.domain([DATA_TIME_OFFSET, new Date()]);
+    yAxis.domain(d3.extent(seriesData, function(d) {
+        return d.Value;
+    }));
+
+    var line = d3.line()
+        .x(function(d) {
+            var date = new Date(d.DateTime);
+            return xAxis(date);
+        })
+        .y(function(d) {
+            return yAxis(d.Value);
         });
-        return series;
+
+    var svg = d3.select(plotBox.get(0)).append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("path")
+        .data([seriesData])
+        .attr("class", "line").attr("d", line)
+        .attr("stroke", "steelblue");
+}
+
+function getTimeSeriesData(sensorInfo) {
+    Papa.parse(sensorInfo['csvPath'], {
+        download: true,
+        header: true,
+        comments: "#",
+        skipEmptyLines: true,
+        complete: function(result) {
+            var recentValues = getRecentData(result.data);
+            fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
+            drawSparklineOnResize(sensorInfo, recentValues);
+            drawSparklinePlot(sensorInfo, recentValues);
+        }
     });
 }
 
@@ -170,10 +175,13 @@ $(document).ready(function () {
 
     $('nav .menu-sites-list').addClass('active');
 
-    var resizeTimer;
-    var timeSeriesData = JSON.parse(document.getElementById('sensors-data').innerHTML);
-    var recentData = getRecentTimeSeries(timeSeriesData);
-    fillValueTables($('table.data-values'), timeSeriesData);
+
+    var sensors = document.querySelectorAll('.device-data .plot_box');
+    for (var index = 0; index < sensors.length; index++) {
+        var sensorInfo = sensors[index].dataset;
+        getTimeSeriesData(sensorInfo);
+    }
+
     bindDeleteDialogEvents();
 
     // Executes when page loads
@@ -186,13 +194,4 @@ $(document).ready(function () {
             fixViewPort();
         })
     );
-
-    $(window).on('resize', function (event) {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () {
-            drawSparklinePlots(recentData);
-        }, 500);
-    });
-
-    drawSparklinePlots(recentData);
 });
