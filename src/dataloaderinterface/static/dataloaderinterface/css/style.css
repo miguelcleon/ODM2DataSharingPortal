@@ -254,6 +254,11 @@ div.registration-data {
     overflow: auto;
 }
 
+div.registration-data i {
+    width: 10px;
+    margin-right: 10px;
+}
+
 div.registration-field {
     padding: .7em 1em;
 }
@@ -305,6 +310,11 @@ svg.not-stale {
 
 .table-trigger {
     cursor: pointer;
+}
+
+.table-trigger.disabled, .download-trigger.disabled {
+    pointer-events: none;
+    color: #c5c5c5;
 }
 
 .measurements-table {
