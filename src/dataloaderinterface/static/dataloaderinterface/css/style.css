@@ -270,7 +270,7 @@ div.registration-field span.control-field {
 .plot_box {
     float: left;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     border-radius: 2px;
     min-height: 180px;
 }
@@ -290,7 +290,7 @@ svg.not-stale {
 
 .plot_box .mdl-card__actions {
     border-top: 0;
-    background: #eee;
+    background: #f6f6f6;
 }
 
 .white-shadow {
@@ -323,7 +323,7 @@ svg.not-stale {
 }
 
 .variable-name {
-    padding: 8px 20px;
+    padding: 8px 0px;
     width: calc(100% - 100px);
 }
 
