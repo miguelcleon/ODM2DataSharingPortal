@@ -105,7 +105,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("text")
-                .text("No data to display.")
+                .text("No data exist for this variable.")
                 .attr("font-size", "12px")
                 .attr("fill", "#AAA")
                 .attr("text-anchor", "left")
