@@ -117,7 +117,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
         return;
     }
 
-    card.find(".last-obs-container").show();
+    card.find(".last-obs-container").css("visibility", "visible");
 
     $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
 

@@ -405,7 +405,7 @@ svg.not-stale {
 }
 
 .last-obs-container {
-    display: none;
+    visibility: hidden;
 }
 
 table.data-values {
