@@ -328,6 +328,10 @@ svg.not-stale {
     overflow: auto;
 }
 
+.measurements-table .mdl-data-table tbody tr:hover {
+    background-color: initial;
+}
+
 .variable-description {
     width: 120px;
     padding: 20px;
