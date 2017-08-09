@@ -254,9 +254,15 @@ div.registration-data {
     overflow: auto;
 }
 
-div.registration-data i {
+div.registration-data i, div.registration-data .material-icons {
     width: 10px;
     margin-right: 10px;
+}
+
+div.registration-data .material-icons {
+    font-size: 15px;
+    margin-left: -2px;
+    margin-right: 12px;
 }
 
 div.registration-field {
