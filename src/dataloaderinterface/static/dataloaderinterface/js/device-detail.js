@@ -229,17 +229,12 @@ $(document).ready(function () {
 
 function formatDate(date) {
     date = new Date(date);
-    var monthNames = [
-        "January", "February", "March",
-        "April", "May", "June", "July",
-        "August", "September", "October",
-        "November", "December"
-    ];
 
-    var day = date.getDate();
-    var monthIndex = date.getMonth();
-    var year = date.getFullYear();
+    var options = {
+        year: "numeric", month: "short",
+        day: "numeric", hour: "2-digit", minute: "2-digit"
+    };
 
-    return monthNames[monthIndex] + ' ' + day + ', ' + year;
+    return date.toLocaleTimeString("en-us", options);
 }
 
