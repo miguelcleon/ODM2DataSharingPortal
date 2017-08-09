@@ -130,13 +130,15 @@
                                                  data-csv-path="{% static result|get_result_csv_path %}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    <div class="variable-name pull-left">
+                                                    <div class="variable-name pull-left white-shadow">
                                                         <strong>{{ result.variable.variable_name_id }} </strong><span
                                                             class="variable-code">({{ result.variable.variable_code }})</span>
                                                     </div>
+
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table table-trigger"
+                                                          class="fa fa-table table-trigger pull-right white-shadow"
                                                           aria-hidden="true"></span>
+
                                                     <div class="mdl-tooltip mdl-tooltip--bottom"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
                                                         View Data Table
@@ -144,12 +146,12 @@
 
                                                     {#  Download data button  #}
                                                     <a href="{% static result|get_result_csv_path %}">
-                                                        <span id="download-trigger-{{ forloop.counter0 }}" class="fa fa-cloud-download"></span>
+                                                        <span id="download-trigger-{{ forloop.counter0 }}"
+                                                              class="fa fa-cloud-download pull-right white-shadow"></span>
                                                     </a>
                                                     <div class="mdl-tooltip mdl-tooltip--bottom" data-mdl-for="download-trigger-{{ forloop.counter0 }}">
                                                         Download Data
                                                     </div>
-
                                                 </div>
 
                                                 <table class="full-width">
@@ -196,7 +198,17 @@
                         <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
                                width="100%" data-result-id="{{ result.result_id }}">
                             <thead>
-                                <tr><th class="mdl-data-table__cell--non-numeric">Timestamp</th><th class="mdl-data-table__cell--non-numeric">UTC Offset</th><th>Value</th></tr>
+                                <tr>
+                                    <th class="mdl-data-table__cell--non-numeric">
+                                        Timestamp
+                                    </th>
+                                    <th class="mdl-data-table__cell--non-numeric">
+                                        UTC Offset
+                                    </th>
+                                    <th>
+                                        Value
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody></tbody>
                         </table>

@@ -113,7 +113,7 @@ class BrowseSitesListView(ListView):
 class DeviceDetailView(DetailView):
     slug_field = 'registration_id'
     model = DeviceRegistration
-    template_name = 'dataloaderinterface/device_detail.html'
+    template_name = 'dataloaderinterface/site_details.html'
 
     def get_context_data(self, **kwargs):
         context = super(DeviceDetailView, self).get_context_data()

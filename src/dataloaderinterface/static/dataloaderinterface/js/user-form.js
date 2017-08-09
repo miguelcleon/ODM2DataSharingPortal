@@ -22,7 +22,7 @@ $(document).ready(function() {
     var organizationSelect = $('form').find('[name="organization"]');
     initializeSelect(organizationForm.find('[name="organization_type"]'));
 
-    $('<option value="new">Add New Organization</option>').insertAfter(organizationSelect.children().first());
+    $('<option value="new">Add New Organization...</option>').insertAfter(organizationSelect.children().first());
     organizationSelect.on('change', function() {
         if ($(this).val() == 'new') {
             cleanOrganizationForm();
