@@ -91,8 +91,9 @@ function drawSparklineOnResize(seriesInfo, seriesData) {
 
 function drawSparklinePlot(seriesInfo, seriesData) {
     var card = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"]');
-    var plotBox = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] div.graph-container');
-    var $lastObservation = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] span.last-observation');
+    var plotBox = card.find(".graph-container");
+    var $lastObservation = card.find(".last-observation");
+
     plotBox.empty();
 
     var margin = {top: 5, right: 1, bottom: 5, left: 1};
