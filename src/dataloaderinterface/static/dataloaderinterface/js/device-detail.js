@@ -90,6 +90,7 @@ function drawSparklineOnResize(seriesInfo, seriesData) {
 }
 
 function drawSparklinePlot(seriesInfo, seriesData) {
+    var card = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"]');
     var plotBox = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] div.graph-container');
     var $lastObservation = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] span.last-observation');
     plotBox.empty();
@@ -104,13 +105,15 @@ function drawSparklinePlot(seriesInfo, seriesData) {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("text")
-                .text("No data in the last 72 hours.")
+                .text("No data to display.")
                 .attr("font-size", "12px")
                 .attr("fill", "#AAA")
                 .attr("text-anchor", "left")
                 .attr("transform", "translate(" + (margin.left + 10) + "," + (margin.top + 20) + ")");
         return;
     }
+
+    card.find(".last-obs-container").show();
 
     $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
 
@@ -119,8 +122,6 @@ function drawSparklinePlot(seriesInfo, seriesData) {
     }));
 
     $lastObservation.text(formatDate(lastRead));
-
-
 
     var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
 

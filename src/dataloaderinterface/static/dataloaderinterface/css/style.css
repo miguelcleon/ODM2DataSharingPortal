@@ -385,8 +385,12 @@ svg.not-stale {
 }
 
 .line {
-    fill: rgb(232, 237, 240);
+    fill: none;
     stroke-width: 2px;
+}
+
+.last-obs-container {
+    display: none;
 }
 
 table.data-values {
