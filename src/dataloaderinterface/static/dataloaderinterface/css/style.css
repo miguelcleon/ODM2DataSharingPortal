@@ -272,7 +272,20 @@ div.registration-field span.control-field {
     width: 100%;
     margin-bottom: 15px;
     border-radius: 2px;
-    min-height: 174px;
+    min-height: 180px;
+}
+
+svg.stale {
+    background-color: #ffefef;
+}
+
+svg.not-stale {
+    background-color: #f8fff7;
+}
+
+
+.last-observation {
+    font-weight: bold;
 }
 
 .plot_box .mdl-card__actions {

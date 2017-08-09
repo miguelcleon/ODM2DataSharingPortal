@@ -117,7 +117,9 @@
                         </div>
 
                         <div class="sparkline-plots col-xs-12">
-                            <div class="alert alert-info" role="alert">Only last 72 hours shown on sparkline plots.</div>
+                            <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
+                                are shown on the sparkline plots.
+                            </div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
                                     {% with feature_action.results.all.0 as result %}
@@ -159,7 +161,11 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                                            <div id="graph{{ forloop.counter0 }}"
+                                                                 class="graph-container"></div>
+                                                            <small style="margin-left:9px;" class="text-muted">Date of last observation: <span
+                                                                    class="last-observation"></span>
+                                                            </small>
                                                         </td>
                                                     </tr>
                                                 </table>

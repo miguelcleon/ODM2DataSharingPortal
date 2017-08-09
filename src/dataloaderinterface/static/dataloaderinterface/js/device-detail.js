@@ -1,5 +1,5 @@
 const EXTENT_HOURS = 72;
-const DATA_TIME_OFFSET = new Date(new Date() - 1000 * 60 * 60 * EXTENT_HOURS);
+const STALE_DATA_CUTOFF = new Date(new Date() - 1000 * 60 * 60 * EXTENT_HOURS);
 
 function initMap() {
     var defaultZoomLevel = 18;
@@ -60,9 +60,15 @@ function bindDeleteDialogEvents() {
     });
 }
 
+// Returns the most recent 72 hours since the last read
 function getRecentData(timeSeriesData) {
+    var lastRead = Math.max.apply(Math, timeSeriesData.map(function(value){
+        return new Date(value.DateTime);
+    }));
+
+    var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
     return timeSeriesData.filter(function (value) {
-        return (new Date(value.DateTime)) >= DATA_TIME_OFFSET;
+        return (new Date(value.DateTime)) >= dataTimeOffset;
     });
 }
 
@@ -85,6 +91,7 @@ function drawSparklineOnResize(seriesInfo, seriesData) {
 
 function drawSparklinePlot(seriesInfo, seriesData) {
     var plotBox = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] div.graph-container');
+    var $lastObservation = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"] span.last-observation');
     plotBox.empty();
 
     var margin = {top: 5, right: 1, bottom: 5, left: 1};
@@ -107,10 +114,20 @@ function drawSparklinePlot(seriesInfo, seriesData) {
 
     $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
 
+    var lastRead = Math.max.apply(Math, seriesData.map(function(value){
+        return new Date(value.DateTime);
+    }));
+
+    $lastObservation.text(formatDate(lastRead));
+
+
+
+    var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
+
     var xAxis = d3.scaleTime().range([0, width]);
     var yAxis = d3.scaleLinear().range([height, 0]);
 
-    xAxis.domain([DATA_TIME_OFFSET, new Date()]);
+    xAxis.domain([dataTimeOffset, lastRead]);
     yAxis.domain(d3.extent(seriesData, function(d) {
         return d.Value;
     }));
@@ -126,6 +143,13 @@ function drawSparklinePlot(seriesInfo, seriesData) {
 
     var svg = d3.select(plotBox.get(0)).append("svg")
         .attr("width", width + margin.left + margin.right)
+        .attr("class", function() {
+            if (lastRead <= STALE_DATA_CUTOFF) {
+                return "stale";
+            }
+
+            return "not-stale";
+        })
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -195,3 +219,20 @@ $(document).ready(function () {
         })
     );
 });
+
+function formatDate(date) {
+    date = new Date(date);
+    var monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return monthNames[monthIndex] + ' ' + day + ', ' + year;
+}
+
