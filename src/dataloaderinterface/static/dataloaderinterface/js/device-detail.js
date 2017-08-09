@@ -164,7 +164,9 @@ $(document).ready(function () {
         tables.hide();
 
         tables.filter('[data-result-id="' + id + '"]').show();
-        $(dialog).find('.mdl-dialog__title').text(box.data('variable-name') + ' (' + box.data('variable-code') + ')');
+        var title = box.data('variable-name') + ' (' + box.data('variable-code') + ')';
+        $(dialog).find('.mdl-dialog__title').text(title);
+        $(dialog).find('.mdl-dialog__title').attr("title", title);
 
         dialog.showModal();
     });

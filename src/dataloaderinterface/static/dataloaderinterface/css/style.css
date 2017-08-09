@@ -277,6 +277,11 @@ div.registration-field span.control-field {
 
 .plot_box .mdl-card__actions {
     border-top: 0;
+    background: #eee;
+}
+
+.white-shadow {
+    text-shadow: 0 1px 0 #fff;
 }
 
 .help-icon {
@@ -737,6 +742,13 @@ dialog#data-table-dialog .mdl-dialog__content {
 
 .flex {
     display: flex;
+}
+
+.mdl-dialog__title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 1.5rem;
 }
 
 .site {
