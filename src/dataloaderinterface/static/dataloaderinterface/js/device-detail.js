@@ -134,7 +134,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
 
     xAxis.domain([dataTimeOffset, lastRead]);
     yAxis.domain(d3.extent(seriesData, function(d) {
-        return d.Value;
+        return parseInt(d.Value);
     }));
 
     var line = d3.line()
