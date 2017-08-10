@@ -254,6 +254,17 @@ div.registration-data {
     overflow: auto;
 }
 
+div.registration-data i, div.registration-data .material-icons {
+    width: 10px;
+    margin-right: 10px;
+}
+
+div.registration-data .material-icons {
+    font-size: 15px;
+    margin-left: -2px;
+    margin-right: 12px;
+}
+
 div.registration-field {
     padding: .7em 1em;
 }
@@ -263,21 +274,29 @@ div.registration-field span.control-label {
     font-weight: 700;
 }
 
-div.registration-field span.control-field {
-
-}
-
 .plot_box {
     float: left;
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
     border-radius: 2px;
-    min-height: 174px;
+    min-height: 180px;
+}
+
+svg.stale {
+    background-color: #ffefef;
+}
+
+svg.not-stale {
+    background-color: #f8fff7;
+}
+
+.last-observation {
+    font-weight: bold;
 }
 
 .plot_box .mdl-card__actions {
     border-top: 0;
-    background: #eee;
+    background: #f6f6f6;
 }
 
 .white-shadow {
@@ -299,9 +318,18 @@ div.registration-field span.control-field {
     cursor: pointer;
 }
 
+.table-trigger.disabled, .download-trigger.disabled {
+    pointer-events: none;
+    color: #c5c5c5;
+}
+
 .measurements-table {
     max-height: 350px;
     overflow: auto;
+}
+
+.measurements-table .mdl-data-table tbody tr:hover {
+    background-color: initial;
 }
 
 .variable-description {
@@ -310,7 +338,7 @@ div.registration-field span.control-field {
 }
 
 .variable-name {
-    padding: 8px 20px;
+    padding: 8px 0px;
     width: calc(100% - 100px);
 }
 
@@ -372,8 +400,12 @@ div.registration-field span.control-field {
 }
 
 .line {
-    fill: rgb(232, 237, 240);
+    fill: none;
     stroke-width: 2px;
+}
+
+.last-obs-container {
+    visibility: hidden;
 }
 
 table.data-values {
@@ -586,7 +618,7 @@ a#btn-new-site {
 
 .plot_box .fa {
     margin-left: 13px;
-    margin-top: 2px;
+    margin-top: 10px;
 }
 
 dialog#data-table-dialog {

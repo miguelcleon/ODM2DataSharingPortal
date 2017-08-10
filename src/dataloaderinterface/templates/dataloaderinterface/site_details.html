@@ -62,38 +62,52 @@
                                 </tr>
 
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Deployment By</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-user-o" aria-hidden="true"></i> Deployment By
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ affiliation }}</td>
                                 </tr>
 
                                 {# we can add deployment date to the registration table, which makes more sense. #}
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Registration Date</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="material-icons">today</i> Registration Date
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ object.registration_date }}</td>
                                 </tr>
 
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Deployment Date</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Deployment Date
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ object.deployment_date }}</td>
                                 </tr>
 
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Latitude</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i> Latitude
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.latitude }}</td>
                                 </tr>
 
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Longitude</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i> Longitude
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.longitude }}</td>
                                 </tr>
 
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Elevation (m)</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-long-arrow-up" aria-hidden="true"></i> Elevation (m)
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ sampling_feature.elevation_m }}</td>
                                 </tr>
 
                                 <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">Site Type</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-circle" aria-hidden="true"></i> Site Type
+                                    </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.site_type_id }}</td>
                                 </tr>
                             </table>
@@ -117,7 +131,10 @@
                         </div>
 
                         <div class="sparkline-plots col-xs-12">
-                            <div class="alert alert-info" role="alert">Only last 72 hours shown on sparkline plots.</div>
+                            <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
+                                are shown on the sparkline plots. Plots highlighted in red have no data available for
+                                the past 72 hours. Plots highlighted in green have been active within the last 72 hours.
+                            </div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
                                     {% with feature_action.results.all.0 as result %}
@@ -133,11 +150,12 @@
                                                             class="variable-code">({{ result.variable.variable_code }})</span>
                                                     </div>
 
+                                                    {#  View data table button  #}
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
                                                           class="fa fa-table table-trigger pull-right white-shadow"
                                                           aria-hidden="true"></span>
 
-                                                    <div class="mdl-tooltip mdl-tooltip--bottom"
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
                                                         View Data Table
                                                     </div>
@@ -145,9 +163,10 @@
                                                     {#  Download data button  #}
                                                     <a href="{% static result|get_result_csv_path %}">
                                                         <span id="download-trigger-{{ forloop.counter0 }}"
-                                                              class="fa fa-cloud-download pull-right white-shadow"></span>
+                                                              class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
                                                     </a>
-                                                    <div class="mdl-tooltip mdl-tooltip--bottom" data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="download-trigger-{{ forloop.counter0 }}">
                                                         Download Data
                                                     </div>
                                                 </div>
@@ -161,7 +180,13 @@
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <div id="graph{{ forloop.counter0 }}" class="graph-container"></div>
+                                                            <div id="graph{{ forloop.counter0 }}"
+                                                                 class="graph-container"></div>
+                                                            <small style="margin-left:9px; display:block;"
+                                                                   class="text-muted last-obs-container">Date of last
+                                                                observation: <span
+                                                                        class="last-observation"></span>
+                                                            </small>
                                                         </td>
                                                     </tr>
                                                 </table>
