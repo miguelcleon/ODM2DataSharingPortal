@@ -84,6 +84,7 @@ class TimeSeriesValuesApi(APIView):
             raise exceptions.ParseError('The timestamp value requires timezone information.')
 
         utc_offset = int(measurement_datetime.utcoffset().total_seconds() / timedelta(hours=1).total_seconds())
+        measurement_datetime = measurement_datetime.replace(tzinfo=None)
 
         # get odm2 sampling feature if it matches sampling feature uuid sent
         sampling_feature = SamplingFeature.objects.filter(sampling_feature_uuid__exact=request.data['sampling_feature']).first()
