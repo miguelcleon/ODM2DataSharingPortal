@@ -74,9 +74,9 @@ function getRecentData(timeSeriesData) {
 
 function fillValueTable(table, data) {
     var rows = data.map(function (dataValue) {
-        return $("<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.DateTime + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.TimeOffset + "</td><td>" + dataValue.Value + "</td></tr>");
+        return "<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.DateTime + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.TimeOffset + "</td><td>" + dataValue.Value + "</td></tr>";
     });
-    table.append(rows);
+    table.append($(rows.join('')));
 }
 
 function drawSparklineOnResize(seriesInfo, seriesData) {
@@ -169,6 +169,7 @@ function getTimeSeriesData(sensorInfo) {
     Papa.parse(sensorInfo['csvPath'], {
         download: true,
         header: true,
+        worker: true,
         comments: "#",
         skipEmptyLines: true,
         complete: function(result) {
@@ -237,4 +238,3 @@ function formatDate(date) {
 
     return date.toLocaleTimeString("en-us", options);
 }
-
