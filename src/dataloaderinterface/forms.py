@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
-    OrganizationType, ActionBy
+    OrganizationType, ActionBy, SiteType
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
@@ -134,12 +134,20 @@ class SamplingFeatureForm(forms.ModelForm):
 
 
 class SiteForm(forms.ModelForm):
+    allowed_site_types = [
+        'Aggregate groundwater use', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
+        'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Soil hole', 'Storm sewer', 'Tidal stream', 'Wetland'
+    ]
+
+    site_type = forms.ModelChoiceField(
+        queryset=SiteType.objects.filter(name__in=allowed_site_types), help_text='Select the type of site you are deploying (e.g., "Stream")'
+    )
     use_required_attribute = False
 
     class Meta:
         model = Site
         help_texts = {
-            'site_type': 'Select the type of site you are deploying (e.g., "Stream")',
+            'site_type': '',
             'latitude': 'Enter the latitude of your site in decimal degrees (e.g., 40.6893)',
             'longitude': 'Enter the longitude of your site in decimal degrees (e.g., -75.2033)',
         }
