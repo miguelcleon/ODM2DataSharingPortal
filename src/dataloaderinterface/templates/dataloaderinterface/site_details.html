@@ -149,8 +149,8 @@
                                                  data-csv-path="{% static result|get_result_csv_path %}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    <div class="pull-left white-shadow">
-                                                        <table class="variable-info">
+                                                    <div class="pull-left white-shadow variable-info">
+                                                        <table class="">
                                                             <tr>
                                                                 <td>Medium: </td>
                                                                 <th>{{ result.sampled_medium }}</th>
@@ -191,8 +191,9 @@
                                                     <tr>
                                                         <td class="variable-description">
                                                             <div class="variable-data text-center">
+                                                                <div class="variable-name">{{ result.variable.variable_name_id }}</div>
                                                                 <div class="latest-value"></div>
-                                                                <div class="unit">{{ result.unit.unit_abbreviation }}</div>
+                                                                <div class="unit">({{ result.unit.unit_abbreviation }})</div>
                                                             </div>
                                                         </td>
                                                         <td>
