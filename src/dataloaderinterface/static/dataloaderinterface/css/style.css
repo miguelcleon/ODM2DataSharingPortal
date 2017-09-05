@@ -617,6 +617,10 @@ footer .separator {
     display: block;
 }
 
+.follow-status.following #btn-follow {
+    background-color: orange;
+}
+
 .follow-status:not(.following) #icon-unfollow  {
     opacity: 0;
     visibility: hidden;
