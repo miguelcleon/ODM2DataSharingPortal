@@ -612,8 +612,8 @@ footer .separator {
 
 #icon-follow, #icon-unfollow {
     position: absolute;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    -wekbit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    -wekbit-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
 }
 
@@ -638,8 +638,8 @@ footer .separator {
 .chip-follow {
     padding: 0;
     margin-right: 10px;
-    transition: width 0.3s;
-    -wekbit-transition: width 0.3s;
+    transition: width 0.4s;
+    -wekbit-transition: width 0.4s;
     overflow: hidden;
 }
 
