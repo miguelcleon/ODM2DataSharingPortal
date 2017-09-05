@@ -136,8 +136,9 @@
 
                         <div class="sparkline-plots col-xs-12">
                             <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
-                                are shown on the sparkline plots. Plots highlighted in red have no data available for
-                                the past 72 hours. Plots highlighted in green have been active within the last 72 hours.
+                                are shown on the sparkline plots. The plots are broken when there are gaps in the data
+                                longer than 6 hours. Plots shaded in green have recent data. Plots shaded in red have
+                                not reported data in the last 72 hours.
                             </div>
                             <div class="row">
                                 {% for feature_action in feature_actions %}
