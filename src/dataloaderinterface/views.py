@@ -108,8 +108,8 @@ class SitesListView(LoginRequiredMixin, ListView):
 
 
 class BrowseSitesListView(ListView):
-    model = DeviceRegistration
-    context_object_name = 'registrations'
+    model = SiteRegistration
+    context_object_name = 'sites'
     template_name = 'dataloaderinterface/browse-sites.html'
 
     # def get_queryset(self):
