@@ -21,25 +21,41 @@
             <div class="row">
                 <section class="device-data col-sm-12">
                     <header>
-                        {% if object.user_id == request.user.odm2user.id or request.user.is_staff %} {# TODO: make and use template tag  #}
                         <div class="text-right buttons-toolbar">
-                            <a href="#" data-toggle="modal" data-target="#code-output-modal"
-                               class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                               id="code-visiblity-toggle">
-                                <i class="material-icons clickable-float-left">code</i>
-                                View code snippet
-                            </a>
-                            <a href="{% url 'site_update' object.pk %}" id="btn-edit-site"
-                               class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
-                                <i class="material-icons">mode_edit</i> Edit Site
-                            </a>
+                            {% if object.user_id == request.user.odm2user.id or request.user.is_staff %}
+                                {# TODO: make and use template tag  #}
 
-                            <a href="#" id="btn-delete-site"
-                               class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                <i class="material-icons">delete_forever</i> Delete Site
-                            </a>
+                                <a href="#" data-toggle="modal" data-target="#code-output-modal"
+                                   class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                   id="code-visiblity-toggle">
+                                    <i class="material-icons clickable-float-left">code</i>
+                                    View code snippet
+                                </a>
+                                <a href="{% url 'site_update' object.pk %}" id="btn-edit-site"
+                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                                    <i class="material-icons">mode_edit</i> Edit Site
+                                </a>
+
+                                <a href="#" id="btn-delete-site"
+                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                    <i class="material-icons">delete_forever</i> Delete Site
+                                </a>
+
+                            {% endif %}
+                            {% if object.user_id != request.user.odm2user.id %}
+                                <div class="follow-status">
+                                <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
+                                    <span id="follow-text" class="mdl-chip__text">You are following this site</span>
+                                </span>
+                                    <button id="btn-follow"
+                                            class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                                        <i id="icon-follow" class="material-icons">add</i>
+                                        <i id="icon-unfollow" class="material-icons">remove</i>
+                                    </button>
+
+                                </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
                         <div class="page-title">
                             {% if sampling_feature.sampling_feature_name %}
                                 {{ sampling_feature.sampling_feature_name }} ({{ sampling_feature.sampling_feature_code }})

@@ -220,6 +220,10 @@ $(document).ready(function () {
         dialogPolyfill.registerDialog(dialog);
     }
 
+    $("#btn-follow").on("click", function () {
+        $(".follow-status").toggleClass("following")
+    });
+
     $(".table-trigger").click(function () {
         var box = $(this).parents('.plot_box');
         var id = box.data('result-id');

@@ -604,6 +604,58 @@ footer .separator {
 
 /*GENERAL STYLING*/
 
+#btn-follow {
+    top: -4px;
+    right: 15px;
+    position: absolute;
+}
+
+#icon-follow, #icon-unfollow {
+    position: absolute;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    -wekbit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+}
+
+.follow-status:not(.following) #icon-unfollow  {
+    opacity: 0;
+    visibility: hidden;
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+    top: 8px;
+    left: 8px;
+}
+
+.follow-status.following #icon-follow {
+    opacity: 0;
+    visibility: hidden;
+    top: 8px;
+    left: 8px;
+    -webkit-transform: rotate(225deg);
+    transform: rotate(225deg);
+}
+
+.chip-follow {
+    padding: 0;
+    margin-right: 10px;
+    transition: width 0.3s;
+    -wekbit-transition: width 0.3s;
+    overflow: hidden;
+}
+
+.follow-status.following #follow-chip {
+    width: 200px;
+}
+
+.follow-status:not(.following) #follow-chip {
+    width: 0;
+}
+
+.chip-follow .mdl-chip__text {
+    margin-left: 15px;
+    margin-right: 35px;
+}
+
 a#btn-new-site {
     margin-top: 32px;
 }
