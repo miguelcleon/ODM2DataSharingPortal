@@ -24,8 +24,16 @@ div#marker-content {
     padding: 5px;
 }
 
-.site-field, .site-link {
-    padding: 3px;
+.site-field {
+    padding-bottom: 3px;
+}
+
+.marker-info td {
+    padding-right: 8px;
+}
+
+.marker-info td, th {
+    padding-bottom: 3px;
 }
 
 span.site-label {

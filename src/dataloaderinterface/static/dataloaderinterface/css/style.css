@@ -277,7 +277,7 @@ div.registration-field span.control-label {
 .plot_box {
     float: left;
     width: 100%;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     border-radius: 2px;
     min-height: 180px;
 }
@@ -334,12 +334,21 @@ svg.not-stale {
 
 .variable-description {
     width: 120px;
-    padding: 20px;
 }
 
 .variable-name {
-    padding: 8px 0px;
+    font-size: 0.8em;
+}
+
+.variable-info {
+    padding: 8px 0;
     width: calc(100% - 100px);
+    font-size: 0.8em;
+}
+
+.variable-info td {
+    padding-right: 10px;
+    padding-bottom: 3px;
 }
 
 .variable-data {
@@ -354,21 +363,21 @@ svg.not-stale {
     margin-bottom: 3px;
 }
 
-.variable-code {
-    font-size: 0.8em;
-    margin-bottom: 3px;
-}
-
 .latest-value {
     font-weight: bold;
     font-size: 1.5em;
-    margin-top: 5px;
+    margin: 5px 0;
+}
+
+.unit {
+    font-size: 0.8em;
 }
 
 .graph-container {
     border: 1px solid #DDD;
     height: 80px;
     margin: 10px;
+    margin-bottom: 5px;
 }
 
 .plot_box div p {
@@ -939,3 +948,4 @@ label.checkbox-label {
 .fab-trans {
 	transform: scale(1);
 }
+

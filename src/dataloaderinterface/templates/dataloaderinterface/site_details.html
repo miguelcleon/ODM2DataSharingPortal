@@ -131,7 +131,6 @@
                                     <td><h5 class="section-title">Recent Measurements</h5></td>
                                 </tr>
                             </table>
-{#                            <div class="text-muted section-subtitle">Last measurement: </div>#}
                         </div>
 
                         <div class="sparkline-plots col-xs-12">
@@ -150,9 +149,21 @@
                                                  data-csv-path="{% static result|get_result_csv_path %}">
 
                                                 <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    <div class="variable-name pull-left white-shadow">
-                                                        <strong>{{ result.variable.variable_name_id }} </strong><span
-                                                            class="variable-code">({{ result.variable.variable_code }})</span>
+                                                    <div class="pull-left white-shadow variable-info">
+                                                        <table>
+                                                            <tr>
+                                                                <td>Variable:</td>
+                                                                <th>{{ result.variable.variable_name_id }}</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Medium: </td>
+                                                                <th>{{ result.sampled_medium }}</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Sensor: </td>
+                                                                <th>{{ result.variable.variable_code }}</th>
+                                                            </tr>
+                                                        </table>
                                                     </div>
 
                                                     {#  View data table button  #}
@@ -180,8 +191,9 @@
                                                     <tr>
                                                         <td class="variable-description">
                                                             <div class="variable-data text-center">
+                                                                <div class="variable-name">{{ result.variable.variable_name_id }}</div>
                                                                 <div class="latest-value"></div>
-                                                                <div class="unit">{{ result.unit.unit_abbreviation }}</div>
+                                                                <div class="unit">({{ result.unit.unit_abbreviation }})</div>
                                                             </div>
                                                         </td>
                                                         <td>
