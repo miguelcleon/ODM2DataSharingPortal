@@ -95,10 +95,16 @@ class UserRegistrationView(CreateView):
 
 class SitesListView(LoginRequiredMixin, ListView):
     model = SiteRegistration
+    context_object_name = 'sites'
     template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
-        return super(SitesListView, self).get_queryset().filter(django_user_id=self.request.user_id)
+        return super(SitesListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        context = super(SitesListView, self).get_context_data()
+        context['followed_sites'] = self.request.user.followed_sites.all()
+        return context
 
 
 class BrowseSitesListView(ListView):

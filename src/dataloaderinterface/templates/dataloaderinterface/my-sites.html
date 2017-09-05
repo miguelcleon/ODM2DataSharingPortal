@@ -27,11 +27,11 @@
 
     <div class="container main-content">
         <div class="row">
-            {% for registration in object_list %}
-                <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
+            {% for site in sites %}
+                <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
                         <div class="mdl-card__title">
-                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' registration.registration_id %}">{{ registration.sampling_feature.sampling_feature_name }}</a></h2>
+                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.registration_id %}">{{ site.sampling_feature_name }}</a></h2>
                         </div>
 
                         <div class="mdl-card__supporting-text">
@@ -45,7 +45,7 @@
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td><strong>{{ registration.sampling_feature.sampling_feature_name }}</strong></td>
+                                    <td><strong>{{ site.sampling_feature_name }}</strong></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -60,27 +60,29 @@
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td><strong>{{ registration.registration_date }}</strong></td>
+                                    <td><strong>{{ site.registration_date }}</strong></td>
                                 </tr>
                                 </tbody>
                             </table>
                             <br>
-                            {% if registration.sampling_feature.latest_updated_result %}
-                            <table>
-                                <tbody>
-                                <tr>
-                                    <td><i class="material-icons site-card-icon">query_builder</i></td>
-                                    <td>
-                                        <span> Latest Measurement</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td><strong>{{ registration.sampling_feature.latest_updated_result.result_datetime }}</strong></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            {% endif %}
+                            {% with latest_result=site.sampling_feature.latest_updated_result %}
+                                {% if latest_result %}
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">query_builder</i></td>
+                                        <td>
+                                            <span> Latest Measurement</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><strong>{{ latest_result.result_datetime }}</strong></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                {% endif %}
+                            {% endwith %}
                         </div>
 
                         <div class="mdl-card__menu">
@@ -100,18 +102,16 @@
 
         <script id="sites-data" type="application/json">
             [
-            {% for registration in object_list %}
-                {% with sampling_feature=registration.sampling_feature %}
+            {% for site in sites %}
                 {
-                    "id": "{{ sampling_feature.sampling_feature_id }}",
-                    "code": "{{ sampling_feature.sampling_feature_code }}",
-                    "name": "{{ sampling_feature.sampling_feature_name }}",
-                    "latitude": {{ sampling_feature.site.latitude|default_if_none:0 }},
-                    "longitude": {{ sampling_feature.site.longitude|default_if_none:0 }},
-                    "elevation": {{ sampling_feature.elevation_m|default_if_none:'""' }},
-                    "detail_link": "{% if registration %}{% url 'site_detail' registration.registration_id %}{% endif %}"
+                    "id": "{{ site.sampling_feature_id }}",
+                    "code": "{{ site.sampling_feature_code }}",
+                    "name": "{{ site.sampling_feature_name }}",
+                    "latitude": {{ site.site_latitude|default_if_none:0 }},
+                    "longitude": {{ site.site_longitude|default_if_none:0 }},
+                    "elevation": {{ site.elevation_m|default_if_none:'""' }},
+                    "detail_link": "{% if registration %}{% url 'site_detail' site.registration_id %}{% endif %}"
                 }{% if not forloop.last %},{% endif %}
-                {% endwith %}
             {% endfor %}
             ]
         </script>

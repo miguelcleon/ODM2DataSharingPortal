@@ -31,6 +31,10 @@ class SiteRegistration(models.Model):
 
     followed_by = models.ManyToManyField(User, related_name='followed_sites')
 
+    @property
+    def sampling_feature(self):
+        return SamplingFeature.objects.get(pk=self.sampling_feature_id)
+
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
 
