@@ -15,7 +15,7 @@ class SiteRegistration(models.Model):
     registration_date = models.DateTimeField(db_column='RegistrationDate')
     deployment_date = models.DateTimeField(db_column='DeploymentDate', blank=True, null=True)
 
-    django_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User')
+    django_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='registrations')
     affiliation_id = models.IntegerField(db_column='AffiliationID')
     person = models.CharField(max_length=765, db_column='Person')
     organization = models.CharField(max_length=255, db_column='Organization', blank=True, null=True)
@@ -29,6 +29,8 @@ class SiteRegistration(models.Model):
     site_longitude = models.FloatField(db_column='Longitude')
     site_type = models.CharField(max_length=765, db_column='SiteType')
 
+    followed_by = models.ManyToManyField(User, related_name='followed_sites')
+
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
 
@@ -39,7 +41,7 @@ class SiteRegistration(models.Model):
 
 
 class SiteSensor(models.Model):
-    registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID')
+    registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
     result_id = models.IntegerField(db_column='ResultID')
     variable_name = models.CharField(max_length=255, db_column='VariableName')
     variable_code = models.CharField(max_length=50, db_column='VariableCode')

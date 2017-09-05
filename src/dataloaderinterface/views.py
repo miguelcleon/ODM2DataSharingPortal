@@ -21,7 +21,7 @@ from django.views.generic.list import ListView
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
-from dataloaderinterface.models import DeviceRegistration, ODM2User
+from dataloaderinterface.models import DeviceRegistration, ODM2User, SiteRegistration
 
 
 class LoginRequiredMixin(object):
@@ -93,12 +93,12 @@ class UserRegistrationView(CreateView):
         return response
 
 
-class DevicesListView(LoginRequiredMixin, ListView):
-    model = DeviceRegistration
+class SitesListView(LoginRequiredMixin, ListView):
+    model = SiteRegistration
     template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
-        return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.odm2user.pk)
+        return super(SitesListView, self).get_queryset().filter(django_user_id=self.request.user_id)
 
 
 class BrowseSitesListView(ListView):

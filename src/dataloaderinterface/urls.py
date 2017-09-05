@@ -15,12 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from dataloaderinterface.views import DevicesListView, DeviceDetailView, SiteRegistrationView,\
+from dataloaderinterface.views import SitesListView, DeviceDetailView, SiteRegistrationView,\
     HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^sites/$', DevicesListView.as_view(), name='sites_list'),
+    url(r'^sites/$', SitesListView.as_view(), name='sites_list'),
     url(r'^sites/browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
     url(r'^sites/update/(?P<slug>[-_\w]+)/$', SiteUpdateView.as_view(), name='site_update'),
