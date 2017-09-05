@@ -27,6 +27,10 @@
 
     <div class="container main-content">
         <div class="row">
+            <div class="col-xs-12">
+                <h4>My sites</h4>
+            </div>
+
             {% for registration in object_list %}
                 <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
@@ -96,6 +100,80 @@
                     </div>
                 </div>
             {% endfor %}
+
+            <div class="col-xs-12">
+                <h4 style="margin-top: 50px;">Following</h4>
+            </div>
+
+            {% for registration in object_list %}
+                    <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
+                        <div class="mdl-card mdl-shadow--2dp site-card">
+                            <div class="mdl-card__title">
+                                <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' registration.registration_id %}">{{ registration.sampling_feature.sampling_feature_name }}</a></h2>
+                            </div>
+
+                            <div class="mdl-card__supporting-text">
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">settings_remote</i></td>
+                                        <td>
+                                            <span> Sampling Feature</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><strong>{{ registration.sampling_feature.sampling_feature_name }}</strong></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">today</i></td>
+                                        <td>
+                                            <span> Registration Date</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><strong>{{ registration.registration_date }}</strong></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                {% if registration.sampling_feature.latest_updated_result %}
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">query_builder</i></td>
+                                        <td>
+                                            <span> Latest Measurement</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td><strong>{{ registration.sampling_feature.latest_updated_result.result_datetime }}</strong></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                {% endif %}
+                            </div>
+
+                            <div class="mdl-card__menu">
+                                <!-- Right aligned menu below button -->
+                                <button id="site-card-menu-{{ forloop.counter0 }}"
+                                        class="mdl-button mdl-js-button mdl-button--icon view-on-map">
+                                    <i class="material-icons">map</i>
+                                </button>
+                                <div class="mdl-tooltip" data-mdl-for="site-card-menu-{{ forloop.counter0 }}">
+                                    View on map
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
         </div>
 
         <script id="sites-data" type="application/json">
