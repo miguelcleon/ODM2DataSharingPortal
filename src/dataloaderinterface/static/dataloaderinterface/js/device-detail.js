@@ -221,7 +221,14 @@ $(document).ready(function () {
     }
 
     $("#btn-follow").on("click", function () {
-        $(".follow-status").toggleClass("following")
+        $(".follow-status").toggleClass("following");
+        var tooltip = $(".mdl-tooltip[data-mdl-for='btn-follow']");
+        if (tooltip.text().trim() == "Follow") {
+            tooltip.text("Unfollow");
+        }
+        else {
+            tooltip.text("Follow");
+        }
     });
 
     $(".table-trigger").click(function () {

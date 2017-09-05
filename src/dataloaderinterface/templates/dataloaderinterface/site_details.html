@@ -44,14 +44,19 @@
                             {% endif %}
                             {% if object.user_id != request.user.odm2user.id %}
                                 <div class="follow-status">
-                                <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
-                                    <span id="follow-text" class="mdl-chip__text">You are following this site</span>
-                                </span>
+                                    <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
+                                        <span id="follow-text" class="mdl-chip__text">You are following this site</span>
+                                    </span>
+
                                     <button id="btn-follow"
                                             class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
                                         <i id="icon-follow" class="material-icons">add</i>
                                         <i id="icon-unfollow" class="material-icons">remove</i>
                                     </button>
+
+                                    <div class="mdl-tooltip" data-mdl-for="btn-follow">
+                                        Follow
+                                    </div>
                                 </div>
                             {% endif %}
                         </div>
