@@ -43,11 +43,12 @@
 
                             {% endif %}
                             {% if object.user_id != request.user.odm2user.id %}
-                                <div class="follow-status">
+                                <div class="follow-status {% if is_followed %}following{% endif %}">
                                     <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
                                         <span id="follow-text" class="mdl-chip__text">You are following this site</span>
                                     </span>
 
+                                    {# this is the button to trigger the follow/unfollow action #}
                                     <button id="btn-follow"
                                             class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
                                         <i id="icon-follow" class="material-icons">add</i>
@@ -55,7 +56,11 @@
                                     </button>
 
                                     <div class="mdl-tooltip" data-mdl-for="btn-follow">
-                                        Follow
+                                        {% if is_followed %}
+                                            Unfollow
+                                        {% else %}
+                                            Follow
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endif %}
