@@ -60,7 +60,7 @@ function bindDeleteDialogEvents() {
     });
 }
 
-// Returns the most recent 72 hours since the last read
+// Returns the most recent 72 hours since the last reading
 function getRecentData(timeSeriesData) {
     var lastRead = Math.max.apply(Math, timeSeriesData.map(function(value){
         return new Date(value.DateTime);
