@@ -32,7 +32,7 @@
                         "latitude": {{ site.site_latitude|default_if_none:0 }},
                         "longitude": {{ site.site_longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                        "detail_link": "{% url 'site_detail' site.registration_id %}"
+                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]

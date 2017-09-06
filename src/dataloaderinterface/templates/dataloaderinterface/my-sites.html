@@ -31,7 +31,7 @@
                 <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
                     <div class="mdl-card mdl-shadow--2dp site-card">
                         <div class="mdl-card__title">
-                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.registration_id %}">{{ site.sampling_feature_name }}</a></h2>
+                            <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
                         </div>
 
                         <div class="mdl-card__supporting-text">
@@ -110,7 +110,7 @@
                     "latitude": {{ site.site_latitude|default_if_none:0 }},
                     "longitude": {{ site.site_longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "detail_link": "{% url 'site_detail' site.registration_id %}"
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                 }{% if not forloop.last %},{% endif %}
             {% endfor %}
             ]

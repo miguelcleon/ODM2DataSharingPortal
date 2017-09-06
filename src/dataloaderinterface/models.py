@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 # Create your models here.
 from django.db.models.aggregates import Min
 
-from dataloader.models import SamplingFeature, Affiliation
+from dataloader.models import SamplingFeature, Affiliation, Result
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -51,6 +51,10 @@ class SiteSensor(models.Model):
     variable_code = models.CharField(max_length=50, db_column='VariableCode')
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
     unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
+
+    @property
+    def result(self):
+        return Result.objects.get(pk=self.result_id)
 
     def __str__(self):
         return '%s %s' % (self.variable_name, self.unit_abbreviation)

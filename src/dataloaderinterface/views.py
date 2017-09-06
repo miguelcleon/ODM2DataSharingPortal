@@ -112,21 +112,16 @@ class BrowseSitesListView(ListView):
     context_object_name = 'sites'
     template_name = 'dataloaderinterface/browse-sites.html'
 
-    # def get_queryset(self):
-    #     return super(BrowseSitesListView, self).get_queryset().select_related('site').filter()
 
-
-class DeviceDetailView(DetailView):
-    slug_field = 'registration_id'
-    model = DeviceRegistration
+class SiteDetailView(DetailView):
+    model = SiteRegistration
+    context_object_name = 'site'
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
     template_name = 'dataloaderinterface/site_details.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DeviceDetailView, self).get_context_data()
-        context['sampling_feature'] = self.object.sampling_feature
-        context['feature_actions'] = self.object.sampling_feature.feature_actions.with_results().all()
-        context['affiliation'] = self.object.user.affiliation
-        context['site'] = self.object.sampling_feature.site
+        context = super(SiteDetailView, self).get_context_data()
         return context
 
 
