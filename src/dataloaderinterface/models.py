@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 # Create your models here.
+import uuid
+
 from django.db.models.aggregates import Min
 
 from dataloader.models import SamplingFeature, Affiliation, Result
@@ -10,7 +12,7 @@ from django.db import models
 
 class SiteRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
-    registration_token = models.CharField(max_length=64, editable=False, db_column='RegistrationToken')
+    registration_token = models.CharField(max_length=64, editable=False, db_column='RegistrationToken', unique=True)
 
     registration_date = models.DateTimeField(db_column='RegistrationDate')
     deployment_date = models.DateTimeField(db_column='DeploymentDate', blank=True, null=True)
@@ -46,11 +48,19 @@ class SiteRegistration(models.Model):
 
 class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
-    result_id = models.IntegerField(db_column='ResultID')
+    result_id = models.IntegerField(db_column='ResultID', unique=True)
+    result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='resultuuid', unique=True)
+    equipment_model = models.CharField(db_column='EquipmentModel', max_length=255)
+    equipment_model_manufacturer = models.CharField(db_column='EquipmenModelManufacturer', max_length=255)
     variable_name = models.CharField(max_length=255, db_column='VariableName')
     variable_code = models.CharField(max_length=50, db_column='VariableCode')
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
     unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
+    sampled_medium = models.CharField(db_column='name', max_length=255)
+
+    @property
+    def sensor_identity(self):
+        return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
 
     @property
     def result(self):

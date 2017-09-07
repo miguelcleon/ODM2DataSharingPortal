@@ -43,13 +43,19 @@ class Command(BaseCommand):
         if existing_site_sensor:
             return existing_site_sensor
 
+        model = result.data_logger_file_columns.first().instrument_output_variable.model
+
         sensor_data = {
             'result_id': result.result_id,
+            'result_uuid': result.result_uuid,
             'registration': site_registration,
+            'equipment_model': model.model_name,
+            'equipment_model_manufacturer':  model.model_manufacturer.organization_name,
             'variable_name': result.variable.variable_name_id,
             'variable_code': result.variable.variable_code,
             'unit_name': result.unit.unit_name,
-            'unit_abbreviation': result.unit.unit_abbreviation
+            'unit_abbreviation': result.unit.unit_abbreviation,
+            'sampled_medium': result.sampled_medium_id
         }
 
         site_sensor = SiteSensor(**sensor_data)
