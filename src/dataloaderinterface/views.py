@@ -126,22 +126,23 @@ class SiteDetailView(DetailView):
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):
-    model = DeviceRegistration
-    slug_field = 'registration_id'
+    model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
     success_url = reverse_lazy('sites_list')
 
     def post(self, request, *args, **kwargs):
-        registration = self.get_object()
-        if not registration:
+        site = self.get_object(self.get_queryset())
+        if not site:
             raise Http404
 
-        if request.user != registration.user.user:
+        if request.user.id != site.django_user_id:
             # temporary error. TODO: do something a little bit more elaborate. or maybe not...
             raise Http404
 
-        sampling_feature = registration.sampling_feature
+        sampling_feature = site.sampling_feature
         data_logger_program = DataLoggerProgramFile.objects.filter(
-            affiliation=request.user.odm2user.affiliation,
+            affiliation_id=site.affiliation_id,
             program_name__contains=sampling_feature.sampling_feature_code
         ).first()
         data_logger_file = data_logger_program.data_logger_files.first()
@@ -155,7 +156,8 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
         data_logger_program.delete()
         sampling_feature.site.delete()
         sampling_feature.delete()
-        registration.delete()
+        site.sensors.all().delete()
+        site.delete()
         return HttpResponseRedirect(self.success_url)
 
     def get(self, request, *args, **kwargs):

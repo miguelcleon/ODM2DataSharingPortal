@@ -37,6 +37,10 @@ class SiteRegistration(models.Model):
     def sampling_feature(self):
         return SamplingFeature.objects.get(pk=self.sampling_feature_id)
 
+    @property
+    def odm2_affiliation(self):
+        return Affiliation.objects.get(pk=self.affiliation_id)
+
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
 
@@ -49,14 +53,14 @@ class SiteRegistration(models.Model):
 class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
     result_id = models.IntegerField(db_column='ResultID', unique=True)
-    result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='resultuuid', unique=True)
+    result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
     equipment_model = models.CharField(db_column='EquipmentModel', max_length=255)
     equipment_model_manufacturer = models.CharField(db_column='EquipmenModelManufacturer', max_length=255)
     variable_name = models.CharField(max_length=255, db_column='VariableName')
     variable_code = models.CharField(max_length=50, db_column='VariableCode')
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
     unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
-    sampled_medium = models.CharField(db_column='name', max_length=255)
+    sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)
 
     @property
     def sensor_identity(self):

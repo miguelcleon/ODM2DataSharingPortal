@@ -250,7 +250,7 @@
             </div>
         </div>
         <div class="mdl-dialog__actions">
-            <form method="POST" action="{% url 'site_delete' site.registration_id %}">
+            <form method="POST" action="{% url 'site_delete' site.sampling_feature_code %}">
                 {% csrf_token %}
                 <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
             </form>
