@@ -671,6 +671,14 @@ footer .separator {
 
 a#btn-new-site {
     margin-top: 32px;
+    text-align: left;
+    min-width: 203px;
+}
+
+.center-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 2px;
 }
 
 #btn-delete-site {
