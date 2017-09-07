@@ -45,7 +45,10 @@
                             {% if object.user_id != request.user.odm2user.id %}
                                 <div class="follow-status {% if is_followed %}following{% endif %}">
                                     <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
-                                        <span id="follow-text" class="mdl-chip__text">You are following this site</span>
+                                        <span id="follow-text" class="mdl-chip__text">
+                                            <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>
+                                            &nbsp;You are following this site
+                                        </span>
                                     </span>
 
                                     {# this is the button to trigger the follow/unfollow action #}

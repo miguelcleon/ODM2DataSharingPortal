@@ -161,8 +161,6 @@ div.separator {
     clear: both;
 }
 
-
-
 /*.form-field.has-error, .form-field.has-error label.control-label {*/
 /*cursor: help;*/
 /*}*/
@@ -621,7 +619,7 @@ footer .separator {
     background-color: orange;
 }
 
-.follow-status:not(.following) #icon-unfollow  {
+.follow-status:not(.following) #icon-unfollow {
     opacity: 0;
     visibility: hidden;
     -webkit-transform: rotate(360deg);
@@ -639,6 +637,13 @@ footer .separator {
     transform: rotate(225deg);
 }
 
+.chip-follow .fa-check-circle-o {
+    font-size: 18px;
+    vertical-align: middle;
+    display: inline-block;
+    margin-bottom: 2px;
+}
+
 .chip-follow {
     padding: 0;
     margin-right: 10px;
@@ -648,7 +653,11 @@ footer .separator {
 }
 
 .follow-status.following #follow-chip {
-    width: 200px;
+    width: 225px;
+}
+
+.text-green {
+    color: #00bf00;
 }
 
 .follow-status:not(.following) #follow-chip {
@@ -656,8 +665,8 @@ footer .separator {
 }
 
 .chip-follow .mdl-chip__text {
-    margin-left: 15px;
-    margin-right: 35px;
+    padding-right: 45px;
+    padding-left: 15px;
 }
 
 a#btn-new-site {
@@ -946,7 +955,7 @@ label.checkbox-label {
 #profile-banner {
     height: 35vh;
     background: #5d688a;
-    margin: -80px -4vw 40px -4vw ;
+    margin: -80px -4vw 40px -4vw;
     padding-right: 4vw;
     padding-left: 4vw;
     display: flex;
@@ -993,15 +1002,15 @@ label.checkbox-label {
 
 /*TRANSITIONS*/
 .mdl-button--trans {
-	-webkit-transition: all 300ms;
-	-moz-transition: all 300ms;
-	-ms-transition: all 300ms;
-	-o-transition: all 300ms;
-	transition: all 300ms;
-	transform: scale(0);
+    -webkit-transition: all 300ms;
+    -moz-transition: all 300ms;
+    -ms-transition: all 300ms;
+    -o-transition: all 300ms;
+    transition: all 300ms;
+    transform: scale(0);
 }
 
 .fab-trans {
-	transform: scale(1);
+    transform: scale(1);
 }
 
