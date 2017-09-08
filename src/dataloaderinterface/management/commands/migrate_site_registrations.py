@@ -28,8 +28,8 @@ class Command(BaseCommand):
             'sampling_feature_code': sampling_feature.sampling_feature_code,
             'sampling_feature_name': sampling_feature.sampling_feature_name,
             'elevation_m': sampling_feature.elevation_m,
-            'site_latitude': sampling_feature.site.latitude,
-            'site_longitude': sampling_feature.site.longitude,
+            'latitude': sampling_feature.site.latitude,
+            'longitude': sampling_feature.site.longitude,
             'site_type': sampling_feature.site.site_type_id
         }
 
@@ -49,8 +49,8 @@ class Command(BaseCommand):
             'result_id': result.result_id,
             'result_uuid': result.result_uuid,
             'registration': site_registration,
-            'equipment_model': model.model_name,
-            'equipment_model_manufacturer':  model.model_manufacturer.organization_name,
+            'model_name': model.model_name,
+            'model_manufacturer':  model.model_manufacturer.organization_name,
             'variable_name': result.variable.variable_name_id,
             'variable_code': result.variable.variable_code,
             'unit_name': result.unit.unit_name,

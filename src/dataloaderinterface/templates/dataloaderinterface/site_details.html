@@ -90,14 +90,14 @@
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-map-marker" aria-hidden="true"></i> Latitude
                                     </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ site.site_latitude }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.latitude }}</td>
                                 </tr>
 
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-map-marker" aria-hidden="true"></i> Longitude
                                     </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ site.site_longitude }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.longitude }}</td>
                                 </tr>
 
                                 <tr>
@@ -118,8 +118,8 @@
 
                         <div class="detail-map-container col-xs-12 col-sm-6">
                             <div id="map"></div>
-                            <input type="hidden" id="site-latitude" value="{{ site.site_latitude }}">
-                            <input type="hidden" id="site-longitude" value="{{ site.site_longitude }}">
+                            <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
+                            <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
                         </div>
                     </div>
                     <div class="row">

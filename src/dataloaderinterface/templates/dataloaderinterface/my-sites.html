@@ -107,8 +107,8 @@
                     "id": "{{ site.sampling_feature_id }}",
                     "code": "{{ site.sampling_feature_code }}",
                     "name": "{{ site.sampling_feature_name }}",
-                    "latitude": {{ site.site_latitude|default_if_none:0 }},
-                    "longitude": {{ site.site_longitude|default_if_none:0 }},
+                    "latitude": {{ site.latitude|default_if_none:0 }},
+                    "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                 }{% if not forloop.last %},{% endif %}

@@ -27,8 +27,8 @@ class SiteRegistration(models.Model):
     sampling_feature_name = models.CharField(max_length=255, blank=True, db_column='SamplingFeatureName')
     elevation_m = models.FloatField(blank=True, null=True, db_column='Elevation')
 
-    site_latitude = models.FloatField(db_column='Latitude')
-    site_longitude = models.FloatField(db_column='Longitude')
+    latitude = models.FloatField(db_column='Latitude')  # TODO: change db column name
+    longitude = models.FloatField(db_column='Longitude')  # TODO: change db column name
     site_type = models.CharField(max_length=765, db_column='SiteType')
 
     followed_by = models.ManyToManyField(User, related_name='followed_sites')
@@ -54,8 +54,8 @@ class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
     result_id = models.IntegerField(db_column='ResultID', unique=True)
     result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
-    equipment_model = models.CharField(db_column='EquipmentModel', max_length=255)
-    equipment_model_manufacturer = models.CharField(db_column='EquipmenModelManufacturer', max_length=255)
+    model_name = models.CharField(db_column='EquipmentModel', max_length=255)  # TODO: change db column name
+    model_manufacturer = models.CharField(db_column='EquipmenModelManufacturer', max_length=255)  # TODO: change db column name
     variable_name = models.CharField(max_length=255, db_column='VariableName')
     variable_code = models.CharField(max_length=50, db_column='VariableCode')
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
