@@ -166,13 +166,14 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
 
 class SiteUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'dataloaderinterface/site_registration.html'
-    model = DeviceRegistration
-    slug_field = 'registration_id'
+    model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
     object = None
     fields = []
 
     def get_success_url(self):
-        return reverse_lazy('site_detail', kwargs=self.kwargs)
+        return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     def get_formset_initial_data(self, *args):
         sampling_feature = self.get_object().sampling_feature
@@ -180,7 +181,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         result_form_data = [
             {
                 'result_id': result.result_id,
-                # this is kinda ugly as shit but works. keep it to be safe, or don't in case there's results without datalogger column.
+                # this is kinda ugly as shit but works. keep it to be safe, or don't. in case there's results without datalogger column.
                 'equipment_model': result.data_logger_file_columns.first() and result.data_logger_file_columns.first().instrument_output_variable.model,
                 'variable': result.variable,
                 'unit': result.unit,
@@ -194,28 +195,29 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         context = super(SiteUpdateView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
+        action_by = sampling_feature.feature_actions.first().action.action_by.first()
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
         context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
+        context['action_by_form'] = ActionByForm(data=data, instance=action_by)
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
     def post(self, request, *args, **kwargs):
-        registration = DeviceRegistration.objects.filter(pk=self.kwargs['slug']).first()
-        sampling_feature = registration.sampling_feature
+        site_registration = SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code']).first()
+        sampling_feature = site_registration.sampling_feature
 
         sampling_feature_form = SamplingFeatureForm(data=self.request.POST, instance=sampling_feature)
         site_form = SiteForm(data=self.request.POST, instance=sampling_feature.site)
         results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
+        action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(sampling_feature_form, site_form, results_formset):
-            affiliation = request.user.odm2user.affiliation
-            data_logger_program = DataLoggerProgramFile.objects.filter(
-                affiliation=affiliation, program_name__contains=registration.sampling_feature.sampling_feature_code
-            ).first()
-            data_logger_file = data_logger_program.data_logger_files.first()
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
+            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
+            data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=sampling_feature.sampling_feature_code).first()
+            data_logger_program = data_logger_file.program
 
             # Update sampling feature
             sampling_feature_form.instance.save()
@@ -224,10 +226,26 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             site_form.instance.save()
 
             # Update datalogger program and datalogger file names
-            data_logger_program.program_name = '%s data collection' % sampling_feature.sampling_feature_code
-            data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
+            data_logger_program.program_name = '%s' % sampling_feature.sampling_feature_code
+            data_logger_program.affiliation = affiliation
             data_logger_program.save()
+
+            data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
             data_logger_file.save()
+
+            # Update Site Registration
+            site_registration.affiliation_id = affiliation.affiliation_id
+            site_registration.django_user = User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
+            site_registration.person = str(affiliation.person)
+            site_registration.organization = str(affiliation.organization)
+            site_registration.sampling_feature_code = sampling_feature.sampling_feature_code
+            site_registration.sampling_feature_name = sampling_feature.sampling_feature_name
+            site_registration.elevation_m = sampling_feature.elevation_m
+            site_registration.latitude = sampling_feature.site.latitude
+            site_registration.longitude = sampling_feature.site.longitude
+            site_registration.site_type = sampling_feature.site.site_type_id
+            registration_form.instance = site_registration
+            site_registration.save()
 
             for result_form in results_formset.forms:
                 is_new_result = 'result_id' not in result_form.initial
@@ -236,7 +254,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                 if is_new_result and to_delete:
                     continue
                 elif is_new_result:
-                    create_result(result_form, sampling_feature, affiliation, data_logger_file)
+                    create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
                     continue
                 elif to_delete:
                     result = Result.objects.get(result_id=result_form.initial['result_id'])
@@ -262,8 +280,24 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                 data_logger_file_column.column_label = '%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
                 data_logger_file_column.save()
 
+                # Update action by
+                action_by = result.feature_action.action.action_by.first()
+                action_by.affiliation = affiliation
+                action_by.save()
+
+                # Update Site Sensor
+                site_sensor = SiteSensor.objects.filter(result_id=result.result_id).first()
+                site_sensor.model_name = instrument_output_variable.model.model_name
+                site_sensor.model_manufacturer = instrument_output_variable.model.model_manufacturer.organization_name
+                site_sensor.variable_name = result.variable.variable_name_id
+                site_sensor.variable_code = result.variable.variable_code
+                site_sensor.unit_name = result.unit.unit_name
+                site_sensor.unit_abbreviation = result.unit.unit_abbreviation
+                site_sensor.sampled_medium = result.sampled_medium_id
+                site_sensor.save()
+
             messages.success(request, 'The site has been updated successfully.')
-            return HttpResponseRedirect(self.get_success_url())
+            return self.form_valid(registration_form)
         else:
             messages.error(request, 'There are still some required fields that need to be filled out.')
             return self.form_invalid(registration_form)
@@ -294,11 +328,8 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         context['site_form'] = SiteForm(data, initial=default_data)
         context['results_formset'] = ResultFormSet(data)
         context['action_by_form'] = ActionByForm(data)
-
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
-
-
 
     def post(self, request, *args, **kwargs):
         sampling_feature_form = SamplingFeatureForm(request.POST)
@@ -435,6 +466,7 @@ def create_result(site_registration, result_form, sampling_feature, affiliation,
 
 
 def delete_result(result):
+    result_id = result.result_id
     feature_action = result.feature_action
     action = feature_action.action
 
@@ -447,3 +479,4 @@ def delete_result(result):
 
     feature_action.delete()
     action.delete()
+    SiteSensor.objects.filter(result_id=result_id).delete()

@@ -19,11 +19,10 @@ class Command(BaseCommand):
         registration_data = {
             'registration_token': device_registration.authentication_token,
             'registration_date': device_registration.registration_date(),
-            'deployment_date': device_registration.deployment_date,
             'django_user': device_registration.user.user,
             'affiliation_id': device_registration.user.affiliation_id,
             'person': str(affiliation.person),
-            'organization': str(affiliation.organization),
+            'organization': str(affiliation.organization) or '',
             'sampling_feature_id': sampling_feature.sampling_feature_id,
             'sampling_feature_code': sampling_feature.sampling_feature_code,
             'sampling_feature_name': sampling_feature.sampling_feature_name,
@@ -55,7 +54,9 @@ class Command(BaseCommand):
             'variable_code': result.variable.variable_code,
             'unit_name': result.unit.unit_name,
             'unit_abbreviation': result.unit.unit_abbreviation,
-            'sampled_medium': result.sampled_medium_id
+            'sampled_medium': result.sampled_medium_id,
+            'activation_date': result.valid_datetime,
+            'activation_date_utc_offset': result.valid_datetime_utc_offset
         }
 
         site_sensor = SiteSensor(**sensor_data)

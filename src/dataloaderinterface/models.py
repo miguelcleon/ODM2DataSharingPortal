@@ -27,8 +27,8 @@ class SiteRegistration(models.Model):
     sampling_feature_name = models.CharField(max_length=255, blank=True, db_column='SamplingFeatureName')
     elevation_m = models.FloatField(blank=True, null=True, db_column='Elevation')
 
-    latitude = models.FloatField(db_column='Latitude')  # TODO: change db column name
-    longitude = models.FloatField(db_column='Longitude')  # TODO: change db column name
+    latitude = models.FloatField(db_column='Latitude')
+    longitude = models.FloatField(db_column='Longitude')
     site_type = models.CharField(max_length=765, db_column='SiteType')
 
     followed_by = models.ManyToManyField(User, related_name='followed_sites')
@@ -40,6 +40,11 @@ class SiteRegistration(models.Model):
     @property
     def odm2_affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
+
+    @property
+    def deployment_date(self):
+        min_datetime = self.sensors.aggregate(first_light=Min('activation_date'))
+        return min_datetime['first_light']
 
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
@@ -54,13 +59,15 @@ class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
     result_id = models.IntegerField(db_column='ResultID', unique=True)
     result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
-    model_name = models.CharField(db_column='EquipmentModel', max_length=255)  # TODO: change db column name
-    model_manufacturer = models.CharField(db_column='EquipmenModelManufacturer', max_length=255)  # TODO: change db column name
+    model_name = models.CharField(db_column='ModelName', max_length=255)
+    model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255)
     variable_name = models.CharField(max_length=255, db_column='VariableName')
     variable_code = models.CharField(max_length=50, db_column='VariableCode')
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
     unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
     sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)
+    activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
+    activation_date_utc_offset = models.BigIntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
     @property
     def sensor_identity(self):
