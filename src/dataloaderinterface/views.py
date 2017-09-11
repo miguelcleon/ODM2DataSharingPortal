@@ -21,7 +21,7 @@ from django.views.generic.list import ListView
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
-from dataloaderinterface.models import DeviceRegistration, ODM2User, SiteRegistration
+from dataloaderinterface.models import DeviceRegistration, ODM2User, SiteRegistration, SiteSensor
 
 
 class LoginRequiredMixin(object):
@@ -271,12 +271,12 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
 class SiteRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/site_registration.html'
-    model = DeviceRegistration
+    model = SiteRegistration
     object = None
     fields = []
 
     def get_success_url(self):
-        return reverse_lazy('site_detail', kwargs={'slug': self.object.pk})
+        return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     @staticmethod
     def get_default_data():
@@ -298,6 +298,8 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
+
+
     def post(self, request, *args, **kwargs):
         sampling_feature_form = SamplingFeatureForm(request.POST)
         site_form = SiteForm(request.POST)
@@ -305,7 +307,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(sampling_feature_form, site_form, action_by_form, results_formset):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
 
             # Create sampling feature
@@ -330,13 +332,30 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
                 data_logger_file_name='%s' % sampling_feature.sampling_feature_code
             )
 
-            for result_form in results_formset.forms:
-                create_result(result_form, sampling_feature, affiliation, data_logger_file)
+            # Create Site Registration TODO: maybe do it in another function.
+            registration_data = {
+                'registration_token': uuid4(),
+                'registration_date': datetime.now(),
+                'django_user': request.user,
+                'affiliation_id': affiliation.affiliation_id,
+                'person': str(affiliation.person),
+                'organization': str(affiliation.organization),
+                'sampling_feature_id': sampling_feature.sampling_feature_id,
+                'sampling_feature_code': sampling_feature.sampling_feature_code,
+                'sampling_feature_name': sampling_feature.sampling_feature_name,
+                'elevation_m': sampling_feature.elevation_m,
+                'latitude': sampling_feature.site.latitude,
+                'longitude': sampling_feature.site.longitude,
+                'site_type': sampling_feature.site.site_type_id
+            }
 
-            registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
-            registration_form.instance.user = ODM2User.objects.filter(affiliation_id=affiliation.pk).first()
-            registration_form.instance.authentication_token = uuid4()
-            registration_form.instance.save()
+            site_registration = SiteRegistration(**registration_data)
+            registration_form.instance = site_registration
+            site_registration.save()
+
+            for result_form in results_formset.forms:
+                create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
+
             return self.form_valid(registration_form)
         else:
             messages.error(request, 'There are still some required fields that need to be filled out!')
@@ -347,7 +366,7 @@ def all_forms_valid(*forms):
     return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
 
 
-def create_result(result_form, sampling_feature, affiliation, data_logger_file):
+def create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file):
     # Create action
     action = Action(
         method=Method.objects.filter(method_type_id='Instrument deployment').first(),
@@ -391,8 +410,24 @@ def create_result(result_form, sampling_feature, affiliation, data_logger_file):
         column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
     )
 
+    sensor_data = {
+        'result_id': result.result_id,
+        'result_uuid': result.result_uuid,
+        'registration': site_registration,
+        'model_name': instrument_output_variable.model.model_name,
+        'model_manufacturer': instrument_output_variable.model.model_manufacturer.organization_name,
+        'variable_name': result.variable.variable_name_id,
+        'variable_code': result.variable.variable_code,
+        'unit_name': result.unit.unit_name,
+        'unit_abbreviation': result.unit.unit_abbreviation,
+        'sampled_medium': result.sampled_medium_id
+    }
+
+    site_sensor = SiteSensor(**sensor_data)
+    site_sensor.save()
+
     # Create csv file to hold the sensor data.
-    # TODO: have this send a signal and the call to create the file be somewhere else.
+    # TODO: have this send a signal and the call to create the file be somewhere else. lol should've done it.
     serializer = SiteResultSerializer(result)
     serializer.build_csv()
 
