@@ -1,4 +1,5 @@
 const EXTENT_HOURS = 72;
+const GAP_HOURS = 6;
 const STALE_DATA_CUTOFF = new Date(new Date() - 1000 * 60 * 60 * EXTENT_HOURS);
 
 function initMap() {
@@ -60,7 +61,7 @@ function bindDeleteDialogEvents() {
     });
 }
 
-// Returns the most recent 72 hours since the last read
+// Returns the most recent 72 hours since the last reading
 function getRecentData(timeSeriesData) {
     var lastRead = Math.max.apply(Math, timeSeriesData.map(function(value){
         return new Date(value.DateTime);
@@ -159,10 +160,40 @@ function drawSparklinePlot(seriesInfo, seriesData) {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.append("path")
-        .data([seriesData])
-        .attr("class", "line").attr("d", line)
-        .attr("stroke", "steelblue");
+    // Rendering the paths
+    var gapOffset;  // The minimum date required before being considered a gap.
+    var previousDate;
+    var start = 0;  // Latest start detected after a gap. Initially set to the start of the list.
+    var paths = [];
+
+    for (var i = 0; i < seriesData.length; i++) {
+        var currentDate = new Date(seriesData[i].DateTime);
+
+        if (previousDate) {
+            gapOffset = new Date(currentDate - 1000 * 60 * 60 * GAP_HOURS);
+        }
+
+        if (previousDate && previousDate < gapOffset) {
+            paths.push(seriesData.slice(start, i - 1));
+            start = i;
+        }
+        previousDate = currentDate;
+    }
+
+    if (start > 0) {
+        paths.push(seriesData.slice(start, seriesData.length));
+    }
+    else {
+        paths.push(seriesData); // No gaps were detected. Just plot the entire original data.
+    }
+
+    // Plot all paths separately to display gaps between them.
+    for (var i = 0; i < paths.length; i++) {
+        svg.append("path")
+            .data([paths[i]])
+            .attr("class", "line").attr("d", line)
+            .attr("stroke", "steelblue");
+    }
 }
 
 function getTimeSeriesData(sensorInfo) {
@@ -172,11 +203,13 @@ function getTimeSeriesData(sensorInfo) {
         worker: true,
         comments: "#",
         skipEmptyLines: true,
-        complete: function(result) {
-            var recentValues = getRecentData(result.data);
-            fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
-            drawSparklineOnResize(sensorInfo, recentValues);
-            drawSparklinePlot(sensorInfo, recentValues);
+        complete: function (result) {
+            if (result.data) {
+                var recentValues = getRecentData(result.data);
+                fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
+                drawSparklineOnResize(sensorInfo, recentValues);
+                drawSparklinePlot(sensorInfo, recentValues);
+            }
         }
     });
 }

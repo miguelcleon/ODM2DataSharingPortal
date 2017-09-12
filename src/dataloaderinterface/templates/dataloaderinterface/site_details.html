@@ -130,13 +130,13 @@
                                     <td><h5 class="section-title">Recent Measurements</h5></td>
                                 </tr>
                             </table>
-{#                            <div class="text-muted section-subtitle">Last measurement: </div>#}
                         </div>
 
                         <div class="sparkline-plots col-xs-12">
                             <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
-                                are shown on the sparkline plots. Plots highlighted in red have no data available for
-                                the past 72 hours. Plots highlighted in green have been active within the last 72 hours.
+                                are shown on the sparkline plots. The plots are broken when there are gaps in the data
+                                longer than 6 hours. Plots shaded in green have recent data. Plots shaded in red have
+                                not reported data in the last 72 hours.
                             </div>
                             <div class="row">
                                 {% for sensor in site.sensors.all %}
@@ -146,11 +146,23 @@
                                          data-variable-code="{{ sensor.variable_code }}"
                                          data-csv-path="{% static sensor|get_sensor_csv_path %}">
 
-                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                            <div class="variable-name pull-left white-shadow">
-                                                <strong>{{ sensor.variable_name }} </strong><span
-                                                    class="variable-code">({{ sensor.variable_code }})</span>
-                                            </div>
+                                                <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                                    <div class=" pull-left white-shadowvariable-info">
+                                                        <table>
+                                                            <tr>
+                                                                <td>Variable:</td>
+                                                                <th>{{ sensor.variable_name }} </th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Medium: </td>
+                                                                <th>{{ result.sampled_medium }}</th>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Sensor: </td>
+                                                                <th>{{ sensor.variable_code }}</th>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
 
                                             {#  View data table button  #}
                                             <span id="table-trigger-{{ forloop.counter0 }}"
@@ -177,8 +189,9 @@
                                             <tr>
                                                 <td class="variable-description">
                                                     <div class="variable-data text-center">
-                                                        <div class="latest-value"></div>
-                                                        <div class="unit">{{ sensor.unit_abbreviation }}</div>
+                                                        <div class="variable-name">{{ result.variable.variable_name_id }}</div>
+                                                                <div class="latest-value"></div>
+                                                        <div class="unit">({{ sensor.unit_abbreviation }})</div>
                                                     </div>
                                                 </td>
                                                 <td>
