@@ -67,7 +67,7 @@ class UserUpdateView(UpdateView):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your information has been updated successfully.')
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('user_account'))
         else:
             messages.error(request, 'There were some errors in the form.')
             return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
