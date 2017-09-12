@@ -21,7 +21,7 @@ from django.views.generic.list import ListView
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
-from dataloaderinterface.models import DeviceRegistration, ODM2User, SiteRegistration, SiteSensor
+from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
 
 
 class LoginRequiredMixin(object):
@@ -33,14 +33,14 @@ class LoginRequiredMixin(object):
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/index.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data()
-        context['device_results'] = []
-        for device in DeviceRegistration.objects.get_queryset().filter(user=self.request.user.id):
-            sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=device.deployment_sampling_feature_uuid)
-            feature_actions = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
-            context['device_results'].append({'device': device, 'feature_actions': feature_actions})
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(HomeView, self).get_context_data()
+    #     context['device_results'] = []
+    #     for device in DeviceRegistration.objects.get_queryset().filter(user=self.request.user.id):
+    #         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=device.deployment_sampling_feature_uuid)
+    #         feature_actions = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
+    #         context['device_results'].append({'device': device, 'feature_actions': feature_actions})
+    #     return context
 
 
 class UserUpdateView(UpdateView):
