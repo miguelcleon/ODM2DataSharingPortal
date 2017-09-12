@@ -27,6 +27,7 @@ function initMap() {
         zoom: ZOOM_LEVEL,
         disableDefaultUI: true,
         zoomControl: true,
+        gestureHandling: 'greedy',
         zoomControlOptions: {
             position: google.maps.ControlPosition.LEFT_BOTTOM
         },
