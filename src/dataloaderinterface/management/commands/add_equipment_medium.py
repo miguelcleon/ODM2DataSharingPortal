@@ -3,6 +3,7 @@ from django.db.models.aggregates import Count
 from django.db.models.query_utils import Q
 
 from dataloader.models import Result, Medium
+from dataloaderinterface.models import SiteSensor
 
 
 class Command(BaseCommand):
@@ -18,10 +19,12 @@ class Command(BaseCommand):
         return equipment_data
 
     def handle(self, *args, **options):
-        equipment_medium_variables = ['Battery voltage', '']
+        equipment_medium_variables = ['EnviroDIY_Mayfly_Temp', 'EnviroDIY_Mayfly_Volt', 'EnviroDIY_Mayfly_FreeSRAM']
         equipment_medium = Medium.objects.filter(pk='Equipment').first()
         if not equipment_medium:
-            equipment_medium = Medium.objects.create(**equipment_medium)
+            equipment_medium = Medium.objects.create(**self.get_medium_data())
 
-        # TODO: change board temp and battery voltage under load when you know what those actually are.
-        # Result.objects.prefetch_related('variable').filter(variable__variable_name_id__in=['Battery voltage', ])
+        results = Result.objects.prefetch_related('variable').filter(variable__variable_code__in=equipment_medium_variables)
+        sensors = SiteSensor.objects.filter(variable_code__in=equipment_medium_variables)
+        results.update(sampled_medium=equipment_medium)
+        sensors.update(sampled_medium=equipment_medium.name)
