@@ -70,6 +70,10 @@ class SiteSensor(models.Model):
     activation_date_utc_offset = models.BigIntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
     @property
+    def make_model(self):
+        return "{0}_{1}".format(self.model_manufacturer, self.model_name)
+
+    @property
     def sensor_identity(self):
         return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
 
