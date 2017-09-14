@@ -4,7 +4,7 @@ from uuid import uuid4
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
-    InstrumentOutputVariable, DataLoggerFileColumn
+    InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -105,6 +105,12 @@ class SitesListView(LoginRequiredMixin, ListView):
         context = super(SitesListView, self).get_context_data()
         context['followed_sites'] = self.request.user.followed_sites.all()
         return context
+
+
+class StatusListView(ListView):
+    model = SiteRegistration
+    context_object_name = 'sites'
+    template_name = 'dataloaderinterface/status.html'
 
 
 class BrowseSitesListView(ListView):

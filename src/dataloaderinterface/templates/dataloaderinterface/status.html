@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <title>Sites Status</title>
+</head>
+<body>
+{% for site in sites %}
+    <h2>{{ site.sampling_feature_code }}</h2>
+    <table style="border: 1px solid black">
+    <thead>
+        {% for sensor in site.sensors.all %}
+            <th style="border: 1px solid black">{{ sensor.variable_code }}</th>
+        {% endfor %}
+    </thead>
+    <tbody>
+        {% for sensor in site.sensors.all %}
+            <td style="border: 1px solid black">{% if sensor.last_measurement %}{{ sensor.last_measurement.data_value }}{% endif %}</td>
+        {% endfor %}
+    </tbody>
+    </table>
+    <br><br>
+{% endfor %}
+</body>
+</html>

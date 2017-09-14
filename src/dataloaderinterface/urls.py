@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView,\
-    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView
+from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, \
+    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
     url(r'^sites/$', SitesListView.as_view(), name='sites_list'),
+    url(r'^status/$', StatusListView.as_view(), name='status'),
     url(r'^browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),

@@ -43,6 +43,8 @@ class Command(BaseCommand):
             return existing_site_sensor
 
         model = result.data_logger_file_columns.first().instrument_output_variable.model
+        values_manager = result.timeseriesresult.values
+        last_value = values_manager.latest('value_datetime') if values_manager.count() > 0 else None
 
         sensor_data = {
             'result_id': result.result_id,
@@ -56,7 +58,8 @@ class Command(BaseCommand):
             'unit_abbreviation': result.unit.unit_abbreviation,
             'sampled_medium': result.sampled_medium_id,
             'activation_date': result.valid_datetime,
-            'activation_date_utc_offset': result.valid_datetime_utc_offset
+            'activation_date_utc_offset': result.valid_datetime_utc_offset,
+            'last_measurement_id': last_value and last_value.value_id
         }
 
         site_sensor = SiteSensor(**sensor_data)

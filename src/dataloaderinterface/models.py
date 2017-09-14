@@ -5,7 +5,7 @@ import uuid
 
 from django.db.models.aggregates import Min
 
-from dataloader.models import SamplingFeature, Affiliation, Result
+from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -46,6 +46,15 @@ class SiteRegistration(models.Model):
         min_datetime = self.sensors.aggregate(first_light=Min('activation_date'))
         return min_datetime['first_light']
 
+    @property
+    def last_measurements(self):
+        if not self.deployment_date:
+            return []
+
+        measurement_ids = [long(measurement.last_measurement_id) for measurement in self.sensors.all() if measurement.last_measurement_id]
+        measurements = TimeSeriesResultValue.objects.filter(pk__in=measurement_ids)
+        return measurements
+
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
 
@@ -66,8 +75,9 @@ class SiteSensor(models.Model):
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
     unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
     sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)
+    last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)
     activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
-    activation_date_utc_offset = models.BigIntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
+    activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
     @property
     def make_model(self):
@@ -76,6 +86,10 @@ class SiteSensor(models.Model):
     @property
     def sensor_identity(self):
         return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
+
+    @property
+    def last_measurement(self):
+        return TimeSeriesResultValue.objects.filter(pk=self.last_measurement_id).first()
 
     @property
     def result(self):
