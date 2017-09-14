@@ -112,6 +112,14 @@ class StatusListView(ListView):
     context_object_name = 'sites'
     template_name = 'dataloaderinterface/status.html'
 
+    def get_queryset(self):
+        return super(StatusListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        context = super(StatusListView, self).get_context_data(**kwargs)
+        context['followed_sites'] = self.request.user.followed_sites.all()
+        return context
+
 
 class BrowseSitesListView(ListView):
     model = SiteRegistration

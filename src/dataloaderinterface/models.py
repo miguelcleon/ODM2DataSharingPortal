@@ -55,6 +55,12 @@ class SiteRegistration(models.Model):
         measurements = TimeSeriesResultValue.objects.filter(pk__in=measurement_ids)
         return measurements
 
+    @property
+    def latest_measurement(self):
+        if not self.deployment_date:
+            return None
+        return self.last_measurements.latest('value_datetime')
+
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
 

@@ -2,7 +2,7 @@ from dataloader.models import SamplingFeature, Result
 from django import template
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
-from dataloaderinterface.models import DeviceRegistration, SiteSensor
+from dataloaderinterface.models import DeviceRegistration, SiteSensor, SiteRegistration
 
 register = template.Library()
 #
@@ -21,6 +21,14 @@ def get_sensor_csv_path(sensor):
         return
 
     return SiteResultSerializer(sensor.result).get_file_path()
+
+
+@register.filter(name='get_site_sensor')
+def get_site_sensor(site, variable_code):
+    if not isinstance(site, SiteRegistration):
+        return
+
+    return site.sensors.filter(variable_code=variable_code).first()
 
 
 @register.filter(name='can_administer_site')
