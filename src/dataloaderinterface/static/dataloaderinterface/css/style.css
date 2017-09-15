@@ -650,6 +650,7 @@ footer .separator {
     transition: width 0.4s;
     -wekbit-transition: width 0.4s;
     overflow: hidden;
+    float: right;
 }
 
 .follow-status.following #follow-chip {
