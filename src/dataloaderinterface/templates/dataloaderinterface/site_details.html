@@ -21,6 +21,13 @@
             <div class="row">
                 <section class="device-data col-sm-12">
                     <header>
+                        <div class="page-title">
+                            {% if site.sampling_feature_name %}
+                                {{ site.sampling_feature_name }} ({{ site.sampling_feature_code }})
+                            {% else %}
+                                {{ site.sampling_feature_code }}
+                            {% endif %}
+                        </div>
                         <div class="buttons-toolbar">
                             <div class="row">
                                 {% if object.user_id != request.user.odm2user.id %}
@@ -79,13 +86,7 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="page-title">
-                            {% if site.sampling_feature_name %}
-                                {{ site.sampling_feature_name }} ({{ site.sampling_feature_code }})
-                            {% else %}
-                                {{ site.sampling_feature_code }}
-                            {% endif %}
-                        </div>
+
 
                         {% if messages %}
                             {% for message in messages %}
