@@ -10,9 +10,12 @@
           type="image/png"
           href="{% static 'dataloaderinterface/images/favicon.png' %}">
     <style>
+        body {
+            margin: 0 45px;
+        }
         table {
             border-collapse: collapse;
-            width: 100%;
+            max-width: 100%;
         }
 
         table tr:not(.subheader):nth-child(odd) {
@@ -63,7 +66,6 @@
         <th>Site Code</th>
         <th>Site Name</th>
         <th>Latest Sample</th>
-        <th>Last heard</th>
         <th>Battery</th>
         <th>Temperature</th>
         <th>Free SRAM</th>
@@ -75,11 +77,11 @@
             <tr>
                 <td>{{ site.sampling_feature_code }}</td>
                 <td>{{ site.sampling_feature_name }}</td>
-                <td>{{ site.latest_measurement.value_datetime }}{% if not site.latest_measurement.value_datetime %}
-                    -{% endif %}</td>
-                <td>{{ site.latest_measurement.value_datetime|timesince }}
-                    {% if site.latest_measurement.value_datetime|timesince %} ago{% else %}-{% endif %}
-                </td>
+                <td>{% if not site.latest_measurement.value_datetime %}
+                    -{% else %}
+                    {{ site.latest_measurement.value_datetime }}
+                    ({{ site.latest_measurement.value_datetime|timesince }} ago)
+                {% endif %}</td>
                 <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
                 <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
                 <td class="numeric">{{ sram.last_measurement.data_value|default:"-" }}</td>
@@ -98,7 +100,6 @@
         <th>Site Code</th>
         <th>Site Name</th>
         <th>Latest Sample</th>
-        <th>Last heard</th>
         <th>Battery</th>
         <th>Temperature</th>
         <th>Free SRAM</th>
@@ -108,11 +109,11 @@
             <tr>
                 <td>{{ site.sampling_feature_code }}</td>
                 <td>{{ site.sampling_feature_name }}</td>
-                <td>{{ site.latest_measurement.value_datetime }}{% if not site.latest_measurement.value_datetime %}
-                    -{% endif %}</td>
-                <td>{{ site.latest_measurement.value_datetime|timesince }}
-                    {% if site.latest_measurement.value_datetime|timesince %} ago{% else %}-{% endif %}
-                </td>
+                <td>{% if not site.latest_measurement.value_datetime %}
+                    -{% else %}
+                    {{ site.latest_measurement.value_datetime }}
+                    ({{ site.latest_measurement.value_datetime|timesince }} ago)
+                {% endif %}</td>
                 <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
                 <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
                 <td class="numeric">{{ sram.last_measurement.data_value|default:"-" }}</td>

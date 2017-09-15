@@ -12,9 +12,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ribbon ribbon-green">
-
-    </div>
+    <div class="ribbon ribbon-green"></div>
 
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
@@ -39,6 +37,7 @@
                                                     <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>
                                                 </span>
                                             </span>
+
                                             {# this is the button to trigger the follow/unfollow action #}
                                             <button id="btn-follow"
                                                     class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
@@ -47,7 +46,7 @@
                                             </button>
 
                                             <div class="mdl-tooltip" data-mdl-for="btn-follow">
-                                                {% if is_followed %}
+                                                {% if object.user.id in site.followed_by %}
                                                     Unfollow
                                                 {% else %}
                                                     Follow
@@ -86,7 +85,6 @@
                                 {% endif %}
                             </div>
                         </div>
-
 
                         {% if messages %}
                             {% for message in messages %}
@@ -162,6 +160,7 @@
                             <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-xs-12">
                             <table>
