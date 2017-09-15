@@ -21,50 +21,55 @@
             <div class="row">
                 <section class="device-data col-sm-12">
                     <header>
-                        {% if site.django_user_id == request.user.id or request.user.is_staff %} {# TODO: make and use template tag  #}
-                        <div class="text-right buttons-toolbar">
-                            <a href="#" data-toggle="modal" data-target="#code-output-modal"
-                               class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                               id="code-visiblity-toggle">
-                                <i class="material-icons center-icon clickable-float-left">code</i>
-                                View code snippet
-                            </a>
-                            <a href="{% url 'site_update' site.sampling_feature_code %}" id="btn-edit-site"
-                               class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                <i class="material-icons center-icon">mode_edit</i> Edit Site
-                            </a>
+                        <div class="buttons-toolbar">
+                            <div class="row">
+                                {% if object.user_id != request.user.odm2user.id %}
+                                    <div class="col-xs-6">
+                                        <div class="follow-status {% if is_followed %}following{% endif %}">
+                                            <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
+                                                <span id="follow-text" class="mdl-chip__text">
+                                                    You are following this site&nbsp;
+                                                    <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>
+                                                </span>
+                                            </span>
+                                            {# this is the button to trigger the follow/unfollow action #}
+                                            <button id="btn-follow"
+                                                    class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                                                <i id="icon-follow" class="material-icons">add</i>
+                                                <i id="icon-unfollow" class="material-icons">remove</i>
+                                            </button>
 
-                                <a href="#" id="btn-delete-site"
-                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                    <i class="material-icons center-icon">delete_forever</i> Delete Site
-                                </a>
-
-                            {% endif %}
-                            {% if object.user_id != request.user.odm2user.id %}
-                                <div class="follow-status {% if is_followed %}following{% endif %}">
-                                    <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
-                                        <span id="follow-text" class="mdl-chip__text">
-                                            <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>
-                                            &nbsp;You are following this site
-                                        </span>
-                                    </span>
-
-                                    {# this is the button to trigger the follow/unfollow action #}
-                                    <button id="btn-follow"
-                                            class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
-                                        <i id="icon-follow" class="material-icons">add</i>
-                                        <i id="icon-unfollow" class="material-icons">remove</i>
-                                    </button>
-
-                                    <div class="mdl-tooltip" data-mdl-for="btn-follow">
-                                        {% if is_followed %}
-                                            Unfollow
-                                        {% else %}
-                                            Follow
-                                        {% endif %}
+                                            <div class="mdl-tooltip" data-mdl-for="btn-follow">
+                                                {% if is_followed %}
+                                                    Unfollow
+                                                {% else %}
+                                                    Follow
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            {% endif %}
+                                {% endif %}
+                                {# TODO: make and use template tag  #}
+                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                    <div class="col-xs-6 text-right">
+                                        <a href="#" data-toggle="modal" data-target="#code-output-modal"
+                                           class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                           id="code-visiblity-toggle">
+                                            <i class="material-icons center-icon clickable-float-left">code</i>
+                                            View code snippet
+                                        </a>
+                                        <a href="{% url 'site_update' site.sampling_feature_code %}" id="btn-edit-site"
+                                           class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                            <i class="material-icons center-icon">mode_edit</i> Edit Site
+                                        </a>
+                                        <a href="#" id="btn-delete-site"
+                                           class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                            <i class="material-icons center-icon">delete_forever</i> Delete Site
+                                        </a>
+                                    </div>
+                                {% endif %}
+
+                            </div>
                         </div>
                         <div class="page-title">
                             {% if site.sampling_feature_name %}

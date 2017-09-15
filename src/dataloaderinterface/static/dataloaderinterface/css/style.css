@@ -308,7 +308,11 @@ svg.not-stale {
     cursor: default;
 }
 
-.button-link:hover {
+.buttons-toolbar .button-link {
+    margin-bottom: 20px;
+}
+
+.buttons-toolbar .button-link:hover {
     text-decoration: none;
 }
 
@@ -603,8 +607,8 @@ footer .separator {
 /*GENERAL STYLING*/
 
 #btn-follow {
-    top: -4px;
-    right: 15px;
+    top: -3px;
+    left: 15px;
     position: absolute;
 }
 
@@ -650,7 +654,6 @@ footer .separator {
     transition: width 0.4s;
     -wekbit-transition: width 0.4s;
     overflow: hidden;
-    float: right;
 }
 
 .follow-status.following #follow-chip {
@@ -666,8 +669,7 @@ footer .separator {
 }
 
 .chip-follow .mdl-chip__text {
-    padding-right: 45px;
-    padding-left: 15px;
+    padding-left: 45px;
 }
 
 a#btn-new-site {
