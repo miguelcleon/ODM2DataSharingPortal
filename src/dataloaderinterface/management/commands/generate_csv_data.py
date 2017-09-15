@@ -18,6 +18,7 @@ class Command(BaseCommand):
             'result__feature_action__action__action_by__affiliation__person',
             'result__feature_action__action__action_by__affiliation__organization'
         ).all()
+        # falta como una musica de elevador. wtf.
         for time_series_result in results:
             print('result %s:' % time_series_result.result_id)
             serializer = SiteResultSerializer(result=time_series_result.result)

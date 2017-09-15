@@ -174,7 +174,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
         }
 
         if (previousDate && previousDate < gapOffset) {
-            paths.push(seriesData.slice(start, i - 1));
+            paths.push(seriesData.slice(start, i));
             start = i;
         }
         previousDate = currentDate;
@@ -189,10 +189,18 @@ function drawSparklinePlot(seriesInfo, seriesData) {
 
     // Plot all paths separately to display gaps between them.
     for (var i = 0; i < paths.length; i++) {
-        svg.append("path")
+        if (paths[i].length == 1) {
+            svg.append("circle")
+                .attr("r", 2)
+                .style("fill", "steelblue")
+                .attr("transform", "translate(" + xAxis(new Date(paths[i][0].DateTime)) + ", " + yAxis(paths[i][0].Value) + ")")
+        }
+        else {
+            svg.append("path")
             .data([paths[i]])
             .attr("class", "line").attr("d", line)
             .attr("stroke", "steelblue");
+        }
     }
 }
 
