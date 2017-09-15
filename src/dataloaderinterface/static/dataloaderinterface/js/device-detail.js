@@ -10,7 +10,7 @@ function initMap() {
 
     var map = new google.maps.Map(document.getElementById('map'), {
         center: sitePosition,
-        scrollwheel: false,
+        gestureHandling: 'greedy',
         zoom: defaultZoomLevel,
         mapTypeId: google.maps.MapTypeId.SATELLITE
     });
@@ -219,6 +219,17 @@ $(document).ready(function () {
     if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
     }
+
+    $("#btn-follow").on("click", function () {
+        $(".follow-status").toggleClass("following");
+        var tooltip = $(".mdl-tooltip[data-mdl-for='btn-follow']");
+        if (tooltip.text().trim() == "Follow") {
+            tooltip.text("Unfollow");
+        }
+        else {
+            tooltip.text("Follow");
+        }
+    });
 
     $(".table-trigger").click(function () {
         var box = $(this).parents('.plot_box');
