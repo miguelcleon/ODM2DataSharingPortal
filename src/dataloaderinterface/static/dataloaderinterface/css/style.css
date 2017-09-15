@@ -650,7 +650,7 @@ footer .separator {
 
 .chip-follow {
     padding: 0;
-    margin-right: 10px;
+    margin-left: 10px;
     transition: width 0.4s;
     -wekbit-transition: width 0.4s;
     overflow: hidden;
@@ -669,7 +669,7 @@ footer .separator {
 }
 
 .chip-follow .mdl-chip__text {
-    padding-left: 45px;
+    padding-left: 35px;
 }
 
 a#btn-new-site {
