@@ -310,6 +310,7 @@ svg.not-stale {
 
 .buttons-toolbar .button-link {
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .buttons-toolbar .button-link:hover {

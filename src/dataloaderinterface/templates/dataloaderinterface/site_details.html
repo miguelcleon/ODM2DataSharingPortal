@@ -24,7 +24,7 @@
                         <div class="buttons-toolbar">
                             <div class="row">
                                 {% if object.user_id != request.user.odm2user.id %}
-                                    <div class="col-xs-12 col-sm-6">
+                                    <div class="col-xs-12 col-sm-5">
                                         <div class="follow-status {% if is_followed %}following{% endif %}">
                                             <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
                                                 <span id="follow-text" class="mdl-chip__text">
@@ -51,21 +51,30 @@
                                 {% endif %}
                                 {# TODO: make and use template tag  #}
                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                                    <div class="col-xs-12 col-sm-6 text-right">
-                                        <a href="#" data-toggle="modal" data-target="#code-output-modal"
-                                           class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                           id="code-visiblity-toggle">
-                                            <i class="material-icons center-icon clickable-float-left">code</i>
-                                            View code snippet
-                                        </a>
-                                        <a href="{% url 'site_update' site.sampling_feature_code %}" id="btn-edit-site"
-                                           class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                            <i class="material-icons center-icon">mode_edit</i> Edit Site
-                                        </a>
-                                        <a href="#" id="btn-delete-site"
-                                           class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                            <i class="material-icons center-icon">delete_forever</i> Delete Site
-                                        </a>
+                                    <div class="col-xs-12 col-sm-7 text-right">
+                                        <div class="row">
+                                            <div class="col-sm-5 col-xs-12">
+                                                <a href="#" data-toggle="modal" data-target="#code-output-modal"
+                                                   class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                                   id="code-visiblity-toggle">
+                                                    <i class="material-icons center-icon clickable-float-left">code</i>
+                                                    View code snippet
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <a href="{% url 'site_update' site.sampling_feature_code %}"
+                                                   id="btn-edit-site"
+                                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                                    <i class="material-icons center-icon">mode_edit</i> Edit Site
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-4 col-xs-12">
+                                                <a href="#" id="btn-delete-site"
+                                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                                    <i class="material-icons center-icon">delete_forever</i> Delete Site
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 {% endif %}
                             </div>
