@@ -1,0 +1,79 @@
+{% load site %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <title>Sites Status</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid black;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr.subheader {
+            background-color: #f2f2f2
+        }
+    </style>
+</head>
+<body>
+<h2>Sites Status</h2>
+<table>
+    <thead>
+        <tr><th>Site Code</th>
+            <th>Site Name</th>
+            <th>Latest Sample</th>
+            <th>Minutes since last heard</th>
+            <th>Battery</th>
+            <th>Temperature</th>
+            <th>Free SRAM</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="subheader"><th colspan="7">My Sites</th></tr>
+        {% for site in sites %}
+            {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Volt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site|get_site_sensor:"EnviroDIY_Mayfly_FreeSRAM" %}
+            <tr>
+                <td>{{ site.sampling_feature_code }}</td>
+                <td>{{ site.sampling_feature_name }}</td>
+                <td>{{ site.latest_measurement.value_datetime }}</td>
+                <td>{{ site.latest_measurement.value_datetime|timesince }}</td>
+                <td>{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td>{{ temperature.last_measurement.data_value|default:"-" }}</td>
+                <td>{{ sram.last_measurement.data_value|default:"-" }}</td>
+            </tr>
+            {% endwith %}
+        {% endfor %}
+        <tr class="subheader"><th colspan="7">Followed Sites</th></tr>
+    </tbody>
+</table>
+{##}
+{#{% for site in sites %}#}
+{#    <h4>{{ site.sampling_feature_code }}</h4>#}
+{#    <table>#}
+{#    <thead>#}
+{#        <tr>#}
+{#        {% for sensor in site.sensors.all %}#}
+{#            <th>{{ sensor.variable_code }}</th>#}
+{#        {% endfor %}#}
+{#        </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#        <tr>#}
+{#        {% for sensor in site.sensors.all %}#}
+{#            <td>{% if sensor.last_measurement %}{{ sensor.last_measurement.data_value }}{% endif %}</td>#}
+{#        {% endfor %}#}
+{#        </tr>#}
+{#    </tbody>#}
+{#    </table>#}
+{#    <br><br>#}
+{#{% endfor %}#}
+</body>
+</html>

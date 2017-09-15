@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import ResultForm
+from dataloaderinterface.models import SiteSensor
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import OrganizationSerializer
 
@@ -123,10 +124,16 @@ class TimeSeriesValuesApi(APIView):
             result.result_datetime = measurement_datetime
             result.result_datetime_utc_offset = utc_offset
 
+            site_sensor = SiteSensor.objects.filter(result_id=result.result_id).first()
+            site_sensor.last_measurement_id = result_value.value_id
+
             if is_first_value:
                 result.valid_datetime = measurement_datetime
                 result.valid_datetime_utc_offset = utc_offset
+                site_sensor.activation_date = measurement_datetime
+                site_sensor.activation_date_utc_offset = utc_offset
 
+            site_sensor.save(update_fields=['last_measurement_id', 'activation_date', 'activation_date_utc_offset'])
             result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset', 'valid_datetime', 'valid_datetime_utc_offset'])
 
             # Write data to result's csv file

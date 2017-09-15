@@ -4,7 +4,7 @@ from uuid import uuid4
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
-    InstrumentOutputVariable, DataLoggerFileColumn
+    InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,7 @@ from django.views.generic.list import ListView
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
-from dataloaderinterface.models import DeviceRegistration, ODM2User
+from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
 
 
 class LoginRequiredMixin(object):
@@ -33,14 +33,14 @@ class LoginRequiredMixin(object):
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/index.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data()
-        context['device_results'] = []
-        for device in DeviceRegistration.objects.get_queryset().filter(user=self.request.user.id):
-            sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=device.deployment_sampling_feature_uuid)
-            feature_actions = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
-            context['device_results'].append({'device': device, 'feature_actions': feature_actions})
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super(HomeView, self).get_context_data()
+    #     context['device_results'] = []
+    #     for device in DeviceRegistration.objects.get_queryset().filter(user=self.request.user.id):
+    #         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=device.deployment_sampling_feature_uuid)
+    #         feature_actions = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
+    #         context['device_results'].append({'device': device, 'feature_actions': feature_actions})
+    #     return context
 
 
 class UserUpdateView(UpdateView):
@@ -67,7 +67,7 @@ class UserUpdateView(UpdateView):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your information has been updated successfully.')
-            return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(reverse('user_account'))
         else:
             messages.error(request, 'There were some errors in the form.')
             return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
@@ -93,54 +93,70 @@ class UserRegistrationView(CreateView):
         return response
 
 
-class DevicesListView(LoginRequiredMixin, ListView):
-    model = DeviceRegistration
+class SitesListView(LoginRequiredMixin, ListView):
+    model = SiteRegistration
+    context_object_name = 'sites'
     template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
-        return super(DevicesListView, self).get_queryset().filter(user_id=self.request.user.odm2user.pk)
+        return super(SitesListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        context = super(SitesListView, self).get_context_data()
+        context['followed_sites'] = self.request.user.followed_sites.all()
+        return context
+
+
+class StatusListView(ListView):
+    model = SiteRegistration
+    context_object_name = 'sites'
+    template_name = 'dataloaderinterface/status.html'
+
+    def get_queryset(self):
+        return super(StatusListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+
+    def get_context_data(self, **kwargs):
+        context = super(StatusListView, self).get_context_data(**kwargs)
+        context['followed_sites'] = self.request.user.followed_sites.all()
+        return context
 
 
 class BrowseSitesListView(ListView):
-    model = DeviceRegistration
-    context_object_name = 'registrations'
+    model = SiteRegistration
+    context_object_name = 'sites'
     template_name = 'dataloaderinterface/browse-sites.html'
 
-    # def get_queryset(self):
-    #     return super(BrowseSitesListView, self).get_queryset().select_related('site').filter()
 
-
-class DeviceDetailView(DetailView):
-    slug_field = 'registration_id'
-    model = DeviceRegistration
+class SiteDetailView(DetailView):
+    model = SiteRegistration
+    context_object_name = 'site'
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
     template_name = 'dataloaderinterface/site_details.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DeviceDetailView, self).get_context_data()
-        context['sampling_feature'] = self.object.sampling_feature
-        context['feature_actions'] = self.object.sampling_feature.feature_actions.with_results().all()
-        context['affiliation'] = self.object.user.affiliation
-        context['site'] = self.object.sampling_feature.site
+        context = super(SiteDetailView, self).get_context_data()
         return context
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):
-    model = DeviceRegistration
-    slug_field = 'registration_id'
+    model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
     success_url = reverse_lazy('sites_list')
 
     def post(self, request, *args, **kwargs):
-        registration = self.get_object()
-        if not registration:
+        site = self.get_object(self.get_queryset())
+        if not site:
             raise Http404
 
-        if request.user != registration.user.user:
+        if request.user.id != site.django_user_id:
             # temporary error. TODO: do something a little bit more elaborate. or maybe not...
             raise Http404
 
-        sampling_feature = registration.sampling_feature
+        sampling_feature = site.sampling_feature
         data_logger_program = DataLoggerProgramFile.objects.filter(
-            affiliation=request.user.odm2user.affiliation,
+            affiliation_id=site.affiliation_id,
             program_name__contains=sampling_feature.sampling_feature_code
         ).first()
         data_logger_file = data_logger_program.data_logger_files.first()
@@ -154,7 +170,8 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
         data_logger_program.delete()
         sampling_feature.site.delete()
         sampling_feature.delete()
-        registration.delete()
+        site.sensors.all().delete()
+        site.delete()
         return HttpResponseRedirect(self.success_url)
 
     def get(self, request, *args, **kwargs):
@@ -163,13 +180,14 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
 
 class SiteUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'dataloaderinterface/site_registration.html'
-    model = DeviceRegistration
-    slug_field = 'registration_id'
+    model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
     object = None
     fields = []
 
     def get_success_url(self):
-        return reverse_lazy('site_detail', kwargs=self.kwargs)
+        return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     def get_formset_initial_data(self, *args):
         sampling_feature = self.get_object().sampling_feature
@@ -177,7 +195,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         result_form_data = [
             {
                 'result_id': result.result_id,
-                # this is kinda ugly as shit but works. keep it to be safe, or don't in case there's results without datalogger column.
+                # this is kinda ugly as shit but works. keep it to be safe, or don't. in case there's results without datalogger column.
                 'equipment_model': result.data_logger_file_columns.first() and result.data_logger_file_columns.first().instrument_output_variable.model,
                 'variable': result.variable,
                 'unit': result.unit,
@@ -191,28 +209,29 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         context = super(SiteUpdateView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
+        action_by = sampling_feature.feature_actions.first().action.action_by.first()
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
         context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
+        context['action_by_form'] = ActionByForm(data=data, instance=action_by)
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
     def post(self, request, *args, **kwargs):
-        registration = DeviceRegistration.objects.filter(pk=self.kwargs['slug']).first()
-        sampling_feature = registration.sampling_feature
+        site_registration = SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code']).first()
+        sampling_feature = site_registration.sampling_feature
 
         sampling_feature_form = SamplingFeatureForm(data=self.request.POST, instance=sampling_feature)
         site_form = SiteForm(data=self.request.POST, instance=sampling_feature.site)
         results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
+        action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(sampling_feature_form, site_form, results_formset):
-            affiliation = request.user.odm2user.affiliation
-            data_logger_program = DataLoggerProgramFile.objects.filter(
-                affiliation=affiliation, program_name__contains=registration.sampling_feature.sampling_feature_code
-            ).first()
-            data_logger_file = data_logger_program.data_logger_files.first()
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
+            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
+            data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=sampling_feature.sampling_feature_code).first()
+            data_logger_program = data_logger_file.program
 
             # Update sampling feature
             sampling_feature_form.instance.save()
@@ -221,10 +240,26 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             site_form.instance.save()
 
             # Update datalogger program and datalogger file names
-            data_logger_program.program_name = '%s data collection' % sampling_feature.sampling_feature_code
-            data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
+            data_logger_program.program_name = '%s' % sampling_feature.sampling_feature_code
+            data_logger_program.affiliation = affiliation
             data_logger_program.save()
+
+            data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
             data_logger_file.save()
+
+            # Update Site Registration
+            site_registration.affiliation_id = affiliation.affiliation_id
+            site_registration.django_user = User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
+            site_registration.person = str(affiliation.person)
+            site_registration.organization = str(affiliation.organization)
+            site_registration.sampling_feature_code = sampling_feature.sampling_feature_code
+            site_registration.sampling_feature_name = sampling_feature.sampling_feature_name
+            site_registration.elevation_m = sampling_feature.elevation_m
+            site_registration.latitude = sampling_feature.site.latitude
+            site_registration.longitude = sampling_feature.site.longitude
+            site_registration.site_type = sampling_feature.site.site_type_id
+            registration_form.instance = site_registration
+            site_registration.save()
 
             for result_form in results_formset.forms:
                 is_new_result = 'result_id' not in result_form.initial
@@ -233,7 +268,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                 if is_new_result and to_delete:
                     continue
                 elif is_new_result:
-                    create_result(result_form, sampling_feature, affiliation, data_logger_file)
+                    create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
                     continue
                 elif to_delete:
                     result = Result.objects.get(result_id=result_form.initial['result_id'])
@@ -259,8 +294,24 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                 data_logger_file_column.column_label = '%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
                 data_logger_file_column.save()
 
+                # Update action by
+                action_by = result.feature_action.action.action_by.first()
+                action_by.affiliation = affiliation
+                action_by.save()
+
+                # Update Site Sensor
+                site_sensor = SiteSensor.objects.filter(result_id=result.result_id).first()
+                site_sensor.model_name = instrument_output_variable.model.model_name
+                site_sensor.model_manufacturer = instrument_output_variable.model.model_manufacturer.organization_name
+                site_sensor.variable_name = result.variable.variable_name_id
+                site_sensor.variable_code = result.variable.variable_code
+                site_sensor.unit_name = result.unit.unit_name
+                site_sensor.unit_abbreviation = result.unit.unit_abbreviation
+                site_sensor.sampled_medium = result.sampled_medium_id
+                site_sensor.save()
+
             messages.success(request, 'The site has been updated successfully.')
-            return HttpResponseRedirect(self.get_success_url())
+            return self.form_valid(registration_form)
         else:
             messages.error(request, 'There are still some required fields that need to be filled out.')
             return self.form_invalid(registration_form)
@@ -268,12 +319,12 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
 class SiteRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/site_registration.html'
-    model = DeviceRegistration
+    model = SiteRegistration
     object = None
     fields = []
 
     def get_success_url(self):
-        return reverse_lazy('site_detail', kwargs={'slug': self.object.pk})
+        return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     @staticmethod
     def get_default_data():
@@ -291,7 +342,6 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         context['site_form'] = SiteForm(data, initial=default_data)
         context['results_formset'] = ResultFormSet(data)
         context['action_by_form'] = ActionByForm(data)
-
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
@@ -302,7 +352,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(sampling_feature_form, site_form, action_by_form, results_formset):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
 
             # Create sampling feature
@@ -327,13 +377,30 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
                 data_logger_file_name='%s' % sampling_feature.sampling_feature_code
             )
 
-            for result_form in results_formset.forms:
-                create_result(result_form, sampling_feature, affiliation, data_logger_file)
+            # Create Site Registration TODO: maybe do it in another function.
+            registration_data = {
+                'registration_token': uuid4(),
+                'registration_date': datetime.now(),
+                'django_user': request.user,
+                'affiliation_id': affiliation.affiliation_id,
+                'person': str(affiliation.person),
+                'organization': str(affiliation.organization),
+                'sampling_feature_id': sampling_feature.sampling_feature_id,
+                'sampling_feature_code': sampling_feature.sampling_feature_code,
+                'sampling_feature_name': sampling_feature.sampling_feature_name,
+                'elevation_m': sampling_feature.elevation_m,
+                'latitude': sampling_feature.site.latitude,
+                'longitude': sampling_feature.site.longitude,
+                'site_type': sampling_feature.site.site_type_id
+            }
 
-            registration_form.instance.deployment_sampling_feature_uuid = sampling_feature.sampling_feature_uuid
-            registration_form.instance.user = ODM2User.objects.filter(affiliation_id=affiliation.pk).first()
-            registration_form.instance.authentication_token = uuid4()
-            registration_form.instance.save()
+            site_registration = SiteRegistration(**registration_data)
+            registration_form.instance = site_registration
+            site_registration.save()
+
+            for result_form in results_formset.forms:
+                create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
+
             return self.form_valid(registration_form)
         else:
             messages.error(request, 'There are still some required fields that need to be filled out!')
@@ -344,7 +411,7 @@ def all_forms_valid(*forms):
     return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
 
 
-def create_result(result_form, sampling_feature, affiliation, data_logger_file):
+def create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file):
     # Create action
     action = Action(
         method=Method.objects.filter(method_type_id='Instrument deployment').first(),
@@ -388,8 +455,24 @@ def create_result(result_form, sampling_feature, affiliation, data_logger_file):
         column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
     )
 
+    sensor_data = {
+        'result_id': result.result_id,
+        'result_uuid': result.result_uuid,
+        'registration': site_registration,
+        'model_name': instrument_output_variable.model.model_name,
+        'model_manufacturer': instrument_output_variable.model.model_manufacturer.organization_name,
+        'variable_name': result.variable.variable_name_id,
+        'variable_code': result.variable.variable_code,
+        'unit_name': result.unit.unit_name,
+        'unit_abbreviation': result.unit.unit_abbreviation,
+        'sampled_medium': result.sampled_medium_id
+    }
+
+    site_sensor = SiteSensor(**sensor_data)
+    site_sensor.save()
+
     # Create csv file to hold the sensor data.
-    # TODO: have this send a signal and the call to create the file be somewhere else.
+    # TODO: have this send a signal and the call to create the file be somewhere else. lol should've done it.
     serializer = SiteResultSerializer(result)
     serializer.build_csv()
 
@@ -397,6 +480,7 @@ def create_result(result_form, sampling_feature, affiliation, data_logger_file):
 
 
 def delete_result(result):
+    result_id = result.result_id
     feature_action = result.feature_action
     action = feature_action.action
 
@@ -409,3 +493,4 @@ def delete_result(result):
 
     feature_action.delete()
     action.delete()
+    SiteSensor.objects.filter(result_id=result_id).delete()
