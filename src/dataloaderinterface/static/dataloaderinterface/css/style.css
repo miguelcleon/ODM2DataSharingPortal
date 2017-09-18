@@ -1040,15 +1040,15 @@ label.checkbox-label {
     border-bottom: 1px solid #DDD;
 }
 
+.marker-info th, .marker-info td {
+    padding: 6px;
+}
+
 .marker-info td {
-    padding-right: 8px;
-    padding-bottom: 4px;
     max-width: 150px;
 }
 
 .marker-info th {
-    padding-top: 6px;
-    padding-bottom: 6px;
     display: inline-block;
 }
 
