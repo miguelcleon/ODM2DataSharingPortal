@@ -26,12 +26,14 @@
                 [
                 {% for site in sites %}
                     {
-                        "id": "{{ site.sampling_feature_id }}",
-                        "code": "{{ site.sampling_feature_code }}",
-                        "name": "{{ site.sampling_feature_name }}",
-                        "latitude": {{ site.latitude|default_if_none:0 }},
-                        "longitude": {{ site.longitude|default_if_none:0 }},
-                        "elevation": {{ site.elevation_m|default_if_none:'""' }},
+                    "id": "{{ site.sampling_feature_id }}",
+                    "code": "{{ site.sampling_feature_code }}",
+                    "name": "{{ site.sampling_feature_name }}",
+                    "latitude": {{ site.latitude|default_if_none:0 }},
+                    "longitude": {{ site.longitude|default_if_none:0 }},
+                    "elevation": {{ site.elevation_m|default_if_none:'""' }},
+                    "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                         "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
@@ -43,36 +45,33 @@
                     <div id="marker-content">
                         <table class="marker-info">
                             <tr class="site-field" data-field="code">
-                                <td class="site-label">Site Code: </td>
-                                <th class="site-data"></th>
+                                <th class="site-label">Site Code: </th>
+                                <td class="site-data"></td>
                             </tr>
-
                             <tr class="site-field" data-field="name">
-                                <td>Site Name: </td>
-                                <th class="site-data"></th>
+                                <th>Site Name: </th>
+                                <td class="site-data"></td>
                             </tr>
-
                             <tr class="site-field" data-field="latitude">
-                                <td>Latitude: </td>
-                                <th class="site-data"></th>
+                                <th>Latitude: </th>
+                                <td class="site-data"></td>
                             </tr>
-
                             <tr class="site-field" data-field="longitude">
-                                <td>Longitude: </td>
-                                <th class="site-data"></th>
+                                <th>Longitude: </th>
+                                <td class="site-data"></td>
                             </tr>
-
                             <tr class="site-field" data-field="elevation">
-                                <td>Elevation: </td>
-                                <th><span class="site-data"></span> <span class="elevation-units">m</span></th>
+                                <th>Elevation: </th>
+                                <td><span class="site-data"></span> <span class="elevation-units">m</span></td>
+                            </tr>
+                            <tr class="site-field" data-field="latest-measurement">
+                                <th>Latest Measurement: </th>
+                                <td><span class="site-data"></span></td>
+                            </tr>
+                            <tr class="site-link">
+                                <td colspan="2"><a>View data for this site</a></td>
                             </tr>
                         </table>
-
-                        <br>
-
-                        <div class="site-link">
-                            <a>View data for this site</a>
-                        </div>
                     </div>
                 </div>
             </script>

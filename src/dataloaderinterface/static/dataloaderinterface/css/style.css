@@ -1030,3 +1030,38 @@ label.checkbox-label {
     transform: scale(1);
 }
 
+/*MARKERS TABLE*/
+
+.site-field {
+    padding-bottom: 3px;
+}
+
+.marker-info tr:not(.site-link) {
+    border-bottom: 1px solid #DDD;
+}
+
+.marker-info td {
+    padding-right: 8px;
+    padding-bottom: 4px;
+    max-width: 150px;
+}
+
+.marker-info th {
+    padding-top: 6px;
+    padding-bottom: 6px;
+    max-width: 65px;
+    display: inline-block;
+}
+
+span.site-label {
+    font-weight: bold;
+}
+
+span.site-label::after {
+    content: ': ';
+}
+
+.site-link {
+    margin-top: 20px;
+    display: block;
+}
