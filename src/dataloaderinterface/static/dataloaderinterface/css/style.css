@@ -1049,16 +1049,7 @@ label.checkbox-label {
 .marker-info th {
     padding-top: 6px;
     padding-bottom: 6px;
-    max-width: 65px;
     display: inline-block;
-}
-
-span.site-label {
-    font-weight: bold;
-}
-
-span.site-label::after {
-    content: ': ';
 }
 
 .site-link {
