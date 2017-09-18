@@ -114,6 +114,7 @@
         <th>Temperature</th>
         <th>Free SRAM</th>
     </tr>
+
     {% for site in followed_sites %}
         {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Volt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site|get_site_sensor:"EnviroDIY_Mayfly_FreeSRAM" %}
             <tr>

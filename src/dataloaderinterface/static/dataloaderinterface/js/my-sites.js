@@ -18,8 +18,6 @@ function initMap() {
         var MAP_CENTER = DEFAULT_POSITION;
     }
 
-    console.log(MAP_CENTER);
-
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
 
     var map = new google.maps.Map(document.getElementById('map'), {

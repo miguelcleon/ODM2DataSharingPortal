@@ -120,7 +120,7 @@
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
                     "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
-                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                  }{% if not forloop.last %},{% endif %}
             {% endfor %}
             ]
