@@ -57,6 +57,12 @@
 <body>
 <h2>Sites Status</h2>
 <hr>
+<a href="{% url 'home' %}">Home</a>
+{% if user.is_authenticated %}
+    - <a href="{% url 'sites_list' %}">My Sites</a>
+{% endif %}
+- <a href="{% url 'browse_sites' %}">Browse Sites</a>
+
 <table>
     <thead>
     <tr class="subheader">
