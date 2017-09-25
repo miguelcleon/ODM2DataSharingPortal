@@ -28,9 +28,10 @@
                         </div>
                         <div class="buttons-toolbar">
                             <div class="row">
-                                {% if object.user_id != request.user.odm2user.id %}
                                     <div class="col-xs-12 col-sm-5">
+                                    {% if site.django_user_id != request.user.id %}
                                         <div class="follow-status {% if is_followed %}following{% endif %}">
+
                                             <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
                                                 <span id="follow-text" class="mdl-chip__text">
                                                     You are following this site&nbsp;
@@ -39,6 +40,11 @@
                                             </span>
 
                                             {# this is the button to trigger the follow/unfollow action #}
+                                            <form id="follow-site-form">
+                                                {% csrf_token %}
+                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">
+                                            </form>
+
                                             <button id="btn-follow"
                                                     class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
                                                 <i id="icon-follow" class="material-icons">add</i>
@@ -46,15 +52,16 @@
                                             </button>
 
                                             <div class="mdl-tooltip" data-mdl-for="btn-follow">
-                                                {% if object.user.id in site.followed_by %}
+                                                {% if is_followed %}
                                                     Unfollow
                                                 {% else %}
                                                     Follow
                                                 {% endif %}
                                             </div>
                                         </div>
+                                    {% endif %}
                                     </div>
-                                {% endif %}
+
                                 {# TODO: make and use template tag  #}
                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                     <div class="col-xs-12 col-sm-7 text-right">
@@ -346,6 +353,11 @@ const char *UUIDs[] =                                                      // UU
         </div>
     </div>
     {% endif %}
+{% endblock %}
+
+{% block services_urls %}
+    {{ block.super }}
+    <input id="follow-site-api" type="hidden" value="{% url 'follow_site' %}">
 {% endblock %}
 
 {% block scripts %}

@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import ResultForm
-from dataloaderinterface.models import SiteSensor
+from dataloaderinterface.models import SiteSensor, SiteRegistration
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import OrganizationSerializer
 
@@ -61,6 +61,22 @@ class OrganizationApi(APIView):
 
         error_data = dict(organization_serializer.errors)
         return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
+
+
+class FollowSiteApi(APIView):
+    authentication_classes = (SessionAuthentication,)
+
+    def post(self, request, format=None):
+        action = request.data['action']
+        sampling_feature_code = request.data['sampling_feature_code']
+        site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
+
+        if action == 'follow':
+            request.user.followed_sites.add(site)
+        elif action == 'unfollow':
+            request.user.followed_sites.remove(site)
+
+        return Response({}, status.HTTP_200_OK)
 
 
 class TimeSeriesValuesApi(APIView):

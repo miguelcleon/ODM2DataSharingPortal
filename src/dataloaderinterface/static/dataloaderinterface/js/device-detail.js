@@ -229,14 +229,22 @@ $(document).ready(function () {
     }
 
     $("#btn-follow").on("click", function () {
-        $(".follow-status").toggleClass("following");
+        var statusContainer = $(".follow-status");
+        var followForm = $("#follow-site-form");
+        var following = statusContainer.hasClass('following');
         var tooltip = $(".mdl-tooltip[data-mdl-for='btn-follow']");
-        if (tooltip.text().trim() == "Follow") {
-            tooltip.text("Unfollow");
-        }
-        else {
-            tooltip.text("Follow");
-        }
+
+        $.ajax({
+            url: $('#follow-site-api').val(),
+            type: 'post',
+            data: {
+                csrfmiddlewaretoken: followForm.find('input[name="csrfmiddlewaretoken"]').val(),
+                sampling_feature_code: followForm.find('input[name="sampling_feature_code"]').val(),
+                action: (following)?'unfollow':'follow'
+            }}).done(function(data) {
+                statusContainer.toggleClass("following");
+                tooltip.text((following)?'Follow':'Unfollow');
+            });
     });
 
     $(".table-trigger").click(function () {
@@ -276,8 +284,7 @@ $(document).ready(function () {
         ResponsiveBootstrapToolkit.changed(function () {
             $('.plot_box').height("initial");   // Reset height
             fixViewPort();
-        })
-    );
+        }));
 });
 
 function formatDate(date) {
