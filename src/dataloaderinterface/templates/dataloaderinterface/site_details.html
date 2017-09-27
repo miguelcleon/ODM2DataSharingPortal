@@ -216,7 +216,7 @@
 
                                                     {#  View on TSA button  #}
                                                     {# TODO: (Juan) Add to url patterns #}
-                                                    <a target="_blank" href="http://data.iutahepscor.org/tsa/?sitecode={{ site.sampling_feature_code }}&variablecode={VariableCode}&view=visualization&plot=true">
+                                                    <a target="_blank" href="http://data.iutahepscor.org/tsa/?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
                                                         <span id="tsa-trigger-{{ forloop.counter0 }}"
                                                            class="fa fa-external-link tsa-trigger pull-right white-shadow"
                                                            aria-hidden="true"></span>
