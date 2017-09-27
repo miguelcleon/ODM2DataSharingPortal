@@ -4,15 +4,19 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <section class="sites-list col-xs-5">
+            <section class="sites-list col-xs-12 col-sm-5">
                 <div class="page-title">Registered Sites</div>
             </section>
-            <div class="col-xs-7">
+            <div class="col-xs-12 col-sm-7 text-right">
+                <a href="{% url 'status' %}"
+                   class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--default mdl-js-ripple-effect">
+                    <i class="material-icons center-icon">assignment</i> Status
+                </a>
                 <a href="{% url 'site_registration' %}" id="btn-new-site"
-                   class="button-link pull-right mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                   class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                     <i class="material-icons center-icon">add_circle_outline</i> Register A New Site
                 </a>
-                <br>
+                <br><br>
             </div>
         </div>
     </div>

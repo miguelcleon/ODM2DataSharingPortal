@@ -677,10 +677,12 @@ footer .separator {
     padding-left: 35px;
 }
 
-a#btn-new-site {
+.my-sites-action {
     margin-top: 32px;
     text-align: left;
-    min-width: 203px;
+}
+.my-sites-action:hover {
+    text-decoration: none;
 }
 
 .center-icon {
