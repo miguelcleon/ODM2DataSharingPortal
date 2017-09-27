@@ -192,42 +192,56 @@
                                          data-variable-code="{{ sensor.variable_code }}"
                                          data-csv-path="{% static sensor|get_sensor_csv_path %}">
 
-                                                <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                                    <div class="pull-left white-shadow variable-info">
-                                                        <table>
-                                                            <tr>
-                                                                <td>Variable:</td>
-                                                                <th>{{ sensor.variable_name }} </th>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Medium: </td>
-                                                                <th>{{ sensor.sampled_medium }}</th>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Sensor: </td>
-                                                                <th>{{ sensor.make_model }}</th>
-                                                            </tr>
-                                                        </table>
+                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-5 pull-right">
+                                                    {#  View data table button  #}
+                                                    <span id="table-trigger-{{ forloop.counter0 }}"
+                                                          class="fa fa-table table-trigger pull-right white-shadow"
+                                                          aria-hidden="true"></span>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="table-trigger-{{ forloop.counter0 }}">
+                                                        View Data Table
                                                     </div>
 
-                                            {#  View data table button  #}
-                                            <span id="table-trigger-{{ forloop.counter0 }}"
-                                                  class="fa fa-table table-trigger pull-right white-shadow"
-                                                  aria-hidden="true"></span>
+                                                    {#  Download data button  #}
+                                                    <a href="{% static sensor|get_sensor_csv_path %}">
+                                                        <span id="download-trigger-{{ forloop.counter0 }}"
+                                                              class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                        Download Data
+                                                    </div>
 
-                                            <div class="mdl-tooltip mdl-tooltip--left"
-                                                 data-mdl-for="table-trigger-{{ forloop.counter0 }}">
-                                                View Data Table
-                                            </div>
-
-                                            {#  Download data button  #}
-                                            <a href="{% static sensor|get_sensor_csv_path %}">
-                                                <span id="download-trigger-{{ forloop.counter0 }}"
-                                                      class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
-                                            </a>
-                                            <div class="mdl-tooltip mdl-tooltip--left"
-                                                 data-mdl-for="download-trigger-{{ forloop.counter0 }}">
-                                                Download Data
+                                                    {#  View on TSA button  #}
+                                                    {# TODO: (Juan) Add to url patterns #}
+                                                    <a target="_blank" href="http://data.iutahepscor.org/tsa/?sitecode={{ site.sampling_feature_code }}&variablecode={VariableCode}&view=visualization&plot=true">
+                                                        <span id="tsa-trigger-{{ forloop.counter0 }}"
+                                                           class="fa fa-external-link tsa-trigger pull-right white-shadow"
+                                                           aria-hidden="true"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
+                                                        Open in Time Series Analyst
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-md-7 white-shadow variable-info">
+                                                    <table>
+                                                        <tr>
+                                                            <td>Variable:</td>
+                                                            <th>{{ sensor.variable_name }} </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Medium:</td>
+                                                            <th>{{ sensor.sampled_medium }}</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Sensor:</td>
+                                                            <th>{{ sensor.make_model }}</th>
+                                                        </tr>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -242,11 +256,12 @@
                                                 </td>
                                                 <td>
                                                     <div id="graph{{ forloop.counter0 }}"
-                                                         class="graph-container"></div>
+                                                         class="graph-container">
+                                                    </div>
                                                     <small style="margin-left:9px; display:block;"
-                                                           class="text-muted last-obs-container">Date of last
-                                                        observation: <span
-                                                                class="last-observation"></span>
+                                                           class="text-muted last-obs-container text-center">
+                                                        Date of last observation
+                                                        <div class="last-observation text-center">-</div>
                                                     </small>
                                                 </td>
                                             </tr>

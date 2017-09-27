@@ -104,6 +104,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
     if (seriesData.length === 0) {
         card.find(".table-trigger").toggleClass("disabled", true);
         card.find(".download-trigger").toggleClass("disabled", true);
+        card.find(".tsa-trigger").toggleClass("disabled", true);
 
         // Append message when there is no data
         d3.select(plotBox.get(0)).append("svg")
@@ -117,8 +118,6 @@ function drawSparklinePlot(seriesInfo, seriesData) {
                 .attr("transform", "translate(" + (margin.left + 10) + "," + (margin.top + 20) + ")");
         return;
     }
-
-    card.find(".last-obs-container").css("visibility", "visible");
 
     $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
 
