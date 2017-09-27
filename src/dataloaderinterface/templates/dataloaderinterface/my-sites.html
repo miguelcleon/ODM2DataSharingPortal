@@ -89,18 +89,18 @@
                                 {% endwith %}
                             </div>
 
-                                <div class="mdl-card__menu">
-                                    <!-- Right aligned menu below button -->
-                                    <button id="site-card-menu-{{ forloop.counter0 }}"
-                                            class="mdl-button mdl-js-button mdl-button--icon view-on-map">
-                                        <i class="material-icons">map</i>
-                                    </button>
-                                    <div class="mdl-tooltip" data-mdl-for="site-card-menu-{{ forloop.counter0 }}">
-                                        View on map
-                                    </div>
+                            <div class="mdl-card__menu">
+                                <!-- Right aligned menu below button -->
+                                <button id="site-card-menu-{{ forloop.counter0 }}"
+                                        class="mdl-button mdl-js-button mdl-button--icon view-on-map">
+                                    <i class="material-icons">map</i>
+                                </button>
+                                <div class="mdl-tooltip" data-mdl-for="site-card-menu-{{ forloop.counter0 }}">
+                                    View on map
                                 </div>
                             </div>
                         </div>
+                    </div>
                 {% endfor %}
             {% else %}
                 <div class="col-xs-12">
@@ -192,6 +192,18 @@
         <script id="sites-data" type="application/json">
             [
             {% for site in sites %}
+                 {
+                    "id": "{{ site.sampling_feature_id }}",
+                    "code": "{{ site.sampling_feature_code }}",
+                    "name": "{{ site.sampling_feature_name }}",
+                    "latitude": {{ site.latitude|default_if_none:0 }},
+                    "longitude": {{ site.longitude|default_if_none:0 }},
+                    "elevation": {{ site.elevation_m|default_if_none:'""' }},
+                    "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                 },
+            {% endfor %}
+            {% for site in followed_sites %}
                  {
                     "id": "{{ site.sampling_feature_id }}",
                     "code": "{{ site.sampling_feature_code }}",
