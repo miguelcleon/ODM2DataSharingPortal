@@ -15,11 +15,16 @@ class SiteResultSerializer:
         self.result = result
 
     def get_file_path(self):
-        filename = "{0}_{1}_{2}.csv".format(self.result.feature_action.sampling_feature.sampling_feature_code, self.result.variable.variable_code, self.result.result_id)
+        filename = "{0}_{1}_{2}.csv".format(self.result.feature_action.sampling_feature.sampling_feature_code,
+                                            self.result.variable.variable_code, self.result.result_id)
         return os.path.join('data', filename)
 
     def open_csv_file(self):
         csv_file = staticfiles_storage.open(self.get_file_path(), 'ab+')
+        return csv_file
+
+    def create_csv_file(self):
+        csv_file = staticfiles_storage.open(self.get_file_path(), 'wb')
         return csv_file
 
     def get_metadata_template(self):
@@ -41,7 +46,7 @@ class SiteResultSerializer:
         ).encode('utf-8')
 
     def build_csv(self):
-        with self.open_csv_file() as output_file:
+        with self.create_csv_file() as output_file:
             output_file.write(self.generate_metadata())
             csv_writer = UnicodeWriter(output_file)
             csv_writer.writerow(self.headers)
