@@ -136,7 +136,7 @@ class SiteDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data()
-        context['is_followed'] = self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
+        context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
         return context
 
 
