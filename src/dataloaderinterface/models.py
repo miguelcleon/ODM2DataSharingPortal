@@ -5,7 +5,8 @@ import uuid
 
 from django.db.models.aggregates import Min
 
-from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue
+from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue, EquipmentModel, Variable, \
+    Unit, Medium
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -84,6 +85,22 @@ class SiteSensor(models.Model):
     last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)
     activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
     activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
+
+    @property
+    def equipment_model(self):
+        return EquipmentModel.objects.filter(model_name=self.model_name).first()
+
+    @property
+    def variable(self):
+        return Variable.objects.filter(variable_code=self.variable_code).first()
+
+    @property
+    def unit(self):
+        return Unit.objects.filter(unit_name=self.unit_name).first()
+
+    @property
+    def medium(self):
+        return Medium.objects.filter(name=self.sampled_medium).first()
 
     @property
     def make_model(self):

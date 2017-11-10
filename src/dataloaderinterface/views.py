@@ -191,18 +191,16 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     def get_formset_initial_data(self, *args):
-        sampling_feature = self.get_object().sampling_feature
-        results = Result.objects.filter(feature_action__in=(sampling_feature.feature_actions.values_list('feature_action_id')))
+        registration = self.get_object()
         result_form_data = [
             {
-                'result_id': result.result_id,
-                # this is kinda ugly as shit but works. keep it to be safe, or don't. in case there's results without datalogger column.
-                'equipment_model': result.data_logger_file_columns.first() and result.data_logger_file_columns.first().instrument_output_variable.model,
-                'variable': result.variable,
-                'unit': result.unit,
-                'sampled_medium': result.sampled_medium
+                'result_id': sensor.result_id,
+                'equipment_model': sensor.equipment_model,
+                'variable': sensor.variable,
+                'unit': sensor.unit,
+                'sampled_medium': sensor.medium
             }
-            for result in results.prefetch_related('data_logger_file_columns__instrument_output_variable__model')
+            for sensor in registration.sensors.all()
         ]
         return result_form_data
 
@@ -231,7 +229,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
         if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
-            data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=sampling_feature.sampling_feature_code).first()
+            data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
 
             # Update sampling feature
@@ -473,7 +471,9 @@ def create_result(site_registration, result_form, sampling_feature, affiliation,
     site_sensor.save()
 
     # Create csv file to hold the sensor data.
-    # TODO: have this send a signal and the call to create the file be somewhere else. lol should've done it.
+    # TODO: have this send a signal and the call to create the file be somewhere else.
+    # lol should've done it.
+    # once more i regret not doing it...
     serializer = SiteResultSerializer(result)
     serializer.build_csv()
 
