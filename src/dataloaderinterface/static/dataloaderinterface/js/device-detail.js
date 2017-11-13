@@ -213,7 +213,7 @@ function getTimeSeriesData(sensorInfo) {
         complete: function (result) {
             if (result.data) {
                 var recentValues = getRecentData(result.data);
-                fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
+                fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), recentValues);
                 drawSparklineOnResize(sensorInfo, recentValues);
                 drawSparklinePlot(sensorInfo, recentValues);
             }

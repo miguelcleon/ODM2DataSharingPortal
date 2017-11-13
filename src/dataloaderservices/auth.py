@@ -10,6 +10,7 @@ class UUIDAuthentication(authentication.BaseAuthentication):
         if request.META['REQUEST_METHOD'] != 'POST':
             return None
 
+        print 'Request data: {}'.format(request.data)
         if 'HTTP_TOKEN' not in request.META:
             raise exceptions.ParseError("Registration Token not present in the request.")
         elif 'sampling_feature' not in request.data:

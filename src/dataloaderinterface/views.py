@@ -188,9 +188,12 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
     fields = []
 
     def get_success_url(self):
+        print 'Getting success url'
         return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     def get_formset_initial_data(self, *args):
+        if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
+            raise Http404
         registration = self.get_object()
         result_form_data = [
             {
@@ -205,6 +208,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         return result_form_data
 
     def get_context_data(self, **kwargs):
+        if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
+            raise Http404
         context = super(SiteUpdateView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
@@ -218,6 +223,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
+            raise Http404
         site_registration = SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code']).first()
         sampling_feature = site_registration.sampling_feature
 
