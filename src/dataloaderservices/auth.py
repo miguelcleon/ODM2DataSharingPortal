@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import authentication
 from rest_framework import exceptions
 
-from dataloaderinterface.models import DeviceRegistration
+from dataloaderinterface.models import DeviceRegistration, SiteRegistration
 
 
 class UUIDAuthentication(authentication.BaseAuthentication):
@@ -10,6 +10,7 @@ class UUIDAuthentication(authentication.BaseAuthentication):
         if request.META['REQUEST_METHOD'] != 'POST':
             return None
 
+        print 'Request data: {}'.format(request.data)
         if 'HTTP_TOKEN' not in request.META:
             raise exceptions.ParseError("Registration Token not present in the request.")
         elif 'sampling_feature' not in request.data:
@@ -17,13 +18,12 @@ class UUIDAuthentication(authentication.BaseAuthentication):
 
         # Get auth_token(uuid) from header, get registration object with auth_token, get the user from that registration, verify sampling_feature uuid is registered by this user, be happy.
         token = request.META['HTTP_TOKEN']
-        registration_queryset = DeviceRegistration.objects.using('default').filter(authentication_token=token)
-        if not registration_queryset.exists():
+        registration = SiteRegistration.objects.filter(registration_token=token).first()
+        if not registration:
             raise exceptions.PermissionDenied('Invalid Security Token')
-        registration = registration_queryset.get()
 
         # request needs to have the sampling feature uuid of the registration -
-        if str(registration.deployment_sampling_feature_uuid) != request.data['sampling_feature']:
+        if str(registration.sampling_feature.sampling_feature_uuid) != request.data['sampling_feature']:
             raise exceptions.AuthenticationFailed(
                 'Site Identifier is not associated with this Token')  # or other related exception
 

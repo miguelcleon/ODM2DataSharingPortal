@@ -4,13 +4,24 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <section class="sites-list col-lg-12">
+            <section class="sites-list col-xs-12 col-sm-5">
                 <div class="page-title">Registered Sites</div>
             </section>
+            <div class="col-xs-12 col-sm-7 text-right">
+                <a href="{% url 'status' %}"
+                   class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--default mdl-js-ripple-effect">
+                    <i class="material-icons center-icon">assignment</i> Status
+                </a>
+                <a href="{% url 'site_registration' %}" id="btn-new-site"
+                   class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                    <i class="material-icons center-icon">add_circle_outline</i> Register A New Site
+                </a>
+                <br><br>
+            </div>
         </div>
     </div>
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="full-width-map-container my-sites">
                 <div id="map"></div>
@@ -21,134 +32,225 @@
     <div class="container main-content">
         <div class="row">
             <div class="col-xs-12">
-                <br>
-                <a href="{% url 'site_registration' %}">
-                    <button id="btn-add-new-site"
-                            class="mdl-button mdl-js-button mdl-button--fab
-                   mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
-                        <i class="material-icons">add</i>
-                    </button>
-                </a>
-
-                <div class="mdl-tooltip" data-mdl-for="btn-add-new-site">
-                    Add New Site
-                </div>
+                <h4>My sites</h4>
             </div>
+            {% if sites %}
+                {% for site in sites %}
+                    <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
+                        <div class="mdl-card mdl-shadow--2dp site-card">
+                            <div class="mdl-card__title">
+                                <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
+                            </div>
 
-            {% for registration in object_list %}
-                <div class="col-xs-12 col-sm-3 site" data-site="{{ registration.sampling_feature.sampling_feature_id }}">
-                    <div class="mdl-card mdl-shadow--2dp site-card">
-                        <div class="mdl-card__title">
-                            <h2 class="mdl-card__title-text">{{ registration.device_name }}</h2>
+                            <div class="mdl-card__supporting-text">
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">settings_remote</i></td>
+                                        <td>
+                                            <span style="color:#92d050;"> Sampling Feature</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ site.sampling_feature_name }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">today</i></td>
+                                        <td>
+                                            <span style="color:#92d050;"> Registration Date</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ site.registration_date }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                {% with latest_result=site.sampling_feature.latest_updated_result %}
+                                    {% if latest_result %}
+                                    <table>
+                                        <tbody>
+                                        <tr>
+                                            <td><i class="material-icons site-card-icon">query_builder</i></td>
+                                            <td>
+                                                <span style="color:#92d050;"> Latest Measurement</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>{{ latest_result.result_datetime }} ({{ latest_result.result_datetime|timesince }} ago)</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+
+                            <div class="mdl-card__menu">
+                                <!-- Right aligned menu below button -->
+                                <button id="site-card-menu-{{ forloop.counter0 }}"
+                                        class="mdl-button mdl-js-button mdl-button--icon view-on-map">
+                                    <i class="material-icons">map</i>
+                                </button>
+                                <div class="mdl-tooltip" data-mdl-for="site-card-menu-{{ forloop.counter0 }}">
+                                    View on map
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="mdl-card__supporting-text">
-                            <table>
-                                <tbody>
-                                <tr>
-                                    <td><i class="material-icons site-card-icon">settings_remote</i></td>
-                                    <td>
-                                        <span> Sampling Feature</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td><strong>{{ registration.sampling_feature }}</strong></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <br>
-                            <table>
-                                <tbody>
-                                <tr>
-                                    <td><i class="material-icons site-card-icon">today</i></td>
-                                    <td>
-                                        <span> Registration Date</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td><strong>{{ registration.registration_date }}</strong></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="mdl-card__actions mdl-card--border">
-                            <a href="{% url 'site_detail' registration.registration_id %}"
-                               class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                                VIEW SITE
-                            </a>
-                        </div>
-
-                        <div class="mdl-card__menu">
-                            <!-- Right aligned menu below button -->
-                            <button id="site-card-menu-{{ forloop.counter0 }}"
-                                    class="mdl-button mdl-js-button mdl-button--icon">
-                                <i class="material-icons">more_vert</i>
-                            </button>
-
-                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                                for="site-card-menu-{{ forloop.counter0 }}">
-                                <li class="mdl-menu__item view-on-map">
-                                    <span class="mdl-list__item-primary-content">
-                                        View on map
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-
                     </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-xs-12">
+                    <p>No sites to display</p>
                 </div>
-            {% endfor %}
+            {% endif %}
 
+            <div class="col-xs-12">
+                <h4 style="margin-top: 40px;">Followed Sites</h4>
+            </div>
+            {% if followed_sites %}
+                {% for site in followed_sites %}
+                    <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
+                        <div class="mdl-card mdl-shadow--2dp site-card">
+                            <div class="mdl-card__title">
+                                <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
+                            </div>
+
+                            <div class="mdl-card__supporting-text">
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">settings_remote</i></td>
+                                        <td>
+                                            <span style="color:#92d050;"> Sampling Feature</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ site.sampling_feature_name }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">today</i></td>
+                                        <td>
+                                            <span style="color:#92d050;"> Registration Date</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ site.registration_date }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <br>
+                                {% with latest_result=site.sampling_feature.latest_updated_result %}
+                                    {% if latest_result %}
+                                    <table>
+                                        <tbody>
+                                        <tr>
+                                            <td><i class="material-icons site-card-icon">query_builder</i></td>
+                                            <td>
+                                                <span style="color:#92d050;"> Latest Measurement</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>{{ latest_result.result_datetime }} ({{ latest_result.result_datetime|timesince }} ago)</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="mdl-card__menu">
+                                <!-- Right aligned menu below button -->
+                                <button id="site-card-menu-{{ forloop.counter0 }}"
+                                        class="mdl-button mdl-js-button mdl-button--icon view-on-map">
+                                    <i class="material-icons">map</i>
+                                </button>
+                                <div class="mdl-tooltip" data-mdl-for="site-card-menu-{{ forloop.counter0 }}">
+                                    View on map
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-xs-12">
+                    <p>No followed sites to display</p>
+                </div>
+            {% endif %}
         </div>
 
         <script id="sites-data" type="application/json">
             [
-            {% for registration in object_list %}
-                {% with sampling_feature=registration.sampling_feature %}
-                {
-                    "id": "{{ sampling_feature.sampling_feature_id }}",
-                    "code": "{{ sampling_feature.sampling_feature_code }}",
-                    "name": "{{ sampling_feature.sampling_feature_name }}",
-                    "latitude": {{ sampling_feature.site.latitude|default_if_none:0 }},
-                    "longitude": {{ sampling_feature.site.longitude|default_if_none:0 }},
-                    "elevation": {{ sampling_feature.elevation_m|default_if_none:'""' }},
-                    "detail_link": "{% if registration %}{% url 'site_detail' registration.registration_id %}{% endif %}"
-                }{% if not forloop.last %},{% endif %}
-                {% endwith %}
+            {% for site in sites %}
+                 {
+                    "id": "{{ site.sampling_feature_id }}",
+                    "code": "{{ site.sampling_feature_code }}",
+                    "name": "{{ site.sampling_feature_name }}",
+                    "latitude": {{ site.latitude|default_if_none:0 }},
+                    "longitude": {{ site.longitude|default_if_none:0 }},
+                    "elevation": {{ site.elevation_m|default_if_none:'""' }},
+                    "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                 }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+            {% for site in followed_sites %}
+                 {
+                    "id": "{{ site.sampling_feature_id }}",
+                    "code": "{{ site.sampling_feature_code }}",
+                    "name": "{{ site.sampling_feature_name }}",
+                    "latitude": {{ site.latitude|default_if_none:0 }},
+                    "longitude": {{ site.longitude|default_if_none:0 }},
+                    "elevation": {{ site.elevation_m|default_if_none:'""' }},
+                    "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                 }{% if not forloop.last %},{% endif %}
             {% endfor %}
             ]
         </script>
 
         <script id="site-marker-content" type="text/plain">
-            <div>
-                <div id="marker-content">
-                    <div data-field="code" class="site-field">
-                        <span class="site-label">Site Code</span>
-                        <span class="site-data"></span>
-                    </div>
-                    <div data-field="name" class="site-field">
-                        <span class="site-label">Site Name</span>
-                        <span class="site-data"></span>
-                    </div>
-                    <div data-field="latitude" class="site-field">
-                        <span class="site-label">Latitude</span>
-                        <span class="site-data"></span>
-                    </div>
-                    <div data-field="longitude" class="site-field">
-                        <span class="site-label">Longitude</span>
-                        <span class="site-data"></span>
-                    </div>
-                    <div data-field="elevation" class="site-field">
-                        <span class="site-label">Elevation</span>
-                        <span class="site-data"></span> <span class="elevation-units">m</span>
-                    </div>
-                    <div class="site-link">
-                        <a>View data for this site</a>
-                    </div>
-                </div>
+            <table class="marker-info">
+                <tr data-field="code" class="site-field">
+                    <th><span class="site-label">Site Code</span></th>
+                    <td><span class="site-data"></span></td>
+                </tr>
+                <tr data-field="name" class="site-field">
+                    <th><span class="site-label">Site Name</span></th>
+                    <td><span class="site-data"></span></td>
+                </tr>
+                <tr data-field="latitude" class="site-field">
+                    <th><span class="site-label">Latitude</span></th>
+                    <td><span class="site-data"></span></td>
+                </tr>
+                <tr data-field="longitude" class="site-field">
+                    <th><span class="site-label">Longitude</span></th>
+                    <td><span class="site-data"></span></td>
+                </tr>
+                <tr data-field="elevation" class="site-field">
+                    <th><span class="site-label">Elevation</span></th>
+                    <td><span class="site-data"></span> <span class="elevation-units">m</span></td>
+                </tr>
+                <tr data-field="latest-measurement" class="site-field">
+                    <th><span class="site-label">Latest Measurement</span></th>
+                    <td><span class="site-data"></span></td>
+                </tr>
+                <tr class="site-link">
+                    <td colspan="2"><a>View data for this site</a></td>
+                </tr>
             </div>
         </script>
     </div>
@@ -166,6 +268,8 @@
 
 {% block scripts %}
     {{ block.super }}
+    <script src="{% static 'dataloaderinterface/js/bootstrap-toolkit.min.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/my-sites.js' %}"></script>
+
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}

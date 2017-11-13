@@ -15,14 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from dataloaderinterface.views import DevicesListView, DeviceDetailView, DeviceRegistrationView, DeviceUpdateView, \
-    HomeView, BrowseSitesListView
+from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, \
+    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
-    url(r'^sites/$', DevicesListView.as_view(), name='sites_list'),
-    url(r'^sites/browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
-    url(r'^sites/register/$', DeviceRegistrationView.as_view(), name='site_registration'),
-    url(r'^sites/register/update/(?P<slug>[-_\w]+)/$', DeviceUpdateView.as_view(), name='site_update'),
-    url(r'^sites/(?P<slug>[-_\w]+)/$', DeviceDetailView.as_view(), name='site_detail'),
+    url(r'^sites/$', SitesListView.as_view(), name='sites_list'),
+    url(r'^status/$', StatusListView.as_view(), name='status'),
+    url(r'^browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
+    url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
+    url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
+    url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
+
 ]

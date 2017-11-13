@@ -1,0 +1,163 @@
+{% load site staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <title>Sites Status</title>
+    <link rel="icon"
+          type="image/png"
+          href="{% static 'dataloaderinterface/images/favicon.png' %}">
+    <style>
+        body {
+            margin: 0 45px;
+        }
+        table {
+            border-collapse: collapse;
+            max-width: 100%;
+        }
+
+        table tr:not(.subheader):nth-child(odd) {
+            background-color: rgb(227, 236, 244);
+        }
+
+        tr:not(.subheader) th, td {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid black;
+        }
+
+        tr:not(.subheader) th {
+            background-color: steelblue;
+            color: #FFF;
+        }
+
+        tr:not(.subheader) td:first-child:not(.no-sites) {
+            font-weight: bold;
+        }
+
+        tr a {
+            text-decoration: none;
+        }
+
+        td.numeric {
+            text-align: right;
+        }
+
+        td.no-sites {
+            background-color: #FFF;
+            text-align: center;
+        }
+
+        tr.subheader {
+            padding-top: 20px;
+            padding-bottom: 10px;
+            border: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<h2>Sites Status</h2>
+<hr>
+<a href="{% url 'home' %}">Home</a>
+{% if user.is_authenticated %}
+    - <a href="{% url 'sites_list' %}">My Sites</a>
+{% endif %}
+- <a href="{% url 'browse_sites' %}">Browse Sites</a>
+
+<table>
+    <thead>
+    <tr class="subheader">
+        <th colspan="7"><h3>My Sites ({{ sites|length }})</h3></th>
+    </tr>
+    <tr>
+        <th>Site Code</th>
+        <th>Site Name</th>
+        <th>Latest Sample</th>
+        <th>Battery</th>
+        <th>Temperature</th>
+        <th>Free SRAM</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for site in sites %}
+        {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Volt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site|get_site_sensor:"EnviroDIY_Mayfly_FreeSRAM" %}
+            <tr>
+                <td><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_code }}</a></td>
+                <td>{{ site.sampling_feature_name }}</td>
+                <td>{% if not site.latest_measurement.value_datetime %}
+                    -{% else %}
+                    {{ site.latest_measurement.value_datetime }}
+                    ({{ site.latest_measurement.value_datetime|timesince }} ago)
+                {% endif %}</td>
+                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ sram.last_measurement.data_value|default:"-" }}</td>
+            </tr>
+        {% endwith %}
+    {% endfor %}
+    {% if sites|length == 0 %}
+        <tr>
+            <td colspan="7" class="no-sites">No sites to display</td>
+        </tr>
+    {% endif %}
+    <tr class="subheader">
+        <th colspan="7"><h3>Followed Sites ({{ followed_sites|length }})</h3></th>
+    </tr>
+    <tr>
+        <th>Site Code</th>
+        <th>Site Name</th>
+        <th>Latest Sample</th>
+        <th>Battery</th>
+        <th>Temperature</th>
+        <th>Free SRAM</th>
+    </tr>
+
+    {% for site in followed_sites %}
+        {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Volt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site|get_site_sensor:"EnviroDIY_Mayfly_FreeSRAM" %}
+            <tr>
+                <td><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_code }}</a></td>
+                <td>{{ site.sampling_feature_name }}</td>
+                <td>{% if not site.latest_measurement.value_datetime %}
+                    -{% else %}
+                    {{ site.latest_measurement.value_datetime }}
+                    ({{ site.latest_measurement.value_datetime|timesince }} ago)
+                {% endif %}</td>
+                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ sram.last_measurement.data_value|default:"-" }}</td>
+            </tr>
+        {% endwith %}
+    {% endfor %}
+    {% if followed_sites|length == 0 %}
+        <tr>
+            <td colspan="7" class="no-sites">No followed sites to display</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>
+{##}
+{#{% for site in sites %}#}
+{#    <h4>{{ site.sampling_feature_code }}</h4>#}
+{#    <table>#}
+{#    <thead>#}
+{#        <tr>#}
+{#        {% for sensor in site.sensors.all %}#}
+{#            <th>{{ sensor.variable_code }}</th>#}
+{#        {% endfor %}#}
+{#        </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#        <tr>#}
+{#        {% for sensor in site.sensors.all %}#}
+{#            <td>{% if sensor.last_measurement %}{{ sensor.last_measurement.data_value }}{% endif %}</td>#}
+{#        {% endfor %}#}
+{#        </tr>#}
+{#    </tbody>#}
+{#    </table>#}
+{#    <br><br>#}
+{#{% endfor %}#}
+</body>
+</html>

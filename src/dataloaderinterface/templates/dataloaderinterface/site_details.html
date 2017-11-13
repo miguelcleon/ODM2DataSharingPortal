@@ -1,0 +1,386 @@
+{% extends 'dataloaderinterface/base.html' %}
+{% load staticfiles %}
+{% load site %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'dataloaderinterface/css/dialog-polyfill.css' %}">
+{% endblock %}
+
+{% block forced_scripts %}
+    <script src="{% static 'dataloaderinterface/js/papaparse.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="ribbon ribbon-green"></div>
+
+    <div class="ribbon-container">
+        <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <section class="device-data col-sm-12">
+                    <header>
+                        <div class="page-title">
+                            {% if site.sampling_feature_name %}
+                                {{ site.sampling_feature_name }} ({{ site.sampling_feature_code }})
+                            {% else %}
+                                {{ site.sampling_feature_code }}
+                            {% endif %}
+                        </div>
+                        <div class="buttons-toolbar">
+                            <div class="row">
+                                    <div class="col-xs-12 col-sm-5">
+                                    {% if site.django_user_id != request.user.id %}
+                                        <div class="follow-status {% if is_followed %}following{% endif %}">
+
+                                            <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
+                                                <span id="follow-text" class="mdl-chip__text">
+                                                    You are following this site&nbsp;
+                                                    <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>
+                                                </span>
+                                            </span>
+
+                                            {# this is the button to trigger the follow/unfollow action #}
+                                            <form id="follow-site-form">
+                                                {% csrf_token %}
+                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">
+                                            </form>
+
+                                            <button id="btn-follow"
+                                                    class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                                                <i id="icon-follow" class="material-icons">add</i>
+                                                <i id="icon-unfollow" class="material-icons">remove</i>
+                                            </button>
+
+                                            <div class="mdl-tooltip" data-mdl-for="btn-follow">
+                                                {% if is_followed %}
+                                                    Unfollow
+                                                {% else %}
+                                                    Follow
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    </div>
+
+                                {# TODO: make and use template tag  #}
+                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                    <div class="col-xs-12 col-sm-7 text-right">
+                                        <div class="row">
+                                            <div class="col-sm-5 col-xs-12">
+                                                <a href="#" data-toggle="modal" data-target="#code-output-modal"
+                                                   class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                                   id="code-visiblity-toggle">
+                                                    <i class="material-icons center-icon clickable-float-left">code</i>
+                                                    View code snippet
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-3 col-xs-12">
+                                                <a href="{% url 'site_update' site.sampling_feature_code %}"
+                                                   id="btn-edit-site"
+                                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                                    <i class="material-icons center-icon">mode_edit</i> Edit Site
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-4 col-xs-12">
+                                                <a href="#" id="btn-delete-site"
+                                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                                    <i class="material-icons center-icon">delete_forever</i> Delete Site
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </header>
+
+                    <div class="row">
+                        <div class="registration-data col-xs-12 col-sm-6">
+                            {# Deployment fields #}
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric" id="site-table-header" colspan="2">
+                                        Details for {{ site.sampling_feature_code }}
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-user-o" aria-hidden="true"></i> Deployment By
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.person }} - {{ site.organization }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="material-icons">today</i> Registration Date
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.registration_date }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Deployment Date
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.deployment_date }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i> Latitude
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.latitude }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i> Longitude
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.longitude }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-long-arrow-up" aria-hidden="true"></i> Elevation (m)
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.elevation_m }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-circle" aria-hidden="true"></i> Site Type
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.site_type }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="detail-map-container col-xs-12 col-sm-6">
+                            <div id="map"></div>
+                            <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
+                            <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table>
+                                <tr>
+                                    <td><i class="material-icons text-muted">query_builder</i>&nbsp;&nbsp;</td>
+                                    <td><h5 class="section-title">Recent Measurements</h5></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="sparkline-plots col-xs-12">
+                            <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
+                                are shown on the sparkline plots. The plots are broken when there are gaps in the data
+                                longer than 6 hours. Plots shaded in green have recent data. Plots shaded in red have
+                                not reported data in the last 72 hours.
+                            </div>
+                            <div class="row">
+                                {% for sensor in site.sensors.all %}
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
+                                         data-variable-name="{{ sensor.variable_name }}"
+                                         data-variable-code="{{ sensor.variable_code }}"
+                                         data-csv-path="{% static sensor|get_sensor_csv_path %}">
+
+                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                            <div class="row">
+                                                <div class="col-xs-12 col-md-5 pull-right">
+                                                    {#  View data table button  #}
+                                                    <span id="table-trigger-{{ forloop.counter0 }}"
+                                                          class="fa fa-table table-trigger pull-right white-shadow"
+                                                          aria-hidden="true"></span>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="table-trigger-{{ forloop.counter0 }}">
+                                                        View Data Table
+                                                    </div>
+
+                                                    {#  Download data button  #}
+                                                    <a href="{% static sensor|get_sensor_csv_path %}">
+                                                        <span id="download-trigger-{{ forloop.counter0 }}"
+                                                              class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                        Download Data
+                                                    </div>
+
+                                                    {#  View on TSA button  #}
+                                                    {# TODO: (Juan) Add to url patterns #}
+                                                    <a target="_blank" href="http://data.envirodiy.org/tsa/?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
+                                                        <span id="tsa-trigger-{{ forloop.counter0 }}"
+                                                           class="fa fa-external-link tsa-trigger pull-right white-shadow"
+                                                           aria-hidden="true"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
+                                                        Open in Time Series Analyst
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-12 col-md-7 white-shadow variable-info">
+                                                    <table>
+                                                        <tr>
+                                                            <td>Variable:</td>
+                                                            <th>{{ sensor.variable_name }} </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Medium:</td>
+                                                            <th>{{ sensor.sampled_medium }}</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Sensor:</td>
+                                                            <th>{{ sensor.make_model }}</th>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <table class="full-width">
+                                            <tr>
+                                                <td class="variable-description">
+                                                    <div class="variable-data text-center">
+                                                        <div class="variable-name">{{ sensor.variable_name }}</div>
+                                                                <div class="latest-value"></div>
+                                                        <div class="unit">({{ sensor.unit_abbreviation }})</div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div id="graph{{ forloop.counter0 }}"
+                                                         class="graph-container">
+                                                    </div>
+                                                    <small style="margin-left:9px; display:block;"
+                                                           class="text-muted last-obs-container text-center">
+                                                        Date of last observation
+                                                        <div class="last-observation text-center">-</div>
+                                                    </small>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div id="clipboard-snackbar" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action hidden" type="button"></button>
+    </div>
+
+    <dialog class="mdl-dialog" id="data-table-dialog">
+        <h4 class="mdl-dialog__title"></h4>
+
+        <div class="mdl-dialog__content">
+            <div class="measurements-table">
+                {% for sensor in site.sensors.all %}
+                    <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
+                           width="100%" data-result-id="{{ sensor.result_id }}">
+                        <thead>
+                            <tr>
+                                <th class="mdl-data-table__cell--non-numeric">
+                                    Timestamp
+                                </th>
+                                <th class="mdl-data-table__cell--non-numeric">
+                                    UTC Offset
+                                </th>
+                                <th>
+                                    Value
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button dialog-close">Close</button>
+        </div>
+    </dialog>
+
+     <dialog class="mdl-dialog" id="site-delete-dialog">
+        <h4 class="mdl-dialog__title">Delete Site</h4>
+        <div class="mdl-dialog__content">
+            <div>
+                <p>
+                    <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
+                    <strong>Are you really really really sure you want to do this?</strong>
+                </p>
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+            <form method="POST" action="{% url 'site_delete' site.sampling_feature_code %}">
+                {% csrf_token %}
+                <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
+            </form>
+
+            <button type="button" class="mdl-button dialog-close">Close</button>
+        </div>
+    </dialog>
+
+    {% if site.django_user_id == request.user.id or request.user.is_staff %}
+    <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="vertical-alignment-helper">
+            <div class="modal-dialog vertical-align-center">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Code Output</h4>
+                    </div>
+                    <div class="modal-body">
+
+                                <pre class="form-control" id="code-output">
+const char *REGISTRATION_TOKEN = "{{ site.registration_token }}";   // Device registration token
+const char *SAMPLING_FEATURE = "{{ site.sampling_feature.sampling_feature_uuid }}";     // Sampling feature UUID
+const char *UUIDs[] =                                                      // UUID array for device sensors
+{{% for sensor in site.sensors.all %}
+    "{{ sensor.result.result_uuid }}"{% if not forloop.last %},  {% else %}   {% endif %} // {{ sensor.variable_name }} ({{ sensor.variable_code }}){% endfor %}
+};</pre>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button data-dismiss="modal"
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                            Close
+                        </button>
+                        <button
+                                class="clipboard-copy btn-copy mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                                data-target="code-output">
+                            <i class="material-icons">content_copy</i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block services_urls %}
+    {{ block.super }}
+    <input id="follow-site-api" type="hidden" value="{% url 'follow_site' %}">
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'dataloaderinterface/js/bootstrap-toolkit.min.js' %}"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+{% endblock %}

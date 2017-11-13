@@ -20,22 +20,6 @@ span.map-tip {
     padding: 7px 15px;
 }
 
-div#marker-content {
-    padding: 5px;
-}
-
-.site-field, .site-link {
-    padding: 3px;
-}
-
-span.site-label {
-    font-weight: bold;
-}
-
-span.site-label::after {
-    content: ': ';
-}
-
 .browse-sites-header {
     display: inline-block;
     position: absolute;
@@ -49,4 +33,5 @@ span.site-label::after {
 
 .browse-sites-header .page-title {
     margin: 0;
+    font-size: 14px;
 }
