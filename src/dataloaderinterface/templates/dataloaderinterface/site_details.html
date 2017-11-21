@@ -190,7 +190,7 @@
                                     <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
                                          data-variable-name="{{ sensor.variable_name }}"
                                          data-variable-code="{{ sensor.variable_code }}"
-                                         data-csv-path="{% static sensor|get_sensor_csv_path %}">
+                                         data-influx-url="{{ sensor.influx_url }}">
 
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
@@ -205,7 +205,7 @@
                                                     </div>
 
                                                     {#  Download data button  #}
-                                                    <a href="{% static sensor|get_sensor_csv_path %}">
+                                                    <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
                                                         <span id="download-trigger-{{ forloop.counter0 }}"
                                                               class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
                                                     </a>
@@ -215,8 +215,7 @@
                                                     </div>
 
                                                     {#  View on TSA button  #}
-                                                    {# TODO: (Juan) Add to url patterns #}
-                                                    <a target="_blank" href="http://envirodiysandbox.usu.edu/tsa/?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
+                                                    <a target="_blank" href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
                                                         <span id="tsa-trigger-{{ forloop.counter0 }}"
                                                            class="fa fa-external-link tsa-trigger pull-right white-shadow"
                                                            aria-hidden="true"></span>

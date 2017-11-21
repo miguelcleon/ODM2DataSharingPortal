@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from dataloaderservices.views import TimeSeriesValuesApi, OrganizationApi, ModelVariablesApi, ResultApi, FollowSiteApi
+from dataloaderservices.views import TimeSeriesValuesApi, OrganizationApi, ModelVariablesApi, ResultApi, FollowSiteApi, \
+    CSVDataApi
 
 urlpatterns = [
     url(r'^api/data-stream/$', TimeSeriesValuesApi.as_view(), name='api_post'),
+    url(r'^api/csv-values/$', CSVDataApi.as_view(), name='csv_data_service'),
     url(r'^api/follow-site/$', FollowSiteApi.as_view(), name='follow_site'),
     url(r'^api/sensor-form/$', ResultApi.as_view(), name='result_validation_service'),
     url(r'^api/organization/$', OrganizationApi.as_view(), name='organization_service'),

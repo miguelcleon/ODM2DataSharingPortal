@@ -1,6 +1,8 @@
 from datetime import datetime
 from uuid import uuid4
 
+from django.conf import settings
+
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
@@ -18,7 +20,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
-from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
@@ -136,6 +137,7 @@ class SiteDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data()
+        context['tsa_url'] = settings.TSA_URL
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
         return context
 
@@ -469,13 +471,6 @@ def create_result(site_registration, result_form, sampling_feature, affiliation,
 
     site_sensor = SiteSensor(**sensor_data)
     site_sensor.save()
-
-    # Create csv file to hold the sensor data.
-    # TODO: have this send a signal and the call to create the file be somewhere else.
-    # lol should've done it.
-    # once more i regret not doing it...
-    serializer = SiteResultSerializer(result)
-    serializer.build_csv()
 
     return result
 

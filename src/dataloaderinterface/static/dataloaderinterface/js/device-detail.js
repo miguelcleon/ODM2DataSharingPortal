@@ -204,21 +204,49 @@ function drawSparklinePlot(seriesInfo, seriesData) {
 }
 
 function getTimeSeriesData(sensorInfo) {
-    Papa.parse(sensorInfo['csvPath'], {
-        download: true,
-        header: true,
-        worker: true,
-        comments: "#",
-        skipEmptyLines: true,
-        complete: function (result) {
-            if (result.data) {
-                var recentValues = getRecentData(result.data);
-                fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
-                drawSparklineOnResize(sensorInfo, recentValues);
-                drawSparklinePlot(sensorInfo, recentValues);
-            }
+    $.ajax({
+        url: sensorInfo['influxUrl']
+    }).done(function(influx_data) {
+        var resultSet = influx_data.results.shift();
+        if (resultSet.series && resultSet.series.length) {
+            var influxSeries = resultSet.series.shift();
+            var values = influxSeries.values.map(function(influxValue) {
+                return {
+                    DateTime: influxValue[0].match(/^(\d{4}\-\d\d\-\d\d([tT][\d:]*)?)/).shift(),
+                    Value: influxValue[1],
+                    TimeOffset: influxValue[2]
+                }
+            });
+
+            var recentValues = getRecentData(values);
+            fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), values);
+            drawSparklineOnResize(sensorInfo, recentValues);
+            drawSparklinePlot(sensorInfo, recentValues);
+
+
+        } else {
+             console.error('No data values were found for this site');
+             console.info(series.getdatainflux);
         }
-    });
+    }).fail(function(failedData) {
+        console.log('data failed to load.');
+
+    })
+    // Papa.parse(sensorInfo['csvPath'], {
+    //     download: true,
+    //     header: true,
+    //     worker: true,
+    //     comments: "#",
+    //     skipEmptyLines: true,
+    //     complete: function (result) {
+    //         if (result.data) {
+    //             var recentValues = getRecentData(result.data);
+    //             fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
+    //             drawSparklineOnResize(sensorInfo, recentValues);
+    //             drawSparklinePlot(sensorInfo, recentValues);
+    //         }
+    //     }
+    // });
 }
 
 $(document).ready(function () {

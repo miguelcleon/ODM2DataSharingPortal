@@ -10,6 +10,8 @@ from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesRe
 from django.contrib.auth.models import User
 from django.db import models
 
+from django.conf import settings
+
 
 class SiteRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
@@ -87,6 +89,10 @@ class SiteSensor(models.Model):
     activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
     @property
+    def result(self):
+        return Result.objects.get(pk=self.result_id)
+
+    @property
     def equipment_model(self):
         return EquipmentModel.objects.filter(model_name=self.model_name).first()
 
@@ -107,16 +113,16 @@ class SiteSensor(models.Model):
         return "{0}_{1}".format(self.model_manufacturer, self.model_name)
 
     @property
-    def sensor_identity(self):
-        return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
-
-    @property
     def last_measurement(self):
         return TimeSeriesResultValue.objects.filter(pk=self.last_measurement_id).first()
 
     @property
-    def result(self):
-        return Result.objects.get(pk=self.result_id)
+    def sensor_identity(self):
+        return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
+
+    @property
+    def influx_url(self):
+        return settings.INFLUX_URL_QUERY.format(str(self.result_uuid).replace('-', '_'))
 
     def __str__(self):
         return '%s %s' % (self.variable_name, self.unit_abbreviation)

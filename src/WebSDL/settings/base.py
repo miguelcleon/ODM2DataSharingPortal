@@ -164,3 +164,7 @@ EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
 EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
 DATETIME_FORMAT = "N j, Y, H:m"
+
+INFLUX_URL_QUERY = data['influx_query']
+
+TSA_URL = data['tsa_url'] if 'tsa_url' in data else ""

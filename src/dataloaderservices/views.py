@@ -1,6 +1,14 @@
-from datetime import datetime, timedelta
+import codecs
+import os
+from datetime import timedelta
 
-from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel, TimeSeriesResult
+from StringIO import StringIO
+
+from django.http.response import HttpResponse
+from django.views.generic.base import View
+from unicodecsv.py2 import UnicodeWriter
+
+from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel, TimeSeriesResult, Result
 from django.db.models.expressions import F
 # Create your views here.
 from django.utils.dateparse import parse_datetime
@@ -10,7 +18,6 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import ResultForm
 from dataloaderinterface.models import SiteSensor, SiteRegistration
 from dataloaderservices.auth import UUIDAuthentication
@@ -77,6 +84,71 @@ class FollowSiteApi(APIView):
             request.user.followed_sites.remove(site)
 
         return Response({}, status.HTTP_200_OK)
+
+
+class CSVDataApi(View):
+    authentication_classes = ()
+    csv_headers = ('DateTime', 'TimeOffset', 'DateTimeUTC', 'Value', 'CensorCode', 'QualifierCode',)
+    date_format = '%Y-%m-%d %H:%M:%S'
+
+    def get(self, request):
+        if 'result_id' not in request.GET:
+            return Response({'error': 'Result Id not received.'})
+
+        result_id = request.GET['result_id']
+        if result_id == '':
+            return Response({'error': 'Empty Result Id received.'})
+
+        time_series_result = TimeSeriesResult.objects\
+            .prefetch_related('values')\
+            .select_related('result__feature_action__sampling_feature', 'result__variable')\
+            .filter(pk=result_id)\
+            .first()
+
+        if not time_series_result:
+            return Response({'error': 'Time Series Result not found.'})
+        result = time_series_result.result
+
+        csv_file = StringIO()
+        csv_writer = UnicodeWriter(csv_file)
+        csv_file.write(self.generate_metadata(time_series_result.result))
+        csv_writer.writerow(self.csv_headers)
+        csv_writer.writerows(self.get_data_values(time_series_result))
+
+        filename = "{0}_{1}_{2}.csv".format(result.feature_action.sampling_feature.sampling_feature_code,
+                                            result.variable.variable_code, result.result_id)
+
+        response = HttpResponse(csv_file.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="%s.csv"' % filename
+        return response
+
+    def get_data_values(self, result):
+        data_values = result.values.all()
+        return [(data_value.value_datetime.strftime(self.date_format),
+                 '{0}:00'.format(data_value.value_datetime_utc_offset),
+                 (data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset)).strftime(self.date_format),
+                 data_value.data_value,
+                 data_value.censor_code_id,
+                 data_value.quality_code_id)
+                for data_value in data_values]
+
+    def get_metadata_template(self):
+        with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
+            return metadata_file.read()
+
+    def generate_metadata(self, result):
+        action = result.feature_action.action
+        equipment_model = result.data_logger_file_columns.first().instrument_output_variable.model
+        affiliation = action.action_by.filter(is_action_lead=True).first().affiliation
+        return self.get_metadata_template().format(
+            sampling_feature=result.feature_action.sampling_feature,
+            variable=result.variable,
+            unit=result.unit,
+            model=equipment_model,
+            result=result,
+            action=action,
+            affiliation=affiliation
+        ).encode('utf-8')
 
 
 class TimeSeriesValuesApi(APIView):
@@ -151,10 +223,5 @@ class TimeSeriesValuesApi(APIView):
 
             site_sensor.save(update_fields=['last_measurement_id', 'activation_date', 'activation_date_utc_offset'])
             result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset', 'valid_datetime', 'valid_datetime_utc_offset'])
-
-            # Write data to result's csv file
-            # TODO: have this send a signal and the call to add data to the file be somewhere else.
-            serializer = SiteResultSerializer(result)
-            serializer.add_data_value(result_value)
 
         return Response({}, status.HTTP_201_CREATED)
