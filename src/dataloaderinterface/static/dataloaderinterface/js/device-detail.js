@@ -62,16 +62,16 @@ function bindDeleteDialogEvents() {
 }
 
 // Returns the most recent 72 hours since the last reading
-function getRecentData(timeSeriesData) {
-    var lastRead = Math.max.apply(Math, timeSeriesData.map(function(value){
-        return new Date(value.DateTime);
-    }));
-
-    var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
-    return timeSeriesData.filter(function (value) {
-        return (new Date(value.DateTime)) >= dataTimeOffset;
-    });
-}
+// function getRecentData(timeSeriesData) {
+//     var lastRead = Math.max.apply(Math, timeSeriesData.map(function(value){
+//         return new Date(value.DateTime);
+//     }));
+//
+//     var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
+//     return timeSeriesData.filter(function (value) {
+//         return (new Date(value.DateTime)) >= dataTimeOffset;
+//     });
+// }
 
 function fillValueTable(table, data) {
     var rows = data.map(function (dataValue) {
@@ -93,7 +93,7 @@ function drawSparklineOnResize(seriesInfo, seriesData) {
 function drawSparklinePlot(seriesInfo, seriesData) {
     var card = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"]');
     var plotBox = card.find(".graph-container");
-    var $lastObservation = card.find(".last-observation");
+    // var $lastObservation = card.find(".last-observation");
 
     plotBox.empty();
 
@@ -119,15 +119,17 @@ function drawSparklinePlot(seriesInfo, seriesData) {
         return;
     }
 
-    $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
+    // $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
 
     var lastRead = Math.max.apply(Math, seriesData.map(function(value){
         return new Date(value.DateTime);
     }));
 
-    $lastObservation.text(formatDate(lastRead));
+    // $lastObservation.text(formatDate(lastRead)); //
 
-    var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
+    var dataTimeOffset = Math.min.apply(Math, seriesData.map(function(value){
+        return new Date(value.DateTime);
+    }));
 
     var xAxis = d3.scaleTime().range([0, width]);
     var yAxis = d3.scaleLinear().range([height, 0]);
@@ -217,11 +219,11 @@ function getTimeSeriesData(sensorInfo) {
                     TimeOffset: influxValue[2]
                 }
             });
-
-            var recentValues = getRecentData(values);
+            //
+            // var recentValues = getRecentData(values);
             fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), values);
-            drawSparklineOnResize(sensorInfo, recentValues);
-            drawSparklinePlot(sensorInfo, recentValues);
+            drawSparklineOnResize(sensorInfo, values);
+            drawSparklinePlot(sensorInfo, values);
 
 
         } else {
@@ -267,10 +269,10 @@ $(document).ready(function () {
             data: {
                 csrfmiddlewaretoken: followForm.find('input[name="csrfmiddlewaretoken"]').val(),
                 sampling_feature_code: followForm.find('input[name="sampling_feature_code"]').val(),
-                action: (following)?'unfollow':'follow'
+                action: (following)? 'unfollow': 'follow'
             }}).done(function(data) {
                 statusContainer.toggleClass("following");
-                tooltip.text((following)?'Follow':'Unfollow');
+                tooltip.text((following)? 'Follow': 'Unfollow');
             });
     });
 

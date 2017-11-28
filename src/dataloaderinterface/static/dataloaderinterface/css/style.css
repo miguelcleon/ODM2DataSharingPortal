@@ -290,6 +290,7 @@ svg.not-stale {
 
 .last-observation {
     font-weight: bold;
+    display: block;
 }
 
 .plot_box .mdl-card__actions {

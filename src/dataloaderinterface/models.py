@@ -122,7 +122,14 @@ class SiteSensor(models.Model):
 
     @property
     def influx_url(self):
-        return settings.INFLUX_URL_QUERY.format(str(self.result_uuid).replace('-', '_'))
+        if not self.last_measurement_id:
+            return
+
+        return settings.INFLUX_URL_QUERY.format(
+            result_uuid=str(self.result_uuid).replace('-', '_'),
+            last_measurement=self.last_measurement.value_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            days_of_data=settings.SENSOR_DATA_PERIOD
+        )
 
     def __str__(self):
         return '%s %s' % (self.variable_name, self.unit_abbreviation)
