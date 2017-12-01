@@ -249,7 +249,7 @@
                                                 <td class="variable-description">
                                                     <div class="variable-data text-center">
                                                         <div class="variable-name">{{ sensor.variable_name }}</div>
-                                                                <div class="latest-value">{{ sensor.last_measurement.data_value|default:"-" }}</div>
+                                                                <div class="latest-value">{{ sensor.last_measurement_value|default:"-" }}</div>
                                                         <div class="unit">({{ sensor.unit_abbreviation }})</div>
                                                     </div>
                                                 </td>
@@ -259,7 +259,7 @@
                                                     </div>
                                                     <small style="margin-left:9px; display:block;" class="text-muted last-obs-container text-center">
                                                         Date of last observation
-                                                        <span class="last-observation text-center">{{ sensor.last_measurement.value_datetime|default:"-" }}</span>
+                                                        <span class="last-observation text-center">{{ sensor.last_measurement_datetime|default:"-" }}</span>
                                                     </small>
                                                 </td>
                                             </tr>

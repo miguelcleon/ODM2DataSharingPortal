@@ -135,6 +135,9 @@ class SiteDetailView(DetailView):
     slug_url_kwarg = 'sampling_feature_code'
     template_name = 'dataloaderinterface/site_details.html'
 
+    def get_queryset(self):
+        return super(SiteDetailView, self).get_queryset().prefetch_related('sensors')
+
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data()
         context['tsa_url'] = settings.TSA_URL
