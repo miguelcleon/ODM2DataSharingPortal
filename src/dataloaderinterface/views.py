@@ -2,6 +2,8 @@ from datetime import datetime
 from uuid import uuid4
 
 from django.conf import settings
+from django.db.models.aggregates import Max
+from django.db.models.expressions import F
 
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
@@ -126,6 +128,9 @@ class BrowseSitesListView(ListView):
     model = SiteRegistration
     context_object_name = 'sites'
     template_name = 'dataloaderinterface/browse-sites.html'
+
+    def get_queryset(self):
+        return super(BrowseSitesListView, self).get_queryset().prefetch_related('sensors').annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
 
 class SiteDetailView(DetailView):

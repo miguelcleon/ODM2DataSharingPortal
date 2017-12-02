@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 # Create your models here.
 import uuid
 
-from django.db.models.aggregates import Min
+from django.db.models.aggregates import Min, Max
 
 from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue, EquipmentModel, Variable, \
     Unit, Medium
@@ -49,20 +49,20 @@ class SiteRegistration(models.Model):
     #     min_datetime = self.sensors.aggregate(first_light=Min('activation_date'))
     #     return min_datetime['first_light']
 
-    @property
-    def last_measurements(self):
-        if not self.deployment_date:
-            return []
+    # @property
+    # def last_measurements(self):
+    #     if not self.deployment_date:
+    #         return []
+    #
+    #     measurement_ids = [long(measurement.last_measurement_id) for measurement in self.sensors.all() if measurement.last_measurement_id]
+    #     measurements = TimeSeriesResultValue.objects.filter(pk__in=measurement_ids)
+    #     return measurements
 
-        measurement_ids = [long(measurement.last_measurement_id) for measurement in self.sensors.all() if measurement.last_measurement_id]
-        measurements = TimeSeriesResultValue.objects.filter(pk__in=measurement_ids)
-        return measurements
-
-    @property
-    def latest_measurement(self):
-        if not self.deployment_date:
-            return None
-        return self.last_measurements.latest('value_datetime')
+    # @property
+    # def latest_measurement(self):
+    #     if not self.deployment_date:
+    #         return None
+    #     return self.sensors.aggregate(last_update=Max('last_measurement_datetime'))['last_update']
 
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
