@@ -102,11 +102,17 @@ class SitesListView(LoginRequiredMixin, ListView):
     template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
-        return super(SitesListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+        return super(SitesListView, self).get_queryset()\
+            .filter(django_user_id=self.request.user.id)\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
     def get_context_data(self, **kwargs):
         context = super(SitesListView, self).get_context_data()
-        context['followed_sites'] = self.request.user.followed_sites.all()
+        context['followed_sites'] = self.request.user.followed_sites\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))\
+            .all()
         return context
 
 
@@ -116,7 +122,10 @@ class StatusListView(ListView):
     template_name = 'dataloaderinterface/status.html'
 
     def get_queryset(self):
-        return super(StatusListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+        return super(StatusListView, self).get_queryset()\
+            .filter(django_user_id=self.request.user.id)\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
@@ -130,7 +139,9 @@ class BrowseSitesListView(ListView):
     template_name = 'dataloaderinterface/browse-sites.html'
 
     def get_queryset(self):
-        return super(BrowseSitesListView, self).get_queryset().prefetch_related('sensors').annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
+        return super(BrowseSitesListView, self).get_queryset()\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
 
 class SiteDetailView(DetailView):
