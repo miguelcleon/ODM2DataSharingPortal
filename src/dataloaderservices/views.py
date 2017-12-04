@@ -216,6 +216,7 @@ class TimeSeriesValuesApi(APIView):
 
 
             site_sensor.last_measurement_id = result_value.value_id
+            site_sensor.last_measurement_value = result_value.data_value
             site_sensor.last_measurement_datetime = result_value.value_datetime
             site_sensor.last_measurement_datetime_utc_offset = result_value.value_datetime_utc_offset
 
@@ -230,7 +231,13 @@ class TimeSeriesValuesApi(APIView):
                     site_sensor.registration.deployment_date_utc_offset = utc_offset
                     site_sensor.registration.save(update_fields=['deployment_date', 'deployment_date_utc_offset'])
 
-            site_sensor.save(update_fields=['last_measurement_id', 'last_measurement_datetime', 'last_measurement_datetime_utc_offset', 'activation_date', 'activation_date_utc_offset'])
-            result.save(update_fields=['result_datetime', 'value_count', 'result_datetime_utc_offset', 'valid_datetime', 'valid_datetime_utc_offset'])
+            site_sensor.save(update_fields=[
+                'last_measurement_id', 'last_measurement_value', 'last_measurement_datetime',
+                'last_measurement_datetime_utc_offset', 'activation_date', 'activation_date_utc_offset'
+            ])
+            result.save(update_fields=[
+                'result_datetime', 'value_count', 'result_datetime_utc_offset',
+                'valid_datetime', 'valid_datetime_utc_offset'
+            ])
 
         return Response({}, status.HTTP_201_CREATED)

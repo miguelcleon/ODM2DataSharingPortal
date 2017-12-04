@@ -29,7 +29,8 @@ class Command(BaseCommand):
 
             elif sensor.last_measurement_id == last_measurement.value_id \
                     and sensor.last_measurement_datetime == last_measurement.value_datetime\
-                    and sensor.last_measurement_utc_offset == last_measurement.value_datetime_utc_offset:
+                    and sensor.last_measurement_utc_offset == last_measurement.value_datetime_utc_offset\
+                    and sensor.last_measurement_value == last_measurement.data_value:
                 print('- %s (%s) sensor is up to date.' % (sensor.sensor_identity, sensor.result_id))
                 continue
 
@@ -40,6 +41,7 @@ class Command(BaseCommand):
                 last_measurement.value_datetime
             ))
             sensor.last_measurement_id = last_measurement.value_id
+            sensor.last_measurement_value = last_measurement.data_value
             sensor.last_measurement_datetime = last_measurement.value_datetime
             sensor.last_measurement_utc_offset = last_measurement.value_datetime_utc_offset
-            sensor.save(update_fields=['last_measurement_id', 'last_measurement_datetime', 'last_measurement_utc_offset'])
+            sensor.save(update_fields=['last_measurement_id', 'last_measurement_value', 'last_measurement_datetime', 'last_measurement_utc_offset'])
