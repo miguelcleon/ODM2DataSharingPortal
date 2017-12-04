@@ -7,10 +7,10 @@ register = template.Library()
 
 @register.filter(name='get_site_sensor')
 def get_site_sensor(site, variable_code):
-    if not isinstance(site, SiteRegistration):
+    if not isinstance(site, SiteRegistration) or not site.status_sensors:
         return
 
-    return site.sensors.filter(variable_code=variable_code).first()
+    return next((sensor for sensor in site.status_sensors if sensor.variable_code==variable_code), None)
 
 
 @register.filter(name='can_administer_site')

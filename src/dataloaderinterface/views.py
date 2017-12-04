@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.db.models.aggregates import Max
 from django.db.models.expressions import F
+from django.db.models.query import Prefetch
 
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
@@ -124,12 +125,21 @@ class StatusListView(ListView):
     def get_queryset(self):
         return super(StatusListView, self).get_queryset()\
             .filter(django_user_id=self.request.user.id)\
-            .prefetch_related('sensors')\
+            .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
+                'EnviroDIY_Mayfly_Volt',
+                'EnviroDIY_Mayfly_Temp',
+                'EnviroDIY_Mayfly_FreeSRAM'
+            ]), to_attr='status_sensors')) \
             .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
-        context['followed_sites'] = self.request.user.followed_sites.all()
+        context['followed_sites'] = self.request.user.followed_sites \
+            .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
+                'EnviroDIY_Mayfly_Volt',
+                'EnviroDIY_Mayfly_Temp',
+                'EnviroDIY_Mayfly_FreeSRAM'
+            ]), to_attr='status_sensors'))
         return context
 
 
