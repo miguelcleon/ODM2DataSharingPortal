@@ -134,10 +134,15 @@ function drawSparklinePlot(seriesInfo, seriesData) {
     var xAxis = d3.scaleTime().range([0, width]);
     var yAxis = d3.scaleLinear().range([height, 0]);
 
+    var yDomain = d3.extent(seriesData, function(d) {
+        return parseFloat(d.Value);
+    });
+    var yPadding = (yDomain[1] - yDomain[0]) / 20;  // 5% padding
+    yDomain[0] -= yPadding;
+    yDomain[1] += yPadding;
+
     xAxis.domain([dataTimeOffset, lastRead]);
-    yAxis.domain(d3.extent(seriesData, function(d) {
-        return parseInt(d.Value);
-    }));
+    yAxis.domain(yDomain);
 
     var line = d3.line()
         .x(function(d) {
