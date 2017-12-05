@@ -314,7 +314,7 @@ svg.not-stale {
     width: 100%;
 }
 
-.buttons-toolbar .button-link:hover {
+.button-link:hover {
     text-decoration: none;
 }
 
