@@ -121,14 +121,18 @@
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="material-icons">today</i> Registration Date
                                     </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ site.registration_date }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        {% if site.registration_date %}{{ site.registration_date }}{% else %}-{% endif %}
+                                    </td>
                                 </tr>
 
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Deployment Date
                                     </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ site.deployment_date }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        {% if site.deployment_date %}{{ site.deployment_date }}{% else %}-{% endif %}
+                                    </td>
                                 </tr>
 
                                 <tr>
