@@ -29,7 +29,7 @@
                         <div class="buttons-toolbar">
                             <div class="row">
                                     <div class="col-xs-12 col-sm-5">
-                                    {% if site.django_user_id != request.user.id %}
+                                    {% if request.user.id and site.django_user_id != request.user.id %}
                                         <div class="follow-status {% if is_followed %}following{% endif %}">
 
                                             <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
