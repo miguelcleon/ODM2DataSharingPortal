@@ -137,7 +137,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
     var yDomain = d3.extent(seriesData, function(d) {
         return parseFloat(d.Value);
     });
-    var yPadding = parseInt((yDomain[1] - yDomain[0]) / 20);  // 5% padding
+    var yPadding = (yDomain[1] - yDomain[0]) / 20;  // 5% padding
     yDomain[0] -= yPadding;
     yDomain[1] += yPadding;
 
