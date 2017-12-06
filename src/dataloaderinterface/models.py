@@ -163,3 +163,24 @@ class ODM2User(models.Model):
 
     def can_administer_site(self, registration):
         return self.user.is_staff or registration.user == self
+
+
+class HydroshareUser(models.Model):
+    user = models.OneToOneField(ODM2User)
+    oauth_token = models.CharField(max_length=255)
+    update_freq = models.IntegerField(default=None)
+    is_enabled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username
+
+
+class HydroshareSync(models.Model):
+    # hydroshare_user references a HydroshareUser object (not an ODM2User object).
+    hydroshare_user = models.OneToOneField(HydroshareUser)
+    # timestamp for when data was synced with Hydroshare.
+    sync_date = models.DateTimeField(default=datetime.now())
+    # sync type, either 'manual' or 'scheduled'.
+    sync_type = models.CharField(max_length=255, default='manual')
+    # resultid corresponds to the PK in the `odm2` database on the `results.resultid` column.
+    resultid = models.IntegerField(db_column='odm2_results_resultid')
