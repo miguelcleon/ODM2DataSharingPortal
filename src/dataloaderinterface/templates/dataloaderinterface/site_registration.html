@@ -30,7 +30,7 @@
                             <fieldset>
                                 <br>
                                 <div class="row">
-                                    <div class="form-group col-sm-4 col-xs-12 sampling-feature-fields">
+                                    <div class="form-group col-sm-4 col-sm-12 sampling-feature-fields">
                                         {% if user.is_staff %}
                                             {% for field in action_by_form %}
                                                 <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
@@ -71,7 +71,7 @@
                                             </div>
                                         {% endfor %}
                                     </div>
-                                    <div class="form-group col-sm-8 col-xs-12 map-container">
+                                    <div class="form-group col-sm-8 col-sm-12 map-container">
                                         <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
                                         <div id="map"></div>
                                     </div>

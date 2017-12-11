@@ -4,10 +4,10 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <section class="sites-list col-xs-12 col-sm-5">
+            <section class="sites-list col-sm-12 col-sm-5">
                 <div class="page-title">Registered Sites</div>
             </section>
-            <div class="col-xs-12 col-sm-7 text-right">
+            <div class="col-sm-12 col-sm-7 text-right">
                 <a href="{% url 'status' %}"
                    class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--default mdl-js-ripple-effect">
                     <i class="material-icons center-icon">assignment</i> Status
@@ -31,12 +31,12 @@
 
     <div class="container main-content">
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-sm-12">
                 <h4>My sites</h4>
             </div>
             {% if sites %}
                 {% for site in sites %}
-                    <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
+                    <div class="col-sm-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
                         <div class="mdl-card mdl-shadow--2dp site-card">
                             <div class="mdl-card__title">
                                 <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
@@ -105,17 +105,17 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="col-xs-12">
+                <div class="col-sm-12">
                     <p>No sites to display</p>
                 </div>
             {% endif %}
 
-            <div class="col-xs-12">
+            <div class="col-sm-12">
                 <h4 style="margin-top: 40px;">Followed Sites</h4>
             </div>
             {% if followed_sites %}
                 {% for site in followed_sites %}
-                    <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
+                    <div class="col-sm-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
                         <div class="mdl-card mdl-shadow--2dp site-card">
                             <div class="mdl-card__title">
                                 <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
@@ -183,7 +183,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="col-xs-12">
+                <div class="col-sm-12">
                     <p>No followed sites to display</p>
                 </div>
             {% endif %}

@@ -28,45 +28,51 @@
                         </div>
                         <div class="buttons-toolbar">
                             <div class="row">
-                                    <div class="col-xs-12 col-sm-5">
+                                    <div class="col-sm-12">
                                     {% if request.user.id and site.django_user_id != request.user.id %}
-                                        <div class="follow-status {% if is_followed %}following{% endif %}">
+                                        <div class="follow-status">
 
-                                            <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
-                                                <span id="follow-text" class="mdl-chip__text">
-                                                    You are following this site&nbsp;
-                                                    <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>
-                                                </span>
-                                            </span>
-
+{#                                            <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">#}
+{#                                                <span id="follow-text" class="mdl-chip__text">#}
+{#                                                    You are following this site&nbsp;#}
+{#                                                    <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>#}
+{#                                                </span>#}
+{#                                            </span>#}
+{##}
                                             {# this is the button to trigger the follow/unfollow action #}
-                                            <form id="follow-site-form">
-                                                {% csrf_token %}
-                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">
-                                            </form>
+{#                                            <form id="follow-site-form">#}
+{#                                                {% csrf_token %}#}
+{#                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">#}
+{#                                            </form>#}
+{##}
+{#                                            <button id="btn-follow"#}
+{#                                                    class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">#}
+{#                                                <i id="icon-follow" class="material-icons">add</i>#}
+{#                                                <i id="icon-unfollow" class="material-icons">remove</i>#}
+{#                                            </button>#}
 
-                                            <button id="btn-follow"
-                                                    class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
-                                                <i id="icon-follow" class="material-icons">add</i>
-                                                <i id="icon-unfollow" class="material-icons">remove</i>
-                                            </button>
+{#                                            <div class="mdl-tooltip" data-mdl-for="btn-follow">#}
+{#                                                {% if is_followed %}#}
+{#                                                    Unfollow#}
+{#                                                {% else %}#}
+{#                                                    Follow#}
+{#                                                {% endif %}#}
+{#                                            </div>#}
 
-                                            <div class="mdl-tooltip" data-mdl-for="btn-follow">
-                                                {% if is_followed %}
-                                                    Unfollow
-                                                {% else %}
-                                                    Follow
-                                                {% endif %}
-                                            </div>
+                                            <label class="follow-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
+                                                   for="checkbox-2">
+                                                <input type="checkbox" id="checkbox-2" class="mdl-checkbox__input">
+                                                <span class="mdl-checkbox__label">Follow</span>
+                                            </label>
                                         </div>
                                     {% endif %}
                                     </div>
 
                                 {# TODO: make and use template tag  #}
                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                                    <div class="col-xs-12 col-sm-7 text-right">
+                                    <div class="col-sm-12 col-sm-7 text-right">
                                         <div class="row">
-                                            <div class="col-sm-5 col-xs-12">
+                                            <div class="col-sm-5 col-sm-12">
                                                 <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                                    class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                                    id="code-visiblity-toggle">
@@ -74,14 +80,14 @@
                                                     View code snippet
                                                 </a>
                                             </div>
-                                            <div class="col-sm-3 col-xs-12">
+                                            <div class="col-sm-3 col-sm-12">
                                                 <a href="{% url 'site_update' site.sampling_feature_code %}"
                                                    id="btn-edit-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                                     <i class="material-icons center-icon">mode_edit</i> Edit Site
                                                 </a>
                                             </div>
-                                            <div class="col-sm-4 col-xs-12">
+                                            <div class="col-sm-4 col-sm-12">
                                                 <a href="#" id="btn-delete-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                                     <i class="material-icons center-icon">delete_forever</i> Delete Site
@@ -101,7 +107,7 @@
                     </header>
 
                     <div class="row">
-                        <div class="registration-data col-xs-12 col-sm-6">
+                        <div class="registration-data col-sm-12 col-sm-6">
                             {# Deployment fields #}
                             <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
                                 <tr>
@@ -165,7 +171,7 @@
                             </table>
                         </div>
 
-                        <div class="detail-map-container col-xs-12 col-sm-6">
+                        <div class="detail-map-container col-sm-12 col-sm-6">
                             <div id="map"></div>
                             <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
                             <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
@@ -173,7 +179,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-xs-12">
+                        <div class="col-sm-12">
                             <table>
                                 <tr>
                                     <td><i class="material-icons text-muted">query_builder</i>&nbsp;&nbsp;</td>
@@ -182,7 +188,7 @@
                             </table>
                         </div>
 
-                        <div class="sparkline-plots col-xs-12">
+                        <div class="sparkline-plots col-sm-12">
                             <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
                                 are shown on the sparkline plots. The plots are broken when there are gaps in the data
                                 longer than 6 hours. Plots shaded in green have recent data. Plots shaded in red have
@@ -190,7 +196,7 @@
                             </div>
                             <div class="row">
                                 {% for sensor in site.sensors.all %}
-                                <div class="col-xs-12 col-sm-6">
+                                <div class="col-sm-12 col-sm-6">
                                     <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
                                          data-variable-name="{{ sensor.variable_name }}"
                                          data-variable-code="{{ sensor.variable_code }}"
@@ -198,7 +204,7 @@
 
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
-                                                <div class="col-xs-12 col-md-5 pull-right">
+                                                <div class="col-sm-12 col-md-5 pull-right">
                                                     {#  View data table button  #}
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
                                                           class="fa fa-table table-trigger pull-right white-shadow"
@@ -229,7 +235,7 @@
                                                         Open in Time Series Analyst
                                                     </div>
                                                 </div>
-                                                <div class="col-xs-12 col-md-7 white-shadow variable-info">
+                                                <div class="col-sm-12 col-md-7 white-shadow variable-info">
                                                     <table>
                                                         <tr>
                                                             <td>Variable:</td>
