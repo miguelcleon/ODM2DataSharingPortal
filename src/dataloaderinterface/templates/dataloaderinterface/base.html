@@ -44,7 +44,7 @@
 <body>
 <div id="wrapper">
     <header>
-        <nav class="navbar navbar-dark navbar-expand-md bg-dark fixed-top">
+        <nav class="navbar navbar-dark navbar-expand-md fixed-top">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img src="{% static 'dataloaderinterface/images/site_logo.png' %}" alt="WebSDL"
                      width="264" height="55">
@@ -56,27 +56,36 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav mr-auto">
                     {% if user.is_authenticated %}
-                        <li class="menu-sites-list"><a href="{% url 'sites_list' %}">My Sites</a></li>
+                        <li class="menu-sites-list">
+                            <a class="nav-link" href="{% url 'sites_list' %}">My Sites</a>
+                        </li>
                     {% endif %}
-                    <li class="menu-browse-sites"><a href="{% url 'browse_sites' %}">Browse Sites</a></li>
+                    <li class="menu-browse-sites">
+                        <a class="nav-link" href="{% url 'browse_sites' %}">Browse Sites</a>
+                    </li>
                 </ul>
 
-                <ul class="nav navbar-nav navbar-right">
+                <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'user_account' %}"><i class="fa fa-user" aria-hidden="true"></i> Logged
-                            in as {{ user }}</a></li>
-                        <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>
-                            Logout</a></li>
-                    {% else %}
-                        <li><a href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_account' %}">
+                                <i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>
+                                Logout</a>
                         </li>
-                        <li><a href="{% url 'user_registration' %}"><i class="fa fa-sign-up" aria-hidden="true"></i>
-                            Sign Up</a></li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}"><i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_registration' %}"><i class="fa fa-sign-up" aria-hidden="true"></i>
+                                Sign Up</a>
+                        </li>
                     {% endif %}
                 </ul>
             </div><!-- /.navbar-collapse -->

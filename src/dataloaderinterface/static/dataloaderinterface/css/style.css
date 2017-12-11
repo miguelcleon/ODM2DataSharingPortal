@@ -525,14 +525,21 @@ ul.errorlist {
 }
 
 /*NAV BAR STYLING*/
-.navbar-inverse {
-    min-height: 80px;
+.navbar-dark {
+    min-height: 81px;
+    border-bottom: 1px solid #000;
     margin-bottom: 0;
     border-radius: 0;
+    padding: 0 20px;
+}
+
+.navbar-dark {
+    background-color: #222;
 }
 
 .navbar-nav > li > a {
-    line-height: 50px !important;
+    line-height: 70px !important;
+    height: 80px;
     border-bottom: 3px solid transparent;
     -webkit-transition: all 0.2s; /* Safari */
     transition: all 0.2s;
