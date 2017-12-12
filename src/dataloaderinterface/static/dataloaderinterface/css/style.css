@@ -128,7 +128,7 @@ div.separator {
     margin: 0 auto;
 }
 
-#result-dialog .modal-content {
+#result-dialog .modal-content, #code-output-modal .modal-content {
     max-width: 600px;
 }
 
@@ -568,11 +568,6 @@ footer .separator {
     margin-bottom: 2px;
 }
 
-#btn-delete-site {
-    background-color: #d9534f;
-    border-color: #d43f3a;
-}
-
 .result-uuid {
     border-bottom: 0 !important;
 }
@@ -617,6 +612,10 @@ dialog#data-table-dialog .mdl-dialog__content {
 
 .mdl-button--raised {
     background: rgba(255, 255, 255, 0.2);
+}
+
+button:focus {
+    outline: none;
 }
 
 .listing-table tr td {
@@ -737,6 +736,11 @@ dialog#data-table-dialog .mdl-dialog__content {
     color: #FFF;
 }
 
+.mdl-menu li a {
+    color: initial;
+    text-decoration: none;
+    font-weight: normal;
+}
 .site-card {
     margin-top: 20px;
     width: auto;

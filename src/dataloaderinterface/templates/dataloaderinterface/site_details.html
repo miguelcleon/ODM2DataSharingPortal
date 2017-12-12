@@ -25,39 +25,42 @@
                             {% else %}
                                 {{ site.sampling_feature_code }}
                             {% endif %}
+
+                            {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                <button id="menu-right" class="mdl-button mdl-js-button mdl-button--icon float-right">
+                                    <i class="material-icons">more_vert</i>
+                                </button>
+
+                                <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="menu-right">
+                                    <li class="mdl-menu__item">
+                                        <a href="#" data-toggle="modal" data-target="#code-output-modal"
+                                           style="display: block;"
+                                           id="code-visiblity-toggle">View code snippet</a>
+                                    </li>
+
+                                    <li class="mdl-menu__item">
+                                        <a href="{% url 'site_update' site.sampling_feature_code %}"
+                                           style="display: block;"
+                                           id="btn-edit-site">Edit</a>
+                                    </li>
+
+                                    <li class="mdl-menu__item">
+                                        <a href="#" style="display: block;" id="btn-delete-site">Delete</a>
+                                    </li>
+                                </ul>
+                            {% endif %}
                         </div>
                         <div class="buttons-toolbar">
                             <div class="row">
-                                    <div class="col-sm-12">
+                                <div class="col-sm-12">
                                     {% if request.user.id and site.django_user_id != request.user.id %}
                                         <div class="follow-status">
-
-{#                                            <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">#}
-{#                                                <span id="follow-text" class="mdl-chip__text">#}
-{#                                                    You are following this site&nbsp;#}
-{#                                                    <i class="fa fa-check-circle-o text-green" aria-hidden="true"></i>#}
-{#                                                </span>#}
-{#                                            </span>#}
-{##}
                                             {# this is the button to trigger the follow/unfollow action #}
                                             <form id="follow-site-form">
                                                 {% csrf_token %}
-                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">
+                                                <input name="sampling_feature_code" type="hidden"
+                                                       value="{{ site.sampling_feature_code }}">
                                             </form>
-{##}
-{#                                            <button id="btn-follow"#}
-{#                                                    class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">#}
-{#                                                <i id="icon-follow" class="material-icons">add</i>#}
-{#                                                <i id="icon-unfollow" class="material-icons">remove</i>#}
-{#                                            </button>#}
-
-{#                                            <div class="mdl-tooltip" data-mdl-for="btn-follow">#}
-{#                                                {% if is_followed %}#}
-{#                                                    Unfollow#}
-{#                                                {% else %}#}
-{#                                                    Follow#}
-{#                                                {% endif %}#}
-{#                                            </div>#}
 
                                             <label class="follow-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
                                                    for="chkFollow">
@@ -67,36 +70,7 @@
                                             </label>
                                         </div>
                                     {% endif %}
-                                    </div>
-
-                                {# TODO: make and use template tag  #}
-                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                                    <div class="col-sm-12 col-sm-7 text-right">
-{#                                        <div class="row">#}
-{#                                            <div class="col-sm-12 col-md-5">#}
-                                                <a href="#" data-toggle="modal" data-target="#code-output-modal"
-                                                   class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                                   id="code-visiblity-toggle">
-                                                    <i class="material-icons center-icon clickable-float-left">code</i>
-                                                    View code snippet
-                                                </a>
-{#                                            </div>#}
-{#                                            <div class="col-sm-12 col-md-3">#}
-                                                <a href="{% url 'site_update' site.sampling_feature_code %}"
-                                                   id="btn-edit-site"
-                                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                                    <i class="material-icons center-icon">mode_edit</i> Edit
-                                                </a>
-{#                                            </div>#}
-{#                                            <div class="col-sm-12 col-md-4">#}
-                                                <a href="#" id="btn-delete-site"
-                                                   class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                                    <i class="material-icons center-icon">delete_forever</i> Delete
-                                                </a>
-{#                                            </div>#}
-{#                                        </div>#}
-                                    </div>
-                                {% endif %}
+                                </div>
                             </div>
                         </div>
 
