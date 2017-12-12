@@ -72,7 +72,7 @@
                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                     <div class="col-sm-12 col-sm-7 text-right">
                                         <div class="row">
-                                            <div class="col-sm-5 col-sm-12">
+                                            <div class="col-sm-12 col-md-5">
                                                 <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                                    class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                                    id="code-visiblity-toggle">
@@ -80,14 +80,14 @@
                                                     View code snippet
                                                 </a>
                                             </div>
-                                            <div class="col-sm-3 col-sm-12">
+                                            <div class="col-sm-12 col-md-3">
                                                 <a href="{% url 'site_update' site.sampling_feature_code %}"
                                                    id="btn-edit-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                                     <i class="material-icons center-icon">mode_edit</i> Edit Site
                                                 </a>
                                             </div>
-                                            <div class="col-sm-4 col-sm-12">
+                                            <div class="col-sm-12 col-md-4">
                                                 <a href="#" id="btn-delete-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                                     <i class="material-icons center-icon">delete_forever</i> Delete Site

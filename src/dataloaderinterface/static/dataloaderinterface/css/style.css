@@ -751,7 +751,7 @@ dialog#data-table-dialog .mdl-dialog__content {
 }
 
 .main-content {
-    margin-bottom: 60px;
+    /*margin-bottom: 60px;*/
 }
 
 .shadow {
@@ -866,6 +866,16 @@ i.material-icons.site-card-icon {
 
 /*LOGIN STYLING*/
 
+.panel {
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.panel .panel-heading {
+    margin: -15px;
+    margin-bottom: 15px;
+}
+
 .panel-login {
     background: rgba(0, 0, 0, 0.63);
     color: #FFF;
@@ -877,6 +887,11 @@ i.material-icons.site-card-icon {
     color: #FFF;
     border: none;
     background-color: #353535;
+}
+
+.panel-login > .panel-heading .panel-title {
+    margin: 0;
+    padding: 15px;
 }
 
 a.orange {
