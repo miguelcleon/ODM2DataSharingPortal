@@ -29,60 +29,6 @@ html > body {
     }
 }
 
-button.navbar-toggle {
-    margin-top: 23px;
-}
-
-@media (max-width: 890px) {
-    .navbar-header {
-        float: none;
-    !important;
-    }
-
-    .navbar-left, .navbar-right {
-        float: none !important;
-    }
-
-    .navbar-toggle {
-        display: block;
-    }
-
-    .navbar-collapse {
-        border-top: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-
-    .navbar-fixed-top {
-        top: 0;
-        border-width: 0 0 1px;
-    !important;
-    }
-
-    .navbar-collapse.collapse {
-        display: none !important;
-    }
-
-    .navbar-nav {
-        float: none !important;
-        margin-top: 7.5px;
-    }
-
-    .navbar-nav > li {
-        float: none;
-    !important;
-    }
-
-    .navbar-nav > li > a {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    !important;
-    }
-
-    .collapse.in {
-        display: block !important;
-    }
-}
-
 .map-container {
     margin-top: 25px;
     height: 450px;
@@ -214,19 +160,6 @@ div.action-affiliation-fields label.control-label {
 div.form-field {
     padding-bottom: 15px;
 }
-
-/*#results-template {*/
-/*display: none;*/
-/*visibility: hidden;*/
-/*}*/
-
-/*span.remove-result {*/
-/*font-size: 1.3em;*/
-/*cursor: pointer;*/
-/*position: absolute;*/
-/*top: 14px;*/
-/*right: 30px;*/
-/*}*/
 
 .inline {
     display: inline-block;
@@ -525,15 +458,17 @@ ul.errorlist {
 }
 
 /*NAV BAR STYLING*/
+.navbar-expand-md .navbar-nav .nav-link {
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+}
+
 .navbar-dark {
     min-height: 81px;
     border-bottom: 1px solid #000;
     margin-bottom: 0;
     border-radius: 0;
     padding: 0 20px;
-}
-
-.navbar-dark {
     background-color: #222;
 }
 
@@ -553,13 +488,13 @@ ul.errorlist {
     border-bottom: 3px solid #FFF;
 }
 
-.navbar-collapse.in .navbar-nav li > a:hover {
-    border-bottom: 3px solid transparent;
-}
+/*.navbar-collapse.in .navbar-nav li > a:hover {*/
+    /*border-bottom: 3px solid transparent;*/
+/*}*/
 
-.navbar-fixed-top .navbar-collapse {
-    max-height: 389px;
-}
+/*.navbar-fixed-top .navbar-collapse {*/
+    /*max-height: 389px;*/
+/*}*/
 
 .navbar-header {
     min-height: 80px;

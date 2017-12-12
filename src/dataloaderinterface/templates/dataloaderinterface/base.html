@@ -60,11 +60,11 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav mr-auto">
                     {% if user.is_authenticated %}
-                        <li class="menu-sites-list">
+                        <li class="nav-item menu-sites-list">
                             <a class="nav-link" href="{% url 'sites_list' %}">My Sites</a>
                         </li>
                     {% endif %}
-                    <li class="menu-browse-sites">
+                    <li class="nav-item menu-browse-sites">
                         <a class="nav-link" href="{% url 'browse_sites' %}">Browse Sites</a>
                     </li>
                 </ul>
@@ -92,7 +92,6 @@
                     {% endif %}
                 </ul>
             </div><!-- /.navbar-collapse -->
-
         </nav>
     </header>
     {% block home_page_banner %}{% endblock %}
