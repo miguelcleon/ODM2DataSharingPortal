@@ -48,6 +48,7 @@ html > body {
 
 .full-screen-map-container {
     margin-top: 0 !important;
+    width: 100%;
 }
 
 .detail-map-container {

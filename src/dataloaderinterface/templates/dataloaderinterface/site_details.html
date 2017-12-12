@@ -107,7 +107,7 @@
                     </header>
 
                     <div class="row">
-                        <div class="registration-data col-sm-12 col-sm-6">
+                        <div class="registration-data col-sm-12 col-md-6">
                             {# Deployment fields #}
                             <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
                                 <tr>
@@ -171,7 +171,7 @@
                             </table>
                         </div>
 
-                        <div class="detail-map-container col-sm-12 col-sm-6">
+                        <div class="detail-map-container col-sm-12 col-md-6">
                             <div id="map"></div>
                             <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
                             <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
@@ -196,7 +196,7 @@
                             </div>
                             <div class="row">
                                 {% for sensor in site.sensors.all %}
-                                <div class="col-sm-12 col-sm-6">
+                                <div class="col-sm-12 col-md-6">
                                     <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
                                          data-variable-name="{{ sensor.variable_name }}"
                                          data-variable-code="{{ sensor.variable_code }}"
