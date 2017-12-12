@@ -100,6 +100,9 @@ function createInfoWindowContent(siteInfo) {
 function fixViewPort() {
     var cards = $('.site-card');
 
+    cards.height("initial");
+    cards.find(".mdl-card__title").height("initial");
+
     var maxCardHeight = 0;
     var maxCardHeaderHeight = 0;
     for (var i = 0; i < cards.length; i++) {
