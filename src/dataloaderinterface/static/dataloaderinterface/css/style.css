@@ -46,6 +46,13 @@ html > body {
     border-right: 0;
 }
 
+.my-sites-map-container {
+    margin-top: 0;
+    height: 450px;
+    border-left: 0;
+    border-right: 0;
+}
+
 .full-screen-map-container {
     margin-top: 0 !important;
     width: 100%;
