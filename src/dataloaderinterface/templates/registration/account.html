@@ -12,10 +12,10 @@
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
             <div id="profile-banner" class="row ribbon-content-close">
-                <h3 data-profile-mode="view" class="display-3 profile-name">
+                <h3 data-profile-mode="view" class="display-4 profile-name">
                     <i class="material-icons">person</i>{{ user.first_name }} {{ user.last_name }}</h3>
 
-                <h3 data-profile-mode="edit" class="display-3 hidden">Edit Profile Information</h3>
+                <h3 data-profile-mode="edit" class="display-4 hidden">Edit Profile Information</h3>
             </div>
 
             <button id="btn-edit-profile"
@@ -76,7 +76,7 @@
             </div>
 
             <div class="row hidden" data-profile-mode="edit">
-                <div class="col-sm-12 col-sm-6">
+                <div class="col-sm-12 col-md-6">
                     <form id="profile-form" method="post" enctype="multipart/form-data" role="form">
                         {% csrf_token %}
                         <fieldset class="form-fieldset">
