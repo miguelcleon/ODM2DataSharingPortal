@@ -40,10 +40,10 @@
 {#                                            </span>#}
 {##}
                                             {# this is the button to trigger the follow/unfollow action #}
-{#                                            <form id="follow-site-form">#}
-{#                                                {% csrf_token %}#}
-{#                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">#}
-{#                                            </form>#}
+                                            <form id="follow-site-form">
+                                                {% csrf_token %}
+                                                <input name="sampling_feature_code" type="hidden" value="{{ site.sampling_feature_code }}">
+                                            </form>
 {##}
 {#                                            <button id="btn-follow"#}
 {#                                                    class="btn-follow mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">#}
@@ -60,8 +60,9 @@
 {#                                            </div>#}
 
                                             <label class="follow-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                                                   for="checkbox-2">
-                                                <input type="checkbox" id="checkbox-2" class="mdl-checkbox__input">
+                                                   for="chkFollow">
+                                                <input id="chkFollow" type="checkbox" class="mdl-checkbox__input"
+                                                       {% if is_followed %}checked{% endif %}>
                                                 <span class="mdl-checkbox__label">Follow</span>
                                             </label>
                                         </div>
@@ -71,29 +72,29 @@
                                 {# TODO: make and use template tag  #}
                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                     <div class="col-sm-12 col-sm-7 text-right">
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-5">
+{#                                        <div class="row">#}
+{#                                            <div class="col-sm-12 col-md-5">#}
                                                 <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                                    class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                                    id="code-visiblity-toggle">
                                                     <i class="material-icons center-icon clickable-float-left">code</i>
                                                     View code snippet
                                                 </a>
-                                            </div>
-                                            <div class="col-sm-12 col-md-3">
+{#                                            </div>#}
+{#                                            <div class="col-sm-12 col-md-3">#}
                                                 <a href="{% url 'site_update' site.sampling_feature_code %}"
                                                    id="btn-edit-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                                    <i class="material-icons center-icon">mode_edit</i> Edit Site
+                                                    <i class="material-icons center-icon">mode_edit</i> Edit
                                                 </a>
-                                            </div>
-                                            <div class="col-sm-12 col-md-4">
+{#                                            </div>#}
+{#                                            <div class="col-sm-12 col-md-4">#}
                                                 <a href="#" id="btn-delete-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                                    <i class="material-icons center-icon">delete_forever</i> Delete Site
+                                                    <i class="material-icons center-icon">delete_forever</i> Delete
                                                 </a>
-                                            </div>
-                                        </div>
+{#                                            </div>#}
+{#                                        </div>#}
                                     </div>
                                 {% endif %}
                             </div>
@@ -128,7 +129,7 @@
                                         <i class="material-icons">today</i> Registration Date
                                     </td>
                                     <td class="mdl-data-table__cell--non-numeric">
-                                        {% if site.registration_date %}{{ site.registration_date }}{% else %}-{% endif %}
+                                        {{ site.registration_date|default:"-" }}
                                     </td>
                                 </tr>
 
@@ -137,7 +138,7 @@
                                         <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Deployment Date
                                     </td>
                                     <td class="mdl-data-table__cell--non-numeric">
-                                        {% if site.deployment_date %}{{ site.deployment_date }}{% else %}-{% endif %}
+                                        {{ site.deployment_date|default:"-" }}
                                     </td>
                                 </tr>
 
@@ -204,37 +205,6 @@
 
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
-                                                <div class="col-sm-12 col-md-5 pull-right">
-                                                    {#  View data table button  #}
-                                                    <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table table-trigger pull-right white-shadow"
-                                                          aria-hidden="true"></span>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
-                                                         data-mdl-for="table-trigger-{{ forloop.counter0 }}">
-                                                        View Data Table
-                                                    </div>
-
-                                                    {#  Download data button  #}
-                                                    <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
-                                                        <span id="download-trigger-{{ forloop.counter0 }}"
-                                                              class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
-                                                    </a>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
-                                                         data-mdl-for="download-trigger-{{ forloop.counter0 }}">
-                                                        Download Data
-                                                    </div>
-
-                                                    {#  View on TSA button  #}
-                                                    <a target="_blank" href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
-                                                        <span id="tsa-trigger-{{ forloop.counter0 }}"
-                                                           class="fa fa-external-link tsa-trigger pull-right white-shadow"
-                                                           aria-hidden="true"></span>
-                                                    </a>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
-                                                         data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
-                                                        Open in Time Series Analyst
-                                                    </div>
-                                                </div>
                                                 <div class="col-sm-12 col-md-7 white-shadow variable-info">
                                                     <table>
                                                         <tr>
@@ -251,7 +221,40 @@
                                                         </tr>
                                                     </table>
                                                 </div>
+                                                <div class="col-sm-12 col-md-5">
+                                                {#  View data table button  #}
+                                                <span id="table-trigger-{{ forloop.counter0 }}"
+                                                      class="fa fa-table table-trigger pull-right white-shadow"
+                                                      aria-hidden="true"></span>
+                                                <div class="mdl-tooltip mdl-tooltip--left"
+                                                     data-mdl-for="table-trigger-{{ forloop.counter0 }}">
+                                                    View Data Table
+                                                </div>
+
+                                                {#  Download data button  #}
+                                                <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
+                                                        <span id="download-trigger-{{ forloop.counter0 }}"
+                                                              class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
+                                                </a>
+                                                <div class="mdl-tooltip mdl-tooltip--left"
+                                                     data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                    Download Data
+                                                </div>
+
+                                                {#  View on TSA button  #}
+                                                <a target="_blank"
+                                                   href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
+                                                        <span id="tsa-trigger-{{ forloop.counter0 }}"
+                                                              class="fa fa-external-link tsa-trigger pull-right white-shadow"
+                                                              aria-hidden="true"></span>
+                                                </a>
+                                                <div class="mdl-tooltip mdl-tooltip--left"
+                                                     data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
+                                                    Open in Time Series Analyst
+                                                </div>
                                             </div>
+                                            </div>
+
                                         </div>
 
                                         <table class="full-width">
