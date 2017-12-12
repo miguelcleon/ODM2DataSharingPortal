@@ -36,7 +36,7 @@
                         <h4 data-toggle="collapse" href="#mySitesCollapse"
                         aria-expanded="false" aria-controls="mySitesCollapse"
                             style="cursor: pointer;"
-                        >My sites <span class="mdl-badge" data-badge="{{ sites|length }}"></span></h4>
+                        >My sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
                     </div>
                     <div class="col-6 text-right">
                         <a href="{% url 'site_registration' %}" id="btn-new-site" style="margin-top:20px;"
@@ -135,7 +135,7 @@
             <div class="col-sm-12">
                 <h4 style="margin-top: 40px; cursor: pointer;" data-toggle="collapse" href="#followedSitesCollapse"
                     aria-expanded="false" aria-controls="followedSitesCollapse"
-                    >Followed Sites <span class="mdl-badge" data-badge="{{ followed_sites|length }}"></span></h4>
+                    >Followed Sites <span class="badge badge-secondary">{{ followed_sites|length }}</span></h4>
                 <hr>
             </div>
             {% if followed_sites %}
