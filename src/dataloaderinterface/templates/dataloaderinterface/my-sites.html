@@ -2,28 +2,37 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <section class="sites-list col-sm-12 col-sm-5">
-                <div class="page-title">Registered Sites</div>
-            </section>
-            <div class="col-sm-12 col-sm-7 text-right">
-                <a href="{% url 'status' %}"
-                   class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--default mdl-js-ripple-effect">
-                    <i class="material-icons center-icon">assignment</i> Status
-                </a>
-                <a href="{% url 'site_registration' %}" id="btn-new-site"
-                   class="button-link my-sites-action mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                    <i class="material-icons center-icon">add_circle_outline</i> Register A New Site
-                </a>
-                <br><br>
+    <div class="container-fluid page-header">
+        <div class="container">
+            <div class="row">
+                <section class="col-5">
+                    <div class="page-title">Registered Sites</div>
+                </section>
+
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-6">
+                            <a href="{% url 'site_registration' %}" id="btn-new-site"
+                               class="button-link btn-block mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect">
+                                <i class="material-icons center-icon">add_circle_outline</i> Register A New Site
+                            </a>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <a href="{% url 'status' %}"
+                               class="button-link btn-block mdl-button mdl-js-button mdl-button--default mdl-js-ripple-effect">
+                                <i class="material-icons center-icon">assignment</i> Status
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <br><br>
 
     <div class="container">
         <div class="row">
-            <div class="full-width-map-container my-sites">
+            <div class="col-sm-12 full-width-map-container my-sites">
                 <div id="map"></div>
             </div>
         </div>

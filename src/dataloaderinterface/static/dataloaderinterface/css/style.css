@@ -624,9 +624,14 @@ footer .separator {
 .follow-checkbox .mdl-checkbox__box-outline {
     top: 4px;
 }
-.my-sites-action {
-    margin-top: 32px;
-    text-align: left;
+
+.page-header {
+    border-bottom: 1px solid #DDD;
+    padding: 20px;
+}
+
+.page-header .page-title {
+    margin-top: 10px;
 }
 
 .my-sites-action:hover {
@@ -791,6 +796,12 @@ dialog#data-table-dialog .mdl-dialog__content {
     width: 100%;
 }
 
+.site-card .mdl-card__title-text {
+    -webkit-align-self: start;
+    -ms-flex-item-align: start;
+    align-self: start;
+}
+
 .site-card .mdl-card__title-text a {
     color: #FFF;
     font-weight: 300;
@@ -834,7 +845,6 @@ i.material-icons.site-card-icon {
 }
 
 .page-title, .section-title {
-    margin: 40px auto;
     text-transform: uppercase;
     color: rgba(0, 0, 0, 0.541176);
     font-size: 18px;
