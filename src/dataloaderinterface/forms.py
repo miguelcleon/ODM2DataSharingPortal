@@ -195,3 +195,7 @@ class ResultForm(forms.ModelForm):
 
 
 ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, can_delete=True)
+
+
+class SiteAlertForm(forms.Form):
+    notify = forms.BooleanField(required=False, initial=False, label='Receive email notifications for this site')

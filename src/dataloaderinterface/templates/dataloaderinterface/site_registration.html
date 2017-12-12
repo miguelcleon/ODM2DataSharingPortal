@@ -70,6 +70,20 @@
                                                 {{ field|add_class:"form-control input-sm" }}
                                             </div>
                                         {% endfor %}
+
+                                        {% for field in email_alert_form %}
+                                            <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
+                                                 data-field="{{ field.name }}">
+                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                <i id="site-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
+                                                {{ field.errors }}
+                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="site-help{{ forloop.counter0 }}">
+                                                    {{ field.help_text }}
+                                                </div>
+                                                {{ field|add_class:"form-control input-sm" }}
+                                            </div>
+                                        {% endfor %}
+
                                     </div>
                                     <div class="form-group col-sm-8 col-xs-12 map-container">
                                         <input type="hidden" name="zoom-level" value="{{ zoom_level }}">

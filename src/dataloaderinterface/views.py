@@ -24,7 +24,7 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm
+    OrganizationForm, UserUpdateForm, ActionByForm, SiteAlertForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
 
 
@@ -379,6 +379,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         context['site_form'] = SiteForm(data, initial=default_data)
         context['results_formset'] = ResultFormSet(data)
         context['action_by_form'] = ActionByForm(data)
+        context['email_alert_form'] = SiteAlertForm(data)
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
