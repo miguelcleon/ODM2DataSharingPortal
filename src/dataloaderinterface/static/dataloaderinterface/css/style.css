@@ -250,10 +250,6 @@ svg.not-stale {
     cursor: default;
 }
 
-.buttons-toolbar .button-link {
-    margin-bottom: 20px;
-}
-
 .button-link:hover {
     text-decoration: none;
 }

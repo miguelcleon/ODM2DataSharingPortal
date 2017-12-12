@@ -26,6 +26,24 @@
                                 {{ site.sampling_feature_code }}
                             {% endif %}
 
+                            {% if request.user.id and site.django_user_id != request.user.id %}
+                                <div class="follow-status">
+                                    {# this is the button to trigger the follow/unfollow action #}
+                                    <form id="follow-site-form">
+                                        {% csrf_token %}
+                                        <input name="sampling_feature_code" type="hidden"
+                                               value="{{ site.sampling_feature_code }}">
+                                    </form>
+
+                                    <label class="follow-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
+                                           for="chkFollow">
+                                        <input id="chkFollow" type="checkbox" class="mdl-checkbox__input"
+                                               {% if is_followed %}checked{% endif %}>
+                                        <span class="mdl-checkbox__label">Follow</span>
+                                    </label>
+                                </div>
+                            {% endif %}
+
                             {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                 <button id="menu-right" class="mdl-button mdl-js-button mdl-button--icon float-right">
                                     <i class="material-icons">more_vert</i>
@@ -49,29 +67,6 @@
                                     </li>
                                 </ul>
                             {% endif %}
-                        </div>
-                        <div class="buttons-toolbar">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    {% if request.user.id and site.django_user_id != request.user.id %}
-                                        <div class="follow-status">
-                                            {# this is the button to trigger the follow/unfollow action #}
-                                            <form id="follow-site-form">
-                                                {% csrf_token %}
-                                                <input name="sampling_feature_code" type="hidden"
-                                                       value="{{ site.sampling_feature_code }}">
-                                            </form>
-
-                                            <label class="follow-checkbox mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                                                   for="chkFollow">
-                                                <input id="chkFollow" type="checkbox" class="mdl-checkbox__input"
-                                                       {% if is_followed %}checked{% endif %}>
-                                                <span class="mdl-checkbox__label">Follow</span>
-                                            </label>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
                         </div>
 
                         {% if messages %}
