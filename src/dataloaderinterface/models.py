@@ -35,6 +35,7 @@ class SiteRegistration(models.Model):
     site_type = models.CharField(max_length=765, db_column='SiteType')
 
     followed_by = models.ManyToManyField(User, related_name='followed_sites')
+    alerts = models.ManyToManyField(User, related_name='site_alerts', db_table='SiteAlert')
 
     @property
     def sampling_feature(self):
