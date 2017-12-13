@@ -28,8 +28,8 @@
                         </div>
                         <div class="buttons-toolbar">
                             <div class="row">
+                                {% if site.django_user_id != request.user.id %}
                                     <div class="col-xs-12 col-sm-5">
-                                    {% if site.django_user_id != request.user.id %}
                                         <div class="follow-status {% if is_followed %}following{% endif %}">
 
                                             <span id="follow-chip" class="mdl-chip chip-follow mdl-chip--contact">
@@ -59,14 +59,14 @@
                                                 {% endif %}
                                             </div>
                                         </div>
-                                    {% endif %}
                                     </div>
+                                {% endif %}
 
                                 {# TODO: make and use template tag  #}
                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                     <div class="col-xs-12 col-sm-7 text-right">
                                         <div class="row">
-                                            <div class="col-sm-5 col-xs-12">
+                                            <div class="col-sm-6 col-xs-12">
                                                 <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                                    class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                                    id="code-visiblity-toggle">
@@ -74,6 +74,16 @@
                                                     View code snippet
                                                 </a>
                                             </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6 col-xs-12">
+                                                <a href="#" id="btn-share-hydroshare"
+                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                                    <i class="material-icons center-icon">share</i> Connect To Hydroshare
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-sm-3 col-xs-12">
                                                 <a href="{% url 'site_update' site.sampling_feature_code %}"
                                                    id="btn-edit-site"
@@ -81,7 +91,7 @@
                                                     <i class="material-icons center-icon">mode_edit</i> Edit Site
                                                 </a>
                                             </div>
-                                            <div class="col-sm-4 col-xs-12">
+                                            <div class="col-sm-3 col-xs-12">
                                                 <a href="#" id="btn-delete-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                                     <i class="material-icons center-icon">delete_forever</i> Delete Site

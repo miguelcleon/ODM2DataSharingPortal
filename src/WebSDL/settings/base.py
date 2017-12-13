@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'dataloader',
     'dataloaderservices',
     'dataloaderinterface',
+    'hydroshare_oauth',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -74,7 +75,7 @@ ROOT_URLCONF = 'WebSDL.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'hydroshare')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -164,3 +165,9 @@ EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
 EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
 DATETIME_FORMAT = "N j, Y, H:m"
+
+if "hydroshare_oauth" in data:
+    os.environ.setdefault("HS_CLIENT_ID", data["hydroshare_oauth"]["client_id"])
+    os.environ.setdefault("HS_CLIENT_SECRET", data["hydroshare_oauth"]["client_secret"])
+    os.environ.setdefault("HS_REDIRECT_URI", data["hydroshare_oauth"]["redirect_uri"])
+    os.environ.setdefault("HS_RESPONSE_TYPE", data["hydroshare_oauth"]["response_type"])

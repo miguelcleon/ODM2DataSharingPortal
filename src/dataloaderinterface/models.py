@@ -10,6 +10,7 @@ from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesRe
 from django.contrib.auth.models import User
 from django.db import models
 
+HYDROSHARE_SYNC_TYPES = (('M', 'manual'), ('S', 'scheduled'))
 
 class SiteRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
@@ -165,22 +166,66 @@ class ODM2User(models.Model):
         return self.user.is_staff or registration.user == self
 
 
+# HydroshareUser - holds information for user's Hydroshare account
 class HydroshareUser(models.Model):
-    user = models.OneToOneField(ODM2User)
-    oauth_token = models.CharField(max_length=255)
-    update_freq = models.IntegerField(default=None)
+    user = models.ForeignKey('ODM2User', db_column='user_id')
+    account_nickname = models.CharField(max_length=255, unique=True)
+    access_token = models.CharField(max_length=255, blank=True, default='')
+    refresh_token = models.CharField(max_length=255, blank=True, default='')
     is_enabled = models.BooleanField(default=False)
+    token_expires_in = models.IntegerField(default=0)
+    oauth_scope = models.CharField(max_length=255, default='read write')
+
+    @property
+    def scope(self):
+        return self.hs_oauth_scope.split(",")
+
+    @property
+    def scope(self, scope):
+        self.hs_oauth_scope = ",".join(scope)
+
+    def set_token(self, token):
+        self.access_token = token['access_token']
+        self.refresh_token = token['refresh_token']
+        self.token_expires_in = token['expires_in']
+        self.oauth_scope = token['scope']
+        self.save(update_fields=['refresh_token', 'access_token', 'token_expires_in', 'oauth_scope'])
 
     def __str__(self):
         return self.user.username
 
+    class Meta:
+        db_table = 'hydroshare_user'
 
-class HydroshareSync(models.Model):
-    # hydroshare_user references a HydroshareUser object (not an ODM2User object).
-    hydroshare_user = models.OneToOneField(HydroshareUser)
+
+# "Settings" for a Hydroshare account connection
+class HydroshareSiteSharing(models.Model):
+
+    site_registration = models.ForeignKey(SiteRegistration, on_delete=models.CASCADE)
+    sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
+    resource_id = models.CharField(max_length=255, blank=True)
+    update_freq = models.IntegerField(null=True)
+    is_enabled = models.BooleanField(default=False)
+    last_sync_date = models.DateTimeField()
+
+    class Meta:
+        db_table = 'hydroshare_site_sharing'
+
+
+# HydroshareSync - tracks scheduled or manual syncs with hydroshares API
+class HydroshareSyncLog(models.Model):
+
+    # HydroshareSiteSharing object this log belongs to
+    site_sharing = models.ForeignKey(HydroshareSiteSharing, on_delete=models.CASCADE)
+
     # timestamp for when data was synced with Hydroshare.
-    sync_date = models.DateTimeField(default=datetime.now())
+    sync_date = models.DateTimeField(auto_now_add=True)
+
     # sync type, either 'manual' or 'scheduled'.
-    sync_type = models.CharField(max_length=255, default='manual')
+    sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
+
     # resultid corresponds to the PK in the `odm2` database on the `results.resultid` column.
-    resultid = models.IntegerField(db_column='odm2_results_resultid')
+    # resultid = models.IntegerField(db_column='odm2_results_resultid')
+
+    class Meta:
+        db_table = 'hydroshare_sync_log'

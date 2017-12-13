@@ -1,4 +1,5 @@
 from datetime import datetime
+from os import environ as env
 from uuid import uuid4
 
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
@@ -10,7 +11,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http.response import HttpResponseRedirect, Http404
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render
 # Create your views here.
 from django.views.generic.base import TemplateView
@@ -31,7 +32,7 @@ class LoginRequiredMixin(object):
 
 
 class HomeView(TemplateView):
-    template_name = 'dataloaderinterface/index.html'
+    template_name = 'dataloaderinterface/hydroshare_account.html'
 
     # def get_context_data(self, **kwargs):
     #     context = super(HomeView, self).get_context_data()
@@ -71,6 +72,10 @@ class UserUpdateView(UpdateView):
         else:
             messages.error(request, 'There were some errors in the form.')
             return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
+
+
+class HydroShareView(UpdateView):
+    template_name = 'hydroshare/hydroshare_account.html'
 
 
 class UserRegistrationView(CreateView):
@@ -411,6 +416,13 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         else:
             messages.error(request, 'There are still some required fields that need to be filled out!')
             return self.form_invalid(registration_form)
+
+class HydroShareView(TemplateView):
+    template_name = 'hydroshare/hydroshare_account.html'
+    hs_oauth_url = 'https://www.hydroshare.org/o/authorize/?r'
+
+
+
 
 
 def all_forms_valid(*forms):
