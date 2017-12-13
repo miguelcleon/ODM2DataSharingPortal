@@ -101,46 +101,65 @@
                                         <br><br>
 
                                         {{ results_formset.management_form }}
-                                        <table class="mdl-data-table mdl-shadow--2dp sensors full-width">
-                                            <thead>
-                                            <tr>
-                                                <th class="mdl-data-table__cell--non-numeric">Equipment Model</th>
-                                                <th class="mdl-data-table__cell--non-numeric">Measured Variable</th>
-                                                <th class="mdl-data-table__cell--non-numeric">Units</th>
-                                                <th class="mdl-data-table__cell--non-numeric">Sampled Medium</th>
-                                                <th class="mdl-data-table__cell--non-numeric">Edit</th>
-                                                <th class="mdl-data-table__cell--non-numeric">Delete</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for result_form in results_formset %}
-                                                {% if result_form|has_data %}
-                                                    <tr class="result-form {% if result_form|is_deleted %} deleted-row {% endif %}" data-result="{{ result_form.prefix }}">
-                                                        <input type="hidden" name="{{ result_form.prefix }}-result_id" class="field-value" value="{{ result_form.initial.result_id }}" />
-                                                        {% for field in result_form %}
-                                                            {% if field.name != "DELETE" %}
-                                                            <td data-field="{{ field.name }}" class="mdl-data-table__cell--non-numeric">
-                                                              <span class="field-text">{{ result_form|get_field_data:field.name }}</span>
-                                                                <input type="hidden" name="{{ field.html_name }}" class="field-value" value="{{ field.value }}"/>
+
+                                        <div style="overflow: auto;">
+                                            <table class="mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
+                                                <thead>
+                                                <tr class="full-width">
+                                                    <th class="mdl-data-table__cell--non-numeric">Equipment Model
+                                                    </th>
+                                                    <th class="mdl-data-table__cell--non-numeric">Measured
+                                                        Variable
+                                                    </th>
+                                                    <th class="mdl-data-table__cell--non-numeric">Units</th>
+                                                    <th class="mdl-data-table__cell--non-numeric">Sampled Medium
+                                                    </th>
+                                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
+                                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for result_form in results_formset %}
+                                                    {% if result_form|has_data %}
+                                                        <tr class="result-form {% if result_form|is_deleted %} deleted-row {% endif %}"
+                                                            data-result="{{ result_form.prefix }}">
+                                                            <input type="hidden"
+                                                                   name="{{ result_form.prefix }}-result_id"
+                                                                   class="field-value"
+                                                                   value="{{ result_form.initial.result_id }}"/>
+                                                            {% for field in result_form %}
+                                                                {% if field.name != "DELETE" %}
+                                                                    <td data-field="{{ field.name }}"
+                                                                        class="mdl-data-table__cell--non-numeric">
+                                                                        <span class="field-text">{{ result_form|get_field_data:field.name }}</span>
+                                                                        <input type="hidden"
+                                                                               name="{{ field.html_name }}"
+                                                                               class="field-value"
+                                                                               value="{{ field.value }}"/>
+                                                                    </td>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            <td data-behaviour="edit"
+                                                                class="mdl-data-table__cell--non-numeric">
+                                                                <button class="mdl-button mdl-button--accent"
+                                                                        type="button">
+                                                                    <i class="material-icons center-icon">mode_edit</i>
+                                                                </button>
                                                             </td>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                        <td data-behaviour="edit" class="mdl-data-table__cell--non-numeric">
-                                                            <button class="mdl-button mdl-button--accent" type="button">
-                                                                <i class="material-icons center-icon">mode_edit</i>
-                                                            </button>
-                                                        </td>
-                                                        <td data-behaviour="delete" class="mdl-data-table__cell--non-numeric">
-                                                            <button class="mdl-button" style="color: #d9534f" type="button">
-                                                                <i class="material-icons center-icon">delete_forever</i>
-                                                                {{ result_form.DELETE }}
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
+                                                            <td data-behaviour="delete"
+                                                                class="mdl-data-table__cell--non-numeric">
+                                                                <button class="mdl-button" style="color: #d9534f"
+                                                                        type="button">
+                                                                    <i class="material-icons center-icon">delete_forever</i>
+                                                                    {{ result_form.DELETE }}
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
 
                                         <script id="sensor-row" type="text/plain">
                                             <tr class="result-form" data-result="form-__prefix__">

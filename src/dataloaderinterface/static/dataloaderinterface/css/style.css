@@ -254,6 +254,16 @@ svg.not-stale {
     text-decoration: none;
 }
 
+.buttons-toolbar .button-link {
+    margin-bottom: 15px;
+}
+
+@media (max-width: 576px) {
+    .buttons-toolbar .button-link {
+        width: 100%;
+    }
+}
+
 .table-trigger {
     cursor: pointer;
 }
@@ -270,6 +280,10 @@ svg.not-stale {
 
 .measurements-table .mdl-data-table tbody tr:hover {
     background-color: initial;
+}
+
+table.sensors td:not([data-behaviour]) {
+    white-space: normal;
 }
 
 .variable-description {
@@ -563,6 +577,11 @@ footer .separator {
 
 .my-sites-action:hover {
     text-decoration: none;
+}
+
+#btn-delete-site {
+    background-color: #d9534f;
+    border-color: #d43f3a;
 }
 
 .center-icon {
