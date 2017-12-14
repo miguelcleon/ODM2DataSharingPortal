@@ -8,11 +8,20 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 
-from dataloaderinterface.models import ODM2User
+from dataloaderinterface.models import ODM2User, HydroShareSiteSharing
 
 
 # AUTHORIZATION
 
+class HydroShareSiteForm(forms.ModelForm):
+    # site_registration_id = forms.IntegerField()
+    # sync_type = forms.ChoiceField(('M', 'manual'), ('S', 'scheduled'))
+    # resource_id = forms.IntegerField()
+    # update_freq = forms.IntegerField()
+    # is_enabled = forms.BooleanField()
+    class Meta:
+        model = HydroShareSiteSharing
+        fields = ['site_registration', 'sync_type', 'resource_id', 'update_freq', 'is_enabled']
 
 class UserRegistrationForm(UserCreationForm):
     use_required_attribute = False

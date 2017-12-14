@@ -1,5 +1,4 @@
 from datetime import datetime
-from os import environ as env
 from uuid import uuid4
 
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
@@ -21,8 +20,8 @@ from django.views.generic.list import ListView
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm
-from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
+    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm
+from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareUser, HydroShareSiteSharing
 
 
 class LoginRequiredMixin(object):
@@ -32,7 +31,7 @@ class LoginRequiredMixin(object):
 
 
 class HomeView(TemplateView):
-    template_name = 'dataloaderinterface/hydroshare_account.html'
+    template_name = 'dataloaderinterface/index.html'
 
     # def get_context_data(self, **kwargs):
     #     context = super(HomeView, self).get_context_data()
@@ -59,6 +58,16 @@ class UserUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserUpdateView, self).get_context_data(**kwargs)
+
+        if self.request.user.is_authenticated():
+            odm2user = ODM2User.objects.get(pk=self.request.user.id)
+            hs_users = HydroShareUser.objects.get(user=odm2user)
+            if not isinstance(hs_users, list):
+                hs_users = [hs_users]
+            context['hs_users'] = hs_users
+        else:
+            context['hs_users'] = []
+
         context['organization_form'] = OrganizationForm()
         return context
 
@@ -74,8 +83,18 @@ class UserUpdateView(UpdateView):
             return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
 
 
-class HydroShareView(UpdateView):
+class HydroShareView(TemplateView):
     template_name = 'hydroshare/hydroshare_account.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(HydroShareView, self).get_context_data(**kwargs)
+
+        odm2user = ODM2User.objects.get(user=self.request.user.id)
+        hs_users = HydroShareUser.objects.get(user=odm2user)
+        if not isinstance(hs_users, list):
+            hs_users = [hs_users]
+        context['hs_users'] = hs_users
+        return context
 
 
 class UserRegistrationView(CreateView):
@@ -141,6 +160,16 @@ class SiteDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data()
+
+        try:
+            odm2user = ODM2User.objects.get(user=self.request.user.id)
+            hs_user = HydroShareUser.objects.get(user=odm2user)
+            hs_site = HydroShareSiteSharing.objects.get(hs_user=hs_user, site_registration=context['site'])
+            context['hs_enabled'] = hs_site.is_enabled
+        except Exception:
+            context['hs_enabled'] = False
+
+
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
         return context
 
@@ -416,13 +445,6 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         else:
             messages.error(request, 'There are still some required fields that need to be filled out!')
             return self.form_invalid(registration_form)
-
-class HydroShareView(TemplateView):
-    template_name = 'hydroshare/hydroshare_account.html'
-    hs_oauth_url = 'https://www.hydroshare.org/o/authorize/?r'
-
-
-
 
 
 def all_forms_valid(*forms):

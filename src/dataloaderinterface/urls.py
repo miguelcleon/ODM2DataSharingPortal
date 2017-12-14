@@ -27,5 +27,5 @@ urlpatterns = [
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
-    url(r'^account/hydroshare/$', HydroShareView.as_view(), name='hydroshare_manage')
+    url(r'^account/hydroshare/$', HydroShareView.as_view(), name='hydroshare_account')
 ]

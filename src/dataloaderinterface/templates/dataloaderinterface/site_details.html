@@ -76,14 +76,6 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-6 col-xs-12">
-                                                <a href="#" id="btn-share-hydroshare"
-                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                                    <i class="material-icons center-icon">share</i> Connect To Hydroshare
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-sm-3 col-xs-12">
                                                 <a href="{% url 'site_update' site.sampling_feature_code %}"
                                                    id="btn-edit-site"
@@ -177,6 +169,18 @@
                             <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
                         </div>
                     </div>
+
+
+
+
+
+                    <div class="hydroshare-site-settings col-lg-12">
+                        <h6>HydroShare Sharing is <b>{% if hs_enabled %}On{% else %}Off{% endif %}</b></h6>
+                    </div>
+
+
+
+
 
                     <div class="row">
                         <div class="col-xs-12">

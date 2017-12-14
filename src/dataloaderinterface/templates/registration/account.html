@@ -76,12 +76,17 @@
                 <div class="col-lg-6 col-sm-12">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
-                            <a href="{% url 'hydroshare_oauth:oauth' %}" class="mdl-button mdl-button--raised mdl-button--accent">
-                                <i class="material-icons icon-center">share</i> Connect To Hydroshare
+                            {% if hs_users %}
+                            <a href="{% url 'hydroshare_account' %}" class="mdl-button mdl-button--raised mdl-button--accent">
+                                <i class="material-icons">settings</i>
+                                <span>HydroShare Settings</span>
                             </a>
-                        </div>
-                        <div class="col-log-6 col-sm-12">
-                            <a href="{% url 'hydroshare_manage' %}" class="mdl-button mdl-button--raised mdl-button--accent">Manage HydroShare Connections</a>
+                            <a href="{% url 'hydroshare_oauth:oauth' %}" class="mdl-button mdl-button--raised mdl-button--accent">
+                                <i class="material-icons">share</i>
+                                <span>Connect To Hydroshare</span>
+                            </a>
+                            {% else %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>

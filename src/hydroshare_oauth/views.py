@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from os import environ as env
 import requests
-from dataloaderinterface.models import  ODM2User, HydroshareUser
+from dataloaderinterface.models import  ODM2User, HydroShareUser
 
 BASE_HS_URL = 'https://www.hydroshare.org/'
 
@@ -19,12 +19,12 @@ class OAuthAuthorize(TemplateView):
                 'redirect_uri': env.get('HS_REDIRECT_URI')
             }
 
-            url = get_url('o/token', params)
+            url = get_url('o/token/', params)
             r = requests.post(url)
 
             if r.status_code == 200:
                 odmuser = ODM2User.objects.get(pk=request.user.id)
-                user = HydroshareUser.objects.get(user=odmuser)
+                user = HydroShareUser.objects.get(user=odmuser)
                 user.set_token(r.json())
 
                 return redirect('user_account')
@@ -43,7 +43,7 @@ class OAuthAuthorize(TemplateView):
 class OAuthRefresh(TemplateView):
     def get(self, request, **kwargs):
         odmuser = ODM2User.objects.get(pk=request.user.id)
-        hsuser = HydroshareUser.objects.get(user=odmuser)
+        hsuser = HydroShareUser.objects.get(user=odmuser)
 
         params = {
             'grant_type': 'refresh_token',
@@ -57,7 +57,7 @@ class OAuthRefresh(TemplateView):
 
         if r.status_code == 200:
             odmuser = ODM2User.objects.get(pk=request.user.id)
-            user = HydroshareUser.objects.get(user=odmuser)
+            user = HydroShareUser.objects.get(user=odmuser)
             user.set_token(r.json())
 
             return redirect('user_account')
