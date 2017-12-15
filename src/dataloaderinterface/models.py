@@ -35,7 +35,7 @@ class SiteRegistration(models.Model):
     site_type = models.CharField(max_length=765, db_column='SiteType')
 
     followed_by = models.ManyToManyField(User, related_name='followed_sites')
-    alert_listeners = models.ManyToManyField(User, related_name='site_alerts', db_table='SiteAlert')
+    alert_listeners = models.ManyToManyField(User, related_name='+', db_table='SiteAlert')
 
     @property
     def sampling_feature(self):
@@ -161,3 +161,10 @@ class ODM2User(models.Model):
 
     def can_administer_site(self, registration):
         return self.user.is_staff or registration.user == self
+
+
+class SiteAlert(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='site_alerts')
+    site_registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='alerts')
+    last_alerted = models.DateTimeField(db_column='LastAlerted', blank=True, null=True)
+    hours_threshold = models.PositiveIntegerField(db_column='HoursThreshold', default=15)

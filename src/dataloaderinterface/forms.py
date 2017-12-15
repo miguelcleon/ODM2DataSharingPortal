@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 
-from dataloaderinterface.models import ODM2User
+from dataloaderinterface.models import ODM2User, SiteAlert
 
 
 # AUTHORIZATION
@@ -197,5 +197,13 @@ class ResultForm(forms.ModelForm):
 ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1, can_delete=True)
 
 
-class SiteAlertForm(forms.Form):
-    notify = forms.BooleanField(required=False, initial=False, label='Receive email notifications for this site')
+class SiteAlertForm(forms.ModelForm):
+    notify = forms.BooleanField(required=False, initial=False)
+    hours_threshold = forms.IntegerField(min_value=1)
+
+    class Meta:
+        model = SiteAlert
+        fields = ['notify', 'hours_threshold']
+        labels = {
+            'notify': 'Receive email notifications for this site',
+        }

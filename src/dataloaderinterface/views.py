@@ -245,11 +245,14 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
         action_by = sampling_feature.feature_actions.first().action.action_by.first()
+        do_notify = self.request.user.site_alerts.filter(sampling_feature_code=sampling_feature.sampling_feature_code).exists()
+        # TODO: add time threshold here.
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
         context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
         context['action_by_form'] = ActionByForm(data=data, instance=action_by)
+        context['email_alert_form'] = SiteAlertForm(data=data, initial={'notify': do_notify})
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
