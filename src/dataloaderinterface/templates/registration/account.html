@@ -81,11 +81,11 @@
                                 <i class="material-icons">settings</i>
                                 <span>HydroShare Settings</span>
                             </a>
+                            {% else %}
                             <a href="{% url 'hydroshare_oauth:oauth' %}" class="mdl-button mdl-button--raised mdl-button--accent">
                                 <i class="material-icons">share</i>
                                 <span>Connect To Hydroshare</span>
                             </a>
-                            {% else %}
                             {% endif %}
                         </div>
                     </div>

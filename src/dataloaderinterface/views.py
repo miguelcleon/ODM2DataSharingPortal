@@ -20,8 +20,8 @@ from django.views.generic.list import ListView
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm
-from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareUser, HydroShareSiteSharing
+    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareUserForm
+from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareUser, HydroShareSiteSetting
 
 
 class LoginRequiredMixin(object):
@@ -164,7 +164,7 @@ class SiteDetailView(DetailView):
         try:
             odm2user = ODM2User.objects.get(user=self.request.user.id)
             hs_user = HydroShareUser.objects.get(user=odm2user)
-            hs_site = HydroShareSiteSharing.objects.get(hs_user=hs_user, site_registration=context['site'])
+            hs_site = HydroShareSiteSetting.objects.get(hs_user=hs_user, site_registration=context['site'])
             context['hs_enabled'] = hs_site.is_enabled
         except Exception:
             context['hs_enabled'] = False
@@ -241,6 +241,12 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         ]
         return result_form_data
 
+    def get_hs_site_setting(self):
+        return HydroShareSiteSetting.objects.get(site_registration=self.get_object())
+
+    def get_hs_user(self):
+        return self.get_hs_site_setting().hs_user
+
     def get_context_data(self, **kwargs):
         if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
             raise Http404
@@ -248,6 +254,14 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
         action_by = sampling_feature.feature_actions.first().action.action_by.first()
+
+        try:
+            hs_site = HydroShareSiteSetting.objects.get(site_registration=self.get_object())
+            hs_user = HydroShareUser.objects.get(pk=hs_site.hs_user.id)
+            context['hydroshare_settings_form'] = HydroShareSiteForm(instance=hs_site, initial={'update_freq': hs_site.update_freq.total_seconds()})
+            context['hydroshare_user_form'] = HydroShareUserForm(hs_user.user)
+        except Exception as e:
+            print(e)
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
@@ -267,11 +281,17 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
         action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
+        hs_user_form = HydroShareUserForm(request.user, data=self.request.POST, instance=self.get_hs_user())
+        hs_site_settings_form = HydroShareSiteForm(data=self.request.POST, instance=self.get_hs_site_setting())
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, hs_user_form, hs_site_settings_form):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
             data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
+
+            # Update HydroShare account info
+            hs_user_form.save(self.get_hs_site_setting())
+            hs_site_settings_form.save()
 
             # Update sampling feature
             sampling_feature_form.instance.save()

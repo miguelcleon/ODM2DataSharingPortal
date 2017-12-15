@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 # Create your models here.
 import uuid
 
+from datetime import timedelta
 from django.db.models.aggregates import Min
 
 from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue, EquipmentModel, Variable, \
@@ -10,7 +11,7 @@ from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesRe
 from django.contrib.auth.models import User
 from django.db import models
 
-HYDROSHARE_SYNC_TYPES = (('M', 'manual'), ('S', 'scheduled'))
+HYDROSHARE_SYNC_TYPES = (('M', 'Manual'), ('S', 'Scheduled'))
 
 class SiteRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
@@ -183,7 +184,7 @@ class HydroShareUser(models.Model):
         self.oauth_scope = token['scope']
         self.save(update_fields=['refresh_token', 'access_token', 'token_expires_in', 'oauth_scope'])
 
-    def toJSON(self):
+    def to_dict(self):
         return {
             'user_id': self.user.id,
             'account_nickname': self.account_nickname,
@@ -195,37 +196,54 @@ class HydroShareUser(models.Model):
         }
 
     def __str__(self):
-        return self.user.username
-
-    def __unicode__(self):
-        return self.user.username
-
-    def __repr__(self):
-        return 'HydroShareUser'
+        return self.account_nickname
 
     class Meta:
         db_table = 'hydro_share_user'
 
 
 # "Settings" for a Hydroshare account connection
-class HydroShareSiteSharing(models.Model):
+class HydroShareSiteSetting(models.Model):
+    FREQUENCY_CHOICES = (
+        (timedelta(hours=1).total_seconds(), 'Every Hour'),
+        (timedelta(hours=3).total_seconds(), 'Every 3 Hours'),
+        (timedelta(hours=6).total_seconds(), 'Every 6 Hours'),
+        (timedelta(days=1).total_seconds(), 'Daily'),
+        (timedelta(days=2).total_seconds(), 'Every 2 Days'),
+        (timedelta(days=3).total_seconds(), 'Every 3 Days'),
+        (timedelta(weeks=1).total_seconds(), 'Weekly'),
+        (timedelta(weeks=2).total_seconds(), 'Bi Monthly'),
+        (timedelta(days=30).total_seconds(), 'Monthly')
+    )
+
     hs_user = models.ForeignKey('HydroShareUser', db_column='hs_user_id', on_delete=models.CASCADE)
-    site_registration = models.ForeignKey(SiteRegistration, on_delete=models.CASCADE)
+    site_registration = models.OneToOneField(SiteRegistration, unique=True)
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
     resource_id = models.CharField(max_length=255, blank=True)
-    update_freq = models.IntegerField(null=True)
+    update_freq = models.DurationField(verbose_name='Update Frequency', default=timedelta())
     is_enabled = models.BooleanField(default=False)
     last_sync_date = models.DateTimeField()
 
+    def to_dict(self):
+        return {
+            'hs_user': self.hs_user,
+            'site_registration': self.site_registration,
+            'sync_type': self.sync_type,
+            'resource_id': self.resource_id,
+            'update_freq': self.update_freq,
+            'is_enabled': self.is_enabled,
+            'last_sync_date': self.last_sync_date
+        }
+
     class Meta:
-        db_table = 'hydro_share_site_sharing'
+        db_table = 'hydro_share_site_setting'
 
 
 # HydroshareSync - tracks scheduled or manual syncs with hydroshares API
 class HydroShareSyncLog(models.Model):
 
     # HydroshareSiteSharing object this log belongs to
-    site_sharing = models.ForeignKey(HydroShareSiteSharing, on_delete=models.CASCADE)
+    site_sharing = models.ForeignKey(HydroShareSiteSetting, on_delete=models.CASCADE)
 
     # timestamp for when data was synced with Hydroshare.
     sync_date = models.DateTimeField(auto_now_add=True)

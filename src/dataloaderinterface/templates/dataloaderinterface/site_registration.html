@@ -12,8 +12,13 @@
             <div class="row">
                 <section class="device-data col-lg-12">
                     <header class="section-header">
-                        <div class="page-title">{% if request.resolver_match.view_name == "site_update" %}Edit Site
-                            Information{% else %}Register a Site{% endif %}</div>
+                        <div class="page-title">
+                            {% if request.resolver_match.view_name == "site_update" %}
+                                Edit Site Information
+                            {% else %}
+                                Register a Site
+                            {% endif %}
+                        </div>
                         {% if messages %}
                             {% for message in messages %}
                                 <span class="form-message {{ message.tags }}">{{ message }}</span>
@@ -22,7 +27,7 @@
                     </header>
 
                     <div class="section-body">
-                        <form method="post" enctype="multipart/form-data" role="form">
+                        <form method="post" enctype="multipart/form-data" role="form" id="site-registration-form">
                             {% csrf_token %}
                             <input name="user_first_name" type="hidden" value="{{ user.first_name }}">
                             <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
@@ -79,7 +84,54 @@
                                 </div>
                             </fieldset>
 
-                            <br>
+
+
+
+                            <fieldset id="hydroshare-form">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">HydroShare Sync Settings</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-12">
+                                                {% with hydroshare_user_form as form %}
+                                                <div class="form-field">
+                                                    <label class="control-label" for="{{ form.hs_users.id_for_label }}">{{ form.hs_users.label }}</label>
+                                                    {{ form.hs_users|add_class:"form-control input-sm" }}
+                                                </div>
+                                                {% endwith %}
+                                            </div>
+                                            <div class="col-lg-6 col-sm-12">
+                                                <div class="form-group">
+                                                    {% with hydroshare_settings_form as form %}
+                                                    <div class="form-field {% if form.sync_type.required %} required-field{% endif %}{% if form.sync_type.errors %} has-error{% endif %}"
+                                                        data-field="{{ form.sync_type.name }}">
+                                                        <label class="control-label" for="{{ form.sync_type.id_for_label }}">{{ form.sync_type.label }}</label>
+                                                        {{ form.sync_type|add_class:"form-control input-sm" }}
+                                                    </div>
+                                                    <div class="form-field {% if form.update_freq.required %} required-field{% endif %}{% if form.update_freq.errors %} has-error{% endif %}"
+                                                         data-field="{{ form.update_freq.name }}">
+                                                        <label class="control-label" for="{{ form.update_freq.id_for_label }}">{{ form.update_freq.label }}</label>
+                                                        {{ form.update_freq.errors }}
+                                                        {{ form.update_freq|add_class:"form-control input-sm" }}
+                                                    </div>
+                                                    <div class="form-check" data-field="{{ form.is_enabled.name }}">
+                                                        <label class="form-check-label" for="{{ form.is_enabled.id_for_label }}">
+                                                            {{ form.is_enabled|add_class:"form-check-input" }}
+                                                            {{ form.is_enabled.label }}
+                                                        </label>
+                                                    </div>
+                                                    {% endwith %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+
+
 
                             <fieldset class="form-fieldset">
                                 <div class="row">
@@ -180,8 +232,12 @@
                             <div>
                                 <button id="btnRegisterSite" type="submit"
                                         class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                    {{ help }}{% if request.resolver_match.view_name == "site_update" %}Save
-                                        Edits{% else %}Register Site{% endif %}
+                                    {{ help }}
+                                    {% if request.resolver_match.view_name == "site_update" %}
+                                        Save Edits
+                                    {% else %}
+                                        Register Site
+                                    {% endif %}
                                 </button>
                             </div>
                         </form>
@@ -276,4 +332,5 @@
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+    <script src="{% static 'dataloaderinterface/js/hydroshare-settings-update-form.js' %}"></script>
 {% endblock %}

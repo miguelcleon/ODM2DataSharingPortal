@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
     OrganizationType, ActionBy, SiteType
@@ -8,20 +8,40 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 
-from dataloaderinterface.models import ODM2User, HydroShareSiteSharing
+from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroShareUser, SiteRegistration
 
 
 # AUTHORIZATION
 
-class HydroShareSiteForm(forms.ModelForm):
-    # site_registration_id = forms.IntegerField()
-    # sync_type = forms.ChoiceField(('M', 'manual'), ('S', 'scheduled'))
-    # resource_id = forms.IntegerField()
-    # update_freq = forms.IntegerField()
-    # is_enabled = forms.BooleanField()
+class HydroShareUserForm(forms.ModelForm):
+    hs_users = forms.ModelChoiceField(queryset=None, required=True, label="HydroShare Account")
     class Meta:
-        model = HydroShareSiteSharing
-        fields = ['site_registration', 'sync_type', 'resource_id', 'update_freq', 'is_enabled']
+        model = HydroShareUser
+        fields = ['is_enabled']
+
+    def __init__(self, odm2user, *args, **kwargs):
+        super(HydroShareUserForm, self).__init__(*args, **kwargs)
+        self.fields['hs_users'] = forms.ModelChoiceField(queryset=HydroShareUser.objects.filter(user=odm2user.pk),
+                                                     required=True,
+                                                     initial=odm2user.id,
+                                                     label="HydroShare Account")
+
+    def save(self, hydroshare_site, commit=True):
+        instance = super(HydroShareUserForm, self).save(commit=False)
+        if commit:
+            if isinstance(self.instance, HydroShareUser) and hydroshare_site.hs_user.pk is not self.instance.pk:
+                hydroshare_site.hs_user = self.instance
+                hydroshare_site.save()
+            instance.save()
+        return instance
+
+
+class HydroShareSiteForm(forms.ModelForm):
+    class Meta:
+        model = HydroShareSiteSetting
+        fields = ['is_enabled', 'sync_type', 'update_freq']
+        widgets = { 'update_freq': forms.Select(choices=HydroShareSiteSetting.FREQUENCY_CHOICES) }
+
 
 class UserRegistrationForm(UserCreationForm):
     use_required_attribute = False
