@@ -171,7 +171,9 @@ function bindResultEvents(resultForm) {
         var outputVariableData = equipmentModelSelect.find('option[value=' + modelId + ']').data('output-variables');
         unitSelect.data('filters-applied', true);
 
-        filterSelectOptions(unitSelect, outputVariableData.variables[variableId]);
+        if (outputVariableData) {
+            filterSelectOptions(unitSelect, outputVariableData.variables[variableId]);
+        }
     });
     variableSelect.trigger('change', [true]);
 
