@@ -476,7 +476,8 @@ div.form-field[data-field="site_type"] {
     order: 0;
 }
 
-div.form-field[data-field="elevation_m"], div.form-field[data-field="elevation_datum"] {
+div.form-field[data-field="elevation_m"], div.form-field[data-field="elevation_datum"],
+div.form-field[data-field="notify"], div.form-field[data-field="hours_threshold"] {
     -webkit-box-ordinal-group: 2;
     -moz-box-ordinal-group: 2;
     -ms-flex-order: 2;
