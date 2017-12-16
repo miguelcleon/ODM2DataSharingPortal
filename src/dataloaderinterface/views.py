@@ -162,10 +162,10 @@ class SiteDetailView(DetailView):
         context = super(SiteDetailView, self).get_context_data()
 
         try:
-            odm2user = ODM2User.objects.get(user=self.request.user.id)
-            hs_user = HydroShareUser.objects.get(user=odm2user)
+            hs_user = HydroShareUser.objects.get(user=self.request.user.odm2user)
             hs_site = HydroShareSiteSetting.objects.get(hs_user=hs_user, site_registration=context['site'])
-            context['hs_enabled'] = hs_site.is_enabled
+            context['hs_user'] = hs_user
+            context['hs_site'] = hs_site
         except Exception:
             context['hs_enabled'] = False
 
@@ -290,7 +290,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             data_logger_program = data_logger_file.program
 
             # Update HydroShare account info
-            hs_user_form.save(self.get_hs_site_setting())
+            # hs_user_form.save(self.get_hs_site_setting())
+            hs_user_form.save(hydroshare_site=self.get_hs_site_setting())
             hs_site_settings_form.save()
 
             # Update sampling feature

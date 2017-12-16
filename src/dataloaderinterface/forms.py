@@ -15,9 +15,6 @@ from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroSha
 
 class HydroShareUserForm(forms.ModelForm):
     hs_users = forms.ModelChoiceField(queryset=None, required=True, label="HydroShare Account")
-    class Meta:
-        model = HydroShareUser
-        fields = ['is_enabled']
 
     def __init__(self, odm2user, *args, **kwargs):
         super(HydroShareUserForm, self).__init__(*args, **kwargs)
@@ -26,7 +23,7 @@ class HydroShareUserForm(forms.ModelForm):
                                                      initial=odm2user.id,
                                                      label="HydroShare Account")
 
-    def save(self, hydroshare_site, commit=True):
+    def save(self, commit=True, hydroshare_site=None):
         instance = super(HydroShareUserForm, self).save(commit=False)
         if commit:
             if isinstance(self.instance, HydroShareUser) and hydroshare_site.hs_user.pk is not self.instance.pk:
@@ -35,6 +32,9 @@ class HydroShareUserForm(forms.ModelForm):
             instance.save()
         return instance
 
+    class Meta:
+        model = HydroShareUser
+        fields = ['is_enabled']
 
 class HydroShareSiteForm(forms.ModelForm):
     class Meta:

@@ -224,6 +224,17 @@ class HydroShareSiteSetting(models.Model):
     is_enabled = models.BooleanField(default=False)
     last_sync_date = models.DateTimeField()
 
+    @property
+    def sync_type_verbose(self):
+        return 'Scheduled' if self.sync_type == 'S' else 'Manual'
+
+    @property
+    def update_freq_verbose(self):
+        for choice in HydroShareSiteSetting.FREQUENCY_CHOICES:
+            if choice[0] == self.update_freq.total_seconds():
+                return choice[1]
+        return 'NA'
+
     def to_dict(self):
         return {
             'hs_user': self.hs_user,

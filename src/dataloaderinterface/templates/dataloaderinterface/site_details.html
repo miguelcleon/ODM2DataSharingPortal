@@ -172,10 +172,56 @@
 
 
 
+                    <div class="row">
+                        {% if hs_user %}
+                        <div class="col-lg-6 col-sm-12">
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width site-table">
+                                <thead class="site-table-header">
+                                    <th class="mdl-data-table__cell--non-numeric" colspan="2">HydroShare Account Settings</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <i class="fa fa-user-circle"></i> Account
+                                        </td>
+                                        <td class="mdl-data-table__cell--non-numeric">{{ hs_user.account_nickname }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <i class="fa fa-share-alt"></i> Sharing
+                                        </td>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <strong>{% if hs_site.is_enabled %} On {% else %} Off {% endif %}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <i class="fa fa-circle" aria-hidden="true"></i> Update Frequency
+                                        </td>
+                                    {% if hs_site.sync_type == 'S' %}
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            {{ hs_site.update_freq_verbose }}
+                                        </td>
+                                    {% elif hs_site.sync_type == 'M' %}
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            {{ hs_site.sync_type_verbose }}
+                                        </td>
+                                    {% endif %}
+                                    </tr>
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            Manually push latest data to your HydroShare account.
+                                        </td>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" id="hs-update-btn">Update</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
 
-
-                    <div class="hydroshare-site-settings col-lg-12">
-                        <h6>HydroShare Sharing is <b>{% if hs_enabled %}On{% else %}Off{% endif %}</b></h6>
+                        {% endif %}
                     </div>
 
 
@@ -397,4 +443,11 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+    <script>
+        $(function() {
+           $('#hs-update-btn').click(function() {
+               alert("This doesn't actually do anything yet...");
+           });
+        });
+    </script>
 {% endblock %}
