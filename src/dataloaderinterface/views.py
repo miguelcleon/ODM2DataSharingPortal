@@ -25,7 +25,7 @@ from django.views.generic.list import ListView
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm, SiteAlertForm
-from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
+from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, SiteAlert
 
 
 class LoginRequiredMixin(object):
@@ -245,14 +245,18 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
         action_by = sampling_feature.feature_actions.first().action.action_by.first()
-        do_notify = self.request.user.site_alerts.filter(sampling_feature_code=sampling_feature.sampling_feature_code).exists()
-        # TODO: add time threshold here.
+        site_registration = context['siteregistration']
+        notify_user = self.request.user.site_alerts.filter(site_registration=site_registration.registration_id,
+                                                         user=self.request.user.id).first()
+        do_notify = True if notify_user else False
+        time_threshold = notify_user.hours_threshold if notify_user else None
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
         context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
         context['action_by_form'] = ActionByForm(data=data, instance=action_by)
-        context['email_alert_form'] = SiteAlertForm(data=data, initial={'notify': do_notify})
+        context['email_alert_form'] = SiteAlertForm(data=data, initial={'notify': do_notify,
+                                                                        'hours_threshold': time_threshold})
         context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
         return context
 
@@ -266,12 +270,31 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         site_form = SiteForm(data=self.request.POST, instance=sampling_feature.site)
         results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
         action_by_form = ActionByForm(request.POST)
+        notify_form = SiteAlertForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset,
+                           notify_form):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
             data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
+
+            # Update notification settings
+            site_alert = self.request.user.site_alerts.filter(site_registration=site_registration.registration_id,
+                                                              user=self.request.user.id).first()
+
+            if notify_form['notify'].value() and site_alert is not None:
+                site_alert.hours_threshold = notify_form['hours_threshold'].value()
+                site_alert.save()
+            elif not notify_form['notify'].value() and site_alert is not None:
+                site_alert.delete()
+            elif notify_form['notify'].value() and site_alert is None:
+                site_alert = SiteAlert()
+                site_alert.user = self.request.user
+                site_alert.hours_threshold = notify_form['hours_threshold'].value()
+                site_alert.site_registration = site_registration
+                site_alert.save()
+
 
             # Update sampling feature
             sampling_feature_form.instance.save()
@@ -391,9 +414,11 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         site_form = SiteForm(request.POST)
         results_formset = ResultFormSet(request.POST)
         action_by_form = ActionByForm(request.POST)
+        notify_form = SiteAlertForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset,
+                           notify_form):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
 
             # Create sampling feature
@@ -438,6 +463,13 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             site_registration = SiteRegistration(**registration_data)
             registration_form.instance = site_registration
             site_registration.save()
+
+            if notify_form['notify'].value():
+                site_alert = SiteAlert()
+                site_alert.user = self.request.user
+                site_alert.hours_threshold = notify_form['hours_threshold'].value()
+                site_alert.site_registration = site_registration
+                site_alert.save()
 
             for result_form in results_formset.forms:
                 create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import json
+import djcelery
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -61,6 +62,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 REST_FRAMEWORK = {
    'DEFAULT_RENDERER_CLASSES': (
        'rest_framework.renderers.JSONRenderer',
@@ -152,8 +154,9 @@ RECAPTCHA_USER_KEY = data["recaptcha_user_key"] if "recaptcha_user_key" in data 
 
 RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
+EMAIL_SENDER = data['password_email_sender'] if 'password_email_sender' in data else '',
 
-EMAIL_SENDER = data['email_sender'] if 'email_sender' in data else '',
+NOTIFY_EMAIL_SENDER = data['notify_email_sender'] if 'notify_email_sender' in data else ''
 
 DEFAULT_FROM_EMAIL = EMAIL_SENDER[0] if isinstance(EMAIL_SENDER, tuple) else EMAIL_SENDER
 

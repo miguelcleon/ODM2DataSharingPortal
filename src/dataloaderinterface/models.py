@@ -164,7 +164,7 @@ class ODM2User(models.Model):
 
 
 class SiteAlert(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='site_alerts')
+    user = models.ForeignKey(User, db_column='User', related_name='site_alerts')
     site_registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='alerts')
     last_alerted = models.DateTimeField(db_column='LastAlerted', blank=True, null=True)
     hours_threshold = models.PositiveIntegerField(db_column='HoursThreshold', default=15)
