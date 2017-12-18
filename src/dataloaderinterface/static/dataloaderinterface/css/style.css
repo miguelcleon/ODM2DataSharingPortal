@@ -213,6 +213,11 @@ div.registration-field span.control-label {
     font-weight: 700;
 }
 
+#id_hours_threshold {
+    display: inline-block;
+    width: 80px;
+}
+
 .plot_box {
     float: left;
     width: 100%;

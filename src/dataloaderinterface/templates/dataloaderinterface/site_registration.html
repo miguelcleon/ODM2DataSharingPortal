@@ -97,7 +97,7 @@
                                                 </div>
                                             {% else %}
                                                 <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %} {% if not field.value %}hidden{% endif %}"
-                                                     data-field="{{ field.name }}" style="margin-top: -20px;">
+                                                     data-field="{{ field.name }}" style="margin-top: -15px;">
                                                     <label class="control-label"
                                                            for="{{ field.id_for_label }}">{{ field.label }}</label>
 
@@ -111,7 +111,6 @@
                                                         </div>
                                                     {% endif %}
                                                     {{ field|add_class:"form-control input-sm" }}
-
                                                 </div>
                                             {% endif %}
                                         {% endfor %}
@@ -325,7 +324,7 @@
                     <p>Are you sure you want to remove this sensor?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="mdl-button" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
                     <button type="button" class="mdl-button mdl-button--raised"
                             style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
                     </button>
