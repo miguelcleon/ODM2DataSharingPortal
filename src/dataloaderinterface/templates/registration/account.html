@@ -73,19 +73,41 @@
                         </tr>
                     </table>
                 </div>
+
                 <div class="col-lg-6 col-sm-12">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
-                            {% if hs_users %}
-                            <a href="{% url 'hydroshare_account' %}" class="mdl-button mdl-button--raised mdl-button--accent">
-                                <i class="material-icons">settings</i>
-                                <span>HydroShare Settings</span>
-                            </a>
-                            {% else %}
-                            <a href="{% url 'hydroshare_oauth:oauth' %}" class="mdl-button mdl-button--raised mdl-button--accent">
+                            <a href="{% url 'hydroshare_oauth:oauth' %}"
+                               id="hs-conn-link"
+                               class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect full-width">
+                               <!--style="text-transform: initial"-->
                                 <i class="material-icons">share</i>
-                                <span>Connect To Hydroshare</span>
+                                Add Hydroshare Connection
                             </a>
+                            {% if hs_users %}
+                            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+                                <thead>
+                                <tr>
+                                    <th class="mdl-data-table__cell">#</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Account Nickname</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {#{% for user in hs_users %}#}
+                                <tr>
+                                    <td class="mdl-data-table__cell">
+
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                             {% endif %}
                         </div>
                     </div>
@@ -222,7 +244,7 @@
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/user-form.js' %}"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
-
+    <script src="{% static 'dataloaderinterface/js/mdl-button-resizer.js' %}"></script>
     <script>
         function setMode(mode) {
             if (mode == "edit") {

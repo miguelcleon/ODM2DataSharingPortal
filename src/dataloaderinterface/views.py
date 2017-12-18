@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
+
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
@@ -8,11 +9,11 @@ from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeries
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http.response import HttpResponseRedirect, Http404, HttpResponse
 from django.shortcuts import render
-# Create your views here.
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
@@ -42,7 +43,6 @@ class HomeView(TemplateView):
     #         context['device_results'].append({'device': device, 'feature_actions': feature_actions})
     #     return context
 
-
 class UserUpdateView(UpdateView):
     form_class = UserUpdateForm
     template_name = 'registration/account.html'
@@ -60,17 +60,23 @@ class UserUpdateView(UpdateView):
         context = super(UserUpdateView, self).get_context_data(**kwargs)
 
         if self.request.user.is_authenticated():
-            odm2user = ODM2User.objects.get(pk=self.request.user.id)
-            hs_users = HydroShareUser.objects.get(user=odm2user)
-            if not isinstance(hs_users, list):
-                hs_users = [hs_users]
-            context['hs_users'] = hs_users
-        else:
-            context['hs_users'] = []
+            try:
+                odm2user = ODM2User.objects.get(pk=self.request.user.id)
+                hs_users = HydroShareUser.objects.get(user=odm2user)
+                if not isinstance(hs_users, list):
+                    hs_users = [hs_users]
+                context['hs_users'] = hs_users
+            except HydroShareUser.DoesNotExist:
+                pass
 
         context['organization_form'] = OrganizationForm()
         return context
 
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        return super(UserUpdateView, self).get(request, *args, **kwargs)
+
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         user = User.objects.get(pk=request.user.pk)
         form = UserUpdateForm(request.POST, instance=user, initial={'organization': user.odm2user.affiliation.organization})
@@ -258,8 +264,9 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         try:
             hs_site = HydroShareSiteSetting.objects.get(site_registration=self.get_object())
             hs_user = HydroShareUser.objects.get(pk=hs_site.hs_user.id)
-            context['hydroshare_settings_form'] = HydroShareSiteForm(instance=hs_site, initial={'update_freq': hs_site.update_freq.total_seconds()})
-            context['hydroshare_user_form'] = HydroShareUserForm(hs_user.user)
+            if self.request.user.id == hs_user.user.id:
+                context['hydroshare_settings_form'] = HydroShareSiteForm(instance=hs_site, initial={'update_freq': hs_site.update_freq.total_seconds()})
+                context['hydroshare_user_form'] = HydroShareUserForm(hs_user.user)
         except Exception as e:
             print(e)
 

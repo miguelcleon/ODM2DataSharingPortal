@@ -14,14 +14,10 @@ from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroSha
 # AUTHORIZATION
 
 class HydroShareUserForm(forms.ModelForm):
-    hs_users = forms.ModelChoiceField(queryset=None, required=True, label="HydroShare Account")
-
     def __init__(self, odm2user, *args, **kwargs):
         super(HydroShareUserForm, self).__init__(*args, **kwargs)
         self.fields['hs_users'] = forms.ModelChoiceField(queryset=HydroShareUser.objects.filter(user=odm2user.pk),
-                                                     required=True,
-                                                     initial=odm2user.id,
-                                                     label="HydroShare Account")
+                                                         initial=odm2user.id, label="HydroShare Account")
 
     def save(self, commit=True, hydroshare_site=None):
         instance = super(HydroShareUserForm, self).save(commit=False)

@@ -86,7 +86,7 @@
 
 
 
-
+                            {% if hydroshare_user_form and hydroshare_settings_form %}
                             <fieldset id="hydroshare-form">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -96,7 +96,7 @@
                                         <div class="row">
                                             <div class="col-lg-6 col-sm-12">
                                                 {% with hydroshare_user_form as form %}
-                                                <div class="form-field">
+                                                <div class="form-field  {% if form.hs_users.required %} required-field{% endif %}{% if form.hs_users.errors %} has-error{% endif %}">
                                                     <label class="control-label" for="{{ form.hs_users.id_for_label }}">{{ form.hs_users.label }}</label>
                                                     {{ form.hs_users|add_class:"form-control input-sm" }}
                                                 </div>
@@ -129,6 +129,7 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            {% endif %}
 
 
 
