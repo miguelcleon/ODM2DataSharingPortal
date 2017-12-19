@@ -295,7 +295,6 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                 site_alert.site_registration = site_registration
                 site_alert.save()
 
-
             # Update sampling feature
             sampling_feature_form.instance.save()
 
@@ -457,7 +456,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
                 'elevation_m': sampling_feature.elevation_m,
                 'latitude': sampling_feature.site.latitude,
                 'longitude': sampling_feature.site.longitude,
-                'site_type': sampling_feature.site.site_type_id
+                'site_type': sampling_feature.site.site_type_id,
             }
 
             site_registration = SiteRegistration(**registration_data)
