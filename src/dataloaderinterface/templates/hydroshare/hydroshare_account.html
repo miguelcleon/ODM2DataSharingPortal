@@ -1,34 +1,69 @@
-<table class="mdl-data-table mdl-js-data-table full-width">
-{% for hsuser in hs_users %}
+
+<a href="{% url 'hydroshare_oauth:oauth' %}"
+   style="margin-bottom: 16px;"
+   class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+    <i class="material-icons">share</i>
+    ADD HYDROSHARE CONNECTION
+</a>
+
+{% if hs_accounts %}
+
+{% if data_profile_mode == 'view' %}
+
+<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
     <thead>
         <tr>
             <th class="mdl-data-table__cell">#</th>
             <th class="mdl-data-table__cell--non-numeric">Account Nickname</th>
-            <th class="mdl-data-table__cell--non-numeric"></th>
+            <th class="mdl-data-table__cell--non-numeric">Status</th>
+            <th class="mdl-data-table__cell--non-numeric">On/Off</th>
             <th class="mdl-data-table__cell--non-numeric"></th>
         </tr>
     </thead>
     <tbody>
+    {% for account in hs_accounts %}
         <tr>
-            <th class="mdl-data-table__cell">{{ forloop.counter }}</th>
-            <td class="mdl-data-table__cell-non-numeric">
-                <form>
-                    <div class="form-group">
-                        <input type="text" class="form-control" value="{{ hsuser.account_nickname|capfirst }}" placeholder="Account Nickname">
-                    </div>
+            <td class="mdl-data-table__cell">
+                {{ forloop.counter }}
+            </td>
+            <td class="mdl-data-table__cell--non-numeric">
+                {{ account.account_nickname }}
+            </td>
+            <td class="mdl-data-table__cell--non-numeric">
+                {% if account.is_enabled %}Enabled{% else %}Disabled{% endif %}
+            </td>
+            <td>
+                <form method="post" id="hydroshare-udpate-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="account_id" value="{{ account.id }}">
+                    <input type="hidden" name="is_enabled" value="{% if account.is_enabled %}false{% else %}true{% endif %}">
+                    <input type="hidden" name="_method" value="put">
+                    <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch_for_hs_{{ account.id }}">
+                        <!--suppress HtmlUnknownAttribute -->
+                        <input type="checkbox" class="mdl-switch__input"
+                               id="switch_for_hs_{{ account.id }}"
+                               {% if account.is_enabled%} checked {% endif %}>
+                        <span class="mdl-switch__label"></span>
+                    </label>
                 </form>
             </td>
-            <!--<td>-->
-                <!--<button class="mdl-button mdl-button&#45;&#45;raised mdl-button&#45;&#45;accent" type="button">-->
-                    <!--<i class="material-icons">mode_edit</i>-->
-                    <!--<span>Edit</span>-->
-                <!--</button>-->
-            <!--</td>-->
-            <!--#FF5852-->
             <td class="mdl-data-table__cell--non-numeric">
-                <button class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white" type="button">Deauthorize</button>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="account_id" value="{{ account.id }}">
+                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color-text--red-500"
+                            type="submit"
+                            name="_method"
+                            value="delete">
+                        <i class="material-icons">delete</i>
+                    </button>
+                </form>
             </td>
         </tr>
+    {% endfor %}
     </tbody>
-{% endfor %}
 </table>
+{% endif %}{# data_profile_mode == 'view' #}
+
+{% endif %}{# hs_accounts #}
+

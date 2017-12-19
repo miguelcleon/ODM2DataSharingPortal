@@ -8,28 +8,28 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 
-from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroShareUser, SiteRegistration
+from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroShareAccount, SiteRegistration
 
 
 # AUTHORIZATION
 
-class HydroShareUserForm(forms.ModelForm):
+class HydroShareAccountForm(forms.ModelForm):
     def __init__(self, odm2user, *args, **kwargs):
-        super(HydroShareUserForm, self).__init__(*args, **kwargs)
-        self.fields['hs_users'] = forms.ModelChoiceField(queryset=HydroShareUser.objects.filter(user=odm2user.pk),
+        super(HydroShareAccountForm, self).__init__(*args, **kwargs)
+        self.fields['hs_users'] = forms.ModelChoiceField(queryset=HydroShareAccount.objects.filter(user=odm2user.pk),
                                                          initial=odm2user.id, label="HydroShare Account")
 
     def save(self, commit=True, hydroshare_site=None):
-        instance = super(HydroShareUserForm, self).save(commit=False)
+        instance = super(HydroShareAccountForm, self).save(commit=False)
         if commit:
-            if isinstance(self.instance, HydroShareUser) and hydroshare_site.hs_user.pk is not self.instance.pk:
+            if hydroshare_site and hydroshare_site.hs_user.pk is not self.instance.pk:
                 hydroshare_site.hs_user = self.instance
                 hydroshare_site.save()
             instance.save()
         return instance
 
     class Meta:
-        model = HydroShareUser
+        model = HydroShareAccount
         fields = ['is_enabled']
 
 class HydroShareSiteForm(forms.ModelForm):
@@ -37,7 +37,6 @@ class HydroShareSiteForm(forms.ModelForm):
         model = HydroShareSiteSetting
         fields = ['is_enabled', 'sync_type', 'update_freq']
         widgets = { 'update_freq': forms.Select(choices=HydroShareSiteSetting.FREQUENCY_CHOICES) }
-
 
 class UserRegistrationForm(UserCreationForm):
     use_required_attribute = False

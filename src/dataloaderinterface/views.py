@@ -1,3 +1,4 @@
+# coding=utf-8
 from datetime import datetime
 from uuid import uuid4
 
@@ -18,11 +19,12 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
+from django.forms import formset_factory
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareUserForm
-from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareUser, HydroShareSiteSetting
+    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareAccountForm
+from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareSiteSetting
 
 
 class LoginRequiredMixin(object):
@@ -56,19 +58,17 @@ class UserUpdateView(UpdateView):
         form = UserUpdateForm(instance=user, initial={'organization': organization})
         return form
 
+    def get_hydroshare_accounts(self, user_id):
+        try:
+            odm2user = ODM2User.objects.get(pk=user_id)
+            return HydroShareAccount.objects.filter(user=odm2user).order_by('account_nickname').values()
+        except HydroShareAccount.DoesNotExist:
+            return []
+
     def get_context_data(self, **kwargs):
         context = super(UserUpdateView, self).get_context_data(**kwargs)
 
-        if self.request.user.is_authenticated():
-            try:
-                odm2user = ODM2User.objects.get(pk=self.request.user.id)
-                hs_users = HydroShareUser.objects.get(user=odm2user)
-                if not isinstance(hs_users, list):
-                    hs_users = [hs_users]
-                context['hs_users'] = hs_users
-            except HydroShareUser.DoesNotExist:
-                pass
-
+        context['hs_accounts'] = self.get_hydroshare_accounts(self.request.user.id)
         context['organization_form'] = OrganizationForm()
         return context
 
@@ -78,15 +78,42 @@ class UserUpdateView(UpdateView):
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(pk=request.user.pk)
-        form = UserUpdateForm(request.POST, instance=user, initial={'organization': user.odm2user.affiliation.organization})
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Your information has been updated successfully.')
-            return HttpResponseRedirect(reverse('user_account'))
+
+        if request.POST.get('_method'):
+            method = request.POST.get('_method')
+            if method == 'delete':
+                # TODO: Change `hs_account.save()` to `hs_account.delete()` after testing is done
+                account_id = request.POST.get('account_id')
+                hs_account = HydroShareAccount.objects.get(pk=account_id)
+                hs_account.is_enabled = False
+                hs_account.save()
+            elif method == 'put':
+                hs_account = HydroShareAccount.objects.get(pk=request.POST.get('account_id'))
+                is_enabled = True if request.POST.get('is_enabled') == 'true' else False
+                hs_account.is_enabled = is_enabled
+                hs_account.save()
+
+            form = UserUpdateForm(instance=request.user, initial={'organization': request.user.odm2user.affiliation.organization})
+            context = {
+                'form': form,
+                'organization_form': OrganizationForm(),
+                'hs_accounts': self.get_hydroshare_accounts(request.user.id)
+            }
+            return render(request, self.template_name, context=context)
         else:
-            messages.error(request, 'There were some errors in the form.')
-            return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
+            user = User.objects.get(pk=request.user.pk)
+            form = UserUpdateForm(request.POST, instance=user,
+                                  initial={'organization': user.odm2user.affiliation.organization})
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your information has been updated successfully.')
+                return HttpResponseRedirect(reverse('user_account'))
+            else:
+                messages.error(request, 'There were some errors in the form.')
+                return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
+
+    def delete(self, request):
+        pass
 
 
 class HydroShareView(TemplateView):
@@ -96,7 +123,7 @@ class HydroShareView(TemplateView):
         context = super(HydroShareView, self).get_context_data(**kwargs)
 
         odm2user = ODM2User.objects.get(user=self.request.user.id)
-        hs_users = HydroShareUser.objects.get(user=odm2user)
+        hs_users = HydroShareAccount.objects.get(user=odm2user)
         if not isinstance(hs_users, list):
             hs_users = [hs_users]
         context['hs_users'] = hs_users
@@ -168,7 +195,7 @@ class SiteDetailView(DetailView):
         context = super(SiteDetailView, self).get_context_data()
 
         try:
-            hs_user = HydroShareUser.objects.get(user=self.request.user.odm2user)
+            hs_user = HydroShareAccount.objects.get(user=self.request.user.odm2user)
             hs_site = HydroShareSiteSetting.objects.get(hs_user=hs_user, site_registration=context['site'])
             context['hs_user'] = hs_user
             context['hs_site'] = hs_site
@@ -263,10 +290,10 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
         try:
             hs_site = HydroShareSiteSetting.objects.get(site_registration=self.get_object())
-            hs_user = HydroShareUser.objects.get(pk=hs_site.hs_user.id)
+            hs_user = HydroShareAccount.objects.get(pk=hs_site.hs_user.id)
             if self.request.user.id == hs_user.user.id:
                 context['hydroshare_settings_form'] = HydroShareSiteForm(instance=hs_site, initial={'update_freq': hs_site.update_freq.total_seconds()})
-                context['hydroshare_user_form'] = HydroShareUserForm(hs_user.user)
+                context['hydroshare_user_form'] = HydroShareAccountForm(hs_user.user)
         except Exception as e:
             print(e)
 
@@ -288,7 +315,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
         action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
-        hs_user_form = HydroShareUserForm(request.user, data=self.request.POST, instance=self.get_hs_user())
+        hs_user_form = HydroShareAccountForm(request.user, data=self.request.POST, instance=self.get_hs_user())
         hs_site_settings_form = HydroShareSiteForm(data=self.request.POST, instance=self.get_hs_site_setting())
 
         if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, hs_user_form, hs_site_settings_form):

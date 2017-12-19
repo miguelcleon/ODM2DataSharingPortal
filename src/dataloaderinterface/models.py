@@ -167,10 +167,10 @@ class ODM2User(models.Model):
         return self.user.is_staff or registration.user == self
 
 
-# HydroshareUser - holds information for user's Hydroshare account
-class HydroShareUser(models.Model):
+# HydroShareAccount - holds information for user's Hydroshare account
+class HydroShareAccount(models.Model):
     user = models.ForeignKey('ODM2User', db_column='user_id')
-    account_nickname = models.CharField(max_length=255, default='Default Account')
+    account_nickname = models.CharField(max_length=255, default='HydroShare Account')
     access_token = models.CharField(max_length=255, blank=True, default='')
     refresh_token = models.CharField(max_length=255, blank=True, default='')
     is_enabled = models.BooleanField(default=False)
@@ -207,7 +207,7 @@ class HydroShareUser(models.Model):
         return self.account_nickname
 
     class Meta:
-        db_table = 'hydroshare_user'
+        db_table = 'hydroshare_account'
 
 
 # "Settings" for a Hydroshare account connection
@@ -224,7 +224,7 @@ class HydroShareSiteSetting(models.Model):
         (timedelta(days=30).total_seconds(), 'Monthly')
     )
 
-    hs_user = models.ForeignKey(HydroShareUser, db_column='hs_user_id', on_delete=models.CASCADE)
+    hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE)
     site_registration = models.OneToOneField(SiteRegistration, unique=True)
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
     resource_id = models.CharField(max_length=255, blank=True)
@@ -245,7 +245,7 @@ class HydroShareSiteSetting(models.Model):
 
     def to_dict(self):
         return {
-            'hs_user': self.hs_user,
+            'hs_account': self.hs_account,
             'site_registration': self.site_registration,
             'sync_type': self.sync_type,
             'resource_id': self.resource_id,
