@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
@@ -8,6 +8,29 @@ from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
 class HydroShareOAuthBaseClass(TemplateView):
     pass
+
+class Resources(TemplateView):
+    template_name = 'hydroshare/resources.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(Resources, self).get_context_data(**kwargs)
+        id = kwargs['id']
+
+        try:
+            account = HydroShareAccount.objects.get(id=id)
+        except:
+            raise Http404
+
+        # context['account'] = account
+        resources = HydroShareAPI.get_resources(account)
+        context['resources'] = resources
+        import json
+        context['resources_json'] = json.dumps(resources)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context = ''
+        return super(Resources, self).get(request, *args, **kwargs)
 
 
 class OAuthAuthorize(HydroShareOAuthBaseClass):

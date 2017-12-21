@@ -170,7 +170,7 @@ class ODM2User(models.Model):
 # HydroShareAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
     user = models.ForeignKey('ODM2User', db_column='user_id')
-    account_nickname = models.CharField(max_length=255, default='HydroShare Account')
+    name = models.CharField(max_length=255, default='HydroShare Account')
     access_token = models.CharField(max_length=255, blank=True, default='')
     refresh_token = models.CharField(max_length=255, blank=True, default='')
     is_enabled = models.BooleanField(default=False)
@@ -191,10 +191,20 @@ class HydroShareAccount(models.Model):
             self.oauth_scope = token.scope
         self.save(update_fields=['refresh_token', 'access_token', 'token_expires_in', 'oauth_scope'])
 
+    def get_token(self):
+        return {
+            'access_token': self.access_token,
+            'token_type': 'Bearer',
+            'expires_in': self.token_expires_in,
+            'refresh_token': self.refresh_token,
+            'scope': self.oauth_scope
+        }
+
     def to_dict(self):
         return {
+            'id': self.pk,
             'user_id': self.user.id,
-            'account_nickname': self.account_nickname,
+            'name': self.name,
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
             'is_enabled': self.is_enabled,
@@ -204,7 +214,7 @@ class HydroShareAccount(models.Model):
         }
 
     def __str__(self):
-        return self.account_nickname
+        return self.name
 
     class Meta:
         db_table = 'hydroshare_account'
@@ -252,6 +262,7 @@ class HydroShareSiteSetting(models.Model):
 
     def to_dict(self):
         return {
+            'id': self.pk,
             'hs_account': self.hs_account,
             'site_registration': self.site_registration,
             'sync_type': self.sync_type,

@@ -86,14 +86,18 @@
 
                             {% if hydroshare_account_form and hydroshare_settings_form %}
                             <fieldset id="hydroshare-form">
-                                <div class="panel panel-default">
+                                <div class="panel panel-primary" id="hs-settings-panel">
                                     <div class="panel-heading">
-                                        <h3 class="panel-title">HydroShare Sync Settings</h3>
+                                        <h3 class="panel-title">HydroShare Settings</h3>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-lg-6 col-sm-12">
                                                 {% with hydroshare_account_form as form %}
+                                                <p class="text-danger" id="hs-disabled-warning">
+                                                    The HydroShare account <b>{{ form.hs_account.label }}</b> has been disabled in your <a href="{% url 'user_account' %}" class="text-primary">account settings</a>.
+                                                    Re-enable your HydroShare account to continue syncing data.
+                                                </p>
                                                 <div class="form-field  {% if form.hs_account.required %} required-field{% endif %}{% if form.hs_account.errors %} has-error{% endif %}">
                                                     <label class="control-label" for="{{ form.hs_account.id_for_label }}">{{ form.hs_account.label }}</label>
                                                     {{ form.hs_account|add_class:"form-control input-sm" }}
@@ -101,8 +105,8 @@
                                                 {% endwith %}
                                             </div>
                                             <div class="col-lg-6 col-sm-12">
+                                                {% with hydroshare_settings_form as form %}
                                                 <div class="form-group" id="hs_settings_form_group">
-                                                    {% with hydroshare_settings_form as form %}
                                                     <div class="form-check" data-field="{{ form.is_enabled.name }}">
                                                         <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="{{ form.is_enabled.id_for_label }}">
                                                             {{ form.is_enabled|add_class:"mdl-switch__input" }}
@@ -120,8 +124,8 @@
                                                         {{ form.update_freq.errors }}
                                                         {{ form.update_freq|add_class:"form-control input-sm" }}
                                                     </div>
-                                                    {% endwith %}
                                                 </div>
+                                                {% endwith %}
                                             </div>
                                         </div>
                                     </div>
@@ -350,4 +354,42 @@
     <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
     <script src="{% static 'dataloaderinterface/js/hydroshare-settings-update-form.js' %}"></script>
+    <script>
+        $('#hs-disabled-warning').hide();
+        $(function() {
+            var hsAccount = $('#id_hs_account');
+            var accounts = "{{ hs_accounts_json }}".replace(/\&quot;/g, '\"');
+            accounts = JSON.parse(accounts, null, 3);
+
+            for (var i = 0; i < accounts.length; i++) {
+                var selectedId = hsAccount[0].value;
+                var currId = accounts[i].id;
+                show = (selectedId == currId) && !accounts[i].is_enabled;
+                showHSWarning((selectedId == currId) && !accounts[i].is_enabled);
+            }
+
+            hsAccount.change(function(ev) {
+                var selectedAccountId = hsAccount[0].value;
+                var currId = -1;
+                for (var i = 0; i < accounts.length; i++) {
+                    if (accounts[i].id == ev.target.value) {
+                        currId = accounts[i].id;
+                        break;
+                    }
+                }
+                showHSWarning((selectedAccountId == currId) && !accounts[i].is_enabled);
+            });
+
+            function showHSWarning(show) {
+                if (show) {
+                    $('#hs-disabled-warning').show();
+                    document.getElementById('hs-settings-panel').className = "panel panel-warning";
+                } else {
+                    $('#hs-disabled-warning').hide();
+                    document.getElementById('hs-settings-panel').className = "panel panel-primary";
+                }
+            }
+        });
+
+    </script>
 {% endblock %}

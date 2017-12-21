@@ -1,0 +1,44 @@
+
+<style>
+    table,
+    th {
+        border: 1px solid grey;
+    }
+</style>
+
+<table id="resource-table">
+    <thead>
+    <tr>
+        <th>Header 1</th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>data 1</td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    resources = '{{ resources_json }}'.replace(/\&quot;/g, '"');
+    resources = JSON.parse(resources, null, '\t');
+
+    function buildTable() {
+        table = document.getElementById('resource-table');
+        thead = document.getElementsByTagName('thead')[0];
+        theadRow = thead.getElementsByTagName('tr')[0];
+        headerRowHTML = "";
+        console.log(resources[0]);
+        const keys = Object.keys(resources[0]).sort();
+        for (i in keys) {
+            var header = keys[i].split('_').map(function (value) {
+                return value.charAt(0).toUpperCase() + value.slice(1);
+            }).join(' ');
+            headerRowHTML += '<th>' + header + '</th>';
+        }
+        theadRow.innerHTML = headerRowHTML;
+    }
+
+    buildTable();
+
+</script>

@@ -13,19 +13,17 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http.response import HttpResponseRedirect, Http404, HttpResponse
+from django.http.response import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
-from django.forms import formset_factory
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSelectAccountForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareSiteSetting
-from hydroshare_oauth.api import HydroShareAPI
 
 
 class LoginRequiredMixin(object):
@@ -62,7 +60,7 @@ class UserUpdateView(UpdateView):
     def get_hydroshare_accounts(self, user_id):
         try:
             odm2user = ODM2User.objects.get(pk=user_id)
-            return HydroShareAccount.objects.filter(user=odm2user).order_by('account_nickname').values()
+            return HydroShareAccount.objects.filter(user=odm2user).order_by('name').values()
         except HydroShareAccount.DoesNotExist:
             return []
 
@@ -219,6 +217,12 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
             # temporary error. TODO: do something a little bit more elaborate. or maybe not...
             raise Http404
 
+        try:
+            hs_site = HydroShareSiteSetting.objects.get(site_registration=self.get_object())
+            hs_site.delete()
+        except HydroShareSiteSetting.DoesNotExist:
+            pass
+
         sampling_feature = site.sampling_feature
         data_logger_program = DataLoggerProgramFile.objects.filter(
             affiliation_id=site.affiliation_id,
@@ -287,11 +291,17 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                     if hs_site.hs_account:
                         hs_account_form = HydroShareSelectAccountForm(self.request.user, initial=hs_site.hs_account)
                 except HydroShareSiteSetting.DoesNotExist:
+                    # create new HydroShareSiteSetting if there is none for this site registration
                     hs_site = HydroShareSiteSetting(site_registration=self.get_object(), hs_account=None, is_enabled=False)
+                    hs_site.save()
 
                 hs_site_form = HydroShareSiteForm(instance=hs_site)
                 context['hydroshare_account_form'] = hs_account_form
                 context['hydroshare_settings_form'] = hs_site_form
+                accounts = HydroShareAccount.objects.filter(user=self.request.user.id)
+                import json
+                context['hs_accounts_json'] = json.dumps([account.to_dict() for account in accounts])
+                context['hydroshare_account'] = hs_site.hs_account
             except HydroShareAccount.DoesNotExist:
                 pass
 

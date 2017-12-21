@@ -14,7 +14,7 @@
     <thead>
         <tr>
             <th class="mdl-data-table__cell">#</th>
-            <th class="mdl-data-table__cell--non-numeric">Account Nickname</th>
+            <th class="mdl-data-table__cell--non-numeric">Account Name</th>
             <th class="mdl-data-table__cell--non-numeric">Status</th>
             <th class="mdl-data-table__cell--non-numeric">On/Off</th>
             <th class="mdl-data-table__cell--non-numeric"></th>
@@ -27,7 +27,7 @@
                 {{ forloop.counter }}
             </td>
             <td class="mdl-data-table__cell--non-numeric">
-                {{ account.account_nickname }}
+                {{ account.name }}
             </td>
             <td class="mdl-data-table__cell--non-numeric">
                 {% if account.is_enabled %}Enabled{% else %}Disabled{% endif %}
