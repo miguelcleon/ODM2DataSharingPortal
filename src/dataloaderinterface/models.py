@@ -213,6 +213,7 @@ class HydroShareAccount(models.Model):
 # "Settings" for a Hydroshare account connection
 class HydroShareSiteSetting(models.Model):
     FREQUENCY_CHOICES = (
+        (timedelta(), 'Never'),
         (timedelta(hours=1).total_seconds(), 'Every Hour'),
         (timedelta(hours=3).total_seconds(), 'Every 3 Hours'),
         (timedelta(hours=6).total_seconds(), 'Every 6 Hours'),
@@ -224,13 +225,13 @@ class HydroShareSiteSetting(models.Model):
         (timedelta(days=30).total_seconds(), 'Monthly')
     )
 
-    hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE)
+    hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE, null=True, blank=True)
     site_registration = models.OneToOneField(SiteRegistration, unique=True)
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
     resource_id = models.CharField(max_length=255, blank=True)
     update_freq = models.DurationField(verbose_name='Update Frequency', default=timedelta())
     is_enabled = models.BooleanField(default=False)
-    last_sync_date = models.DateTimeField()
+    last_sync_date = models.DateTimeField(blank=True, null=True)
 
     @property
     def sync_type_verbose(self):
@@ -243,6 +244,12 @@ class HydroShareSiteSetting(models.Model):
                 return choice[1]
         return 'NA'
 
+    def get_udpate_freq_index(self):
+        try:
+            return [choice[0] for choice in HydroShareSiteSetting.FREQUENCY_CHOICES].index(self.update_freq.total_seconds())
+        except Exception:
+            return 0
+
     def to_dict(self):
         return {
             'hs_account': self.hs_account,
@@ -253,6 +260,10 @@ class HydroShareSiteSetting(models.Model):
             'is_enabled': self.is_enabled,
             'last_sync_date': self.last_sync_date
         }
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        return super(HydroShareSiteSetting, self).save(force_insert, force_update, using, update_fields)
 
     class Meta:
         db_table = 'hydroshare_site_setting'

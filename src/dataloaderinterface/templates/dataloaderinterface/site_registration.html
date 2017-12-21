@@ -84,9 +84,7 @@
                                 </div>
                             </fieldset>
 
-
-
-                            {% if hydroshare_user_form and hydroshare_settings_form %}
+                            {% if hydroshare_account_form and hydroshare_settings_form %}
                             <fieldset id="hydroshare-form">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
@@ -95,16 +93,22 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-lg-6 col-sm-12">
-                                                {% with hydroshare_user_form as form %}
-                                                <div class="form-field  {% if form.hs_users.required %} required-field{% endif %}{% if form.hs_users.errors %} has-error{% endif %}">
-                                                    <label class="control-label" for="{{ form.hs_users.id_for_label }}">{{ form.hs_users.label }}</label>
-                                                    {{ form.hs_users|add_class:"form-control input-sm" }}
+                                                {% with hydroshare_account_form as form %}
+                                                <div class="form-field  {% if form.hs_account.required %} required-field{% endif %}{% if form.hs_account.errors %} has-error{% endif %}">
+                                                    <label class="control-label" for="{{ form.hs_account.id_for_label }}">{{ form.hs_account.label }}</label>
+                                                    {{ form.hs_account|add_class:"form-control input-sm" }}
                                                 </div>
                                                 {% endwith %}
                                             </div>
                                             <div class="col-lg-6 col-sm-12">
-                                                <div class="form-group">
+                                                <div class="form-group" id="hs_settings_form_group">
                                                     {% with hydroshare_settings_form as form %}
+                                                    <div class="form-check" data-field="{{ form.is_enabled.name }}">
+                                                        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="{{ form.is_enabled.id_for_label }}">
+                                                            {{ form.is_enabled|add_class:"mdl-switch__input" }}
+                                                            <span class="mdl-switch__label" id="is_enabled_switch_label">Syncing {% if form.is_enabled.value %}On{% else %}Off{% endif %}</span>
+                                                        </label>
+                                                    </div>
                                                     <div class="form-field {% if form.sync_type.required %} required-field{% endif %}{% if form.sync_type.errors %} has-error{% endif %}"
                                                         data-field="{{ form.sync_type.name }}">
                                                         <label class="control-label" for="{{ form.sync_type.id_for_label }}">{{ form.sync_type.label }}</label>
@@ -116,12 +120,6 @@
                                                         {{ form.update_freq.errors }}
                                                         {{ form.update_freq|add_class:"form-control input-sm" }}
                                                     </div>
-                                                    <div class="form-check" data-field="{{ form.is_enabled.name }}">
-                                                        <label class="form-check-label" for="{{ form.is_enabled.id_for_label }}">
-                                                            {{ form.is_enabled|add_class:"form-check-input" }}
-                                                            {{ form.is_enabled.label }}
-                                                        </label>
-                                                    </div>
                                                     {% endwith %}
                                                 </div>
                                             </div>
@@ -129,10 +127,28 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            {% else %}
+                            <div class="site-update__connect-hs-card mdl-card mdl-shadow--2dp">
+                                <div class="mdl-card__title">
+                                    <img src="https://www.hydroshare.org/static/img/logo-lg.png"/>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    Add a HydroShare account and start syncing site data between
+                                    <em>data.envirodiy.org</em> and <em>hydroshare.org</em>.
+                                </div>
+                                <div class="mdl-card__actions mdl-card--border">
+                                    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+                                       href="{% url 'hydroshare_oauth:oauth_redirect' %}">
+                                        Get Started
+                                    </a>
+                                </div>
+                                <div class="mdl-card__menu">
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">share</i>
+                                    </button>
+                                </div>
+                            </div>
                             {% endif %}
-
-
-
 
                             <fieldset class="form-fieldset">
                                 <div class="row">

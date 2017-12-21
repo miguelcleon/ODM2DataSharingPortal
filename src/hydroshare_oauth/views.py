@@ -1,10 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
-from os import environ as env
-import requests
+from django.utils.safestring import mark_safe
 from dataloaderinterface.models import  ODM2User, HydroShareAccount
-from . api import HydroShareAPI as hsAPI
+from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
 
 class HydroShareOAuthBaseClass(TemplateView):
@@ -63,6 +62,13 @@ class OAuthRefresh(HydroShareOAuthBaseClass):
 class OAuthDeauthorize(HydroShareOAuthBaseClass):
     pass
 
+class OAuthAuthorizeRedirect(HydroShareOAuthBaseClass):
+    template_name = 'hydroshare/oauth_redirect.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OAuthAuthorizeRedirect, self).get_context_data(**kwargs)
+        context['hydroshare_oauth_url'] = mark_safe(HydroShareAPI.get_auth_code_url())
+        return context
 
 
 

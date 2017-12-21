@@ -1063,3 +1063,21 @@ label.checkbox-label {
     margin-top: 20px;
     display: block;
 }
+.site-update__connect-hs-card.mdl-card {
+    width: 396px;
+}
+
+.site-update__connect-hs-card > .mdl-card__title > img {
+    width: 100%;
+    height: auto;
+}
+
+.site-update__connect-hs-card > .mdl-card__menu {
+    color: #fff;
+}
+
+@media only screen and (max-width: 480px) {
+    .site-update__connect-hs-card.mdl-card {
+        width: 100%;
+    }
+}

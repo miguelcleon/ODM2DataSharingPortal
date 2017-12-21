@@ -1,7 +1,8 @@
 from os import environ as env
 import requests
 from django.shortcuts import redirect
-
+from django.core.urlresolvers import reverse
+from django.shortcuts import HttpResponseRedirect
 
 class HydroShareAPI():
 
@@ -13,29 +14,27 @@ class HydroShareAPI():
     _response_type = env.get('HS_RESPONSE_TYPE')
     _redirect_uri = env.get('HS_REDIRECT_URI')
 
-    # def __init__(self):
-    #     self._session = requests.Session()
-
     @staticmethod
     def get_auth_code_url():
-        return {
+        params = {
             'response_type': HydroShareAPI._response_type,
             'client_id': HydroShareAPI._client_id,
             'redirect_uri': HydroShareAPI._redirect_uri
         }
+        return HydroShareAPI.build_oauth_url('authorize/', params)
 
     @staticmethod
     def get_refresh_code_params(refresh_token):
         return {
             'grant_type': 'refresh_token',
-            'client_id': env.get('HS_CLIENT_ID'),
-            'client_secret': env.get('HS_CLIENT_SECRET'),
+            'client_id': HydroShareAPI._client_id,
+            'client_secret': HydroShareAPI._client_secret,
             'refresh_token': refresh_token,
-            'redirect_uri': env.get('HS_REDIRECT_URI')
+            'redirect_uri': HydroShareAPI._redirect_uri,
         }
 
     @staticmethod
-    def _build_oauth_url(path, params):
+    def build_oauth_url(path, params):
         url_params = []
         for key, value in params.iteritems():
             url_params.append('{0}={1}'.format(key, value))
@@ -50,7 +49,7 @@ class HydroShareAPI():
             'client_secret': HydroShareAPI._client_secret,
             'redirect_uri': HydroShareAPI._redirect_uri
         }
-        url = HydroShareAPI._build_oauth_url('token/', params)
+        url = HydroShareAPI.build_oauth_url('token/', params)
         res = requests.post(url)
 
         if res.status_code == 200:
@@ -65,12 +64,7 @@ class HydroShareAPI():
 
     @staticmethod
     def authorize_client():
-        params = {
-            'response_type': env.get('HS_RESPONSE_TYPE'),
-            'client_id': env.get('HS_CLIENT_ID'),
-            'redirect_uri': env.get('HS_REDIRECT_URI')
-        }
-        return redirect(HydroShareAPI._build_oauth_url('authorize/', params))
+        return HttpResponseRedirect(reverse('hydroshare_oauth:oauth_redirect'))
 
     @staticmethod
     def get_auth_header(token):

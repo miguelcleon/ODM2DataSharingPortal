@@ -13,29 +13,25 @@ from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroSha
 
 # AUTHORIZATION
 
-class HydroShareAccountForm(forms.ModelForm):
-    def __init__(self, odm2user, *args, **kwargs):
-        super(HydroShareAccountForm, self).__init__(*args, **kwargs)
-        self.fields['hs_users'] = forms.ModelChoiceField(queryset=HydroShareAccount.objects.filter(user=odm2user.pk),
-                                                         initial=odm2user.id, label="HydroShare Account")
-
-    def save(self, commit=True, hydroshare_site=None):
-        instance = super(HydroShareAccountForm, self).save(commit=False)
-        if commit:
-            if hydroshare_site and hydroshare_site.hs_user.pk is not self.instance.pk:
-                hydroshare_site.hs_user = self.instance
-                hydroshare_site.save()
-            instance.save()
-        return instance
+class HydroShareSelectAccountForm(forms.ModelForm):
+    def __init__(self, odm2user, initial=None, *args, **kwargs):
+        super(HydroShareSelectAccountForm, self).__init__(*args, **kwargs)
+        self.fields['hs_account'] = forms.ModelChoiceField(queryset=HydroShareAccount.objects.filter(user=odm2user.pk),
+                                                         initial=initial, label="HydroShare Account")
 
     class Meta:
         model = HydroShareAccount
         fields = ['is_enabled']
 
 class HydroShareSiteForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(HydroShareSiteForm, self).__init__(*args, **kwargs)
+        freq_choice_index = self.instance.get_udpate_freq_index()
+        self.initial['update_freq'] = HydroShareSiteSetting.FREQUENCY_CHOICES[freq_choice_index][0]
+
     class Meta:
         model = HydroShareSiteSetting
-        fields = ['is_enabled', 'sync_type', 'update_freq']
+        fields = ['is_enabled', 'sync_type', 'update_freq', 'hs_account', 'site_registration']
         widgets = { 'update_freq': forms.Select(choices=HydroShareSiteSetting.FREQUENCY_CHOICES) }
 
 class UserRegistrationForm(UserCreationForm):

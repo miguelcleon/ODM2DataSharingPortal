@@ -1,0 +1,26 @@
+{% extends 'dataloaderinterface/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h6 id="redirect-notice" style="margin: 48px;">You are being redirected to <strong>www.hydroshare.org</strong></h6>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super.block }}
+    <script>
+        const url = '{{ hydroshare_oauth_url  }}';
+        var counter = 0;
+        function wait() {
+            setTimeout(function () {
+                if (counter++ < 3) {
+                    document.getElementById('redirect-notice').innerHTML += '.';
+                    wait();
+                } else {
+                    window.location.replace(url);
+                }
+            }, 1000);
+        }
+        wait();
+    </script>
+{% endblock %}
