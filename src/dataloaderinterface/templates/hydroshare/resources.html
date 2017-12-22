@@ -1,44 +1,72 @@
 
+{% extends 'dataloaderinterface/base.html' %}
+
+{% block content %}
+
 <style>
-    table,
-    th {
-        border: 1px solid grey;
-    }
+
 </style>
 
-<table id="resource-table">
+<table id="resource-table" class="mdl-data-table mdl-js-data-table">
     <thead>
-    <tr>
+    <tr id="res-header-row">
         <th>Header 1</th>
     </tr>
     </thead>
-    <tbody>
+    <tbody id="res-table-body">
         <tr>
             <td>data 1</td>
         </tr>
     </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+{{ super.block }}
 <script>
     resources = '{{ resources_json }}'.replace(/\&quot;/g, '"');
-    resources = JSON.parse(resources, null, '\t');
-
+    resources = JSON.parse(resources);
+    console.log(resources);
     function buildTable() {
-        table = document.getElementById('resource-table');
-        thead = document.getElementsByTagName('thead')[0];
-        theadRow = thead.getElementsByTagName('tr')[0];
-        headerRowHTML = "";
-        console.log(resources[0]);
-        const keys = Object.keys(resources[0]).sort();
-        for (i in keys) {
-            var header = keys[i].split('_').map(function (value) {
+        const cellClassName = "mdl-data-table__cell--non-numeric";
+
+        let keys = Object.keys(resources[0]).sort();
+        keys.splice(keys.indexOf('resource_id'), 1);
+        keys.unshift('resource_id');
+        keys.splice(keys.indexOf('immutable'), 1);
+
+        console.log(`keys after sorting:`, keys);
+
+        let tableHeaderRow = document.getElementById('res-header-row');
+        let headerRowHTML = '';
+        for (let key of keys) {
+            let header = key.split('_').map(function (value) {
                 return value.charAt(0).toUpperCase() + value.slice(1);
             }).join(' ');
-            headerRowHTML += '<th>' + header + '</th>';
+            headerRowHTML += `<th class="${cellClassName}">${header}</th>`;
         }
-        theadRow.innerHTML = headerRowHTML;
+        tableHeaderRow.innerHTML = headerRowHTML;
+
+        tableBody = document.getElementById('res-table-body');
+        tableBody.innerHTML = "";
+        for (let resource of resources) {
+            bodyRowHTML = `<tr>`;
+            for (let key of keys) {
+                let innerHTML = resource[key];
+                if (typeof innerHTML === 'string' && innerHTML.match(/http:\/\//)) {
+                    innerHTML = `<a href=${innerHTML}>link</a>`
+                } else if (Array.isArray(innerHTML) && innerHTML.length) {
+                    innerHTML = `<code>${innerHTML}</code>`;
+                }
+                bodyRowHTML += `<td class="${cellClassName}">${innerHTML}</td>`;
+            }
+            bodyRowHTML += `</tr>`;
+            tableBody.innerHTML += bodyRowHTML;
+        }
     }
 
     buildTable();
 
 </script>
+{% endblock %}
