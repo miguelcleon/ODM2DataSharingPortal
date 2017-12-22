@@ -251,12 +251,6 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             .first()
         alert_data = {'notify': True, 'hours_threshold': site_alert.hours_threshold} if site_alert else {}
 
-        # site_registration = context['siteregistration']
-        # notify_user = self.request.user.site_alerts.filter(site_registration=site_registration.registration_id,
-        #                                                  user=self.request.user.id).first()
-        # do_notify = True if notify_user else False
-        # time_threshold = notify_user.hours_threshold if notify_user else None
-
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
         context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
