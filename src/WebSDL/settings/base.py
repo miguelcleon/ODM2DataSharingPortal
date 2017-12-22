@@ -164,3 +164,10 @@ EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
 EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
 DATETIME_FORMAT = "N j, Y, H:m"
+
+INFLUX_URL_QUERY = data['influx_query']
+
+# This data period is measured in days
+SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data else '2'
+
+TSA_URL = data['tsa_url'] if 'tsa_url' in data else ''

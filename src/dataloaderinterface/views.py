@@ -1,6 +1,11 @@
 from datetime import datetime
 from uuid import uuid4
 
+from django.conf import settings
+from django.db.models.aggregates import Max
+from django.db.models.expressions import F
+from django.db.models.query import Prefetch
+
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
@@ -18,7 +23,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView
 from django.views.generic.list import ListView
 
-from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor
@@ -99,11 +103,17 @@ class SitesListView(LoginRequiredMixin, ListView):
     template_name = 'dataloaderinterface/my-sites.html'
 
     def get_queryset(self):
-        return super(SitesListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+        return super(SitesListView, self).get_queryset()\
+            .filter(django_user_id=self.request.user.id)\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
     def get_context_data(self, **kwargs):
         context = super(SitesListView, self).get_context_data()
-        context['followed_sites'] = self.request.user.followed_sites.all()
+        context['followed_sites'] = self.request.user.followed_sites\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))\
+            .all()
         return context
 
 
@@ -113,11 +123,23 @@ class StatusListView(ListView):
     template_name = 'dataloaderinterface/status.html'
 
     def get_queryset(self):
-        return super(StatusListView, self).get_queryset().filter(django_user_id=self.request.user.id)
+        return super(StatusListView, self).get_queryset()\
+            .filter(django_user_id=self.request.user.id)\
+            .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
+                'EnviroDIY_Mayfly_Volt',
+                'EnviroDIY_Mayfly_Temp',
+                'EnviroDIY_Mayfly_FreeSRAM'
+            ]), to_attr='status_sensors')) \
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
-        context['followed_sites'] = self.request.user.followed_sites.all()
+        context['followed_sites'] = self.request.user.followed_sites \
+            .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
+                'EnviroDIY_Mayfly_Volt',
+                'EnviroDIY_Mayfly_Temp',
+                'EnviroDIY_Mayfly_FreeSRAM'
+            ]), to_attr='status_sensors'))
         return context
 
 
@@ -125,6 +147,11 @@ class BrowseSitesListView(ListView):
     model = SiteRegistration
     context_object_name = 'sites'
     template_name = 'dataloaderinterface/browse-sites.html'
+
+    def get_queryset(self):
+        return super(BrowseSitesListView, self).get_queryset()\
+            .prefetch_related('sensors')\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
 
 class SiteDetailView(DetailView):
@@ -134,8 +161,12 @@ class SiteDetailView(DetailView):
     slug_url_kwarg = 'sampling_feature_code'
     template_name = 'dataloaderinterface/site_details.html'
 
+    def get_queryset(self):
+        return super(SiteDetailView, self).get_queryset().prefetch_related('sensors')
+
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data()
+        context['tsa_url'] = settings.TSA_URL
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
         return context
 
@@ -476,13 +507,6 @@ def create_result(site_registration, result_form, sampling_feature, affiliation,
 
     site_sensor = SiteSensor(**sensor_data)
     site_sensor.save()
-
-    # Create csv file to hold the sensor data.
-    # TODO: have this send a signal and the call to create the file be somewhere else.
-    # lol should've done it.
-    # once more i regret not doing it...
-    serializer = SiteResultSerializer(result)
-    serializer.build_csv()
 
     return result
 

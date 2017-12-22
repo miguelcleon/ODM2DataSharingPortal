@@ -3,12 +3,14 @@ from __future__ import unicode_literals
 # Create your models here.
 import uuid
 
-from django.db.models.aggregates import Min
+from django.db.models.aggregates import Min, Max
 
 from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue, EquipmentModel, Variable, \
     Unit, Medium
 from django.contrib.auth.models import User
 from django.db import models
+
+from django.conf import settings
 
 
 class SiteRegistration(models.Model):
@@ -42,25 +44,25 @@ class SiteRegistration(models.Model):
     def odm2_affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
 
-    @property
-    def deployment_date(self):
-        min_datetime = self.sensors.aggregate(first_light=Min('activation_date'))
-        return min_datetime['first_light']
+    # @property
+    # def deployment_date(self):
+    #     min_datetime = self.sensors.aggregate(first_light=Min('activation_date'))
+    #     return min_datetime['first_light']
 
-    @property
-    def last_measurements(self):
-        if not self.deployment_date:
-            return []
+    # @property
+    # def last_measurements(self):
+    #     if not self.deployment_date:
+    #         return []
+    #
+    #     measurement_ids = [long(measurement.last_measurement_id) for measurement in self.sensors.all() if measurement.last_measurement_id]
+    #     measurements = TimeSeriesResultValue.objects.filter(pk__in=measurement_ids)
+    #     return measurements
 
-        measurement_ids = [long(measurement.last_measurement_id) for measurement in self.sensors.all() if measurement.last_measurement_id]
-        measurements = TimeSeriesResultValue.objects.filter(pk__in=measurement_ids)
-        return measurements
-
-    @property
-    def latest_measurement(self):
-        if not self.deployment_date:
-            return None
-        return self.last_measurements.latest('value_datetime')
+    # @property
+    # def latest_measurement(self):
+    #     if not self.deployment_date:
+    #         return None
+    #     return self.sensors.aggregate(last_update=Max('last_measurement_datetime'))['last_update']
 
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
@@ -73,18 +75,32 @@ class SiteRegistration(models.Model):
 
 class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
+
     result_id = models.IntegerField(db_column='ResultID', unique=True)
     result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
+
     model_name = models.CharField(db_column='ModelName', max_length=255)
     model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255)
+
     variable_name = models.CharField(max_length=255, db_column='VariableName')
     variable_code = models.CharField(max_length=50, db_column='VariableCode')
+
     unit_name = models.CharField(max_length=255, db_column='UnitsName')
     unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
+
     sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)
+
     last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)
+    last_measurement_value = models.FloatField(db_column='LastMeasurementValue', blank=True, null=True)
+    last_measurement_datetime = models.DateTimeField(db_column='LastMeasurementDatetime', blank=True, null=True)
+    last_measurement_utc_offset = models.IntegerField(db_column='LastMeasurementUtcOffset', blank=True, null=True)
+
     activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
     activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
+
+    @property
+    def result(self):
+        return Result.objects.get(pk=self.result_id)
 
     @property
     def equipment_model(self):
@@ -107,16 +123,23 @@ class SiteSensor(models.Model):
         return "{0}_{1}".format(self.model_manufacturer, self.model_name)
 
     @property
-    def sensor_identity(self):
-        return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
-
-    @property
     def last_measurement(self):
         return TimeSeriesResultValue.objects.filter(pk=self.last_measurement_id).first()
 
     @property
-    def result(self):
-        return Result.objects.get(pk=self.result_id)
+    def sensor_identity(self):
+        return "{0}_{1}_{2}".format(self.registration.sampling_feature_code, self.variable_code, self.result_id)
+
+    @property
+    def influx_url(self):
+        if not self.last_measurement_id:
+            return
+
+        return settings.INFLUX_URL_QUERY.format(
+            result_uuid=str(self.result_uuid).replace('-', '_'),
+            last_measurement=self.last_measurement_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            days_of_data=settings.SENSOR_DATA_PERIOD
+        )
 
     def __str__(self):
         return '%s %s' % (self.variable_name, self.unit_abbreviation)
@@ -125,32 +148,6 @@ class SiteSensor(models.Model):
         return "<SiteSensor('%s', [%s], '%s', '%s')>" % (
             self.id, self.registration, self.variable_code, self.unit_abbreviation,
         )
-
-
-class DeviceRegistration(models.Model):
-    registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
-    deployment_sampling_feature_uuid = models.UUIDField(db_column='SamplingFeatureUUID')
-    authentication_token = models.CharField(max_length=64, editable=False, db_column='AuthenticationToken')
-    user = models.ForeignKey('ODM2User', db_column='User')
-    # deployment_date = models.DateTimeField(db_column='DeploymentDate')
-
-    def registration_date(self):
-        action = self.sampling_feature.actions.first()
-        return action and action.begin_datetime
-
-    @property
-    def deployment_date(self):
-        sampling_feature = self.sampling_feature
-        min_datetime = sampling_feature.feature_actions.aggregate(first_light=Min('results__valid_datetime'))
-        return min_datetime['first_light']
-
-    @property
-    def sampling_feature(self):
-        return SamplingFeature.objects.get(sampling_feature_uuid__exact=self.deployment_sampling_feature_uuid)
-
-    def __str__(self):
-        action = self.sampling_feature.actions.first()
-        return '{}\t{}: {}'.format(self.sampling_feature.sampling_feature_code, action.action_type_id, action.begin_datetime.strftime('%Y/%m/%d'))
 
 
 class ODM2User(models.Model):

@@ -73,8 +73,7 @@
                                     </tbody>
                                 </table>
                                 <br>
-                                {% with latest_result=site.sampling_feature.latest_updated_result %}
-                                    {% if latest_result %}
+                                {% if site.latest_measurement %}
                                     <table>
                                         <tbody>
                                         <tr>
@@ -85,12 +84,11 @@
                                         </tr>
                                         <tr>
                                             <td></td>
-                                            <td>{{ latest_result.result_datetime }} ({{ latest_result.result_datetime|timesince }} ago)</td>
+                                            <td>{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago)</td>
                                         </tr>
                                         </tbody>
                                     </table>
-                                    {% endif %}
-                                {% endwith %}
+                                {% endif %}
                             </div>
 
                             <div class="mdl-card__menu">
@@ -154,24 +152,22 @@
                                     </tbody>
                                 </table>
                                 <br>
-                                {% with latest_result=site.sampling_feature.latest_updated_result %}
-                                    {% if latest_result %}
-                                    <table>
-                                        <tbody>
-                                        <tr>
-                                            <td><i class="material-icons site-card-icon">query_builder</i></td>
-                                            <td>
-                                                <span style="color:#92d050;"> Latest Measurement</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td>{{ latest_result.result_datetime }} ({{ latest_result.result_datetime|timesince }} ago)</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                    {% endif %}
-                                {% endwith %}
+                                {% if site.latest_measurement %}
+                                <table>
+                                    <tbody>
+                                    <tr>
+                                        <td><i class="material-icons site-card-icon">query_builder</i></td>
+                                        <td>
+                                            <span style="color:#92d050;"> Latest Measurement</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago)</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                {% endif %}
                             </div>
                             <div class="mdl-card__menu">
                                 <!-- Right aligned menu below button -->
@@ -203,9 +199,9 @@
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
+                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
-                 }{% if not forloop.last %},{% endif %}
+                 }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
             {% endfor %}
             {% for site in followed_sites %}
                  {
@@ -215,7 +211,7 @@
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "latest-measurement": "{% if site.latest_measurement.value_datetime %}{{ site.latest_measurement.value_datetime }} ({{ site.latest_measurement.value_datetime|timesince }} ago){% else %}-{% endif %}",
+                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                  }{% if not forloop.last %},{% endif %}
             {% endfor %}

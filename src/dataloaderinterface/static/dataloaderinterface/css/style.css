@@ -285,11 +285,12 @@ svg.stale {
 }
 
 svg.not-stale {
-    background-color: #f8fff7;
+    background-color: #ebffe8;
 }
 
 .last-observation {
     font-weight: bold;
+    display: block;
 }
 
 .plot_box .mdl-card__actions {
@@ -313,7 +314,7 @@ svg.not-stale {
     width: 100%;
 }
 
-.buttons-toolbar .button-link:hover {
+.button-link:hover {
     text-decoration: none;
 }
 

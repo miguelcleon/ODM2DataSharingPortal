@@ -1179,8 +1179,8 @@ class Site(models.Model):
 
 
 class RelatedFeature(ObjectRelation):
-    sampling_feature = models.ForeignKey('SamplingFeature', related_name='related_features__sampling_feature', db_column='samplingfeatureid')
-    related_feature = models.ForeignKey('SamplingFeature', related_name='related_features__related_feature', db_column='relatedfeatureid')
+    sampling_feature = models.ForeignKey('SamplingFeature', related_name='related_features_sampling_feature', db_column='samplingfeatureid')
+    related_feature = models.ForeignKey('SamplingFeature', related_name='related_features_related_feature', db_column='relatedfeatureid')
     spatial_offset = models.ForeignKey('SpatialOffset', db_column='spatialoffsetid', blank=True, null=True)
 
     def __repr__(self):
@@ -1231,8 +1231,8 @@ class Model(models.Model):
 
 
 class RelatedModel(ObjectRelation):
-    model = models.ForeignKey('Model', related_name='related_model__model', db_column='modelid')
-    related_model = models.ForeignKey('Model', related_name='related_model__related_model', db_column='relatedmodelid')
+    model = models.ForeignKey('Model', related_name='related_model_model', db_column='modelid')
+    related_model = models.ForeignKey('Model', related_name='related_model_related_model', db_column='relatedmodelid')
 
     def __repr__(self):
         return "<RelatedModel('%s', Model['%s', '%s'], Model['%s', '%s'])>" % (
@@ -1805,8 +1805,8 @@ class MethodCitation(models.Model):
 
 
 class RelatedAnnotation(ObjectRelation):
-    annotation = models.ForeignKey('Annotation', related_name='related_annonation__annotation', db_column='annotationid')
-    related_annotation = models.ForeignKey('Annotation', related_name='related_annotation__related_annontation', db_column='relatedannotationid')
+    annotation = models.ForeignKey('Annotation', related_name='related_annonation_annotation', db_column='annotationid')
+    related_annotation = models.ForeignKey('Annotation', related_name='related_annotation_related_annontation', db_column='relatedannotationid')
 
     def __repr__(self):
         return "<RelatedAnnotation('%s', Annotation['%s', '%s'], '%s', Annotation['%s', '%s'])>" % (
@@ -1819,8 +1819,8 @@ class RelatedAnnotation(ObjectRelation):
 
 
 class RelatedDataSet(ObjectRelation):
-    data_set = models.ForeignKey('DataSet', related_name='related_dataset__dataset', db_column='datasetid')
-    related_data_set = models.ForeignKey('DataSet', related_name='related_dataset__related_dataset', db_column='relateddatasetid')
+    data_set = models.ForeignKey('DataSet', related_name='related_dataset_dataset', db_column='datasetid')
+    related_data_set = models.ForeignKey('DataSet', related_name='related_dataset_related_dataset', db_column='relateddatasetid')
     version_code = models.CharField(db_column='versioncode', blank=True, max_length=50)
 
     def __repr__(self):
@@ -1835,7 +1835,7 @@ class RelatedDataSet(ObjectRelation):
 
 class RelatedResult(ObjectRelation):
     result = models.ForeignKey('Result', db_column='resultid')
-    related_result = models.ForeignKey('Result', related_name='related_result__related_result', db_column='relatedresultid')
+    related_result = models.ForeignKey('Result', related_name='related_result_related_result', db_column='relatedresultid')
     version_code = models.CharField(db_column='versioncode', blank=True, max_length=50)
     related_result_sequence_number = models.IntegerField(db_column='relatedresultsequencenumber', blank=True, null=True)
 
