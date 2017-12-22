@@ -14,15 +14,17 @@ class Resources(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(Resources, self).get_context_data(**kwargs)
-        id = kwargs['id']
-
-        try:
-            account = HydroShareAccount.objects.get(id=id)
-        except:
-            raise Http404
+        if 'id' in kwargs:
+            id = kwargs['id']
+            try:
+                account = HydroShareAccount.objects.get(id=id)
+            except:
+                raise Http404
+            resources = HydroShareAPI.get_account_resources(account)
+        else:
+            resources = HydroShareAPI.get_shared_resources()
 
         # context['account'] = account
-        resources = HydroShareAPI.get_resources(account)
         context['resources'] = resources
         import json
         context['resources_json'] = json.dumps(resources)
