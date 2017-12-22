@@ -350,4 +350,8 @@ $(document).ready(function() {
         dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
         dialog.modal('toggle');
     });
+
+    $("#id_notify").change(function() {
+        $("div[data-field='hours_threshold']").toggleClass("hidden", !this.checked);
+    });
 });

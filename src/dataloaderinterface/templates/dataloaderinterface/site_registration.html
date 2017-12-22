@@ -58,17 +58,61 @@
                                                 {{ field|add_class:"form-control input-sm" }}
                                             </div>
                                         {% endfor %}
+
                                         {% for field in site_form %}
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">
-                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                <i id="site-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
+                                                <label class="control-label"
+                                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                                <i id="site-help{{ forloop.counter0 }}"
+                                                   class="material-icons text-muted help-icon">help</i>
                                                 {{ field.errors }}
-                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="site-help{{ forloop.counter0 }}">
+                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                                                     data-mdl-for="site-help{{ forloop.counter0 }}">
                                                     {{ field.help_text }}
                                                 </div>
                                                 {{ field|add_class:"form-control input-sm" }}
                                             </div>
+                                        {% endfor %}
+
+                                        {% for field in email_alert_form %}
+                                            {% if field.name == 'notify' %}
+                                                <div class="form-field checkbox {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
+                                                     data-field="{{ field.name }}">
+                                                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
+                                                           for="{{ field.id_for_label }}">
+                                                        {{ field|add_class:"mdl-checkbox__input" }}
+                                                        {{ field.label }}
+
+                                                        {% if field.help_text %}
+                                                            <i id="email-alert-help-{{ forloop.counter0 }}"
+                                                               class="material-icons text-muted help-icon">help</i>
+                                                            {{ field.errors }}
+                                                            <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                                                                 data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
+                                                                {{ field.help_text }}
+                                                            </div>
+                                                        {% endif %}
+                                                    </label>
+                                                </div>
+                                            {% else %}
+                                                <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %} {% if not field.value %}hidden{% endif %}"
+                                                     data-field="{{ field.name }}" style="margin-top: -15px;">
+                                                    <label class="control-label"
+                                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
+
+                                                    {% if field.help_text %}
+                                                        <i id="email-alert-help-{{ forloop.counter0 }}"
+                                                           class="material-icons text-muted help-icon">help</i>
+                                                        {{ field.errors }}
+                                                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                                                             data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
+                                                            {{ field.help_text }}
+                                                        </div>
+                                                    {% endif %}
+                                                    {{ field|add_class:"form-control input-sm" }}
+                                                </div>
+                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                     <div class="form-group col-sm-12 col-md-8 map-container">
@@ -280,7 +324,7 @@
                     <p>Are you sure you want to remove this sensor?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="mdl-button" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
                     <button type="button" class="mdl-button mdl-button--raised"
                             style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
                     </button>
