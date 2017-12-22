@@ -68,7 +68,7 @@ class HydroShareAPI():
 
     @staticmethod
     def authorize_client():
-        return HttpResponseRedirect(reverse('hydroshare_oauth:oauth_redirect'))
+        return HttpResponseRedirect(reverse('hydroshare_api:oauth_redirect'))
 
     @staticmethod
     def get_auth_header(token):

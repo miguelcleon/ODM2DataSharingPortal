@@ -4,4 +4,4 @@ from django.apps import AppConfig
 
 
 class HydroshareOauthConfig(AppConfig):
-    name = 'hydroshare_oauth'
+    name = 'hydroshare_api'
