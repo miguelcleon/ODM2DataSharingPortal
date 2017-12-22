@@ -50,6 +50,3 @@ class Command(BaseCommand):
             if success:
                 site_alert.last_alerted = datetime.utcnow()
                 site_alert.save()
-            else:
-                # TODO: kene: what if the email failed?
-                continue
