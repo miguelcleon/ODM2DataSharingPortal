@@ -3,7 +3,10 @@ from __future__ import unicode_literals
 # Create your models here.
 import uuid
 
-from datetime import timedelta
+from datetime import timedelta, datetime
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from django.db.models.aggregates import Min
 
 from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue, EquipmentModel, Variable, \
@@ -171,47 +174,35 @@ class ODM2User(models.Model):
 class HydroShareAccount(models.Model):
     user = models.ForeignKey('ODM2User', db_column='user_id')
     name = models.CharField(max_length=255, default='HydroShare Account')
-    access_token = models.CharField(max_length=255, blank=True, default='')
-    refresh_token = models.CharField(max_length=255, blank=True, default='')
     is_enabled = models.BooleanField(default=False)
-    token_expires_in = models.IntegerField(default=0)
-    oauth_scope = models.CharField(max_length=255, default='read write')
     ext_hydroshare_id = models.IntegerField(unique=True)
 
-    def set_token(self, token):
-        if isinstance(token, dict):
-            self.access_token = token['access_token']
-            self.refresh_token = token['refresh_token']
-            self.token_expires_in = token['expires_in']
-            self.oauth_scope = token['scope']
-        else:
-            self.access_token = token.access_token
-            self.refresh_token = token.refresh_token
-            self.token_expires_in = token.expires_in
-            self.oauth_scope = token.scope
-        self.save(update_fields=['refresh_token', 'access_token', 'token_expires_in', 'oauth_scope'])
+    @classmethod
+    def save_token(cls, token):
+        if not isinstance(token, dict):
+            raise TypeError("'token' must be of type 'dict'.")
+        OAuthToken(cls, **token).save()
 
-    def get_token(self):
-        return {
-            'access_token': self.access_token,
-            'token_type': 'Bearer',
-            'expires_in': self.token_expires_in,
-            'refresh_token': self.refresh_token,
-            'scope': self.oauth_scope
-        }
+    @property
+    def token(self):
+        try:
+            return OAuthToken.objects.get(account=self)
+        except ObjectDoesNotExist:
+            return None
 
-    def to_dict(self):
-        return {
+    def to_dict(self, include_token=True):
+        account = {
             'id': self.pk,
             'user_id': self.user.id,
             'name': self.name,
-            'access_token': self.access_token,
-            'refresh_token': self.refresh_token,
-            'is_enabled': self.is_enabled,
-            'token_expires_in': self.token_expires_in,
-            'oauth_scope': self.oauth_scope,
-            'ext_hydroshare_id': self.ext_hydroshare_id
+            'ext_hydroshare_id': self.ext_hydroshare_id,
+            'is_enabled': self.is_enabled
         }
+        if include_token:
+            token = self.token
+            if token:
+                account['token'] = token.to_dict()
+        return account
 
     def __str__(self):
         return self.name
@@ -297,3 +288,42 @@ class HydroShareSyncLog(models.Model):
 
     class Meta:
         db_table = 'hydroshare_sync_log'
+
+
+class OAuthToken(models.Model):
+    account = models.ForeignKey(HydroShareAccount, db_column='account_id')
+    access_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255)
+    token_type = models.CharField(max_length=len('Bearer'), default='Bearer', editable=False)
+    expires_in = models.DateTimeField(default=timezone.now)
+    scope = models.CharField(max_length=255, default='read')
+
+    def __init__(self, *args, **kwargs):
+        super(OAuthToken, self).__init__(*args, **kwargs)
+        # Check if 'self.pk' exists. If not, the assumption is that this is a new token and
+        # the 'expires_in' value needs to be converted into a datetime object representing
+        # a future point in time when the token expires and will need to be refreshed.
+        if not self.pk:
+            if isinstance(self.expires_in, str):
+                try:
+                    self.expires_in = int(self.expires_in)
+                    self.expires_in = datetime.today() + timedelta(seconds=self.expires_in)
+                    # print(self.expires_in.strftime('%B %d, %Y, %I:%M:%S %p'))
+                except ValueError as e:
+                    raise ValueError("Failed to cast 'expires_in' from 'str' to 'int'.\n\t" + e.message)
+
+    def to_dict(self, include_account=False):
+        token = {
+            'access_token': self.access_token,
+            'refresh_token': self.refresh_token,
+            'token_type': self.token_type,
+            'expires_in': int((self.expires_in - datetime.today()).total_seconds()),
+            'scope': self.scope
+        }
+        if include_account:
+            token['account'] = self.account.id
+        return token
+
+    class Meta:
+        db_table = 'oauth_token'
+

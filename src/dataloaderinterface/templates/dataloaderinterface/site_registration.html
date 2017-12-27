@@ -355,29 +355,26 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
     <script src="{% static 'dataloaderinterface/js/hydroshare-settings-update-form.js' %}"></script>
     <script>
+        'use strict';
         $('#hs-disabled-warning').hide();
         $(function() {
-            var hsAccount = $('#id_hs_account');
-            var accounts = "{{ hs_accounts_json }}".replace(/\&quot;/g, '\"');
-            accounts = JSON.parse(accounts, null, 3);
+            const hsAccountSelectField = $('#id_hs_account');
+            let accountsJSON = "{{ hs_accounts_json }}".replace(/&quot;/g, '\"');
+            const accounts = JSON.parse(accountsJSON);
 
-            for (var i = 0; i < accounts.length; i++) {
-                var selectedId = hsAccount[0].value;
-                var currId = accounts[i].id;
-                show = (selectedId == currId) && !accounts[i].is_enabled;
-                showHSWarning((selectedId == currId) && !accounts[i].is_enabled);
+            for (let account of accounts) {
+                let selectedId = hsAccountSelectField[0].value;
+                showHSWarning((selectedId == account.id) && !account.is_enabled);
             }
 
-            hsAccount.change(function(ev) {
-                var selectedAccountId = hsAccount[0].value;
-                var currId = -1;
-                for (var i = 0; i < accounts.length; i++) {
-                    if (accounts[i].id == ev.target.value) {
-                        currId = accounts[i].id;
+            hsAccountSelectField.change(function(ev) {
+                for (let account of accounts) {
+                    if (account.id == ev.target.value) {
+                        console.log(account);
+                        showHSWarning(!account.is_enabled);
                         break;
                     }
                 }
-                showHSWarning((selectedAccountId == currId) && !accounts[i].is_enabled);
             });
 
             function showHSWarning(show) {
@@ -390,6 +387,5 @@
                 }
             }
         });
-
     </script>
 {% endblock %}

@@ -1,6 +1,8 @@
+import uuid
 from os import environ as env
+from datetime import date
 import requests
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponseServerError
 from django.core.urlresolvers import reverse
 from django.shortcuts import HttpResponseRedirect
@@ -9,9 +11,10 @@ from oauthlib.oauth2 import TokenExpiredError
 from hs_restclient import HydroShare, HydroShareAuthOAuth2
 
 from dataloaderinterface.models import HydroShareAccount
+from hydroshare_api.models import HydroShareResource
 
 
-class HydroShareAPI():
+class HydroShareAPI:
 
     _API_URL_BASE = 'https://www.hydroshare.org/hsapi/'
     _OAUTH_URL_BASE = 'https://www.hydroshare.org/o/'
@@ -63,7 +66,7 @@ class HydroShareAPI():
             resJSON = res.json()
             if 'access_token' in resJSON:
                 user_info = HydroShareAPI.get_user_info(resJSON['access_token'])
-                return HydroShareAuth(res.json(), user_info)
+                return HydroShareAuth(resJSON, user_info)
             else:
                 return None
         else:
@@ -97,24 +100,24 @@ class HydroShareAPI():
     # TODO: Implement method
     @staticmethod
     def refresh_token(hsaccount):
-        raise Exception('method not implemented.')
+        raise NotImplementedError
 
     @staticmethod
     def get_shared_resources():
         # TODO: Actually implement this method...
-        mock_account = HydroShareAccount.objects.get(pk=12)
+        mock_account = HydroShareAccount.objects.get(pk=1)
         return HydroShareAPI.get_account_resources(mock_account)
 
     @staticmethod
     def get_account_resources(hsaccount):
         client_id = HydroShareAPI.__client_id
         client_secret = HydroShareAPI.__client_secret
-        token = hsaccount.get_token()
+        token = hsaccount.token.to_dict()
         auth = HydroShareAuthOAuth2(client_id=client_id, client_secret=client_secret, token=token)
 
         try:
             # TODO: Return actual resources
-            hs = HydroShare(auth=auth)
+            # hs = HydroShare(auth=auth)
             # resources = []
             # for r in hs.resources():
             #     resources.append(r)
@@ -127,8 +130,6 @@ class HydroShareAPI():
             #     mock_resources.append(hs.getSystemMetadata(resource_id))
             # print(mock_resources)
             # return mock_resources
-
-
             return mock_resource_meta_data
         except TokenExpiredError:
             HydroShareAPI.refresh_token(hsaccount)
@@ -141,9 +142,59 @@ class HydroShareAPI():
         except:
             return HttpResponseNotFound('resource not found for account ' + hsaccount.id)
 
+    @staticmethod
+    def refresh_resources():
+        # hs = HydroShare()
+        # for resource in hs.resources():
+        #     print(resource)
+        HydroShareAPI._dev_refresh_resources()
+
+    @staticmethod
+    def _dev_refresh_resources():
+        import csv
+        with open('../resources.csv', 'rb') as file:
+            reader = csv.DictReader(file)
+            next(reader, None)
+            for row in reader:
+                try:
+                    id = HydroShareAPI._string_to_uuid(row['resource_id'])
+                    resource = HydroShareResource.objects.get(pk=id)
+                    print('resource "' + str(resource.resource_id) + '" already exists.')
+                except ObjectDoesNotExist:
+                    print('Creating new resource.')
+                    resource_obj = {
+                        'resource_id': HydroShareAPI._string_to_uuid(row['resource_id']),
+                        'resource_title': row['resource_title'],
+                        'creator': row['creator'],
+                        'resource_type': row['resource_type'],
+                        'date_created': HydroShareAPI._hs_string_to_date(row['date_created']),
+                        'date_last_updated': HydroShareAPI._hs_string_to_date(row['date_last_updated']),
+                        'public': True if row['public'] == 'True' else False,
+                        'shareable': True if row['shareable'] == 'True' else False,
+                        'discoverable': True if row['discoverable'] == 'True' else False,
+                        'published': True if row['published'] == 'True' else False,
+                        'immutable': True if row['immutable'] == 'True' else False,
+                        'resource_url': row['resource_url'],
+                        'bag_url': row['bag_url'],
+                        'science_metadata_url': row['science_metadata_url'],
+                        'resource_map_url': row['resource_map_url']
+                    }
+                    resource = HydroShareResource(**resource_obj)
+                    resource.save()
+
+    @staticmethod
+    def _string_to_uuid(s):
+        return uuid.UUID(uuid.UUID(s).hex)
+
+    @staticmethod
+    def _hs_string_to_date(s):
+        s = s.split('-')
+        return "{year}-{month}-{day}".format(year=s[2], month=s[0], day=s[1])
 
 
-class HydroShareAuth():
+class HydroShareAuth:
+    token_type = 'Bearer'
+
     def __init__(self, auth, account_info=None):
         self.access_token = auth['access_token']
         self.refresh_token = auth['refresh_token']
@@ -153,7 +204,7 @@ class HydroShareAuth():
             self.user_info = HydroShareUserInfo(account_info)
 
 
-class HydroShareUserInfo():
+class HydroShareUserInfo:
     def __init__(self, info):
         self.id = info['id']
         self.email = info['email']

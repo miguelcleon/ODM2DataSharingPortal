@@ -1,7 +1,7 @@
 # coding=utf-8
 from datetime import datetime
 from uuid import uuid4
-
+import json
 
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
@@ -291,7 +291,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                     if hs_site.hs_account:
                         hs_account_form = HydroShareSelectAccountForm(self.request.user, initial=hs_site.hs_account)
                 except HydroShareSiteSetting.DoesNotExist:
-                    # create new HydroShareSiteSetting if there is none for this site registration
+                    # create new HydroShareSiteSetting if none are associated with this site registration.
                     hs_site = HydroShareSiteSetting(site_registration=self.get_object(), hs_account=None, is_enabled=False)
                     hs_site.save()
 
@@ -299,8 +299,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                 context['hydroshare_account_form'] = hs_account_form
                 context['hydroshare_settings_form'] = hs_site_form
                 accounts = HydroShareAccount.objects.filter(user=self.request.user.id)
-                import json
-                context['hs_accounts_json'] = json.dumps([account.to_dict() for account in accounts])
+                context['hs_accounts_json'] = json.dumps([account.to_dict(include_token=False) for account in accounts])
                 context['hydroshare_account'] = hs_site.hs_account
             except HydroShareAccount.DoesNotExist:
                 pass

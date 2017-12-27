@@ -31,7 +31,7 @@ class Resources(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        context = ''
+        # HydroShareAPI.refresh_resources()
         return super(Resources, self).get(request, *args, **kwargs)
 
 
@@ -52,7 +52,7 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
                     user = HydroShareAccount(user=odm2user, is_enabled=True, ext_hydroshare_id=auth.user_info.id)
                     user.save()
 
-                user.set_token(auth)
+                user.save_token(auth)
 
                 return redirect('user_account')
             else:
