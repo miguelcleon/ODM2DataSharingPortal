@@ -299,7 +299,7 @@ class OAuthToken(models.Model):
     scope = models.CharField(max_length=255, default='read')
 
     def __init__(self, *args, **kwargs):
-        super(OAuthToken, self).__init__(*args, **kwargs)
+        super(OAuthToken, self).__init__(args, kwargs)
         # Check if 'self.pk' exists. If not, the assumption is that this is a new token and
         # the 'expires_in' value needs to be converted into a datetime object representing
         # a future point in time when the token expires and will need to be refreshed.

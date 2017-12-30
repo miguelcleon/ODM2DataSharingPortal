@@ -168,6 +168,7 @@ class StatusListView(ListView):
     def get_queryset(self):
         return super(StatusListView, self).get_queryset().filter(django_user_id=self.request.user.id)
 
+    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
         context['followed_sites'] = self.request.user.followed_sites.all()
@@ -187,8 +188,9 @@ class SiteDetailView(DetailView):
     slug_url_kwarg = 'sampling_feature_code'
     template_name = 'dataloaderinterface/site_details.html'
 
+    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
-        context = super(SiteDetailView, self).get_context_data()
+        context = super(SiteDetailView, self).get_context_data(**kwargs)
 
         try:
             hs_site = HydroShareSiteSetting.objects.get(site_registration=context['site'])
@@ -196,7 +198,6 @@ class SiteDetailView(DetailView):
             context['hs_site'] = hs_site
         except Exception:
             context['hs_enabled'] = False
-
 
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
         return context
