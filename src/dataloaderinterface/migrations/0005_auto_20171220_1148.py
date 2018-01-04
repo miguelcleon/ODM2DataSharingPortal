@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='hydrosharesitesetting',
             name='hs_account',
-            field=models.ForeignKey(blank=True, db_column='hs_account_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='dataloaderinterface.HydroShareAccount'),
+            field=models.ForeignKey(blank=True, db_column='hs_account_id', null=True, on_delete=django.db.models.deletion.CASCADE, to='dataloaderinterface.HSUAccount'),
         ),
     ]

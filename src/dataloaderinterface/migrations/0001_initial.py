@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='HydroShareAccount',
+            name='HSUAccount',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('account_nickname', models.CharField(default='HydroShare Account', max_length=255)),
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                 ('update_freq', models.DurationField(default=datetime.timedelta(0), verbose_name='Update Frequency')),
                 ('is_enabled', models.BooleanField(default=False)),
                 ('last_sync_date', models.DateTimeField()),
-                ('hs_user', models.ForeignKey(db_column='hs_user_id', on_delete=django.db.models.deletion.CASCADE, to='dataloaderinterface.HydroShareAccount')),
+                ('hs_user', models.ForeignKey(db_column='hs_user_id', on_delete=django.db.models.deletion.CASCADE, to='dataloaderinterface.HSUAccount')),
             ],
             options={
                 'db_table': 'hydroshare_site_setting',

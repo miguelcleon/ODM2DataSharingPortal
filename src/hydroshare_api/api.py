@@ -84,7 +84,8 @@ class HydroShareAPI:
     def get_user_info(token):
         session = requests.Session()
         header = HydroShareAPI.get_auth_header(token)
-        response = session.get("{url_base}{path}".format(url_base=HydroShareAPI._API_URL_BASE, path='userInfo/'), headers=header)
+        response = session.get("{url_base}{path}".format(url_base=HydroShareAPI._API_URL_BASE, path='userInfo/'),
+                               headers=header)
 
         if response.status_code == 200 and 'json' in dir(response):
             resJSON = response.json()

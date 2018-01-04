@@ -170,7 +170,7 @@ class ODM2User(models.Model):
         return self.user.is_staff or registration.user == self
 
 
-# HydroShareAccount - holds information for user's Hydroshare account
+# HSUAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
     user = models.ForeignKey('ODM2User', db_column='user_id')
     name = models.CharField(max_length=255, default='HydroShare Account')

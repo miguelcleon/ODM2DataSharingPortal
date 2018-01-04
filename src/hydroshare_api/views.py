@@ -66,14 +66,14 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
 class OAuthRefresh(HydroShareOAuthBaseClass):
 #     def get(self, request, *args, **kwargs):
 #         odmuser = ODM2User.objects.get(pk=request.user.id)
-#         hsuser = HydroShareAccount.objects.get(user=odmuser)
+#         hsuser = HSUAccount.objects.get(user=odmuser)
 #
 #         params = hsAPI.get_refresh_code_params(hsuser.refresh_token)
 #         r = requests.post(self.get_hydroshare_oauth_url('o/token/', params))
 #
 #         if r.status_code == 200:
 #             odmuser = ODM2User.objects.get(pk=request.user.id)
-#             user = HydroShareAccount.objects.get(user=odmuser)
+#             user = HSUAccount.objects.get(user=odmuser)
 #             user.set_token(r.json())
 #
 #             return redirect('user_account')
