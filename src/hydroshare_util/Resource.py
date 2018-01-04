@@ -1,7 +1,7 @@
-from . import HydroShareUtilityBaseClass
+from . import _HydroShareUtilityBaseClass
 
 
-class HSUResourceBaseClass(HydroShareUtilityBaseClass):
+class HSUResourceBaseClass(_HydroShareUtilityBaseClass):
     def __init__(self, **kwargs):
         self.title = ""
         self.abstract = ""
@@ -85,3 +85,5 @@ class HSUResource(HSUResourceBaseClass):
                           "value": {"start": resource['period_start'],
                                     "end": resource['period_end']}}]
         }
+
+__all__ = ["HSUResourceTemplate", "HSUResource"]

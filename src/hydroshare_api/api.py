@@ -3,16 +3,16 @@ from os import environ as env
 from datetime import date
 import requests
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.http import HttpResponseServerError
-from django.core.urlresolvers import reverse
-from django.shortcuts import HttpResponseRedirect
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseServerError, HttpResponseNotFound
+from django.shortcuts import redirect
 from oauthlib.oauth2 import TokenExpiredError
 from hs_restclient import HydroShare, HydroShareAuthOAuth2
 
 from dataloaderinterface.models import HydroShareAccount
 from hydroshare_api.models import HydroShareResource
 
+## Old imports above, refactored imports below
+from hydroshare_util.Utility import HydroShareUtility
 
 class HydroShareAPI:
 
@@ -74,16 +74,17 @@ class HydroShareAPI:
 
     @staticmethod
     def authorize_client():
-        return HttpResponseRedirect(reverse('hydroshare_api:oauth_redirect'))
+        # return HttpResponseRedirect(reverse('hydroshare_api:oauth_redirect'))
+        return redirect('hydroshare_api:oauth_redirect')
 
     @staticmethod
-    def get_auth_header(token):
-        return { 'Authorization': 'Bearer {token}'.format(token=token) }
+    def get_auth_header(access_token): # type: (str) -> dict
+        return { 'Authorization': 'Bearer {token}'.format(token=access_token) }
 
     @staticmethod
-    def get_user_info(token):
+    def get_user_info(access_token):
         session = requests.Session()
-        header = HydroShareAPI.get_auth_header(token)
+        header = HydroShareAPI.get_auth_header(access_token)
         response = session.get("{url_base}{path}".format(url_base=HydroShareAPI._API_URL_BASE, path='userInfo/'),
                                headers=header)
 
@@ -101,7 +102,7 @@ class HydroShareAPI:
     # TODO: Implement method
     @staticmethod
     def refresh_token(hsaccount):
-        raise NotImplementedError
+        raise NotImplementedError("not implemented")
 
     @staticmethod
     def get_shared_resources():

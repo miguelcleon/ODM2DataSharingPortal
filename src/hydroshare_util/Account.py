@@ -1,7 +1,7 @@
-from . import HydroShareUtilityBaseClass, HSUAttributeError
+from . import _HydroShareUtilityBaseClass, HSUClassAttributeError
 
 
-class HSUAccount(HydroShareUtilityBaseClass):
+class HSUAccount(_HydroShareUtilityBaseClass):
     def __init__(self, id=None, email=None, first_name=None, last_name=None,
                  organization=None, username=None, **kwargs):
         self.id = id
@@ -15,7 +15,7 @@ class HSUAccount(HydroShareUtilityBaseClass):
             if key in self.__dict__:
                 setattr(self, key, value)
             else:
-                raise HSUAttributeError(self, key)
+                raise HSUClassAttributeError(self, key)
 
     def to_dict(self):
         account = self.get_metadata()
@@ -30,3 +30,6 @@ class HSUAccount(HydroShareUtilityBaseClass):
 
     def __repr__(self):
         return "<{classname}: {username}>".format(classname=type(self).__name__, username=self.username)
+
+
+__all__ = ["HSUAccount"]
