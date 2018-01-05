@@ -1,23 +1,23 @@
 from abc import ABCMeta, abstractmethod
 import re
 import requests
+import logging as logger
 from oauthlib.oauth2 import InvalidGrantError, TokenExpiredError, UnauthorizedClientError
 from hs_restclient import HydroShare, HydroShareAuthOAuth2, HydroShareAuthBasic
 from . import _HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
 from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseServerError
 
 OAUTH_ROPC = 'oauth-resource-owner-password-credentials'
 OAUTH_AC = 'oauth-authorization-code'
 BASIC_AUTH = 'basic-auth'
-
+DEFAULT_RESPONSE_TYPE = 'code'
 
 class HSUAuth(_HydroShareUtilityBaseClass):
-    """
-    Manager class for handling user authentication. Use 'HydroShareAuthFactory' to create instances of this class.
-    :param auth: An instance of either HSUBasicAuth or HSUOAuth
-    """
+    """Main authentication class. Use 'HSUAuthFactory' to create instances of this class."""
     def __init__(self, implementation):
-        self.__implementation = implementation # type: HSUAuthImplementor
+        self.__implementation = implementation
 
     def authenticate(self):
         return self.__implementation.authenticate()
@@ -28,32 +28,39 @@ class HSUAuth(_HydroShareUtilityBaseClass):
     def to_dict(self):
         return self.__implementation.to_dict()
 
+    def get_token(self):
+        return self.__implementation.get_token()
+
     @staticmethod
-    def authorize_client(client_id, redirect_uri, response_type):
-        return HSUOAuth.authorize_client(client_id, redirect_uri, response_type)
+    def authorize_client(client_id, redirect_uri, response_type=None):
+        return HSUOAuth.authorize_client(client_id, redirect_uri, response_type=response_type)
 
     @staticmethod
     def authorize_client_callback(client_id, client_secret, redirect_uri, code):
-        oauth = HSUOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
-        oauth._authorize_client_callback(code)
-        return HSUAuth(oauth)
+        oauth = HSUOAuth.authorize_client_callback(client_id, client_secret, redirect_uri, code)
+        auth = HSUAuth(oauth)
+        return auth
 
 
 class HSUAuthImplementor(_HydroShareUtilityBaseClass):
-    """Defines bridging interface for implementation classes"""
+    """Defines bridging interface for implementation classes of 'HSUAuth'"""
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def get_user_info(self):
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        pass
 
     @abstractmethod
     def authenticate(self):
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        pass
 
     @abstractmethod
     def to_dict(self):
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        pass
+
+    @abstractmethod
+    def get_token(self):
+        pass
 
 
 class HSUOAuth(HSUAuthImplementor):
@@ -64,8 +71,8 @@ class HSUOAuth(HSUAuthImplementor):
     _HS_API_URL_PROTO = '{base}hsapi/'
     _HS_OAUTH_URL_PROTO = '{base}o/'
 
-    def __init__(self, client_id, client_secret, redirect_uri=None, use_https=True, hostname='www.hydroshare.org', port=None, scope=None,
-                 access_token=None, refresh_token=None, expires_in=None, token_type='Bearer',
+    def __init__(self, client_id, client_secret, redirect_uri=None, use_https=True, hostname='www.hydroshare.org',
+                 port=None, scope=None, access_token=None, refresh_token=None, expires_in=None, token_type='Bearer',
                  response_type='authorization_code', username=None, password=None, **kwargs):
         self.client_id = client_id
         self.client_secret = client_secret
@@ -94,7 +101,8 @@ class HSUOAuth(HSUAuthImplementor):
         self.oauth_url = self._HS_OAUTH_URL_PROTO.format(base=self.base_url)
 
         for key, value in kwargs.iteritems():
-            setattr(self, key, value)
+            if key in self.__dict__:
+                setattr(self, key, value)
 
         if self.username and self.password:
             self._authorization_grant_type = OAUTH_ROPC
@@ -103,7 +111,6 @@ class HSUOAuth(HSUAuthImplementor):
 
     def get_token(self):
         token = {
-            'response_type': self.response_type,
             'access_token': self.access_token,
             'token_type': self.token_type,
             'expires_in': self.expires_in,
@@ -112,16 +119,30 @@ class HSUOAuth(HSUAuthImplementor):
         }
         for key, value in token.iteritems():
             if value is None:
-                missing_fields = [field for field in self._required_token_fields if
+                missing_attrs = [field for field in self._required_token_fields if
                                   getattr(self, field) is None and not re.search(r'^__[a-zA-Z0-9]+__$', field)]
-                if len(missing_fields) > 0:
-                    raise AttributeError("Missing required field(s) for 'token': [{fields}]".format(
-                        classname=self.classname, fields=", ".join(missing_fields)))
+                if len(missing_attrs) > 0:
+                    raise AttributeError("missing attributes(s) for token: {attrs}".format(attrs=missing_attrs))
         return token
 
     def get_user_info(self):
-        # TODO: Implement...
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        session = requests.Session()
+
+        header = self._get_authorization_header()
+        url = "{url_base}{path}".format(url_base=self.api_url, path='userInfo/')
+
+        response = session.get(url, headers=header)
+
+        if response.status_code == 200 and 'json' in dir(response):
+            resJSON = response.json()
+            if 'id' in resJSON:
+                return resJSON
+            else:
+                raise Exception('Invalid access token or token expired.')
+        elif response.status_code == 403:
+            raise PermissionDenied("permission denied ({url})")
+        elif response.status_code == 500:
+            return HttpResponseServerError(url)
 
     def authenticate(self):
         """Authenticates the user and returns a 'HydroShare' object"""
@@ -145,23 +166,35 @@ class HSUOAuth(HSUAuthImplementor):
         raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
     @staticmethod
-    def authorize_client(client_id, redirect_uri, response_type):
-        if response_type is None:
-            auth = HSUOAuth(client_id, '--not_used--', redirect_uri=redirect_uri)
+    def authorize_client(client_id, redirect_uri, response_type=None): # type: (str, str, str) -> None
+        if response_type:
+            auth = HSUOAuth(client_id, '__not_used__', redirect_uri=redirect_uri, response_type=response_type)
         else:
-            auth = HSUOAuth(client_id, '--not_used--', redirect_uri=redirect_uri, response_type=response_type)
+            auth = HSUOAuth(client_id, '__not_used__', redirect_uri=redirect_uri)
 
         url = auth._get_authorization_code_url()
         return redirect(url)
 
-    def _authorize_client_callback(self, code): # type: (str) -> None
-        json_token = self._get_access_token(code)
+    @staticmethod
+    def authorize_client_callback(client_id, client_secret, redirect_uri, code, response_type=None):
+        # type: (str, str, str, str, str) -> HSUOAuth
+        if response_type:
+            auth = HSUOAuth(client_id, client_secret, redirect_uri=redirect_uri, response_type=response_type)
+        else:
+            auth = HSUOAuth(client_id, client_secret, redirect_uri=redirect_uri)
 
-        self.access_token = json_token['access_token']
-        self.refresh_token = json_token['refresh_token']
-        self.token_type = json_token['token_type']
-        self.expires_in = json_token['expires_in']
-        self.scope = json_token['scope']
+        json_token = auth._request_access_token(code)
+
+        auth._set_token(**json_token)
+
+        return auth
+
+    def _set_token(self, **token):
+        for key, value in token.iteritems():
+            if key in self.__dict__:
+                setattr(self, key, value)
+            else:
+                logger.warning("skipped setting attribute '{attr}' on '{clsname}".format(attr=key, clsname=self.classname))
 
     def _refresh_authentication(self):
         """Does the same thing as 'authenticate()', but attempts to refresh 'self.access_token' first"""
@@ -224,7 +257,7 @@ class HSUOAuth(HSUAuthImplementor):
     def _get_authorization_header(self):
         return {'Authorization': 'Bearer {access_token}'.format(access_token=self.access_token)}
 
-    def _get_access_token(self, code):
+    def _request_access_token(self, code):
         url = self._get_access_token_url(code)
 
         response = requests.post(url)
@@ -255,12 +288,13 @@ class HSUBasicAuth(HSUAuthImplementor):
         # TODO: Implement...
         raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
+    def get_token(self):
+        return None
+
+
 class HSUAuthFactory(object):
     """
-    This class provides a factory method for creating instances of 'HydroShareAuthManager'.
-
-    'HydroShareAuthManager' has a required 'auth' paramater, which is an instance of either 'HSUBasicAuth'
-    or 'HSUOAuth'.
+    Factory class for creating instances of 'HSUAuth'.
 
     Example: Creating a 'HSUAuth' object using the 'basic' authentication scheme:
         hsauth = HSUAuthFactory.create(username='<your username>', password='<your password>')
@@ -274,12 +308,9 @@ class HSUAuthFactory(object):
         hsauth = HSUAuthFactory.create(client_id='<client_id>', client_secret='<client_secret>',
                                         token=token, redirect_uri='<your_app_redirect_uri>')
     """
-    def __init__(self):
-        raise NotImplementedError("'__init__' is not implemented. Use 'HydroShareAuthFactory.create(...)' to create \
-        an instance of 'HydroShareAuthManager' instead.")
-
     @staticmethod
-    def create(username=None, password=None, client_id=None, client_secret=None, token=None, redirect_uri=None):
+    def create(username=None, password=None, client_id=None, client_secret=None, token=None, redirect_uri=None,
+               response_type=None):
         """
         Factory method creates and returns an instance of HSUAuth. Background implementation is determined by the
         provided paramters. The following table shows which parameters are required for each type of authentication
@@ -312,11 +343,17 @@ class HSUAuthFactory(object):
             scheme = BASIC_AUTH
 
         if scheme == OAUTH_AC:
-            implementation = HSUOAuth(client_id, client_secret, redirect_uri, **token)
+            if response_type is None:
+                response_type = DEFAULT_RESPONSE_TYPE
+
+            implementation = HSUOAuth(client_id, client_secret, redirect_uri, response_type=response_type, **token)
+
         elif scheme == OAUTH_ROPC:
             implementation = HSUOAuth(client_id, client_secret, username=username, password=password)
+
         elif scheme == BASIC_AUTH:
             implementation = HSUBasicAuth(username, password)
+
         else:
             raise ValueError("Could not determine authentication scheme with provided parameters.")
 

@@ -177,11 +177,11 @@ class HydroShareAccount(models.Model):
     is_enabled = models.BooleanField(default=False)
     ext_hydroshare_id = models.IntegerField(unique=True)
 
-    @classmethod
-    def save_token(cls, token):
+    def save_token(self, token):
         if not isinstance(token, dict):
             raise TypeError("'token' must be of type 'dict'.")
-        OAuthToken(cls, **token).save()
+        oauth_token = OAuthToken(account=self, **token)
+        oauth_token.save()
 
     @property
     def token(self):
@@ -263,9 +263,8 @@ class HydroShareSiteSetting(models.Model):
             'last_sync_date': self.last_sync_date
         }
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        return super(HydroShareSiteSetting, self).save(force_insert, force_update, using, update_fields)
+    # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    #     return super(HydroShareSiteSetting, self).save(force_insert, force_update, using, update_fields)
 
     class Meta:
         db_table = 'hydroshare_site_setting'
@@ -298,19 +297,19 @@ class OAuthToken(models.Model):
     expires_in = models.DateTimeField(default=timezone.now)
     scope = models.CharField(max_length=255, default='read')
 
-    def __init__(self, *args, **kwargs):
-        super(OAuthToken, self).__init__(args, kwargs)
-        # Check if 'self.pk' exists. If not, the assumption is that this is a new token and
-        # the 'expires_in' value needs to be converted into a datetime object representing
-        # a future point in time when the token expires and will need to be refreshed.
-        if not self.pk:
-            if isinstance(self.expires_in, str):
-                try:
-                    self.expires_in = int(self.expires_in)
-                    self.expires_in = datetime.today() + timedelta(seconds=self.expires_in)
-                    # print(self.expires_in.strftime('%B %d, %Y, %I:%M:%S %p'))
-                except ValueError as e:
-                    raise ValueError("Failed to cast 'expires_in' from 'str' to 'int'.\n\t" + e.message)
+    @property
+    def is_expired(self):
+        return datetime.today() > self.expires_in
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if isinstance(self.expires_in, str):
+            self.expires_in = int(self.expires_in)
+
+        if isinstance(self.expires_in, int):
+            self.expires_in = datetime.today() + timedelta(seconds=self.expires_in)
+
+        super(OAuthToken, self).save(force_insert=force_insert, force_update=force_update, using=using,
+                                     update_fields=update_fields)
 
     def to_dict(self, include_account=False):
         token = {

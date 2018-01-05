@@ -1,5 +1,7 @@
 from os import environ
-from django.http import HttpResponse, Http404
+
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
@@ -7,13 +9,13 @@ from dataloaderinterface.models import  ODM2User, HydroShareAccount
 from hydroshare_util.Auth import HSUAuth
 from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
-
 class HydroShareOAuthBaseClass(TemplateView):
     pass
 
-class Resources(TemplateView):
+class Resources(HydroShareOAuthBaseClass):
     template_name = 'hydroshare/resources.html'
 
+    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(Resources, self).get_context_data(**kwargs)
         if 'id' in kwargs:
@@ -34,42 +36,42 @@ class Resources(TemplateView):
 
     def get(self, request, *args, **kwargs):
         # HydroShareAPI.refresh_resources()
-        return super(Resources, self).get(request, *args, **kwargs)
+        return super(Resources, self).get(request, args, kwargs)
 
 
 class OAuthAuthorize(HydroShareOAuthBaseClass):
     def get(self, request, *args, **kwargs):
+        client_id = environ.get('HS_CLIENT_ID')
+        client_secret = environ.get('HS_CLIENT_SECRET')
+        redirect_uri = environ.get('HS_REDIRECT_URI')
+
         if 'code' in request.GET:
-
-            # Get access token
-            # auth = hsAPI.get_access_token(request.GET['code'])
-            client_id = environ.get('HS_CLIENT_ID')
-            client_secret = environ.get('HS_CLIENT_SECRET')
-            redirect_uri = environ.get('HS_REDIRECT_URI')
-
             auth = HSUAuth.authorize_client_callback(client_id, client_secret, redirect_uri, request.GET['code']) # type: HSUAuth
 
             if auth:
-                odm2user = ODM2User.objects.get(pk=request.user.id)
+                user_info = auth.get_user_info()
+                print("HydroShare user info: ", user_info)
+
                 try:
-                    user = HydroShareAccount.objects.get(ext_hydroshare_id=auth.user_info.id)
-                    # user_info = hsAPI.get_user_info(user.access_token)
-                    # print(user_info)
+                    user = HydroShareAccount.objects.get(ext_hydroshare_id=user_info['id'])
                 except HydroShareAccount.DoesNotExist:
-                    user = HydroShareAccount(user=odm2user, is_enabled=True, ext_hydroshare_id=auth.user_info.id)
+                    odm2user = ODM2User.objects.get(pk=request.user.id)
+                    user = HydroShareAccount(user=odm2user, is_enabled=True, ext_hydroshare_id=user_info['id'])
                     user.save()
 
-                user.save_token(auth)
+                token = auth.get_token()
+
+                if token:
+                    user.save_token(token)
 
                 return redirect('user_account')
             else:
                 # TODO: Create a view to handle failed authorization
                 return HttpResponse('Error: Authorization failure!')
+        elif 'error' in request.GET:
+            return HttpResponseServerError(request.GET['error'])
         else:
-            client_id = environ.get('HS_CLIENT_ID')
-            client_secret = environ.get('HS_CLIENT_SECRET')
-            redirect_uri = environ.get('HS_REDIRECT_URI')
-            return HSUAuth.authorize_client(client_id, client_secret, redirect_uri)
+            return HSUAuth.authorize_client(client_id, redirect_uri)
 
 
 # TODO: Implement this class
@@ -93,13 +95,14 @@ class OAuthRefresh(HydroShareOAuthBaseClass):
     pass
 
 
-# TODO: Allow users to deauthorize app to manage their HydroShare account.
 class OAuthDeauthorize(HydroShareOAuthBaseClass):
+    # TODO: Allow users to deauthorize this application
     pass
 
 class OAuthAuthorizeRedirect(HydroShareOAuthBaseClass):
     template_name = 'hydroshare/oauth_redirect.html'
 
+    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(OAuthAuthorizeRedirect, self).get_context_data(**kwargs)
         context['hydroshare_oauth_url'] = mark_safe(HydroShareAPI.get_auth_code_url())
