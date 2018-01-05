@@ -1,7 +1,7 @@
-from . import _HydroShareUtilityBaseClass, HSUClassAttributeError
+from . import HydroShareUtilityBaseClass, HSUClassAttributeError
 
 
-class HSUAccount(_HydroShareUtilityBaseClass):
+class HSUAccount(HydroShareUtilityBaseClass):
     def __init__(self, id=None, email=None, first_name=None, last_name=None,
                  organization=None, username=None, **kwargs):
         self.id = id

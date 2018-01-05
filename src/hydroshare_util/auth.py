@@ -1,32 +1,35 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 import re
 import requests
 import logging as logger
 from oauthlib.oauth2 import InvalidGrantError, TokenExpiredError, UnauthorizedClientError
-from hs_restclient import HydroShare, HydroShareAuthOAuth2, HydroShareAuthBasic
-from . import _HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
+from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
+from utility import HydroShareAdapter
+from . import HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseServerError
 
-OAUTH_ROPC = 'oauth-resource-owner-password-credentials'
-OAUTH_AC = 'oauth-authorization-code'
-BASIC_AUTH = 'basic-auth'
 DEFAULT_RESPONSE_TYPE = 'code'
 
-class HSUAuth(_HydroShareUtilityBaseClass):
+OAUTH_ROPC = 'oauth-resource-owner-password-credentials'
+OAUTH_AC = 'oauth-authorization-code'
+BASIC_AUTH = 'basic'
+
+class HSUAuth(HydroShareUtilityBaseClass):
     """Main authentication class. Use 'HSUAuthFactory' to create instances of this class."""
     def __init__(self, implementation):
         self.__implementation = implementation
 
-    def authenticate(self):
-        return self.__implementation.authenticate()
+    @property
+    def auth_type(self):
+        return self.__implementation.auth_type
+
+    def get_client(self):
+        return self.__implementation.get_client()
 
     def get_user_info(self):
         return self.__implementation.get_user_info()
-
-    def to_dict(self):
-        return self.__implementation.to_dict()
 
     def get_token(self):
         return self.__implementation.get_token()
@@ -42,20 +45,20 @@ class HSUAuth(_HydroShareUtilityBaseClass):
         return auth
 
 
-class HSUAuthImplementor(_HydroShareUtilityBaseClass):
+class HSUAuthImplementor(HydroShareUtilityBaseClass):
     """Defines bridging interface for implementation classes of 'HSUAuth'"""
     __metaclass__ = ABCMeta
+
+    @abstractproperty
+    def auth_type(self):
+        pass
 
     @abstractmethod
     def get_user_info(self):
         pass
 
     @abstractmethod
-    def authenticate(self):
-        pass
-
-    @abstractmethod
-    def to_dict(self):
+    def get_client(self):
         pass
 
     @abstractmethod
@@ -109,6 +112,10 @@ class HSUOAuth(HSUAuthImplementor):
         else:
             self._authorization_grant_type = OAUTH_AC
 
+    @property
+    def auth_type(self):
+        return self._authorization_grant_type
+
     def get_token(self):
         token = {
             'access_token': self.access_token,
@@ -144,26 +151,18 @@ class HSUOAuth(HSUAuthImplementor):
         elif response.status_code == 500:
             return HttpResponseServerError(url)
 
-    def authenticate(self):
-        """Authenticates the user and returns a 'HydroShare' object"""
-        if self._authorization_grant_type == OAUTH_AC:
+    def get_client(self):
+        """Provides authentication details to 'hs_restclient.HydroShare' and returns the object"""
+        if self.auth_type == OAUTH_AC:
             token = self.get_token()
             auth = HydroShareAuthOAuth2(self.client_id, self.client_secret, token=token)
-        elif self._authorization_grant_type == OAUTH_ROPC:
+        elif self.auth_type == OAUTH_ROPC:
             auth = HydroShareAuthOAuth2(self.client_id, self.client_secret, username=self.username,
                                         password=self.password)
         else:
             raise InvalidGrantError("Invalid authorization grant type.")
 
-        try:
-            return HydroShare(auth=auth)
-        except TokenExpiredError:
-            return self._refresh_authentication()
-
-    def to_dict(self):
-        # TODO: implement
-        # yield self.get_user_info()
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        return HydroShareAdapter(auth=auth)
 
     @staticmethod
     def authorize_client(client_id, redirect_uri, response_type=None): # type: (str, str, str) -> None
@@ -189,6 +188,9 @@ class HSUOAuth(HSUAuthImplementor):
 
         return auth
 
+    def get_authorization_header(self):
+        return {'Authorization': 'Bearer {access_token}'.format(access_token=self.access_token)}
+
     def _set_token(self, **token):
         for key, value in token.iteritems():
             if key in self.__dict__:
@@ -197,7 +199,7 @@ class HSUOAuth(HSUAuthImplementor):
                 logger.warning("skipped setting attribute '{attr}' on '{clsname}".format(attr=key, clsname=self.classname))
 
     def _refresh_authentication(self):
-        """Does the same thing as 'authenticate()', but attempts to refresh 'self.access_token' first"""
+        """Does the same thing as 'get_client()', but attempts to refresh 'self.access_token' first"""
         params = {
             'grant_type': 'refresh_token',
             'client_id': self.client_id,
@@ -222,7 +224,7 @@ class HSUOAuth(HSUAuthImplementor):
             # TODO: Use a better exception type
             raise Exception("failed to refresh access token")
 
-        return self.authenticate()
+        return self.get_client()
 
     def _build_oauth_url(self, path, params=None): # type: (str, list) -> str
         if params is None:
@@ -254,9 +256,6 @@ class HSUOAuth(HSUAuthImplementor):
 
         return self._build_oauth_url('token/', params)
 
-    def _get_authorization_header(self):
-        return {'Authorization': 'Bearer {access_token}'.format(access_token=self.access_token)}
-
     def _request_access_token(self, code):
         url = self._get_access_token_url(code)
 
@@ -276,17 +275,19 @@ class HSUBasicAuth(HSUAuthImplementor):
         self.username = username
         self.password = password
 
+        self.__auth_type__ = BASIC_AUTH
+
+    @property
+    def auth_type(self):
+        return self.__auth_type__
+
     def get_user_info(self):
         # TODO: Implement...
         raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
-    def authenticate(self):
+    def get_client(self):
         auth = HydroShareAuthBasic(username=self.username, password=self.password)
-        return HydroShare(auth=auth)
-
-    def to_dict(self):
-        # TODO: Implement...
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        return HydroShareAdapter(auth=auth)
 
     def get_token(self):
         return None

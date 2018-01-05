@@ -12,8 +12,25 @@ from dataloaderinterface.models import HydroShareAccount
 from hydroshare_api.models import HydroShareResource
 
 ## Old imports above, refactored imports below
-from hydroshare_util.Utility import HydroShareUtility
-from hydroshare_util.Auth import HSUAuth
+from hydroshare_util.utility import HydroShareUtility
+from hydroshare_util.auth import HSUAuth
+
+
+
+
+
+
+
+#############################################################
+## Exploratory Code (i.e., you probably shouldn't use this ##
+#############################################################
+
+
+
+
+
+
+
 
 class HydroShareAPI:
 

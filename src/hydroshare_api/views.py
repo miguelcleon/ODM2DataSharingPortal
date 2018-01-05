@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
 from dataloaderinterface.models import  ODM2User, HydroShareAccount
-from hydroshare_util.Auth import HSUAuth
+from hydroshare_util.auth import HSUAuth
 from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
 class HydroShareOAuthBaseClass(TemplateView):

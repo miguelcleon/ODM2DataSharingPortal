@@ -1,7 +1,9 @@
+from enum import Enum
+
 NOT_IMPLEMENTED_ERROR = "Method not implemeneted."
 
 
-class _HydroShareUtilityBaseClass(object):
+class HydroShareUtilityBaseClass(object):
     """The base class for all HSU* classes"""
 
     @property
@@ -48,4 +50,13 @@ class HSUOAuthCredentialsTypeError(TypeError):
         super(HSUOAuthCredentialsTypeError, self).__init__(arg)
 
 
-__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError"]
+class NotAuthorizedError(Exception):
+    def __init__(self, *args, **kwargs): # real signature unknown
+        super(NotAuthorizedError, self).__init__(args, kwargs)
+
+
+class AuthScheme(Enum):
+    BASIC = 'basic'
+    OAUTH = 'oauth'
+
+__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError", "AuthScheme"]
