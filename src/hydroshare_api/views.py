@@ -1,8 +1,10 @@
+from os import environ
 from django.http import HttpResponse, Http404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
 from dataloaderinterface.models import  ODM2User, HydroShareAccount
+from hydroshare_util.Auth import HSUAuth
 from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
 
@@ -40,7 +42,12 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
         if 'code' in request.GET:
 
             # Get access token
-            auth = hsAPI.get_access_token(request.GET['code'])
+            # auth = hsAPI.get_access_token(request.GET['code'])
+            client_id = environ.get('HS_CLIENT_ID')
+            client_secret = environ.get('HS_CLIENT_SECRET')
+            redirect_uri = environ.get('HS_REDIRECT_URI')
+
+            auth = HSUAuth.authorize_client_callback(client_id, client_secret, redirect_uri, request.GET['code']) # type: HSUAuth
 
             if auth:
                 odm2user = ODM2User.objects.get(pk=request.user.id)
@@ -59,7 +66,10 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
                 # TODO: Create a view to handle failed authorization
                 return HttpResponse('Error: Authorization failure!')
         else:
-            return hsAPI.authorize_client()
+            client_id = environ.get('HS_CLIENT_ID')
+            client_secret = environ.get('HS_CLIENT_SECRET')
+            redirect_uri = environ.get('HS_REDIRECT_URI')
+            return HSUAuth.authorize_client(client_id, client_secret, redirect_uri)
 
 
 # TODO: Implement this class

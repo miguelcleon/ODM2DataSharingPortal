@@ -41,7 +41,7 @@ class HydroShareUtility(_HydroShareUtilityBaseClass):
             else:
                 raise HSUOAuthCredentialsTypeError(username, password, token)
         else:
-            raise ValueError("'{scheme}' is not a valid authentication scheme. Must be 'basic' or 'oauth'.".format(scheme=scheme))
+            raise ValueError("'{scheme}' is not a valid authentication scheme, must be 'basic' or 'oauth'".format(scheme=scheme))
 
         self.client = auth_util.authenticate()
 

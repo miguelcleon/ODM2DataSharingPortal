@@ -25,13 +25,18 @@ class HSUAuth(_HydroShareUtilityBaseClass):
     def get_user_info(self):
         return self.__implementation.get_user_info()
 
-    @staticmethod
-    def authorize_client(self, client_id, redirect_uri, response_type):
-        HSUOAuth._authorize_client(client_id, redirect_uri, response_type)
+    def to_dict(self):
+        return self.__implementation.to_dict()
 
     @staticmethod
-    def authorize_client_callback(self, code):
-        return self.__implementation.authorize_client_callback(code)
+    def authorize_client(client_id, redirect_uri, response_type):
+        return HSUOAuth.authorize_client(client_id, redirect_uri, response_type)
+
+    @staticmethod
+    def authorize_client_callback(client_id, client_secret, redirect_uri, code):
+        oauth = HSUOAuth(client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri)
+        oauth._authorize_client_callback(code)
+        return HSUAuth(oauth)
 
 
 class HSUAuthImplementor(_HydroShareUtilityBaseClass):
@@ -46,13 +51,9 @@ class HSUAuthImplementor(_HydroShareUtilityBaseClass):
     def authenticate(self):
         raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
-    # @abstractmethod
-    # def authorize_client(self, redirect_to=None):
-    #     raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
-    #
-    # @abstractmethod
-    # def authorize_client_callback(self, code):
-    #     raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+    @abstractmethod
+    def to_dict(self):
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
 
 class HSUOAuth(HSUAuthImplementor):
@@ -138,8 +139,13 @@ class HSUOAuth(HSUAuthImplementor):
         except TokenExpiredError:
             return self._refresh_authentication()
 
+    def to_dict(self):
+        # TODO: implement
+        # yield self.get_user_info()
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+
     @staticmethod
-    def _authorize_client(client_id, redirect_uri, response_type):
+    def authorize_client(client_id, redirect_uri, response_type):
         if response_type is None:
             auth = HSUOAuth(client_id, '--not_used--', redirect_uri=redirect_uri)
         else:
@@ -148,12 +154,12 @@ class HSUOAuth(HSUAuthImplementor):
         url = auth._get_authorization_code_url()
         return redirect(url)
 
-    @staticmethod
-    def _authorize_client_callback(client_id, client_secret, redirect_uri, code): # type: (str) -> dict
+    def _authorize_client_callback(self, code): # type: (str) -> None
         json_token = self._get_access_token(code)
 
         self.access_token = json_token['access_token']
         self.refresh_token = json_token['refresh_token']
+        self.token_type = json_token['token_type']
         self.expires_in = json_token['expires_in']
         self.scope = json_token['scope']
 
@@ -226,7 +232,7 @@ class HSUOAuth(HSUAuthImplementor):
         if response.status_code == 200 and 'json' in dir(response):
             return response.json()
         else:
-            # TODO: Better exception handling
+            # TODO: Better exception handling...
             raise Exception("failed to get access token")
 
 
@@ -245,14 +251,9 @@ class HSUBasicAuth(HSUAuthImplementor):
         auth = HydroShareAuthBasic(username=self.username, password=self.password)
         return HydroShare(auth=auth)
 
-    def authorize_client(self, redirect_to=None):
-        raise NotImplementedError(
-            "method not implemented: '{name}' does not need to authorize a client".format(name=self.classname))
-
-    def authorize_client_callback(self, code):
-        raise NotImplementedError(
-            "method not implemented: '{name}' does not need to authorize a client".format(name=self.classname))
-
+    def to_dict(self):
+        # TODO: Implement...
+        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
 
 class HSUAuthFactory(object):
     """

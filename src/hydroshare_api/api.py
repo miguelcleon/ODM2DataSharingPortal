@@ -13,6 +13,7 @@ from hydroshare_api.models import HydroShareResource
 
 ## Old imports above, refactored imports below
 from hydroshare_util.Utility import HydroShareUtility
+from hydroshare_util.Auth import HSUAuth
 
 class HydroShareAPI:
 
@@ -74,7 +75,6 @@ class HydroShareAPI:
 
     @staticmethod
     def authorize_client():
-        # return HttpResponseRedirect(reverse('hydroshare_api:oauth_redirect'))
         return redirect('hydroshare_api:oauth_redirect')
 
     @staticmethod
