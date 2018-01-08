@@ -1,3 +1,13 @@
+"""
+
+Utility library for consuming HydroShare's REST API.
+
+Built on top of the 'hs_restclient' library.
+
+"""
+__title__ = 'hydroshare_util'
+__version__ = '1.0'
+
 NOT_IMPLEMENTED_ERROR = "Method not implemeneted."
 
 

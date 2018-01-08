@@ -16,3 +16,4 @@ waitress==1.0.1
 WebOb==1.6.2
 WebTest==2.0.23
 requests==2.18.4
+hs_restclient==1.2.10

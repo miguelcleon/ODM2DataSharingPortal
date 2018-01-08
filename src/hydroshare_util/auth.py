@@ -3,7 +3,7 @@ from enum import Enum
 import re
 import requests
 import logging as logger
-from oauthlib.oauth2 import InvalidGrantError, TokenExpiredError, UnauthorizedClientError
+from oauthlib.oauth2 import InvalidGrantError
 from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
 from adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass, ImproperlyConfiguredError, NOT_IMPLEMENTED_ERROR
@@ -173,7 +173,8 @@ class OAuthUtil(AuthUtilImplementor):
         else:
             raise InvalidGrantError("Invalid authorization grant type.")
 
-        return HydroShareAdapter(auth=auth)
+        header = self.get_authorization_header()
+        return HydroShareAdapter(auth=auth, auth_header=header)
 
     @staticmethod
     def authorize_client(response_type=None): # type: (str, str, str) -> None
@@ -213,9 +214,9 @@ class OAuthUtil(AuthUtilImplementor):
         """Does the same thing as 'get_client()', but attempts to refresh 'self.access_token' first"""
         params = {
             'grant_type': 'refresh_token',
-            '__client_id': self.__client_id,
-            '__client_secret': self.__client_secret,
-            '__redirect_uri': self.__redirect_uri,
+            'client_id': self.__client_id,
+            'client_secret': self.__client_secret,
+            'redirect_uri': self.__redirect_uri,
             'refresh_token': self.refresh_token
         }
 
@@ -250,8 +251,8 @@ class OAuthUtil(AuthUtilImplementor):
     def _get_authorization_code_url(self):
         params = {
             'response_type': self.response_type,
-            '__client_id': self.__client_id,
-            '__redirect_uri': self.__redirect_uri
+            'client_id': self.__client_id,
+            'redirect_uri': self.__redirect_uri
         }
 
         return self._build_oauth_url('authorize/', params)
@@ -259,8 +260,8 @@ class OAuthUtil(AuthUtilImplementor):
     def _get_access_token_url(self, code):
         params = {
             'grant_type': 'authorization_code',
-            '__client_id': self.__client_id,
-            '__client_secret': self.__client_secret,
+            'client_id': self.__client_id,
+            'client_secret': self.__client_secret,
             '__redirect_uri': self.__redirect_uri,
             'code': code
         }
@@ -313,11 +314,11 @@ class AuthUtilFactory(object):
 
     Example of creating a 'AuthUtil' object using the 'oauth' authentication scheme and client credential grant type:
         hsauth = AuthUtilFactory.create(username='<your_username>', password='<your_password>',
-                                        __client_id='<__client_id>', __client_secret='<__client_secret>')
+                                        client_id='<__client_id>', client_secret='<__client_secret>')
 
     Example of creating an 'AuthUtil' object using the 'auth' authentication scheme and authorization code grant type:
         token = get_token() # get_token is a stand for getting a token dictionary
-        hsauth = AuthUtilFactory.create(__client_id='<__client_id>', __client_secret='<__client_secret>',
+        hsauth = AuthUtilFactory.create(client_id='<__client_id>', client_secret='<__client_secret>',
                                         token=token, __redirect_uri='<your_app_redirect_uri>')
     """
     @staticmethod

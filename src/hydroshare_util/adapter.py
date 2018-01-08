@@ -1,29 +1,83 @@
-from hs_restclient import HydroShare, HydroShareHTTPException
+# adapter.py
+from hs_restclient import HydroShare, DEFAULT_HOSTNAME
 
 
 class HydroShareAdapter(HydroShare):
-    def getUserInfo(self, headers=None):
-        return self.get_user_info(headers=headers)
+    def __init__(self, hostname=DEFAULT_HOSTNAME, port=None, use_https=True, verify=True,
+                 auth=None, auth_header=None):
+        self._auth_header = auth_header
+        super(HydroShareAdapter, self).__init__(hostname=hostname, port=port, use_https=use_https, verify=verify, auth=auth)
 
-    def get_user_info(self, headers=None):
-        """
-                Query the GET /hsapi/userInfo/ REST end point of the HydroShare server.
+    def _request(self, method, url, params=None, data=None, files=None, headers=None, stream=False):
+        _headers = None
+        if self._auth_header and headers:
+            _headers.update(self._auth_header)
+        elif self._auth_header:
+            _headers = self._auth_header
 
-                :raises: HydroShareHTTPException to signal an HTTP error
+        return super(HydroShareAdapter, self)._request(method, url, params=params, data=data, files=files, stream=stream, headers=_headers)
 
-                :return: A JSON object representing user info, for example:
+    def get_resource_list(self, **kwargs):
+        return self.getResourceList(**kwargs)
 
-                {
-                    "username": "username",
-                    "first_name": "First",
-                    "last_name": "Last",
-                    "email": "user@domain.com"
-                }
-                """
-        url = "{url_base}/userInfo/".format(url_base=self.url_base)
+    def get_system_metadata(self, pid):
+        return self.getSystemMetadata(pid)
 
-        response = self._request('GET', url, headers=headers)
-        if response.status_code != 200:
-            raise HydroShareHTTPException((url, 'GET', response.status_code))
+    def get_science_metadata_RDF(self, pid):
+        return self.getScienceMetadata(pid)
 
-        return response.json()
+    def get_science_metadata(self, pid):
+        return self.getScienceMetadata(pid)
+
+    def update_science_metadata(self, pid, metadata):
+        return self.updateScienceMetadata(pid, metadata)
+
+    def get_resource_map(self, pid):
+        return self.getResourceMap(pid)
+
+    def get_resource(self, pid, destination=None, unzip=False, wait_for_bag_creation=True):
+        return self.getResource(pid, destination=destination, unzip=unzip, wait_for_bag_creation=wait_for_bag_creation)
+
+    def get_resourceTypes(self):
+        return self.getResourceTypes()
+
+    def create_resource(self, resource_type, title, resource_file=None, resource_filename=None,
+                       abstract=None, keywords=None,
+                       edit_users=None, view_users=None, edit_groups=None, view_groups=None,
+                       metadata=None, extra_metadata=None, progress_callback=None):
+        return self.createResource(resource_type, title, resource_file=resource_file,
+                                   resource_filename=resource_filename, abstract=abstract, keywords=keywords,
+                                   edit_users=edit_users, view_users=view_users, edit_groups=edit_groups,
+                                   view_groups=view_groups, metadata=metadata, extra_metadata=extra_metadata,
+                                   progress_callback=progress_callback)
+
+    def delete_resource(self, pid):
+        return self.deleteResource(pid)
+
+    def set_access_rules(self, pid, public=False):
+        return self.setAccessRules(pid, public=public)
+
+    def add_resource_file(self, pid, resource_file, resource_filename=None, progress_callback=None):
+        return self.addResourceFile(pid, resource_file, resource_filename=resource_filename,
+                                    progress_callback=progress_callback)
+
+    def get_resource_file(self, pid, filename, destination=None):
+        return self.getResourceFile(pid, filename, destination=destination)
+
+    def delete_resource_file(self, pid, filename):
+        return self.deleteResourceFile(pid, filename)
+
+    def get_resource_file_list(self, pid):
+        return self.getResourceFileList(pid)
+
+    def get_resource_folder_contents(self, pid, pathname):
+        return self.getResourceFolderContents(pid, pathname)
+
+    def create_resource_folder(self, pid, pathname):
+        return self.createResourceFolder(pid, pathname)
+
+    def delete_resource_folder(self, pid, pathname):
+        return self.delete_resourceFolder(pid, pathname)
+
+    def get_user_info(self):
+        return self.getUserInfo()
