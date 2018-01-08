@@ -11,6 +11,13 @@ from django.forms.formsets import formset_factory
 from dataloaderinterface.models import ODM2User, SiteAlert
 
 
+class SiteTypeSelect(forms.Select):
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        option = super(SiteTypeSelect, self).create_option(name, value, label, selected, index, subindex, attrs)
+        option['attrs']['title'] = self.choices.queryset.get(name=value).definition if value else ''
+        return option
+
+
 # AUTHORIZATION
 
 
@@ -140,7 +147,9 @@ class SiteForm(forms.ModelForm):
     ]
 
     site_type = forms.ModelChoiceField(
-        queryset=SiteType.objects.filter(name__in=allowed_site_types), help_text='Select the type of site you are deploying (e.g., "Stream")'
+        queryset=SiteType.objects.filter(name__in=allowed_site_types),
+        help_text='Select the type of site you are deploying (e.g., "Stream")',
+        widget=SiteTypeSelect(attrs={'title': 'this is the title for all options i think'})
     )
     use_required_attribute = False
 
