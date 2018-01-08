@@ -18,7 +18,7 @@ If using this authentication strategy, the value for `REDIRECT_URI` is not requi
 
 ### Authentication
 
-Authorizing a user using OAuth 2.0:
+#### Authorizing a user using OAuth 2.0:
 
 ```python
 # views.py
@@ -52,7 +52,7 @@ def hydroshare_callback(request):
     ...
 ```
 
-Authorizing a user using OAuth 2.0 and their username and password:
+#### Authorizing a user using OAuth 2.0 and their username and password:
 
 **Note:** From a security standpoint, a user should never be asked for their credentials to *hydroshare.org* from a website existing under a different domain name.
  Quoting from [RFC 6742](https://tools.ietf.org/html/rfc6749#section-1.3.3):
@@ -71,7 +71,7 @@ def hydroshare(request):
     auth = AuthUtil.authorize(scheme='oauth', username=username, password=password)
 ```
 
-Authorizing a user using basic authentication:
+#### Authorizing a user using basic authentication:
 
 ```python
 from hydroshare_util.auth import AuthUtil
