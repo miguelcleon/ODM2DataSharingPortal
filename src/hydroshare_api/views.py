@@ -5,12 +5,16 @@ from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
-from dataloaderinterface.models import  ODM2User, HydroShareAccount
+
+from adapter import HydroShareAdapter
+from dataloaderinterface.models import ODM2User, HydroShareAccount
 from hydroshare_util.auth import AuthUtil
 from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
+
 class HydroShareOAuthBaseClass(TemplateView):
     pass
+
 
 class Resources(HydroShareOAuthBaseClass):
     template_name = 'hydroshare/resources.html'
@@ -42,28 +46,41 @@ class Resources(HydroShareOAuthBaseClass):
 class OAuthAuthorize(HydroShareOAuthBaseClass):
     def get(self, request, *args, **kwargs):
         if 'code' in request.GET:
-            auth = AuthUtil.authorize_client_callback(request.GET['code']) # type: AuthUtil
-
-            if auth:
-                user_info = auth.get_user_info()
-                print("HydroShare user info: ", user_info)
-
-                try:
-                    user = HydroShareAccount.objects.get(ext_hydroshare_id=user_info['id'])
-                except HydroShareAccount.DoesNotExist:
-                    odm2user = ODM2User.objects.get(pk=request.user.id)
-                    user = HydroShareAccount(user=odm2user, is_enabled=True, ext_hydroshare_id=user_info['id'])
-                    user.save()
-
-                token = auth.get_token()
-
-                if token:
-                    user.save_token(token)
-
+            auth_code = AuthUtil.authorize_client_callback(request.GET['code'])  # type: str
+            try:
+                token = AuthUtil.authorize_client_callback(auth_code)
+                auth_utility = AuthUtil.authorize(scheme='oauth', token=token)  # type: AuthUtil
+                client = auth_utility.get_client()  # type: HydroShareAdapter
+                print client
+                user_info = client.get_user_info()
+                print user_info
+                hydroshare_account = HydroShareAccount.objects.get()
                 return redirect('user_account')
-            else:
-                # TODO: Create a view to handle failed authorization
+            except Exception as e:
+                print 'Authorizition likely failed: {}'.format(e)
                 return HttpResponse('Error: Authorization failure!')
+
+            #
+            # if auth:
+            #     user_info = auth.get_user_info()
+            #     print("HydroShare user info: ", user_info)
+            #
+            #     try:
+            #         user = HydroShareAccount.objects.get(ext_hydroshare_id=user_info['id'])
+            #     except HydroShareAccount.DoesNotExist:
+            #         odm2user = ODM2User.objects.get(pk=request.user.id)
+            #         user = HydroShareAccount(user=odm2user, is_enabled=True, ext_hydroshare_id=user_info['id'])
+            #         user.save()
+            #
+            #     token = auth.get_token()
+            #
+            #     if token:
+            #         user.save_token(token)
+            #
+            #     return redirect('user_account')
+            # else:
+            #     # TODO: Create a view to handle failed authorization
+            #     return HttpResponse('Error: Authorization failure!')
         elif 'error' in request.GET:
             return HttpResponseServerError(request.GET['error'])
         else:

@@ -213,9 +213,9 @@ class OAuthUtil(AuthUtilImplementor):
         """Does the same thing as 'get_client()', but attempts to refresh 'self.access_token' first"""
         params = {
             'grant_type': 'refresh_token',
-            '__client_id': self.__client_id,
-            '__client_secret': self.__client_secret,
-            '__redirect_uri': self.__redirect_uri,
+            'client_id': self.__client_id,
+            'client_secret': self.__client_secret,
+            'redirect_uri': self.__redirect_uri,
             'refresh_token': self.refresh_token
         }
 
@@ -250,8 +250,8 @@ class OAuthUtil(AuthUtilImplementor):
     def _get_authorization_code_url(self):
         params = {
             'response_type': self.response_type,
-            '__client_id': self.__client_id,
-            '__redirect_uri': self.__redirect_uri
+            'client_id': self.__client_id,
+            'redirect_uri': self.__redirect_uri
         }
 
         return self._build_oauth_url('authorize/', params)
@@ -259,9 +259,9 @@ class OAuthUtil(AuthUtilImplementor):
     def _get_access_token_url(self, code):
         params = {
             'grant_type': 'authorization_code',
-            '__client_id': self.__client_id,
-            '__client_secret': self.__client_secret,
-            '__redirect_uri': self.__redirect_uri,
+            'client_id': self.__client_id,
+            'client_secret': self.__client_secret,
+            'redirect_uri': self.__redirect_uri,
             'code': code
         }
 

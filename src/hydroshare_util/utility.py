@@ -1,6 +1,7 @@
 import re
+import os
 from . import HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
-# from hs_restclient import HydroShare, HydroShareAuthBasic, HydroShareAuthOAuth2, HydroShareHTTPException
+from hs_restclient import HydroShare, HydroShareAuthBasic, HydroShareAuthOAuth2, HydroShareHTTPException
 from auth import OAUTH_AC, OAuthUtil
 
 class HydroShareUtility(HydroShareUtilityBaseClass):
@@ -12,7 +13,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
     method has been called, you can use self.client to access the API.
     """
     def __init__(self, auth=None, time_format="%Y-%m-%dT%H:%M:%S", xml_coverage="start={start}; end={end}; scheme=W3C-DTF"):
-        self.auth = auth # HydroShare
+        self.auth = auth  # type: HydroShare
         self.RE_PERIOD = re.compile(r'(?P<tag_start>^start=)(?P<start>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_end>end=)'
                                     r'(?P<end>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_scheme>scheme=)(?P<scheme>.+$)', re.I)
         self.XML_NS = {'dc': "http://purl.org/dc/elements/1.1/",
@@ -28,7 +29,11 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
         pass
 
     def get_resource_file_list(self, resource_id):
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        try:
+            return list(self.auth.getResourceFileList(resource_id))
+        except Exception as e:
+            print 'Error while fetching resource files {}'.format(e)
+            return []
 
     def get_resource(self):
         raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
