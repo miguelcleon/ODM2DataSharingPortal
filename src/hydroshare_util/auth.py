@@ -5,7 +5,7 @@ import requests
 import logging as logger
 from oauthlib.oauth2 import InvalidGrantError, TokenExpiredError, UnauthorizedClientError
 from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
-from utility import HydroShareAdapter
+from adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass, ImproperlyConfiguredError, NOT_IMPLEMENTED_ERROR
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
@@ -138,7 +138,7 @@ class OAuthUtil(AuthUtilImplementor):
         for key, value in token.iteritems():
             if value is None:
                 missing_attrs = [field for field in self._required_token_fields if
-                                  getattr(self, field) is None and not re.search(r'^__[a-zA-Z0-9]+__$', field)]
+                                 getattr(self, field) is None and not re.search(r'^__[a-zA-Z0-9]+__$', field)]
                 if len(missing_attrs) > 0:
                     raise AttributeError("missing attributes(s) for token: {attrs}".format(attrs=missing_attrs))
         return token

@@ -169,8 +169,8 @@ DATETIME_FORMAT = "N j, Y, H:m"
 
 
 HYDROSHARE_UTIL_CONFIG = {
-    'CLIENT_ID': data["hydroshare_oauth"]["__client_id"],
-    'CLIENT_SECRET': data["hydroshare_oauth"]["__client_secret"],
-    'REDIRECT_URI': data["hydroshare_oauth"]["__redirect_uri"],
+    'CLIENT_ID': data["hydroshare_oauth"]["client_id"],
+    'CLIENT_SECRET': data["hydroshare_oauth"]["client_secret"],
+    'REDIRECT_URI': data["hydroshare_oauth"]["redirect_uri"],
  #   'RESPONSE_TYPE': data["hydroshare_oauth"]["response_type"]
 }

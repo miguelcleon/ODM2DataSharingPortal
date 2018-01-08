@@ -1,8 +1,7 @@
 import re
 from . import HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
-from hs_restclient import HydroShare, HydroShareAuthBasic, HydroShareAuthOAuth2, HydroShareHTTPException
-from auth import BASIC_AUTH, OAUTH_AC, OAUTH_ROPC, AuthUtil, OAuthUtil
-from adapter import HydroShareAdapter
+# from hs_restclient import HydroShare, HydroShareAuthBasic, HydroShareAuthOAuth2, HydroShareHTTPException
+from auth import OAUTH_AC, OAuthUtil
 
 class HydroShareUtility(HydroShareUtilityBaseClass):
     """
