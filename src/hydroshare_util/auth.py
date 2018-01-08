@@ -1,23 +1,24 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
+from enum import Enum
 import re
 import requests
 import logging as logger
 from oauthlib.oauth2 import InvalidGrantError, TokenExpiredError, UnauthorizedClientError
 from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
 from utility import HydroShareAdapter
-from . import HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
+from . import HydroShareUtilityBaseClass, ImproperlyConfiguredError, NOT_IMPLEMENTED_ERROR
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseServerError
-
-DEFAULT_RESPONSE_TYPE = 'code'
+from django.conf import settings
 
 OAUTH_ROPC = 'oauth-resource-owner-password-credentials'
 OAUTH_AC = 'oauth-authorization-code'
 BASIC_AUTH = 'basic'
 
-class HSUAuth(HydroShareUtilityBaseClass):
-    """Main authentication class. Use 'HSUAuthFactory' to create instances of this class."""
+
+class AuthUtil(HydroShareUtilityBaseClass):
+    """Main authentication class. Use 'AuthUtilFactory' to create instances of this class."""
     def __init__(self, implementation):
         self.__implementation = implementation
 
@@ -35,18 +36,22 @@ class HSUAuth(HydroShareUtilityBaseClass):
         return self.__implementation.get_token()
 
     @staticmethod
-    def authorize_client(client_id, redirect_uri, response_type=None):
-        return HSUOAuth.authorize_client(client_id, redirect_uri, response_type=response_type)
+    def authorize_client(response_type=None):
+        return OAuthUtil.authorize_client(response_type=response_type)
 
     @staticmethod
-    def authorize_client_callback(client_id, client_secret, redirect_uri, code):
-        oauth = HSUOAuth.authorize_client_callback(client_id, client_secret, redirect_uri, code)
-        auth = HSUAuth(oauth)
+    def authorize_client_callback(code):
+        oauth = OAuthUtil.authorize_client_callback(code)
+        auth = AuthUtil(oauth)
         return auth
 
+    @staticmethod
+    def authorize(scheme, username=None, password=None, token=None):
+        return AuthUtilFactory.create(scheme, username=username, password=password, token=token)
 
-class HSUAuthImplementor(HydroShareUtilityBaseClass):
-    """Defines bridging interface for implementation classes of 'HSUAuth'"""
+
+class AuthUtilImplementor(HydroShareUtilityBaseClass):
+    """Defines bridging interface for implementation classes of 'AuthUtil'"""
     __metaclass__ = ABCMeta
 
     @abstractproperty
@@ -66,7 +71,7 @@ class HSUAuthImplementor(HydroShareUtilityBaseClass):
         pass
 
 
-class HSUOAuth(HSUAuthImplementor):
+class OAuthUtil(AuthUtilImplementor):
     """User authentication with OAuth 2.0 using the 'authorization_code' grant type"""
     _required_token_fields = ['response_type', 'access_token', 'token_type', 'expires_in', 'refresh_token', 'scope']
     _HS_BASE_URL_PROTO_WITH_PORT = '{scheme}://{hostname}:{port}/'
@@ -74,12 +79,15 @@ class HSUOAuth(HSUAuthImplementor):
     _HS_API_URL_PROTO = '{base}hsapi/'
     _HS_OAUTH_URL_PROTO = '{base}o/'
 
-    def __init__(self, client_id, client_secret, redirect_uri=None, use_https=True, hostname='www.hydroshare.org',
+    @property
+    def auth_type(self):
+        return self._authorization_grant_type
+
+    def __init__(self, redirect_uri=None, use_https=True, hostname='www.hydroshare.org',
                  port=None, scope=None, access_token=None, refresh_token=None, expires_in=None, token_type='Bearer',
-                 response_type='authorization_code', username=None, password=None, **kwargs):
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.redirect_uri = redirect_uri
+                 response_type='code', username=None, password=None, **kwargs):
+
+        self.__redirect_uri__ = redirect_uri
         self.token_type = token_type
         self.response_type = response_type
         self.scope = scope
@@ -103,6 +111,13 @@ class HSUOAuth(HSUAuthImplementor):
         self.api_url = self._HS_API_URL_PROTO.format(base=self.base_url)
         self.oauth_url = self._HS_OAUTH_URL_PROTO.format(base=self.base_url)
 
+        if settings.HYDROSHARE_UTIL_CONFIG:
+            self.__client_id = settings.HYDROSHARE_UTIL_CONFIG['CLIENT_ID']
+            self.__client_secret = settings.HYDROSHARE_UTIL_CONFIG['CLIENT_SECRET']
+            self.__redirect_uri = settings.HYDROSHARE_UTIL_CONFIG['REDIRECT_URI']
+        else:
+            raise ImproperlyConfiguredError()
+
         for key, value in kwargs.iteritems():
             if key in self.__dict__:
                 setattr(self, key, value)
@@ -111,10 +126,6 @@ class HSUOAuth(HSUAuthImplementor):
             self._authorization_grant_type = OAUTH_ROPC
         else:
             self._authorization_grant_type = OAUTH_AC
-
-    @property
-    def auth_type(self):
-        return self._authorization_grant_type
 
     def get_token(self):
         token = {
@@ -135,7 +146,7 @@ class HSUOAuth(HSUAuthImplementor):
     def get_user_info(self):
         session = requests.Session()
 
-        header = self._get_authorization_header()
+        header = self.get_authorization_header()
         url = "{url_base}{path}".format(url_base=self.api_url, path='userInfo/')
 
         response = session.get(url, headers=header)
@@ -155,9 +166,9 @@ class HSUOAuth(HSUAuthImplementor):
         """Provides authentication details to 'hs_restclient.HydroShare' and returns the object"""
         if self.auth_type == OAUTH_AC:
             token = self.get_token()
-            auth = HydroShareAuthOAuth2(self.client_id, self.client_secret, token=token)
+            auth = HydroShareAuthOAuth2(self.__client_id, self.__client_secret, token=token)
         elif self.auth_type == OAUTH_ROPC:
-            auth = HydroShareAuthOAuth2(self.client_id, self.client_secret, username=self.username,
+            auth = HydroShareAuthOAuth2(self.__client_id, self.__client_secret, username=self.username,
                                         password=self.password)
         else:
             raise InvalidGrantError("Invalid authorization grant type.")
@@ -165,28 +176,28 @@ class HSUOAuth(HSUAuthImplementor):
         return HydroShareAdapter(auth=auth)
 
     @staticmethod
-    def authorize_client(client_id, redirect_uri, response_type=None): # type: (str, str, str) -> None
+    def authorize_client(response_type=None): # type: (str, str, str) -> None
         if response_type:
-            auth = HSUOAuth(client_id, '__not_used__', redirect_uri=redirect_uri, response_type=response_type)
+            auth = OAuthUtil(response_type=response_type)
         else:
-            auth = HSUOAuth(client_id, '__not_used__', redirect_uri=redirect_uri)
+            auth = OAuthUtil()
 
         url = auth._get_authorization_code_url()
         return redirect(url)
 
     @staticmethod
-    def authorize_client_callback(client_id, client_secret, redirect_uri, code, response_type=None):
-        # type: (str, str, str, str, str) -> HSUOAuth
+    def authorize_client_callback(code, response_type=None):
+        # type: (str, str) -> dict
+        redirect_uri = settings.HYDROSHARE_UTIL_CONFIG['REDIRECT_URI']
+
         if response_type:
-            auth = HSUOAuth(client_id, client_secret, redirect_uri=redirect_uri, response_type=response_type)
+            auth = OAuthUtil(redirect_uri=redirect_uri, response_type=response_type)
         else:
-            auth = HSUOAuth(client_id, client_secret, redirect_uri=redirect_uri)
+            auth = OAuthUtil(redirect_uri=redirect_uri)
 
-        json_token = auth._request_access_token(code)
+        token = auth._request_access_token(code)
 
-        auth._set_token(**json_token)
-
-        return auth
+        return token
 
     def get_authorization_header(self):
         return {'Authorization': 'Bearer {access_token}'.format(access_token=self.access_token)}
@@ -202,9 +213,9 @@ class HSUOAuth(HSUAuthImplementor):
         """Does the same thing as 'get_client()', but attempts to refresh 'self.access_token' first"""
         params = {
             'grant_type': 'refresh_token',
-            'client_id': self.client_id,
-            'client_secret': self.client_secret,
-            'redirect_uri': self.redirect_uri,
+            '__client_id': self.__client_id,
+            '__client_secret': self.__client_secret,
+            '__redirect_uri': self.__redirect_uri,
             'refresh_token': self.refresh_token
         }
 
@@ -239,8 +250,8 @@ class HSUOAuth(HSUAuthImplementor):
     def _get_authorization_code_url(self):
         params = {
             'response_type': self.response_type,
-            'client_id': self.client_id,
-            'redirect_uri': self.redirect_uri
+            '__client_id': self.__client_id,
+            '__redirect_uri': self.__redirect_uri
         }
 
         return self._build_oauth_url('authorize/', params)
@@ -248,9 +259,9 @@ class HSUOAuth(HSUAuthImplementor):
     def _get_access_token_url(self, code):
         params = {
             'grant_type': 'authorization_code',
-            'client_id': self.client_id,
-            'client_secret': self.client_secret,
-            'redirect_uri': self.redirect_uri,
+            '__client_id': self.__client_id,
+            '__client_secret': self.__client_secret,
+            '__redirect_uri': self.__redirect_uri,
             'code': code
         }
 
@@ -268,7 +279,7 @@ class HSUOAuth(HSUAuthImplementor):
             raise Exception("failed to get access token")
 
 
-class HSUBasicAuth(HSUAuthImplementor):
+class BasicAuthUtil(AuthUtilImplementor):
     """User authentication using 'Basic Auth' scheme."""
 
     def __init__(self, username, password):
@@ -293,72 +304,68 @@ class HSUBasicAuth(HSUAuthImplementor):
         return None
 
 
-class HSUAuthFactory(object):
+class AuthUtilFactory(object):
     """
-    Factory class for creating instances of 'HSUAuth'.
+    Factory class for creating instances of 'AuthUtil'.
 
-    Example: Creating a 'HSUAuth' object using the 'basic' authentication scheme:
-        hsauth = HSUAuthFactory.create(username='<your username>', password='<your password>')
+    Example: Creating a 'AuthUtil' object using the 'basic' authentication scheme:
+        hsauth = AuthUtilFactory.create(username='<your username>', password='<your password>')
 
-    Example of creating a 'HSUAuth' object using the 'oauth' authentication scheme and client credential grant type:
-        hsauth = HSUAuthFactory.create(username='<your_username>', password='<your_password>',
-                                        client_id='<client_id>', client_secret='<client_secret>')
+    Example of creating a 'AuthUtil' object using the 'oauth' authentication scheme and client credential grant type:
+        hsauth = AuthUtilFactory.create(username='<your_username>', password='<your_password>',
+                                        __client_id='<__client_id>', __client_secret='<__client_secret>')
 
-    Example of creating an 'HSUAuth' object using the 'auth' authentication scheme and authorization code grant type:
+    Example of creating an 'AuthUtil' object using the 'auth' authentication scheme and authorization code grant type:
         token = get_token() # get_token is a stand for getting a token dictionary
-        hsauth = HSUAuthFactory.create(client_id='<client_id>', client_secret='<client_secret>',
-                                        token=token, redirect_uri='<your_app_redirect_uri>')
+        hsauth = AuthUtilFactory.create(__client_id='<__client_id>', __client_secret='<__client_secret>',
+                                        token=token, __redirect_uri='<your_app_redirect_uri>')
     """
     @staticmethod
-    def create(username=None, password=None, client_id=None, client_secret=None, token=None, redirect_uri=None,
-               response_type=None):
+    def create(scheme, username=None, password=None, token=None):
+        # type: (AuthScheme, str, str, dict, str) -> AuthUtil
         """
-        Factory method creates and returns an instance of HSUAuth. Background implementation is determined by the
-        provided paramters. The following table shows which parameters are required for each type of authentication
-        scheme.
+        Factory method creates and returns an instance of AuthUtil. The chosen scheme ('basic' or 'oauth') determines
+        the background implementation. The following table shows which parameters are required for each type of
+        authentication scheme.
 
-        +-----------------------------------------------------------------------------------------------------+
-        |       scheme type      | username | password |   token   | client_id | client_secret | redirect_uri |
-        +------------------------+----------------------------------------------------------------------------+
-        | Basic Auth             |    X     |    X     |           |           |               |              |
-        +------------------------+----------------------------------------------------------------------------+
-        | OAuth with credentials |    X     |    X     |           |     X     |       X       |              |
-        +------------------------+----------------------------------------------------------------------------+
-        | OAuth with token       |          |          |     X     |     X     |       X       |      X       |
-        +------------------------+----------------------------------------------------------------------------+
+        +--------------------------------------------------------------+
+        |       scheme type      |  username  |  password  |   token   |
+        +------------------------+-------------------------------------+
+        | Basic Auth             |     X      |     X      |           |
+        +------------------------+-------------------------------------+
+        | OAuth with credentials |     X      |     X      |           |
+        +------------------------+-------------------------------------+
+        | OAuth with token       |            |            |     X     |
+        +------------------------+--------------------------------------
 
+        :param scheme: The authentication scheme, either 'basic' or 'oauth'
         :param username: user's username
         :param password: user's password
-        :param client_id: application's client ID
-        :param client_secret: applications client secret
         :param token: a dictionary containing values for 'access_token', 'token_type', 'refresh_token', 'expires_in',
         and 'scope'
-        :param redirect_uri: redirect URI for OAuth
         """
-        scheme = None
-        if token and client_id and client_secret and redirect_uri:
-            scheme = OAUTH_AC
-        elif username and password and client_id and client_secret:
-            scheme = OAUTH_ROPC
-        elif username and password:
-            scheme = BASIC_AUTH
+        if scheme == AuthScheme.OAUTH and token:
 
-        if scheme == OAUTH_AC:
-            if response_type is None:
-                response_type = DEFAULT_RESPONSE_TYPE
+            implementation = OAuthUtil(**token)
 
-            implementation = HSUOAuth(client_id, client_secret, redirect_uri, response_type=response_type, **token)
+        elif scheme == AuthScheme.OAUTH and username and password:
 
-        elif scheme == OAUTH_ROPC:
-            implementation = HSUOAuth(client_id, client_secret, username=username, password=password)
+            implementation = OAuthUtil(username=username, password=password)
 
-        elif scheme == BASIC_AUTH:
-            implementation = HSUBasicAuth(username, password)
+        elif scheme == AuthScheme.BASIC and username and password:
+
+            implementation = BasicAuthUtil(username, password)
 
         else:
-            raise ValueError("Could not determine authentication scheme with provided parameters.")
+            raise ValueError("incorrect arguments supplied to 'AuthUtilFactory.create()' using authentication scheme \
+                '{scheme}'".format(scheme=scheme))
 
-        return HSUAuth(implementation)
+        return AuthUtil(implementation)
 
 
-__all__ = ["HSUAuth", "HSUOAuth", "HSUBasicAuth", "HSUAuthFactory"]
+class AuthScheme(Enum):
+    BASIC = 'basic'
+    OAUTH = 'oauth'
+
+
+__all__ = ["AuthUtil", "OAuthUtil", "BasicAuthUtil", "AuthUtilFactory", "AuthScheme"]

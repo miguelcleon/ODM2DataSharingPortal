@@ -62,6 +62,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 REST_FRAMEWORK = {
    'DEFAULT_RENDERER_CLASSES': (
        'rest_framework.renderers.JSONRenderer',
@@ -166,8 +167,10 @@ EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVE
 
 DATETIME_FORMAT = "N j, Y, H:m"
 
-if "hydroshare_oauth" in data:
-    os.environ.setdefault("HS_CLIENT_ID", data["hydroshare_oauth"]["client_id"])
-    os.environ.setdefault("HS_CLIENT_SECRET", data["hydroshare_oauth"]["client_secret"])
-    os.environ.setdefault("HS_REDIRECT_URI", data["hydroshare_oauth"]["redirect_uri"])
-    os.environ.setdefault("HS_RESPONSE_TYPE", data["hydroshare_oauth"]["response_type"])
+
+HYDROSHARE_UTIL_CONFIG = {
+    'CLIENT_ID': data["hydroshare_oauth"]["__client_id"],
+    'CLIENT_SECRET': data["hydroshare_oauth"]["__client_secret"],
+    'REDIRECT_URI': data["hydroshare_oauth"]["__redirect_uri"],
+ #   'RESPONSE_TYPE': data["hydroshare_oauth"]["response_type"]
+}

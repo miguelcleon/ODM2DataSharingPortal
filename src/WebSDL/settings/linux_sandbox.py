@@ -11,9 +11,9 @@ if "host_staging" in data:
     ALLOWED_HOSTS.append(data["host_staging"])
 
 if "hydroshare_oauth" in data:
-    os.environ.setdefault("HS_CLIENT_ID", data["hydroshare_oauth"]["client_id"])
-    os.environ.setdefault("HS_CLIENT_SECRET", data["hydroshare_oauth"]["client_secret"])
-    os.environ.setdefault("HS_REDIRECT_URI", data["hydroshare_oauth"]["redirect_uri"])
+    os.environ.setdefault("HS_CLIENT_ID", data["hydroshare_oauth"]["__client_id"])
+    os.environ.setdefault("HS_CLIENT_SECRET", data["hydroshare_oauth"]["__client_secret"])
+    os.environ.setdefault("HS_REDIRECT_URI", data["hydroshare_oauth"]["__redirect_uri"])
     os.environ.setdefault("HS_RESPONSE_TYPE", data["hydroshare_oauth"]["response_type"])
 
 STATIC_ROOT = data["static_root"]

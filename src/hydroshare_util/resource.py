@@ -1,8 +1,8 @@
 import logging as logger
 
-from . import HydroShareUtilityBaseClass, AuthScheme, HSUOAuthCredentialsTypeError
+from . import HydroShareUtilityBaseClass
 from utility import HydroShareUtility
-from auth import HSUAuthFactory, HSUAuth
+from auth import AuthUtil
 
 class ResourceBaseClass(HydroShareUtilityBaseClass):
     def __init__(self, **kwargs):
@@ -26,7 +26,7 @@ class Resource(ResourceBaseClass):
                                        award_title=award_title, award_number=award_number)
         self.resource_id = resource_id
         self.util = utility # type: HydroShareUtility
-        self.auth = auth # type: HSUAuth
+        self.auth = auth # type: AuthUtil
         self.owner = owner
         self.files = files
         self.subjects = subjects

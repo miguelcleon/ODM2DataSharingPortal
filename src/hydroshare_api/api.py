@@ -13,7 +13,7 @@ from hydroshare_api.models import HydroShareResource
 
 ## Old imports above, refactored imports below
 from hydroshare_util.utility import HydroShareUtility
-from hydroshare_util.auth import HSUAuth
+from hydroshare_util.auth import AuthUtil
 
 
 
@@ -46,8 +46,8 @@ class HydroShareAPI:
     def get_auth_code_url():
         params = {
             'response_type': HydroShareAPI.__response_type,
-            'client_id': HydroShareAPI.__client_id,
-            'redirect_uri': HydroShareAPI.__redirect_uri
+            '__client_id': HydroShareAPI.__client_id,
+            '__redirect_uri': HydroShareAPI.__redirect_uri
         }
         return HydroShareAPI.build_oauth_url('authorize/', params)
 
@@ -55,9 +55,9 @@ class HydroShareAPI:
     def get_refresh_code_params(refresh_token):
         return {
             'grant_type': 'refresh_token',
-            'client_id': HydroShareAPI.__client_id,
-            'client_secret': HydroShareAPI.__client_secret,
-            'redirect_uri': HydroShareAPI.__redirect_uri,
+            '__client_id': HydroShareAPI.__client_id,
+            '__client_secret': HydroShareAPI.__client_secret,
+            '__redirect_uri': HydroShareAPI.__redirect_uri,
             'refresh_token': refresh_token
         }
 
@@ -72,9 +72,9 @@ class HydroShareAPI:
     def get_access_token(code):
         params = {
             'grant_type': 'authorization_code',
-            'client_id': HydroShareAPI.__client_id,
-            'client_secret': HydroShareAPI.__client_secret,
-            'redirect_uri': HydroShareAPI.__redirect_uri,
+            '__client_id': HydroShareAPI.__client_id,
+            '__client_secret': HydroShareAPI.__client_secret,
+            '__redirect_uri': HydroShareAPI.__redirect_uri,
             'code': code
         }
         url = HydroShareAPI.build_oauth_url('token/', params)

@@ -1,7 +1,7 @@
 import re
 from . import HydroShareUtilityBaseClass, NOT_IMPLEMENTED_ERROR
 from hs_restclient import HydroShare, HydroShareAuthBasic, HydroShareAuthOAuth2, HydroShareHTTPException
-from auth import BASIC_AUTH, OAUTH_AC, OAUTH_ROPC, HSUAuth, HSUOAuth
+from auth import BASIC_AUTH, OAUTH_AC, OAUTH_ROPC, AuthUtil, OAuthUtil
 from adapter import HydroShareAdapter
 
 class HydroShareUtility(HydroShareUtilityBaseClass):
@@ -68,7 +68,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
         client = self.auth.get_client()
         if self.auth.auth_type == OAUTH_AC:
             imp = self.auth.__implementation
-            header = imp.get_authorization_header() if isinstance(imp, HSUOAuth) else None
+            header = imp.get_authorization_header() if isinstance(imp, OAuthUtil) else None
             return client.get_user_info(headers=header)
         else:
             return client.get_user_info()

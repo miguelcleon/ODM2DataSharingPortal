@@ -1,5 +1,3 @@
-from enum import Enum
-
 NOT_IMPLEMENTED_ERROR = "Method not implemeneted."
 
 
@@ -55,8 +53,11 @@ class NotAuthorizedError(Exception):
         super(NotAuthorizedError, self).__init__(args, kwargs)
 
 
-class AuthScheme(Enum):
-    BASIC = 'basic'
-    OAUTH = 'oauth'
+class ImproperlyConfiguredError(Exception):
+    def __init__(self, **kwargs):
+        arg = "'hydroshare_util' improperly configured. Please refer to the documentation \
+        (https://github.com/ODM2/ODM2WebSDL/tree/hydroshare/src/hydroshare_util)"
+        super(ImproperlyConfiguredError, self).__init__(arg, kwargs)
 
-__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError", "AuthScheme"]
+
+__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError"]

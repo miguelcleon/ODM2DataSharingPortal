@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
 from dataloaderinterface.models import  ODM2User, HydroShareAccount
-from hydroshare_util.auth import HSUAuth
+from hydroshare_util.auth import AuthUtil
 from .api import HydroShareAPI as hsAPI, HydroShareAPI
 
 class HydroShareOAuthBaseClass(TemplateView):
@@ -41,12 +41,8 @@ class Resources(HydroShareOAuthBaseClass):
 
 class OAuthAuthorize(HydroShareOAuthBaseClass):
     def get(self, request, *args, **kwargs):
-        client_id = environ.get('HS_CLIENT_ID')
-        client_secret = environ.get('HS_CLIENT_SECRET')
-        redirect_uri = environ.get('HS_REDIRECT_URI')
-
         if 'code' in request.GET:
-            auth = HSUAuth.authorize_client_callback(client_id, client_secret, redirect_uri, request.GET['code']) # type: HSUAuth
+            auth = AuthUtil.authorize_client_callback(request.GET['code']) # type: AuthUtil
 
             if auth:
                 user_info = auth.get_user_info()
@@ -71,7 +67,7 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
         elif 'error' in request.GET:
             return HttpResponseServerError(request.GET['error'])
         else:
-            return HSUAuth.authorize_client(client_id, redirect_uri)
+            return AuthUtil.authorize_client()
 
 
 # TODO: Implement this class
