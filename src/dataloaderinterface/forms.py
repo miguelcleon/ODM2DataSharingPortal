@@ -142,8 +142,9 @@ class SamplingFeatureForm(forms.ModelForm):
 
 class SiteForm(forms.ModelForm):
     allowed_site_types = [
-        'Aggregate groundwater use', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
-        'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Soil hole', 'Storm sewer', 'Tidal stream', 'Wetland'
+        'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
+        'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Observation well', 'Soil hole',
+        'Storm sewer', 'Stream gage', 'Tidal stream', 'Water quality station', 'Weather station', 'Wetland'
     ]
 
     site_type = forms.ModelChoiceField(
