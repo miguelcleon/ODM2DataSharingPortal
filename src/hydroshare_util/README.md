@@ -5,7 +5,7 @@
 In `settings.json` in your django project, include the following configuration to enable using OAuth 2.0 with `hydroshare_util`.  
  
 ```python
-HYDRO_SHARE_UTIL_CONFIG = {
+HYDROSHARE_UTIL_CONFIG = {
     'CLIENT_ID': '<your_client_id>',
     'CLIENT_SECRET': '<your_client_secret>',
     'REDIRECT_URI': '<your_redirect_uri>'
@@ -86,15 +86,37 @@ def hydroshare(request):
 
 After a user has been authenticated, you can start using `hydroshare_util` to consume HydroShare's REST API.
 
-A basic example of usage:
+Get information about the user:
 ```python
 from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.auth import AuthUtil
 
-token = get_token() # You will need to implement your own method for retrieving a stored token 
+token = get_token() # You will need to implement your own method for retrieving a token 
 auth = AuthUtil.authorize('oauth', token=token)
 
 util = HydroShareUtility(auth=auth)
 
 user_info = util.get_user_info()
+# user_info = {
+#    "username": "<username>", 
+#    "first_name": "<first_name>", 
+#    "last_name": "<last_name>", 
+#    "email": "<email>", 
+#    "organization": "<organization>", 
+#    "id": 1
+# }
 ```
+
+To get a list of resources:
+```python
+from hydroshare_util.resource import Resource
+resources = util.get_resources() # type: list
+resource = resources[0] # type: Resource
+```
+
+To get a specific resource:
+```python
+from hydroshare_util.resource import Resource
+resource = util.get_resource(pid=<your_resource_id>) # type: Resource
+```
+

@@ -4,16 +4,16 @@ from hs_restclient import HydroShare, DEFAULT_HOSTNAME
 
 class HydroShareAdapter(HydroShare):
     def __init__(self, hostname=DEFAULT_HOSTNAME, port=None, use_https=True, verify=True,
-                 auth=None, auth_header=None):
-        self._auth_header = auth_header
+                 auth=None, default_headers=None):
+        self._default_headers = default_headers
         super(HydroShareAdapter, self).__init__(hostname=hostname, port=port, use_https=use_https, verify=verify, auth=auth)
 
     def _request(self, method, url, params=None, data=None, files=None, headers=None, stream=False):
         _headers = None
-        if self._auth_header and headers:
-            _headers.update(self._auth_header)
-        elif self._auth_header:
-            _headers = self._auth_header
+        if self._default_headers and headers:
+            _headers.update(self._default_headers)
+        elif self._default_headers:
+            _headers = self._default_headers
 
         return super(HydroShareAdapter, self)._request(method, url, params=params, data=data, files=files, stream=stream, headers=_headers)
 

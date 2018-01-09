@@ -5,10 +5,10 @@ import requests
 from oauthlib.oauth2 import InvalidGrantError
 from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
 from adapter import HydroShareAdapter
-from . import HydroShareUtilityBaseClass, ImproperlyConfiguredError, NOT_IMPLEMENTED_ERROR
+from . import HydroShareUtilityBaseClass, ImproperlyConfiguredError
 from django.shortcuts import redirect
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseServerError
+# from django.core.exceptions import PermissionDenied
+# from django.http import HttpResponseServerError
 from django.conf import settings
 import logging as logger
 
@@ -16,6 +16,7 @@ import logging as logger
 OAUTH_ROPC = 'oauth-resource-owner-password-credentials'
 OAUTH_AC = 'oauth-authorization-code'
 BASIC_AUTH = 'basic'
+SELF_SIGNED_CERTIFICATE = 'self-signed-certificate'
 
 
 class AuthUtil(HydroShareUtilityBaseClass):
@@ -29,9 +30,6 @@ class AuthUtil(HydroShareUtilityBaseClass):
 
     def get_client(self):
         return self.__implementation.get_client()
-
-    def get_user_info(self):
-        return self.__implementation.get_user_info()
 
     def get_token(self):
         return self.__implementation.get_token()
@@ -58,10 +56,6 @@ class AuthUtilImplementor(HydroShareUtilityBaseClass):
         pass
 
     @abstractmethod
-    def get_user_info(self):
-        pass
-
-    @abstractmethod
     def get_client(self):
         pass
 
@@ -80,7 +74,7 @@ class OAuthUtil(AuthUtilImplementor):
 
     @property
     def auth_type(self):
-        return self._authorization_grant_type
+        return self.__authorization_grant_type
 
     def __init__(self, use_https=True, hostname='www.hydroshare.org',
                  port=None, scope=None, access_token=None, refresh_token=None, expires_in=None, token_type='Bearer',
@@ -116,9 +110,9 @@ class OAuthUtil(AuthUtilImplementor):
             raise ImproperlyConfiguredError()
 
         if self.username and self.password:
-            self._authorization_grant_type = OAUTH_ROPC
+            self.__authorization_grant_type = OAUTH_ROPC
         else:
-            self._authorization_grant_type = OAUTH_AC
+            self.__authorization_grant_type = OAUTH_AC
 
     def get_token(self):
         token = {
@@ -136,25 +130,6 @@ class OAuthUtil(AuthUtilImplementor):
                     raise AttributeError("missing attributes(s) for token: {attrs}".format(attrs=missing_attrs))
         return token
 
-    def get_user_info(self):
-        session = requests.Session()
-
-        header = self.get_authorization_header()
-        url = "{url_base}{path}".format(url_base=self.api_url, path='userInfo/')
-
-        response = session.get(url, headers=header)
-
-        if response.status_code == 200 and 'json' in dir(response):
-            resJSON = response.json()
-            if 'id' in resJSON:
-                return resJSON
-            else:
-                raise Exception('Invalid access token or token expired.')
-        elif response.status_code == 403:
-            raise PermissionDenied("permission denied ({url})")
-        elif response.status_code == 500:
-            return HttpResponseServerError(url)
-
     def get_client(self):
         """Provides authentication details to 'hs_restclient.HydroShare' and returns the object"""
         if self.auth_type == OAUTH_AC:
@@ -166,8 +141,8 @@ class OAuthUtil(AuthUtilImplementor):
         else:
             raise InvalidGrantError("Invalid authorization grant type.")
 
-        header = self.get_authorization_header()
-        return HydroShareAdapter(auth=auth, auth_header=header)
+        authorization_header = self.get_authorization_header()
+        return HydroShareAdapter(auth=auth, default_headers=authorization_header)
 
     @staticmethod
     def authorize_client(response_type=None): # type: (str, str, str) -> None
@@ -192,7 +167,8 @@ class OAuthUtil(AuthUtilImplementor):
         return token
 
     def get_authorization_header(self):
-        return {'Authorization': 'Bearer {access_token}'.format(access_token=self.access_token)}
+        return {'Authorization': '{token_type} {access_token}'.format(token_type=self.token_type,
+                                                                      access_token=self.access_token)}
 
     def _set_token(self, **token):
         for key, value in token.iteritems():
@@ -224,7 +200,7 @@ class OAuthUtil(AuthUtilImplementor):
             self.scope = responseJSON['scope']
 
         else:
-            # TODO: Use a better exception type
+            # TODO: better exception handling
             raise Exception("failed to refresh access token")
 
         return self.get_client()
@@ -278,15 +254,11 @@ class BasicAuthUtil(AuthUtilImplementor):
         self.username = username
         self.password = password
 
-        self.__auth_type__ = BASIC_AUTH
+        self.__auth_type = BASIC_AUTH
 
     @property
     def auth_type(self):
-        return self.__auth_type__
-
-    def get_user_info(self):
-        # TODO: Implement...
-        raise NotImplementedError(NOT_IMPLEMENTED_ERROR)
+        return self.__auth_type
 
     def get_client(self):
         auth = HydroShareAuthBasic(username=self.username, password=self.password)
@@ -295,6 +267,28 @@ class BasicAuthUtil(AuthUtilImplementor):
     def get_token(self):
         return None
 
+
+class SelfSignSecurityCertAuth(AuthUtilImplementor):
+    """Used to connect to a development HydroShare server that uses a self-sign security certificate"""
+    def __init__(self, hostname, port=None): # type: (str) -> None
+        self.hostname = hostname
+        self.port = port
+        self.use_https = False
+
+        self.__auth_type = SELF_SIGNED_CERTIFICATE
+
+    @property
+    def auth_type(self):
+        return self.__auth_type
+
+    def get_client(self):
+        if self.port:
+            return HydroShareAdapter(hostname=self.hostname, port=self.port, use_https=self.use_https)
+        else:
+            return HydroShareAdapter(hostname=self.hostname, verify=False)
+
+    def get_token(self):
+        return None
 
 class AuthUtilFactory(object):
     """
@@ -313,7 +307,7 @@ class AuthUtilFactory(object):
                                         token=token, __redirect_uri='<your_app_redirect_uri>')
     """
     @staticmethod
-    def create(scheme, username=None, password=None, token=None):
+    def create(scheme, username=None, password=None, token=None, hostname=None, port=None):
         # type: (AuthScheme, str, str, dict, str) -> AuthUtil
         """
         Factory method creates and returns an instance of AuthUtil. The chosen scheme ('basic' or 'oauth') determines
@@ -337,22 +331,13 @@ class AuthUtilFactory(object):
         and 'scope'
         """
         if scheme == AuthScheme.OAUTH._value_ and token:
-            # access_token = token['access_token']
-            # token_type = token['token_type']
-            # expires_in = token['expires_in']
-            # refresh_token = token['refresh_token']
-            # scope = token['scope']
-
             implementation = OAuthUtil(**token)
-
         elif scheme == AuthScheme.OAUTH._value_ and username and password:
-
             implementation = OAuthUtil(username=username, password=password)
-
         elif scheme == AuthScheme.BASIC._value_ and username and password:
-
             implementation = BasicAuthUtil(username, password)
-
+        elif scheme == AuthScheme.SELF_SIGNED_CERTIFICATE._value_ and hostname:
+            implementation = SelfSignSecurityCertAuth(hostname, port=port)
         else:
             raise ValueError("incorrect arguments supplied to 'AuthUtilFactory.create()' using authentication scheme \
                 '{scheme}'".format(scheme=scheme))
@@ -363,6 +348,7 @@ class AuthUtilFactory(object):
 class AuthScheme(Enum):
     BASIC = 'basic'
     OAUTH = 'oauth'
+    SELF_SIGNED_CERTIFICATE = 'self-signed-certificate'
 
 
-__all__ = ["AuthUtil", "OAuthUtil", "BasicAuthUtil", "AuthUtilFactory", "AuthScheme"]
+__all__ = ["AuthUtil", "OAuthUtil", "BasicAuthUtil", "SelfSignSecurityCertAuth", "AuthUtilFactory", "AuthScheme"]

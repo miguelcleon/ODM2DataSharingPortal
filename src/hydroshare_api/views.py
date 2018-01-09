@@ -1,15 +1,13 @@
-from os import environ
-
+import json
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponse, Http404, HttpResponseServerError
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
-
+from hydroshare_api.api import *
 from hydroshare_util.adapter import HydroShareAdapter
-from dataloaderinterface.models import ODM2User, HydroShareAccount
+from dataloaderinterface.models import HydroShareAccount
 from hydroshare_util.auth import AuthUtil
-from .api import HydroShareAPI as hsAPI, HydroShareAPI
 import logging
 
 class HydroShareOAuthBaseClass(TemplateView):
@@ -55,9 +53,8 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
 
             client = auth_utility.get_client()  # type: HydroShareAdapter
             user_info = client.get_user_info()
-            import json
-            user_info_to_string = json.dumps(user_info, indent=3)
-            logging.info('\n\nuser_info: %s\n', user_info_to_string)
+
+            logging.info('\nuser_info: %s', json.dumps(user_info, indent=3))
 
             try:
                 account = HydroShareAccount.objects.get(ext_hydroshare_id=user_info['id'])
