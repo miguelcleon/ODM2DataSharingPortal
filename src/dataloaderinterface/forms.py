@@ -150,7 +150,7 @@ class SiteForm(forms.ModelForm):
     site_type = forms.ModelChoiceField(
         queryset=SiteType.objects.filter(name__in=allowed_site_types),
         help_text='Select the type of site you are deploying (e.g., "Stream")',
-        widget=SiteTypeSelect(attrs={'title': 'this is the title for all options i think'})
+        widget=SiteTypeSelect
     )
     use_required_attribute = False
 
