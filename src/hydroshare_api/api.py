@@ -11,19 +11,14 @@ from hs_restclient import HydroShare, HydroShareAuthOAuth2
 from dataloaderinterface.models import HydroShareAccount
 from hydroshare_api.models import HydroShareResource
 
-## Old imports above, refactored imports below
+# Old imports above, refactored imports below
 from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.auth import AuthUtil
 
 
-
-
-
-
-
-#############################################################
-## Exploratory Code (i.e., you probably shouldn't use this ##
-#############################################################
+###########################################################
+# Exploratory Code (i.e., you probably shouldn't use this #
+###########################################################
 
 
 
@@ -33,7 +28,6 @@ from hydroshare_util.auth import AuthUtil
 
 
 class HydroShareAPI:
-
     _API_URL_BASE = 'https://www.hydroshare.org/hsapi/'
     _OAUTH_URL_BASE = 'https://www.hydroshare.org/o/'
 
@@ -66,7 +60,8 @@ class HydroShareAPI:
         url_params = []
         for key, value in params.iteritems():
             url_params.append('{0}={1}'.format(key, value))
-        return "{url_base}{path}?{params}".format(url_base=HydroShareAPI._OAUTH_URL_BASE, path=path, params='&'.join(url_params))
+        return "{url_base}{path}?{params}".format(url_base=HydroShareAPI._OAUTH_URL_BASE, path=path,
+                                                  params='&'.join(url_params))
 
     @staticmethod
     def get_access_token(code):
@@ -95,8 +90,8 @@ class HydroShareAPI:
         return redirect('hydroshare_api:oauth_redirect')
 
     @staticmethod
-    def get_auth_header(access_token): # type: (str) -> dict
-        return { 'Authorization': 'Bearer {token}'.format(token=access_token) }
+    def get_auth_header(access_token):  # type: (str) -> dict
+        return {'Authorization': 'Bearer {token}'.format(token=access_token)}
 
     @staticmethod
     def get_user_info(access_token):
@@ -232,17 +227,108 @@ class HydroShareUserInfo:
         self.organization = info['organization']
         self.username = info['username']
 
-mock_resource_meta_data =[
-    {'coverages': [], 'date_last_updated': '11-21-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/f340e255d26246a0acd99097799d46c9.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/f340e255d26246a0acd99097799d46c9/scimeta/', 'creator': 'Erica Loudermilk', 'resource_id': 'f340e255d26246a0acd99097799d46c9', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/f340e255d26246a0acd99097799d46c9/map/', 'immutable': False, 'resource_title': 'Rapidan River Watershed near Ruckersville, VA', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-21-2017', 'resource_url': 'http://www.hydroshare.org/resource/f340e255d26246a0acd99097799d46c9/', 'public': True, 'resource_type': 'CompositeResource'},
-    {'coverages': [], 'date_last_updated': '11-21-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/261601bf5b654826be2fbf2f9574729f.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/261601bf5b654826be2fbf2f9574729f/scimeta/', 'creator': 'Md Sabit', 'resource_id': '261601bf5b654826be2fbf2f9574729f', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/261601bf5b654826be2fbf2f9574729f/map/', 'immutable': False, 'resource_title': 'Estimating runoff at Ruckersville, VA using HEC-HMS, calibrating and validating the model', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-21-2017', 'resource_url': 'http://www.hydroshare.org/resource/261601bf5b654826be2fbf2f9574729f/', 'public': True, 'resource_type': 'CompositeResource'},
-    {'coverages': [{'type': 'point', 'value': {'units': 'Decimal degrees', 'east': -78.3403, 'north': 38.2806, 'name': 'Ruckersville, VA', 'projection': 'WGS 84 EPSG:4326'}}], 'date_last_updated': '11-21-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/24128378656f467bad4ad5b32a79d56e.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/24128378656f467bad4ad5b32a79d56e/scimeta/', 'creator': 'Faria Zahura', 'resource_id': '24128378656f467bad4ad5b32a79d56e', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/24128378656f467bad4ad5b32a79d56e/map/', 'immutable': False, 'resource_title': 'Hydrologic Model for Rapidian River near Ruckersville, VA', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-21-2017', 'resource_url': 'http://www.hydroshare.org/resource/24128378656f467bad4ad5b32a79d56e/', 'public': True, 'resource_type': 'ModelInstanceResource'},
-    {'coverages': [{'type': 'box', 'value': {'northlimit': 30.1623230543248, 'projection': 'WGS 84 EPSG:4326', 'units': 'Decimal degrees', 'southlimit': 29.50025209413407, 'eastlimit': -97.44182761259479, 'westlimit': -98.71084148153477}}], 'date_last_updated': '11-22-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/142ff904212144c2842abba738de8d14.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/142ff904212144c2842abba738de8d14/scimeta/', 'creator': 'Dave Tarboton', 'resource_id': '142ff904212144c2842abba738de8d14', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/142ff904212144c2842abba738de8d14/map/', 'immutable': False, 'resource_title': 'SanMarcosFlowline', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-22-2017', 'resource_url': 'http://www.hydroshare.org/resource/142ff904212144c2842abba738de8d14/', 'public': True, 'resource_type': 'GeographicFeatureResource'},
-    {'coverages': [], 'date_last_updated': '11-22-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/571afcb0bbd14df995db3c472ca9dd3d.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/571afcb0bbd14df995db3c472ca9dd3d/scimeta/', 'creator': 'Megan Fork', 'resource_id': '571afcb0bbd14df995db3c472ca9dd3d', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/571afcb0bbd14df995db3c472ca9dd3d/map/', 'immutable': False, 'resource_title': 'C budget and event-scale fluxes of DOC and TDN in urban engineered headwaters', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-22-2017', 'resource_url': 'http://www.hydroshare.org/resource/571afcb0bbd14df995db3c472ca9dd3d/', 'public': False, 'resource_type': 'CompositeResource'},
-    {'coverages': [], 'date_last_updated': '11-22-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/73c8eabdc270480eadaf8ecd8d245a2c.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/73c8eabdc270480eadaf8ecd8d245a2c/scimeta/', 'creator': 'Christina Bandaragoda', 'resource_id': '73c8eabdc270480eadaf8ecd8d245a2c', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/73c8eabdc270480eadaf8ecd8d245a2c/map/', 'immutable': False, 'resource_title': 'Infrastructure for Lowering the Barrier to Computational Modeling of the Earth Surface', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-22-2017', 'resource_url': 'http://www.hydroshare.org/resource/73c8eabdc270480eadaf8ecd8d245a2c/', 'public': True, 'resource_type': 'GenericResource'},
-    {'coverages': [], 'date_last_updated': '11-29-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/bd5e1952b73c42f8893c8a3f769de822.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/bd5e1952b73c42f8893c8a3f769de822/scimeta/', 'creator': 'Tyler Munk', 'resource_id': 'bd5e1952b73c42f8893c8a3f769de822', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/bd5e1952b73c42f8893c8a3f769de822/map/', 'immutable': False, 'resource_title': 'Logan Canyon Runoff Factors', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-27-2017', 'resource_url': 'http://www.hydroshare.org/resource/bd5e1952b73c42f8893c8a3f769de822/', 'public': True, 'resource_type': 'CompositeResource'},
-    {'coverages': [], 'date_last_updated': '11-28-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/3386b3136f514757b40a6cfbadfac91f.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/3386b3136f514757b40a6cfbadfac91f/scimeta/', 'creator': 'Mary Lawrence', 'resource_id': '3386b3136f514757b40a6cfbadfac91f', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/3386b3136f514757b40a6cfbadfac91f/map/', 'immutable': False, 'resource_title': 'Rapidan River', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-28-2017', 'resource_url': 'http://www.hydroshare.org/resource/3386b3136f514757b40a6cfbadfac91f/', 'public': True, 'resource_type': 'ModelInstanceResource'},
-    {'coverages': [], 'date_last_updated': '11-28-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/8ec3822f5a284329804e81a4fbc6ff41.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/8ec3822f5a284329804e81a4fbc6ff41/scimeta/', 'creator': 'Jennifer McIntosh', 'resource_id': '8ec3822f5a284329804e81a4fbc6ff41', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/8ec3822f5a284329804e81a4fbc6ff41/map/', 'immutable': False, 'resource_title': 'Groundwater and gas chemistry and isotope data from coal beds in the Powder River Basin, Wyoming and Montana', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-28-2017', 'resource_url': 'http://www.hydroshare.org/resource/8ec3822f5a284329804e81a4fbc6ff41/', 'public': True, 'resource_type': 'GenericResource'},
-    {'coverages': [], 'date_last_updated': '11-29-2017', 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/58735a35f51f44b19dee8d3296abd067.zip', 'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/58735a35f51f44b19dee8d3296abd067/scimeta/', 'creator': 'Tyler Munk', 'resource_id': '58735a35f51f44b19dee8d3296abd067', 'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/58735a35f51f44b19dee8d3296abd067/map/', 'immutable': False, 'resource_title': 'Logan Canyon Presentation', 'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-29-2017', 'resource_url': 'http://www.hydroshare.org/resource/58735a35f51f44b19dee8d3296abd067/', 'public': True, 'resource_type': 'CompositeResource'}]
+
+mock_resource_meta_data = [
+    {'coverages': [], 'date_last_updated': '11-21-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/f340e255d26246a0acd99097799d46c9.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/f340e255d26246a0acd99097799d46c9/scimeta/',
+     'creator': 'Erica Loudermilk', 'resource_id': 'f340e255d26246a0acd99097799d46c9',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/f340e255d26246a0acd99097799d46c9/map/',
+     'immutable': False, 'resource_title': 'Rapidan River Watershed near Ruckersville, VA', 'shareable': True,
+     'discoverable': True, 'published': False, 'date_created': '11-21-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/f340e255d26246a0acd99097799d46c9/', 'public': True,
+     'resource_type': 'CompositeResource'},
+    {'coverages': [], 'date_last_updated': '11-21-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/261601bf5b654826be2fbf2f9574729f.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/261601bf5b654826be2fbf2f9574729f/scimeta/',
+     'creator': 'Md Sabit', 'resource_id': '261601bf5b654826be2fbf2f9574729f',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/261601bf5b654826be2fbf2f9574729f/map/',
+     'immutable': False,
+     'resource_title': 'Estimating runoff at Ruckersville, VA using HEC-HMS, calibrating and validating the model',
+     'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-21-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/261601bf5b654826be2fbf2f9574729f/', 'public': True,
+     'resource_type': 'CompositeResource'},
+    {'coverages': [{'type': 'point', 'value': {'units': 'Decimal degrees', 'east': -78.3403, 'north': 38.2806,
+                                               'name': 'Ruckersville, VA', 'projection': 'WGS 84 EPSG:4326'}}],
+     'date_last_updated': '11-21-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/24128378656f467bad4ad5b32a79d56e.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/24128378656f467bad4ad5b32a79d56e/scimeta/',
+     'creator': 'Faria Zahura', 'resource_id': '24128378656f467bad4ad5b32a79d56e',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/24128378656f467bad4ad5b32a79d56e/map/',
+     'immutable': False, 'resource_title': 'Hydrologic Model for Rapidian River near Ruckersville, VA',
+     'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-21-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/24128378656f467bad4ad5b32a79d56e/', 'public': True,
+     'resource_type': 'ModelInstanceResource'},
+    {'coverages': [{'type': 'box', 'value': {'northlimit': 30.1623230543248, 'projection': 'WGS 84 EPSG:4326',
+                                             'units': 'Decimal degrees', 'southlimit': 29.50025209413407,
+                                             'eastlimit': -97.44182761259479, 'westlimit': -98.71084148153477}}],
+     'date_last_updated': '11-22-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/142ff904212144c2842abba738de8d14.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/142ff904212144c2842abba738de8d14/scimeta/',
+     'creator': 'Dave Tarboton', 'resource_id': '142ff904212144c2842abba738de8d14',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/142ff904212144c2842abba738de8d14/map/',
+     'immutable': False, 'resource_title': 'SanMarcosFlowline', 'shareable': True, 'discoverable': True,
+     'published': False, 'date_created': '11-22-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/142ff904212144c2842abba738de8d14/', 'public': True,
+     'resource_type': 'GeographicFeatureResource'},
+    {'coverages': [], 'date_last_updated': '11-22-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/571afcb0bbd14df995db3c472ca9dd3d.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/571afcb0bbd14df995db3c472ca9dd3d/scimeta/',
+     'creator': 'Megan Fork', 'resource_id': '571afcb0bbd14df995db3c472ca9dd3d',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/571afcb0bbd14df995db3c472ca9dd3d/map/',
+     'immutable': False,
+     'resource_title': 'C budget and event-scale fluxes of DOC and TDN in urban engineered headwaters',
+     'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-22-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/571afcb0bbd14df995db3c472ca9dd3d/', 'public': False,
+     'resource_type': 'CompositeResource'},
+    {'coverages': [], 'date_last_updated': '11-22-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/73c8eabdc270480eadaf8ecd8d245a2c.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/73c8eabdc270480eadaf8ecd8d245a2c/scimeta/',
+     'creator': 'Christina Bandaragoda', 'resource_id': '73c8eabdc270480eadaf8ecd8d245a2c',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/73c8eabdc270480eadaf8ecd8d245a2c/map/',
+     'immutable': False,
+     'resource_title': 'Infrastructure for Lowering the Barrier to Computational Modeling of the Earth Surface',
+     'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-22-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/73c8eabdc270480eadaf8ecd8d245a2c/', 'public': True,
+     'resource_type': 'GenericResource'},
+    {'coverages': [], 'date_last_updated': '11-29-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/bd5e1952b73c42f8893c8a3f769de822.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/bd5e1952b73c42f8893c8a3f769de822/scimeta/',
+     'creator': 'Tyler Munk', 'resource_id': 'bd5e1952b73c42f8893c8a3f769de822',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/bd5e1952b73c42f8893c8a3f769de822/map/',
+     'immutable': False, 'resource_title': 'Logan Canyon Runoff Factors', 'shareable': True, 'discoverable': True,
+     'published': False, 'date_created': '11-27-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/bd5e1952b73c42f8893c8a3f769de822/', 'public': True,
+     'resource_type': 'CompositeResource'},
+    {'coverages': [], 'date_last_updated': '11-28-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/3386b3136f514757b40a6cfbadfac91f.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/3386b3136f514757b40a6cfbadfac91f/scimeta/',
+     'creator': 'Mary Lawrence', 'resource_id': '3386b3136f514757b40a6cfbadfac91f',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/3386b3136f514757b40a6cfbadfac91f/map/',
+     'immutable': False, 'resource_title': 'Rapidan River', 'shareable': True, 'discoverable': True, 'published': False,
+     'date_created': '11-28-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/3386b3136f514757b40a6cfbadfac91f/', 'public': True,
+     'resource_type': 'ModelInstanceResource'},
+    {'coverages': [], 'date_last_updated': '11-28-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/8ec3822f5a284329804e81a4fbc6ff41.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/8ec3822f5a284329804e81a4fbc6ff41/scimeta/',
+     'creator': 'Jennifer McIntosh', 'resource_id': '8ec3822f5a284329804e81a4fbc6ff41',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/8ec3822f5a284329804e81a4fbc6ff41/map/',
+     'immutable': False,
+     'resource_title': 'Groundwater and gas chemistry and isotope data from coal beds in the Powder River Basin, '
+                       'Wyoming and Montana',
+     'shareable': True, 'discoverable': True, 'published': False, 'date_created': '11-28-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/8ec3822f5a284329804e81a4fbc6ff41/', 'public': True,
+     'resource_type': 'GenericResource'},
+    {'coverages': [], 'date_last_updated': '11-29-2017',
+     'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/58735a35f51f44b19dee8d3296abd067.zip',
+     'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/58735a35f51f44b19dee8d3296abd067/scimeta/',
+     'creator': 'Tyler Munk', 'resource_id': '58735a35f51f44b19dee8d3296abd067',
+     'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/58735a35f51f44b19dee8d3296abd067/map/',
+     'immutable': False, 'resource_title': 'Logan Canyon Presentation', 'shareable': True, 'discoverable': True,
+     'published': False, 'date_created': '11-29-2017',
+     'resource_url': 'http://www.hydroshare.org/resource/58735a35f51f44b19dee8d3296abd067/', 'public': True,
+     'resource_type': 'CompositeResource'}]
 
 mock_resource_ids = [
     'f340e255d26246a0acd99097799d46c9',

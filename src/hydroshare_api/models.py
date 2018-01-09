@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 
+
 # Create your models here.
 class HydroShareResource(models.Model):
     resource_id = models.UUIDField(primary_key=True, editable=True)

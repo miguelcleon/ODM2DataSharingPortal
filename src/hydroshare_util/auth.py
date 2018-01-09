@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from enum import Enum
 import re
 import requests
-import logging as logger
 from oauthlib.oauth2 import InvalidGrantError
 from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
 from adapter import HydroShareAdapter
@@ -11,6 +10,8 @@ from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseServerError
 from django.conf import settings
+import logging as logger
+
 
 OAUTH_ROPC = 'oauth-resource-owner-password-credentials'
 OAUTH_AC = 'oauth-authorization-code'
@@ -41,9 +42,7 @@ class AuthUtil(HydroShareUtilityBaseClass):
 
     @staticmethod
     def authorize_client_callback(code):
-        oauth = OAuthUtil.authorize_client_callback(code)
-        auth = AuthUtil(oauth)
-        return auth
+        return OAuthUtil.authorize_client_callback(code)
 
     @staticmethod
     def authorize(scheme, username=None, password=None, token=None):
@@ -83,20 +82,18 @@ class OAuthUtil(AuthUtilImplementor):
     def auth_type(self):
         return self._authorization_grant_type
 
-    def __init__(self, redirect_uri=None, use_https=True, hostname='www.hydroshare.org',
+    def __init__(self, use_https=True, hostname='www.hydroshare.org',
                  port=None, scope=None, access_token=None, refresh_token=None, expires_in=None, token_type='Bearer',
-                 response_type='code', username=None, password=None, **kwargs):
+                 response_type='code', username=None, password=None):
 
-        self.__redirect_uri__ = redirect_uri
         self.token_type = token_type
         self.response_type = response_type
-        self.scope = scope
         self.access_token = access_token
         self.refresh_token = refresh_token
         self.expires_in = expires_in
+        self.scope = scope
         self.username = username
         self.password = password
-        self.access_token = self.expires_in = self.refresh_token = None
 
         if use_https:
             self.scheme = 'https'
@@ -117,10 +114,6 @@ class OAuthUtil(AuthUtilImplementor):
             self.__redirect_uri = settings.HYDROSHARE_UTIL_CONFIG['REDIRECT_URI']
         else:
             raise ImproperlyConfiguredError()
-
-        for key, value in kwargs.iteritems():
-            if key in self.__dict__:
-                setattr(self, key, value)
 
         if self.username and self.password:
             self._authorization_grant_type = OAUTH_ROPC
@@ -189,12 +182,10 @@ class OAuthUtil(AuthUtilImplementor):
     @staticmethod
     def authorize_client_callback(code, response_type=None):
         # type: (str, str) -> dict
-        redirect_uri = settings.HYDROSHARE_UTIL_CONFIG['REDIRECT_URI']
-
         if response_type:
-            auth = OAuthUtil(redirect_uri=redirect_uri, response_type=response_type)
+            auth = OAuthUtil(response_type=response_type)
         else:
-            auth = OAuthUtil(redirect_uri=redirect_uri)
+            auth = OAuthUtil()
 
         token = auth._request_access_token(code)
 
@@ -262,7 +253,7 @@ class OAuthUtil(AuthUtilImplementor):
             'grant_type': 'authorization_code',
             'client_id': self.__client_id,
             'client_secret': self.__client_secret,
-            '__redirect_uri': self.__redirect_uri,
+            'redirect_uri': self.__redirect_uri,
             'code': code
         }
 
@@ -345,15 +336,20 @@ class AuthUtilFactory(object):
         :param token: a dictionary containing values for 'access_token', 'token_type', 'refresh_token', 'expires_in',
         and 'scope'
         """
-        if scheme == AuthScheme.OAUTH and token:
+        if scheme == AuthScheme.OAUTH._value_ and token:
+            # access_token = token['access_token']
+            # token_type = token['token_type']
+            # expires_in = token['expires_in']
+            # refresh_token = token['refresh_token']
+            # scope = token['scope']
 
             implementation = OAuthUtil(**token)
 
-        elif scheme == AuthScheme.OAUTH and username and password:
+        elif scheme == AuthScheme.OAUTH._value_ and username and password:
 
             implementation = OAuthUtil(username=username, password=password)
 
-        elif scheme == AuthScheme.BASIC and username and password:
+        elif scheme == AuthScheme.BASIC._value_ and username and password:
 
             implementation = BasicAuthUtil(username, password)
 

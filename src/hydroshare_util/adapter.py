@@ -77,7 +77,7 @@ class HydroShareAdapter(HydroShare):
         return self.createResourceFolder(pid, pathname)
 
     def delete_resource_folder(self, pid, pathname):
-        return self.delete_resourceFolder(pid, pathname)
+        return self.deleteResourceFolder(pid, pathname)
 
     def get_user_info(self):
         return self.getUserInfo()

@@ -1,7 +1,6 @@
 import re
 from . import HydroShareUtilityBaseClass
 from auth import AuthUtil
-from adapter import HydroShareAdapter
 
 class HydroShareUtility(HydroShareUtilityBaseClass):
     """Utility class for accessing and consuming HydroShare's REST API."""
