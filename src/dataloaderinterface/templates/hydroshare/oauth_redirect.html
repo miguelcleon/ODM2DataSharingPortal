@@ -40,7 +40,6 @@
 {% block scripts %}
 {{ super.block }}
 <script>
-    console.log('{{ hydroshare_oauth_url }}');
     function suspendRedirect() {
         setTimeout(function () {
             window.location.replace('{{ hydroshare_oauth_url  }}');

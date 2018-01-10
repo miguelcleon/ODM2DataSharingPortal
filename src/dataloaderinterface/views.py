@@ -81,11 +81,10 @@ class UserUpdateView(UpdateView):
         if request.POST.get('_method'):
             method = request.POST.get('_method')
             if method == 'delete':
-                # TODO: Change `hs_account.save()` to `hs_account.delete()` after testing is done
                 account_id = request.POST.get('account_id')
                 hs_account = HydroShareAccount.objects.get(pk=account_id)
                 hs_account.is_enabled = False
-                hs_account.save()
+                hs_account.delete()
             elif method == 'put':
                 hs_account = HydroShareAccount.objects.get(pk=request.POST.get('account_id'))
                 is_enabled = True if request.POST.get('is_enabled') == 'true' else False
@@ -188,7 +187,6 @@ class SiteDetailView(DetailView):
     slug_url_kwarg = 'sampling_feature_code'
     template_name = 'dataloaderinterface/site_details.html'
 
-    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data(**kwargs)
 

@@ -1,5 +1,6 @@
 from dataloader.models import SamplingFeature, Result
 from django import template
+from django.core.exceptions import ObjectDoesNotExist
 
 from dataloaderinterface.csv_serializer import SiteResultSerializer
 from dataloaderinterface.models import DeviceRegistration, SiteSensor, SiteRegistration
@@ -19,8 +20,10 @@ register = template.Library()
 def get_sensor_csv_path(sensor):
     if not isinstance(sensor, SiteSensor):
         return
-
-    return SiteResultSerializer(sensor.result).get_file_path()
+    try:
+        return SiteResultSerializer(sensor.result).get_file_path()
+    except ObjectDoesNotExist:
+        return None
 
 
 @register.filter(name='get_site_sensor')

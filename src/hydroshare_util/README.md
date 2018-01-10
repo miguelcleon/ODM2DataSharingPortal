@@ -86,8 +86,9 @@ def hydroshare(request):
 
 After a user has been authenticated, you can start using `hydroshare_util` to consume HydroShare's REST API.
 
-Get information about the user:
+TO get information about the user:
 ```python
+# example.py
 from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.auth import AuthUtil
 
@@ -109,14 +110,20 @@ user_info = util.get_user_info()
 
 To get a list of resources:
 ```python
+from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.resource import Resource
+
+util = HydroShareUtility(...)
 resources = util.get_resources() # type: list
 resource = resources[0] # type: Resource
 ```
 
 To get a specific resource:
 ```python
+from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.resource import Resource
+
+util = HydroShareUtility(...)
 resource = util.get_resource(pid=<your_resource_id>) # type: Resource
 ```
 

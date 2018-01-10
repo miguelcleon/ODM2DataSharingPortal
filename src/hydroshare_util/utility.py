@@ -14,7 +14,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
     XML_COVERAGE_PROTO = "start={start}; end={end}; scheme=W3C-DTF"
     TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
-    def __init__(self, auth=None): # type: (AuthUtil, str, str) -> None
+    def __init__(self, auth): # type: (AuthUtil, str, str) -> None
         self.auth = auth
 
     @staticmethod
