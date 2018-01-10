@@ -11,6 +11,13 @@ from django.forms.formsets import formset_factory
 from dataloaderinterface.models import ODM2User, SiteAlert
 
 
+class SiteTypeSelect(forms.Select):
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        option = super(SiteTypeSelect, self).create_option(name, value, label, selected, index, subindex, attrs)
+        option['attrs']['title'] = self.choices.queryset.get(name=value).definition if value else ''
+        return option
+
+
 # AUTHORIZATION
 
 
@@ -135,12 +142,15 @@ class SamplingFeatureForm(forms.ModelForm):
 
 class SiteForm(forms.ModelForm):
     allowed_site_types = [
-        'Aggregate groundwater use', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
-        'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Soil hole', 'Storm sewer', 'Tidal stream', 'Wetland'
+        'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
+        'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Observation well', 'Soil hole',
+        'Storm sewer', 'Stream gage', 'Tidal stream', 'Water quality station', 'Weather station', 'Wetland'
     ]
 
     site_type = forms.ModelChoiceField(
-        queryset=SiteType.objects.filter(name__in=allowed_site_types), help_text='Select the type of site you are deploying (e.g., "Stream")'
+        queryset=SiteType.objects.filter(name__in=allowed_site_types),
+        help_text='Select the type of site you are deploying (e.g., "Stream")',
+        widget=SiteTypeSelect
     )
     use_required_attribute = False
 
