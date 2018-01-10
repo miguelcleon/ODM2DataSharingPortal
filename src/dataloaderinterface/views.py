@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.http.response import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
@@ -274,6 +275,13 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         ]
         return result_form_data
 
+    def get_hydroshare_accounts(self):
+        try:
+            return HydroShareAccount.objects.filter(user=self.request.user.id)
+        except ObjectDoesNotExist:
+            return []
+
+
     def get_context_data(self, **kwargs):
         if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
             raise Http404
@@ -295,12 +303,14 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
                     hs_site.save()
 
                 hs_site_form = HydroShareSiteForm(instance=hs_site)
-                context['hydroshare_account_form'] = hs_account_form
-                context['hydroshare_settings_form'] = hs_site_form
                 accounts = HydroShareAccount.objects.filter(user=self.request.user.id)
-                context['hs_accounts_json'] = json.dumps([account.to_dict(include_token=False) for account in accounts])
-                context['hydroshare_account'] = hs_site.hs_account
-            except HydroShareAccount.DoesNotExist:
+
+                if len(accounts):
+                    context['hydroshare_account_form'] = hs_account_form
+                    context['hydroshare_settings_form'] = hs_site_form
+                    context['hs_accounts_json'] = json.dumps([account.to_dict(include_token=False) for account in accounts])
+                    context['hydroshare_account'] = hs_site.hs_account
+            except ObjectDoesNotExist:
                 pass
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
@@ -322,19 +332,20 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         action_by_form = ActionByForm(request.POST)
         registration_form = self.get_form()
 
-        # Get HydroShareSiteSetting to use for `instance` value in hs_site_form constructor
-        hs_site = HydroShareSiteSetting.objects.get(site_registration=self.get_object())
-        # Add 'site_registration' value to request.POST
-        request.POST.update({'site_registration': self.get_object().registration_id})
-        hs_site_form = HydroShareSiteForm(data=request.POST, instance=hs_site)
+        # update hydroshare site information
+        accounts = self.get_hydroshare_accounts()
+        if len(accounts) > 0:
+            # Get HydroShareSiteSetting to use for `instance` value in hs_site_form constructor
+            hs_site = HydroShareSiteSetting.objects.get(site_registration=self.get_object())
+            # Add 'site_registration' value to request.POST
+            request.POST.update({'site_registration': self.get_object().registration_id})
+            hs_site_form = HydroShareSiteForm(data=request.POST, instance=hs_site)
+            hs_site_form.save()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, hs_site_form):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
             data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
-
-            # Update HydroShare account info
-            hs_site_form.save()
 
             # Update sampling feature
             sampling_feature_form.instance.save()

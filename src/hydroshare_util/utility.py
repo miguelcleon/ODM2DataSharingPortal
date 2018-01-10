@@ -1,6 +1,8 @@
 import re
 from . import HydroShareUtilityBaseClass
 from auth import AuthUtil
+from adapter import HydroShareAdapter
+from resource import Resource
 
 class HydroShareUtility(HydroShareUtilityBaseClass):
     """Utility class for accessing and consuming HydroShare's REST API."""
@@ -19,7 +21,12 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
     @staticmethod
     def get_resources():
-        raise NotImplementedError('not implemented')
+        hs = HydroShareAdapter()
+        resources = list()
+        for resource in hs.resources():
+            print resource
+            resources.append(resource)
+        return resources
 
 
 __all__ = ["HydroShareUtility"]

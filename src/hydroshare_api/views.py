@@ -1,13 +1,14 @@
 import json
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponse, Http404, HttpResponseServerError
-from django.shortcuts import redirect
+from django.shortcuts import reverse
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
 from hydroshare_api.api import *
 from hydroshare_util.adapter import HydroShareAdapter
 from dataloaderinterface.models import HydroShareAccount
 from hydroshare_util.auth import AuthUtil
+from hydroshare_util.utility import HydroShareUtility
 import logging
 
 class HydroShareOAuthBaseClass(TemplateView):
@@ -37,7 +38,7 @@ class Resources(HydroShareOAuthBaseClass):
         return context
 
     def get(self, request, *args, **kwargs):
-        # HydroShareAPI.refresh_resources()
+        # resources = HydroShareUtility.get_resources()
         return super(Resources, self).get(request, args, kwargs)
 
 
@@ -121,11 +122,14 @@ class OAuthDeauthorize(HydroShareOAuthBaseClass):
 class OAuthAuthorizeRedirect(HydroShareOAuthBaseClass):
     template_name = 'hydroshare/oauth_redirect.html'
 
-    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(OAuthAuthorizeRedirect, self).get_context_data(**kwargs)
-        context['hydroshare_oauth_url'] = mark_safe(HydroShareAPI.get_auth_code_url())
+        url = reverse('hydroshare_api:oauth_redirect') + '?redirect=true'
+        context['redirect_url'] = mark_safe(url)
         return context
 
-
-
+    def get(self, request, *args, **kwargs):
+        if 'redirect' in request.GET and request.GET['redirect'] == 'true':
+            return AuthUtil.authorize_client()
+        else:
+            return super(OAuthAuthorizeRedirect, self).get(request, args, kwargs)
