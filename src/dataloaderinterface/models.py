@@ -81,6 +81,9 @@ class SiteSensor(models.Model):
     activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
     activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
+    class Meta:
+        ordering = ['result_id']
+
     @property
     def result(self):
         return Result.objects.get(pk=self.result_id)
