@@ -7,38 +7,8 @@ from coverage import Coverage
 
 
 class Resource(HydroShareUtilityBaseClass):
-    """
-    {
-        'resource_id': '318480bd6db94393ac59347802df9057',
-        'coverages': [
-            {
-                'type': 'box',
-                'value': {
-                    'northlimit': 51.12216756422692,
-                    'projection': 'WGS 84 EPSG:4326',
-                    'units': 'Decimal degrees',
-                    'southlimit': 48.433992380251986,
-                    'eastlimit': 18.894746595269186,
-                    'westlimit': 11.833382262850698
-                }
-            }
-        ],
-        'date_last_updated': '12-08-2016',
-        # 'bag_url': 'http://www.hydroshare.org/django_irods/download/bags/318480bd6db94393ac59347802df9057.zip',
-        'science_metadata_url': 'http://www.hydroshare.org/hsapi/resource/318480bd6db94393ac59347802df9057/scimeta/',
-        'creator': 'Jiri Kadlec',
-        'resource_map_url': 'http://www.hydroshare.org/hsapi/resource/318480bd6db94393ac59347802df9057/map/',
-        'immutable': False,
-        'resource_title': 'Snow probability Czechia 2015-02-08',
-        'shareable': True,
-        'discoverable': True,
-        'published': False,
-        'date_created': '01-06-2016',
-        'resource_url': 'http://www.hydroshare.org/resource/318480bd6db94393ac59347802df9057/',
-        'public': True,
-        'resource_type': 'RasterResource'
-    }
-    """
+    RESOURCE_TYPES = None
+
     def __init__(self, client, resource_id=None, creator=None, title="", abstract="", keywords=set(),
                  funding_agency=None, agency_url=None, award_title="", award_number=None, files=list(), subjects=list(),
                  period_start=None, period_end=None, public=False, resource_map_url=None, resource_url=None,
@@ -83,8 +53,6 @@ class Resource(HydroShareUtilityBaseClass):
             if isinstance(coverage, dict):
                 self.coverages.append(Coverage(coverage=coverage))
 
-        self._resource_types = [type for type in self._initialize_resource_types()]
-
         for key, value in kwargs.iteritems():
             if key == 'public':
                 if isinstance(value, str):
@@ -94,77 +62,63 @@ class Resource(HydroShareUtilityBaseClass):
             else:
                 setattr(self, key, value)
 
-    def _initialize_resource_types(self):
-        return self.client.get_resource_types()
-
     def add_coverage(self, coverage):
         self.coverages.append(Coverage(coverage=coverage))
 
-    def get_file_list(self):
+    def update_file_list(self):
         try:
-            return list(self.client.get_resource_file_list(self.resource_id))
+            file_list = [file for file in self.client.get_resource_file_list(self.resource_id)]
+            self.files = [os.path.basename(file['url']) for file in file_list]
         except Exception as e:
-            print e
-        return []
+            self._r_logger("Error updating resource file list", error=e)
 
     def update_metadata(self, data=None):
         if data is None:
             data = self.get_metadata()
         return self.client.update_science_metadata(self.resource_id, data)
 
-    def get_file(self):
-        pass
-
-    def filter_resources(self):
-        pass
-
     def upload_files(self):
-        try:
-            for file in self.files:
-                try:
-                    self.client.deleteResourceFile(self.resource_id, os.path.basename(file))
-                except HydroShareNotFound:
-                    pass
+        upload_success_count = 0
+        for file in self.files:
+            try:
+                self.client.deleteResourceFile(self.resource_id, os.path.basename(file))
+            except HydroShareNotFound:
+                pass
 
-                if not isinstance(file, str):
-                    file = str(file)
+            if not isinstance(file, str):
+                file = str(file)
 
+            try:
                 self.client.addResourceFile(self.resource_id, file)
-                logging.info("File {} uploaded to remote {}".format(os.path.basename(file), self.resource_id))
-        except Exception as e:
-            logging.warn("Upload failed - could not complete upload to HydroShare due to exception: {}".format(e))
-            return False
-        except KeyError as e:
-            logging.warn('Incorrectly formatted arguments given. Expected key not found: {}'.format(e))
-            return False
-        return True
+                self._r_logger("File upload successful: '{filename}'".format(filename=os.path.basename(file)),
+                               level=logging.INFO)
+                upload_success_count += 1
+            except KeyError as e:
+                self._log_error('File upload failed; incorrectly formatted arguments given.', e)
+                raise e
+            except Exception as e:
+                self._log_error("File upload failed: \n\t{fname}\n".format(fname=os.path.basename(file)), e)
+                raise e
+        self._r_logger("successfully uploaded {count} files".format(count=upload_success_count),
+                       level=logging.INFO)
 
     def delete_files(self, files=None):
-        try:
-            if files is None:
-                files = self.get_file_list()
-        except Exception as e:
-            logging.warn("Failed to get file list for resource: {id}\n{e}".format(id=self.resource_id, e=e))
-            return
+        if files is None:
+            self.update_file_list()
+            files = self.files
 
-        try:
-            for file_info in files:
-                url = file_info['url']
-                logging.info("Deleting resource file: {file}".format(file=os.path.basename(url)))
-                self.client.delete_resource_file(self.resource_id, os.path.basename(url))
-        except Exception as e:
-            logging.warn("Failed to delete files in resource {id}\n{e}".format(id=self.resource_id, e=e))
-
+        for file in files:
+            url = file['url']
+            self._r_logger("Deleting resource file\n\tfile: {file}".format(file=os.path.basename(url)),
+                           level=logging.INFO)
+            self.client.delete_resource_file(self.resource_id, os.path.basename(url))
 
     def get_coverage_period(self):
         pass
 
     def delete(self):
-        try:
-            logging.info("Deleting resource: {id}".format(id=self.resource_id))
-            self.client.delete_resource(self.resource_id)
-        except Exception as e:
-            logging.warn("Failed to delete resource {id}\n{e}".format(id=self.resource_id, e=e))
+        self._r_logger("Deleting resource!", level=logging.INFO)
+        self.client.delete_resource(self.resource_id)
 
     def create(self):
         resource_id = self.client.create_resource(resource_type=self.resource_type, title=self.title,
@@ -172,7 +126,7 @@ class Resource(HydroShareUtilityBaseClass):
         return resource_id
 
     def update(self):
-        pass
+        return self.client.update_science_metadata(self.resource_id, self.get_metadata())
 
     def get_metadata(self):
         return {
@@ -186,6 +140,10 @@ class Resource(HydroShareUtilityBaseClass):
                           "value": {"start": self.period_start,
                                     "end": self.period_end}}]
         }
+
+    def make_public(self, public=True):
+        return self.client.set_access_rules(self.resource_id, public=public)
+
 
     def to_dict(self):
         data = {
@@ -213,8 +171,39 @@ class Resource(HydroShareUtilityBaseClass):
             'resource_url': self.resource_url,
             'science_metadata_url': self.science_metadata_url,
             'shareable': self.shareable,
-            'subjects': self.subjects
+            'subjects': self.subjects,
+            'coverages': []
         }
+
+        if len(self.coverages) > 0:
+            data['coverages'] = [coverage.to_dict() for coverage in self.coverages]
+
+        return data
+
+    def _log_error(self, msg, error):
+        return self._r_logger(msg, error=error, level=logging.ERROR)
+
+    def _r_logger(self, msg, error=None, level=None):
+        if error:
+            log = "{msg}\n\tresource_id: {id}\n{e}".format(msg=msg, id=self.resource_id, e=error)
+        else:
+            log = "{msg}\n\tresource_id: {id}".format(msg=msg, id=self.resource_id)
+
+        if isinstance(level, str):
+            level = level.lower()
+        elif level is None:
+            level = logging.DEBUG
+
+        if level == logging.DEBUG or level == 'debug':
+            logging.debug(log)
+        elif level == logging.INFO or level == 'info':
+            logging.info(log)
+        elif level == logging.WARN or level == logging.WARNING or level == 'warning' or level == 'warn':
+            logging.warning(log)
+        elif level == logging.ERROR or level == 'error':
+            logging.error(log)
+        elif level == logging.CRITICAL or level == 'critical':
+            logging.critical(log)
 
     def __str__(self):
         return '{title} with {lenfiles} files'.format(title=self.title, lenfiles=len(self.files))
@@ -223,27 +212,4 @@ class Resource(HydroShareUtilityBaseClass):
         return "<{classname}: {title}>".format(classname=self.classname, title=self.title)
 
 
-# class ResourceTemplate(ResourceBaseClass):
-#     def __init__(self, template_name, title="", abstract="", keywords=list(), funding_agency=None, agency_url=None,
-#                  award_title="", award_number=None):
-#         super(ResourceTemplate, self).__init__(title=title, abstract=abstract, keywords=keywords,
-#                                                funding_agency=funding_agency, agency_url=agency_url,
-#                                                award_title=award_title, award_number=award_number)
-#         self.template_name = template_name
-#
-#     def get_metadata(self):
-#         template = self.get_metadata()
-#         return {'funding_agencies': {'agency_name': template['funding_agency'],
-#                                      'award_title': template['award_title'],
-#                                      'award_number': template['award_number'],
-#                                      'agency_url': template['agency_url']}}
-#
-#     def __str__(self):
-#         return self.template_name
-#
-#     def __repr__(self):
-#         return "<{classname}: {template_name}".format(classname=self.classname, template_name=self.template_name)
-
-
-# __all__ = ["ResourceTemplate", "Resource"]
 __all__ = ["Resource"]
