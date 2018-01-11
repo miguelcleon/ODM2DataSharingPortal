@@ -898,9 +898,9 @@ class InstrumentOutputVariable(models.Model):
     objects = InstrumentOutputVariableManager()
 
     def __str__(self):
-        return '%s %s %s: %s - %s' % (
-            self.variable.variable_name_id, self.variable.variable_code,
-            self.instrument_raw_output_unit.unit_abbreviation, self.instrument_method.method_code, self.model.model_name
+        return '%s: %s measured in %s' % (
+            self.model.model_name, self.variable.variable_code,
+            self.instrument_raw_output_unit.unit_abbreviation
         )
 
     def __repr__(self):
