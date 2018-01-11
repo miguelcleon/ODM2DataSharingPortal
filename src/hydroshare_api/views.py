@@ -17,6 +17,7 @@ class HydroShareOAuthBaseClass(TemplateView):
     pass
 
 class ResourceBaseClass(TemplateView):
+    """base class for resource views"""
     def get_hydroshare_util(self):
         try:
             accounts = HydroShareAccount.objects.filter(user=self.request.user.id)
@@ -36,9 +37,9 @@ class ResourceBaseClass(TemplateView):
 
 
 class Resources(ResourceBaseClass):
+    """displays a list of shareable resources from hydroshare"""
     template_name = 'hydroshare/resources.html'
 
-    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(Resources, self).get_context_data(**kwargs)
 
@@ -57,6 +58,7 @@ class Resources(ResourceBaseClass):
 
 
 class ResourceDetail(ResourceBaseClass):
+    """displays the details for a specific hydroshare resource"""
     template_name = 'hydroshare/resources.html'
 
     def get_context_data(self, **kwargs):
@@ -67,8 +69,8 @@ class ResourceDetail(ResourceBaseClass):
             util = self.get_hydroshare_util()
 
             try:
-                # resource = util.get_resource_metadata(id)
-                resource = util.get_resource_metadata('f340e255d26246a0acd99097799d46c9')
+                resource = util.get_resource_metadata(id)
+                # resource = util.get_resource_metadata('f340e255d26246a0acd99097799d46c9')
                 context['resource'] = resource
             except HydroShareNotFound:
                 return Http404
@@ -77,6 +79,7 @@ class ResourceDetail(ResourceBaseClass):
 
 
 class OAuthAuthorize(HydroShareOAuthBaseClass):
+    """handles the OAuth 2.0 authorization workflow with hydroshare.org"""
     def get(self, request, *args, **kwargs):
         if 'code' in request.GET:
             try:
@@ -100,59 +103,14 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
             account.save_token(token)
 
             return redirect('user_account')
-            #
-            # if auth:
-            #     user_info = auth.get_user_info()
-            #     print("HydroShare user info: ", user_info)
-            #
-            #     try:
-            #         user = HydroShareAccount.objects.get(ext_hydroshare_id=user_info['id'])
-            #     except HydroShareAccount.DoesNotExist:
-            #         odm2user = ODM2User.objects.get(pk=request.user.id)
-            #         user = HydroShareAccount(user=odm2user, is_enabled=True, ext_hydroshare_id=user_info['id'])
-            #         user.save()
-            #
-            #     token = auth.get_token()
-            #
-            #     if token:
-            #         user.save_token(token)
-            #
-            #     return redirect('user_account')
-            # else:
-            #     # TODO: Create a view to handle failed authorization
-            #     return HttpResponse('Error: Authorization failure!')
         elif 'error' in request.GET:
             return HttpResponseServerError(request.GET['error'])
         else:
             return AuthUtil.authorize_client()
 
 
-# TODO: Implement this class
-class OAuthRefresh(HydroShareOAuthBaseClass):
-#     def get(self, request, *args, **kwargs):
-#         odmuser = ODM2User.objects.get(pk=request.user.id)
-#         hsuser = HSUAccount.objects.get(user=odmuser)
-#
-#         params = hsAPI.get_refresh_code_params(hsuser.refresh_token)
-#         r = requests.post(self.get_hydroshare_oauth_url('o/token/', params))
-#
-#         if r.status_code == 200:
-#             odmuser = ODM2User.objects.get(pk=request.user.id)
-#             user = HSUAccount.objects.get(user=odmuser)
-#             user.set_token(r.json())
-#
-#             return redirect('user_account')
-#         else:
-#             # TODO: Create a view to handle failed authorization
-#             return HttpResponse('Error: Authorization failure!')
-    pass
-
-
-class OAuthDeauthorize(HydroShareOAuthBaseClass):
-    # TODO: Allow users to deauthorize this application
-    pass
-
 class OAuthAuthorizeRedirect(HydroShareOAuthBaseClass):
+    """handles notifying a user they are being redirected, then handles the actual redirection"""
     template_name = 'hydroshare/oauth_redirect.html'
 
     def get_context_data(self, **kwargs):
@@ -166,3 +124,13 @@ class OAuthAuthorizeRedirect(HydroShareOAuthBaseClass):
             return AuthUtil.authorize_client()
         else:
             return super(OAuthAuthorizeRedirect, self).get(request, args, kwargs)
+
+
+class OAuthRefresh(HydroShareOAuthBaseClass):
+    # TODO: Implement this class
+    pass
+
+
+class OAuthDeauthorize(HydroShareOAuthBaseClass):
+    # TODO: Implement this class
+    pass
