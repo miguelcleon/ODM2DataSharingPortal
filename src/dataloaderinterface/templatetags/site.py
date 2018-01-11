@@ -14,15 +14,15 @@ register = template.Library()
 #
 #     return DeviceRegistration.objects.filter(deployment_sampling_feature_uuid__exact=sampling_feature.sampling_feature_uuid).first()
 
-
-@register.filter(name='get_sensor_csv_path')
-def get_sensor_csv_path(sensor):
-    if not isinstance(sensor, SiteSensor):
-        return
-    try:
-        return SiteResultSerializer(sensor.result).get_file_path()
-    except ObjectDoesNotExist:
-        return None
+#
+# @register.filter(name='get_sensor_csv_path')
+# def get_sensor_csv_path(sensor):
+#     if not isinstance(sensor, SiteSensor):
+#         return
+#     try:
+#         return SiteResultSerializer(sensor.result).get_file_path()
+#     except ObjectDoesNotExist:
+#         return None
 
 @register.filter(name='get_site_sensor')
 def get_site_sensor(site, variable_code):

@@ -205,8 +205,7 @@ class BrowseSitesListView(ListView):
 
     def get_queryset(self):
         return super(BrowseSitesListView, self).get_queryset()\
-            .prefetch_related('sensors')\
-            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
+            .prefetch_related('sensors').annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
 
 class SiteDetailView(DetailView):
