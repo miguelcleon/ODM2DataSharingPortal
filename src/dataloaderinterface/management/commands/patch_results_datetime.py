@@ -14,7 +14,6 @@ class Command(BaseCommand):
             result.value_count = result.number_of_values
             result.save()
 
-
     def handle(self, *args, **options):
         self.fix_results_value_count()
         results = Result.objects.prefetch_related('timeseriesresult__values').filter(value_count__gt=0)

@@ -101,18 +101,18 @@ class TestDeviceDetailView(TestCase):
         self.user.delete()
 
 
-class TestDeviceRegistrationView(TestCase):
-    def setUp(self):
-        self.user = TestAuthentication.create_user()
-        self.client.force_login(self.user)
-
-    def test_status(self):
-        url = reverse('device_registration')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def tearDown(self):
-        self.user.delete()
+# class TestDeviceRegistrationView(TestCase):
+#     def setUp(self):
+#         self.user = TestAuthentication.create_user()
+#         self.client.force_login(self.user)
+#
+#     def test_status(self):
+#         url = reverse('device_registration')
+#         response = self.client.get(url)
+#         self.assertEqual(response.status_code, 200)
+#
+#     def tearDown(self):
+#         self.user.delete()
 
 
 class TestDeviceUpdateView(TestCase):

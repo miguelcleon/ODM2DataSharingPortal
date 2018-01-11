@@ -87,14 +87,14 @@
             <tr>
                 <td><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_code }}</a></td>
                 <td>{{ site.sampling_feature_name }}</td>
-                <td>{% if not site.latest_measurement.value_datetime %}
+                <td>{% if not site.latest_measurement %}
                     -{% else %}
-                    {{ site.latest_measurement.value_datetime }}
-                    ({{ site.latest_measurement.value_datetime|timesince }} ago)
+                    {{ site.latest_measurement }}
+                    ({{ site.latest_measurement|timesince }} ago)
                 {% endif %}</td>
-                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
-                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
-                <td class="numeric">{{ sram.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ sram.last_measurement_value|default:"-" }}</td>
             </tr>
         {% endwith %}
     {% endfor %}
@@ -120,14 +120,14 @@
             <tr>
                 <td><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_code }}</a></td>
                 <td>{{ site.sampling_feature_name }}</td>
-                <td>{% if not site.latest_measurement.value_datetime %}
+                <td>{% if not site.latest_measurement %}
                     -{% else %}
-                    {{ site.latest_measurement.value_datetime }}
-                    ({{ site.latest_measurement.value_datetime|timesince }} ago)
+                    {{ site.latest_measurement }}
+                    ({{ site.latest_measurement|timesince }} ago)
                 {% endif %}</td>
-                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
-                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
-                <td class="numeric">{{ sram.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ sram.last_measurement_value|default:"-" }}</td>
             </tr>
         {% endwith %}
     {% endfor %}

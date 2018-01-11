@@ -158,8 +158,9 @@ RECAPTCHA_USER_KEY = data["recaptcha_user_key"] if "recaptcha_user_key" in data 
 
 RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
+EMAIL_SENDER = data['password_email_sender'] if 'password_email_sender' in data else '',
 
-EMAIL_SENDER = data['email_sender'] if 'email_sender' in data else '',
+NOTIFY_EMAIL_SENDER = data['notify_email_sender'] if 'notify_email_sender' in data else ''
 
 DEFAULT_FROM_EMAIL = EMAIL_SENDER[0] if isinstance(EMAIL_SENDER, tuple) else EMAIL_SENDER
 
@@ -178,3 +179,10 @@ HYDROSHARE_UTIL_CONFIG = {
     'REDIRECT_URI': data["hydroshare_oauth"]["redirect_uri"],
  #   'RESPONSE_TYPE': data["hydroshare_oauth"]["response_type"]
 }
+
+INFLUX_URL_QUERY = data['influx_query']
+
+# This data period is measured in days
+SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data else '2'
+
+TSA_URL = data['tsa_url'] if 'tsa_url' in data else ''

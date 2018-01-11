@@ -2,7 +2,7 @@
 # WARNING: These data are provisional and subject to revision. The data are provided
 # as is with no warranty and on the condition that neither the data collector nor
 # any of the participants in or developers of http://data.envirodiy.org may be held
-# liable for any damages resulting from thier use.
+# liable for any damages resulting from their use.
 #
 # The following metadata describe the data in this file:
 # ----------------------------------------------------------------------------------
