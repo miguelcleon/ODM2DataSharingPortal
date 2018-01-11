@@ -46,7 +46,7 @@ def hydroshare_callback(request):
     except:
         return redirect('/authorization_failure')
     
-    auth = AuthUtil.authorize(scheme='oauth', token=token)
+    auth = AuthUtil.authorize(token=token)
     
     # do other stuff like save the access token to a database 
     ...
@@ -79,7 +79,23 @@ from hydroshare_util.auth import AuthUtil
 def hydroshare(request):
     username = request.POST['username']
     password = request.POST['password']
-    auth = AuthUtil.authorize(scheme='basic', username=username, password=password)
+    auth = AuthUtil.authorize(username=username, password=password)
+```
+
+#### Authorization using a self signed security certificate (to connect to a hydroshare development server)
+```python
+from hydroshare_util.auth import AuthUtil
+
+def hydroshare(request):
+    hostname = '<your_hostname>'
+    auth = AuthUtil.authorize(hostname=hostname)
+    
+    # You can also connect to a specific port
+    auth = AuthUtil.authorize_client(hostname=hostname, port=8080)
+    
+    # If you're connecting to a port other than port 80, but need to connect using https
+    auth = AuthUtil.authorize_client(hostname=hostname, port=8080)
+    auth.use_https = True
 ```
 
 ### Usage

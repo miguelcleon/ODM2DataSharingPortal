@@ -82,3 +82,5 @@ class PointCoverage(BaseCoverageClass):
                 'units': self.units
             }
         }
+
+__all__ = ["Coverage", "BaseCoverageClass", "BoxCoverage", "PointCoverage"]

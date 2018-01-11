@@ -38,7 +38,10 @@ class HydroShareAdapter(HydroShare):
     def get_resource(self, pid, destination=None, unzip=False, wait_for_bag_creation=True):
         return self.getResource(pid, destination=destination, unzip=unzip, wait_for_bag_creation=wait_for_bag_creation)
 
-    def get_resourceTypes(self):
+    def get_resource_metadata(self, pid):
+        return self.get_system_metadata(pid)
+
+    def get_resource_types(self):
         return self.getResourceTypes()
 
     def create_resource(self, resource_type, title, resource_file=None, resource_filename=None,

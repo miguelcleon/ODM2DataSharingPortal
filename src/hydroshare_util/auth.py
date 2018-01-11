@@ -43,8 +43,8 @@ class AuthUtil(HydroShareUtilityBaseClass):
         return OAuthUtil.authorize_client_callback(code)
 
     @staticmethod
-    def authorize(scheme, username=None, password=None, token=None):
-        return AuthUtilFactory.create(scheme, username=username, password=password, token=token)
+    def authorize(scheme=None, username=None, password=None, token=None):
+        return AuthUtilFactory.create(scheme=scheme, username=username, password=password, token=token)
 
 
 class AuthUtilImplementor(HydroShareUtilityBaseClass):
@@ -145,7 +145,7 @@ class OAuthUtil(AuthUtilImplementor):
         return HydroShareAdapter(auth=auth, default_headers=authorization_header)
 
     @staticmethod
-    def authorize_client(response_type=None): # type: (str, str, str) -> None
+    def authorize_client(response_type=None): # type: (str) -> None
         if response_type:
             auth = OAuthUtil(response_type=response_type)
         else:
@@ -270,7 +270,7 @@ class BasicAuthUtil(AuthUtilImplementor):
 
 class SelfSignSecurityCertAuth(AuthUtilImplementor):
     """Used to connect to a development HydroShare server that uses a self-sign security certificate"""
-    def __init__(self, hostname, port=None): # type: (str) -> None
+    def __init__(self, hostname, port=None): # type: (str, int) -> None
         self.hostname = hostname
         self.port = port
         self.use_https = False
@@ -307,38 +307,47 @@ class AuthUtilFactory(object):
                                         token=token, __redirect_uri='<your_app_redirect_uri>')
     """
     @staticmethod
-    def create(scheme, username=None, password=None, token=None, hostname=None, port=None):
-        # type: (AuthScheme, str, str, dict, str) -> AuthUtil
+    def create(scheme=None, username=None, password=None, token=None, hostname=None, port=None):
+        # type: (AuthScheme, str, str, dict, str, int) -> AuthUtil
         """
         Factory method creates and returns an instance of AuthUtil. The chosen scheme ('basic' or 'oauth') determines
         the background implementation. The following table shows which parameters are required for each type of
         authentication scheme.
 
-        +--------------------------------------------------------------+
-        |       scheme type      |  username  |  password  |   token   |
-        +------------------------+-------------------------------------+
-        | Basic Auth             |     X      |     X      |           |
-        +------------------------+-------------------------------------+
-        | OAuth with credentials |     X      |     X      |           |
-        +------------------------+-------------------------------------+
-        | OAuth with token       |            |            |     X     |
-        +------------------------+--------------------------------------
+        +----------------------------------------------------------------------------------------+
+        |       scheme type      |  username  |  password  |   token   |  hostname  |    port    |
+        +------------------------+---------------------------------------------------------------+
+        | Basic Auth             |     X      |     X      |           |            |            |
+        +------------------------+---------------------------------------------------------------+
+        | OAuth with credentials |     X      |     X      |           |            |            |
+        +------------------------+---------------------------------------------------------------+
+        | OAuth with token       |            |            |     X     |            |            |
+        +------------------------+---------------------------------------------------------------+
+        | Security Certificate   |            |            |           |      X     |  optional  |
+        +------------------------+---------------------------------------------------------------+
 
         :param scheme: The authentication scheme, either 'basic' or 'oauth'
         :param username: user's username
         :param password: user's password
         :param token: a dictionary containing values for 'access_token', 'token_type', 'refresh_token', 'expires_in',
         and 'scope'
+        :param hostname: The hostname if using a self signed security certificate
+        :param port: The port to connect to if trying to connect to a hydroshare development server
         """
-        if scheme == AuthScheme.OAUTH._value_ and token:
+        if token:
+            # OAuth using authorization-code
             implementation = OAuthUtil(**token)
-        elif scheme == AuthScheme.OAUTH._value_ and username and password:
+        elif scheme and scheme == AuthScheme.OAUTH._value_ and username and password:
+            # OAuth using resource-owner-password-credentials
             implementation = OAuthUtil(username=username, password=password)
-        elif scheme == AuthScheme.BASIC._value_ and username and password:
+        elif username and password:
+            # Basic auth - username and password
             implementation = BasicAuthUtil(username, password)
         elif scheme == AuthScheme.SELF_SIGNED_CERTIFICATE._value_ and hostname:
+            # Auth using a self signed security certificate
             implementation = SelfSignSecurityCertAuth(hostname, port=port)
         else:
+            scheme = scheme if scheme else "not specified"
             raise ValueError("incorrect arguments supplied to 'AuthUtilFactory.create()' using authentication scheme \
                 '{scheme}'".format(scheme=scheme))
 
