@@ -44,11 +44,12 @@ def hydroshare_callback(request):
         #   }
         token = AuthUtil.authorize_client_callback(authorization_code)
     except:
-        return redirect('/authorization_failure')
+        # authorization failed
+        return redirect('/<authorization_failure_url>')
     
     auth = AuthUtil.authorize(token=token)
     
-    # do other stuff like save the access token to a database 
+    # do other stuff like save the access token to a database and redirecting the user to a success page 
     ...
 ```
 
@@ -140,6 +141,6 @@ from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.resource import Resource
 
 util = HydroShareUtility(...)
-resource = util.get_resource(pid=<your_resource_id>) # type: Resource
+resource = util.get_resource_metadata(<your_resource_id>) # type: Resource
 ```
 

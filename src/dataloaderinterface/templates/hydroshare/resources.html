@@ -3,23 +3,42 @@
 
 {% block content %}
 
-<!--suppress JSUnfilteredForInLoop -->
-<style>
 
-</style>
+    <style>
+        .resource-container {
 
-<table id="resource-table" class="mdl-data-table mdl-js-data-table">
-    <thead>
-    <tr id="res-header-row">
-        <th>Header 1</th>
-    </tr>
-    </thead>
-    <tbody id="res-table-body">
-        <tr>
-            <td>data 1</td>
-        </tr>
-    </tbody>
-</table>
+        }
+        .resource-container > table {
+            table-layout: fixed;
+            margin: 0;
+            width: 100%;
+        }
+        table > tbody > tr > td {
+            -ms-word-wrap: break-word;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+    </style>
+
+    <div class="resource-container container">
+        <div class="page-header">
+            <h3>Resource List <small>HydroShare</small></h3>
+        </div>
+{#        <h3>HydroShare Resource List</h3>#}
+        <br>
+        <table id="resource-table" class="mdl-data-table mdl-js-data-table">
+            <thead>
+            <tr id="res-header-row">
+                <th>Header 1</th>
+            </tr>
+            </thead>
+            <tbody id="res-table-body">
+                <tr>
+                    <td>data 1</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}
 
@@ -32,17 +51,15 @@
     resources = JSON.parse(resources);
     console.log(resources);
 
-    {#deleteResourceByValue(resources, 'public', false);#}
-    {#deleteResources(resources, ['resource_id', 'immutable', 'coverages', 'public']);#}
+    deleteResourceByValue(resources, 'public', false);
+    deleteKeysFromResource(resources, ['resource_id', 'immutable', 'coverages', 'public', 'discoverable', 'published',
+        'resource_map_url', 'resource_url', 'science_metadata_url', 'shareable', 'bag_url']);
 
     function buildTable() {
-
         let keys = Object.keys(resources[0]).sort();
         let headers = orderKeysBy(keys, ['resource_title', 'creator', 'date_created']);
-
         buildTableHeaderRow(headers);
         buildTableBody(headers);
-
     }
 
     function buildTableHeaderRow(headers) {
@@ -89,7 +106,12 @@
         tableBody.innerHTML = innerHTML;
     }
 
-    function deleteResources(resources, keys) {
+    /**
+     * Deletes key-value pairs from resources that match the given keys
+     * @param: resources {object}: An array of resource objects
+     * @param: keys {Array}: An array of keys to delete from 'resources'
+     */
+    function deleteKeysFromResource(resources, keys) {
         for (let res of resources) {
             for (let key of keys) {
                 delete res[key];
@@ -97,6 +119,12 @@
         }
     }
 
+    /**
+     * Deletes resources that contain the given key-value pair
+     * @param resources {Array}
+     * @param key {string}
+     * @param value {string}
+     */
     function deleteResourceByValue(resources, key, value) {
         let deleteIndexStack = [];
         for (let index in resources) {
@@ -116,14 +144,11 @@
         orderedBy.reverse();
         for (let key of orderedBy) {
             let index = orderedKeys.indexOf(key);
-            console.log(`index of ${key}: ${index}`);
             if (index > -1) {
                 orderedKeys.splice(orderedKeys.indexOf(key), 1);
-                console.log(`KEYS after removing ${key.toUpperCase()}`, orderedKeys);
                 orderedKeys.unshift(key);
             }
         }
-        console.log(`KEYS`, orderedKeys);
         return orderedKeys;
     }
 

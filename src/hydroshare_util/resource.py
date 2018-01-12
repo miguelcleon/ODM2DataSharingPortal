@@ -9,13 +9,14 @@ from coverage import Coverage
 class Resource(HydroShareUtilityBaseClass):
     RESOURCE_TYPES = None
 
-    def __init__(self, client, resource_id=None, creator=None, title="", abstract="", keywords=set(),
+    def __init__(self, client, raw=None, resource_id=None, creator=None, title="", abstract="", keywords=set(),
                  funding_agency=None, agency_url=None, award_title="", award_number=None, files=list(), subjects=list(),
                  period_start=None, period_end=None, public=False, resource_map_url=None, resource_url=None,
                  date_created=None, date_last_updated=None, discoverable=None, published=None, resource_type=None,
                  immutable=None, science_metadata_url=None, bag_url=None, coverages=None, shareable=None, **kwargs):
 
         self.client = client # type: HydroShareAdapter
+        self._raw = raw
 
         self.abstract = abstract
         self.award_number = award_number
@@ -114,7 +115,7 @@ class Resource(HydroShareUtilityBaseClass):
             self.client.delete_resource_file(self.resource_id, os.path.basename(url))
 
     def get_coverage_period(self):
-        pass
+        raise NotImplementedError("method not implemented.")
 
     def delete(self):
         self._r_logger("Deleting resource!", level=logging.INFO)
@@ -146,7 +147,7 @@ class Resource(HydroShareUtilityBaseClass):
 
 
     def to_dict(self):
-        data = {
+        return {
             'abstract': self.abstract,
             'agency_url': self.agency_url,
             'award_title': self.award_title,
@@ -172,20 +173,15 @@ class Resource(HydroShareUtilityBaseClass):
             'science_metadata_url': self.science_metadata_url,
             'shareable': self.shareable,
             'subjects': self.subjects,
-            'coverages': []
+            'coverages': [coverage.to_dict() for coverage in self.coverages] if isinstance(self.coverages, list) else []
         }
-
-        if len(self.coverages) > 0:
-            data['coverages'] = [coverage.to_dict() for coverage in self.coverages]
-
-        return data
 
     def _log_error(self, msg, error):
         return self._r_logger(msg, error=error, level=logging.ERROR)
 
     def _r_logger(self, msg, error=None, level=None):
         if error:
-            log = "{msg}\n\tresource_id: {id}\n{e}".format(msg=msg, id=self.resource_id, e=error)
+            log = "{msg}\n\tresource_id: {id}\n\t{e}".format(msg=msg, id=self.resource_id, e=error)
         else:
             log = "{msg}\n\tresource_id: {id}".format(msg=msg, id=self.resource_id)
 

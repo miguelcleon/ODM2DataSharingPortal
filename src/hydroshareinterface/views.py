@@ -1,12 +1,11 @@
 import json
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.http import HttpResponse, Http404, HttpResponseServerError
-from django.shortcuts import reverse
+from django.shortcuts import reverse, redirect
 from django.views.generic import TemplateView
 from django.utils.safestring import mark_safe
 from hs_restclient import HydroShareNotFound
 
-from hydroshare_api.api import *
 from hydroshare_util.adapter import HydroShareAdapter
 from dataloaderinterface.models import HydroShareAccount
 from hydroshare_util.auth import AuthUtil
@@ -48,17 +47,21 @@ class Resources(ResourceBaseClass):
     def get_context_data(self, **kwargs):
         context = super(Resources, self).get_context_data(**kwargs)
 
-        util = self.get_hydroshare_util()
+        # TODO: uncomment to get live data
+        # util = self.get_hydroshare_util()
+        # resources = util.get_resources(limit=3)
+        # context['resources'] = resources
+        # context['resources_json'] = json.dumps([r._raw for r in resources])
 
-        resources = util.get_resources()
-
+        # TODO: uncomment to get mock data
+        from api import mock_resource_meta_data
+        resources = mock_resource_meta_data
         context['resources'] = resources
         context['resources_json'] = json.dumps(resources)
+
         return context
 
     def get(self, request, *args, **kwargs):
-        # resources = util.get_resources()
-
         return super(Resources, self).get(request, args, kwargs)
 
 
@@ -135,7 +138,7 @@ class OAuthAuthorizeRedirect(HydroShareOAuthBaseClass):
     def get_context_data(self, **kwargs):
         context = super(OAuthAuthorizeRedirect, self).get_context_data(**kwargs)
         # Add 'redirect' as a url parameter
-        url = reverse('hydroshare_api:oauth_redirect') + '?redirect=true'
+        url = reverse('hydroshareinterface:oauth_redirect') + '?redirect=true'
         context['redirect_url'] = mark_safe(url)
         return context
 

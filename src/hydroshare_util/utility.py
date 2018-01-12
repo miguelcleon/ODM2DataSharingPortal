@@ -29,7 +29,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
         else:
             return HydroShareAdapter()
 
-    def get_resources(self):
+    def get_resources(self, limit=None):
         """
         Gets a list of all resources. Warning: This takes a long time to complete
         :return: Resource[]
@@ -38,11 +38,14 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
         resources = list()
         start_time = time.time()
 
-        logging.info("Grabbing resources from www.hydroshare.org:")
+        logging.info("Grabbing {limit} resources from www.hydroshare.org:".format(limit=limit if limit else ''))
 
         for resource_json in self.client.resources():
+            if limit: limit -= 1
+            else: break
+
             logging.info(json.dumps(resource_json))
-            resource = Resource(self.client, **resource_json)
+            resource = Resource(self.client, raw=resource_json, **resource_json)
             resources.append(resource)
 
         elapsed_time = time.time() - start_time

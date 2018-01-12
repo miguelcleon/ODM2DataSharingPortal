@@ -43,8 +43,9 @@ class AuthUtil(HydroShareUtilityBaseClass):
         return OAuthUtil.authorize_client_callback(code)
 
     @staticmethod
-    def authorize(scheme=None, username=None, password=None, token=None):
-        return AuthUtilFactory.create(scheme=scheme, username=username, password=password, token=token)
+    def authorize(scheme=None, username=None, password=None, token=None, hostname=None, port=None):
+        return AuthUtilFactory.create(scheme=scheme, username=username, password=password, token=token,
+                                      hostname=hostname, port=port)
 
 
 class AuthUtilImplementor(HydroShareUtilityBaseClass):

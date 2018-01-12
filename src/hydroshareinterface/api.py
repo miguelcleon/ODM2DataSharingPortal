@@ -9,16 +9,18 @@ from oauthlib.oauth2 import TokenExpiredError
 from hs_restclient import HydroShare, HydroShareAuthOAuth2
 
 from dataloaderinterface.models import HydroShareAccount
-from hydroshare_api.models import HydroShareResource
 
 # Old imports above, refactored imports below
 from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.auth import AuthUtil
 
 
-###########################################################
-# Exploratory Code (i.e., you probably shouldn't use this #
-###########################################################
+
+
+
+                #############################################################
+                #  Exploratory Code (i.e., you probably shouldn't use this)
+                #############################################################
 
 
 
@@ -87,7 +89,7 @@ class HydroShareAPI:
 
     @staticmethod
     def authorize_client():
-        return redirect('hydroshare_api:oauth_redirect')
+        return redirect('hydroshareinterface:oauth_redirect')
 
     @staticmethod
     def get_auth_header(access_token):  # type: (str) -> dict
@@ -156,45 +158,45 @@ class HydroShareAPI:
         except:
             return HttpResponseNotFound('resource not found for account ' + hsaccount.id)
 
-    @staticmethod
-    def refresh_resources():
+    # @staticmethod
+    # def refresh_resources():
         # hs = HydroShare()
         # for resource in hs.resources():
         #     print(resource)
-        HydroShareAPI._dev_refresh_resources()
+        # HydroShareAPI._dev_refresh_resources()
 
-    @staticmethod
-    def _dev_refresh_resources():
-        import csv
-        with open('../resources.csv', 'rb') as file:
-            reader = csv.DictReader(file)
-            next(reader, None)
-            for row in reader:
-                try:
-                    id = HydroShareAPI._string_to_uuid(row['resource_id'])
-                    resource = HydroShareResource.objects.get(pk=id)
-                    print('resource "' + str(resource.resource_id) + '" already exists.')
-                except ObjectDoesNotExist:
-                    print('Creating new resource.')
-                    resource_obj = {
-                        'resource_id': HydroShareAPI._string_to_uuid(row['resource_id']),
-                        'resource_title': row['resource_title'],
-                        'creator': row['creator'],
-                        'resource_type': row['resource_type'],
-                        'date_created': HydroShareAPI._hs_string_to_date(row['date_created']),
-                        'date_last_updated': HydroShareAPI._hs_string_to_date(row['date_last_updated']),
-                        'public': True if row['public'] == 'True' else False,
-                        'shareable': True if row['shareable'] == 'True' else False,
-                        'discoverable': True if row['discoverable'] == 'True' else False,
-                        'published': True if row['published'] == 'True' else False,
-                        'immutable': True if row['immutable'] == 'True' else False,
-                        'resource_url': row['resource_url'],
-                        'bag_url': row['bag_url'],
-                        'science_metadata_url': row['science_metadata_url'],
-                        'resource_map_url': row['resource_map_url']
-                    }
-                    resource = HydroShareResource(**resource_obj)
-                    resource.save()
+    # @staticmethod
+    # def _dev_refresh_resources():
+    #     import csv
+    #     with open('../resources.csv', 'rb') as file:
+    #         reader = csv.DictReader(file)
+    #         next(reader, None)
+    #         for row in reader:
+    #             try:
+    #                 id = HydroShareAPI._string_to_uuid(row['resource_id'])
+    #                 resource = HydroShareResource.objects.get(pk=id)
+    #                 print('resource "' + str(resource.resource_id) + '" already exists.')
+    #             except ObjectDoesNotExist:
+    #                 print('Creating new resource.')
+    #                 resource_obj = {
+    #                     'resource_id': HydroShareAPI._string_to_uuid(row['resource_id']),
+    #                     'resource_title': row['resource_title'],
+    #                     'creator': row['creator'],
+    #                     'resource_type': row['resource_type'],
+    #                     'date_created': HydroShareAPI._hs_string_to_date(row['date_created']),
+    #                     'date_last_updated': HydroShareAPI._hs_string_to_date(row['date_last_updated']),
+    #                     'public': True if row['public'] == 'True' else False,
+    #                     'shareable': True if row['shareable'] == 'True' else False,
+    #                     'discoverable': True if row['discoverable'] == 'True' else False,
+    #                     'published': True if row['published'] == 'True' else False,
+    #                     'immutable': True if row['immutable'] == 'True' else False,
+    #                     'resource_url': row['resource_url'],
+    #                     'bag_url': row['bag_url'],
+    #                     'science_metadata_url': row['science_metadata_url'],
+    #                     'resource_map_url': row['resource_map_url']
+    #                 }
+    #                 resource = HydroShareResource(**resource_obj)
+    #                 resource.save()
 
     @staticmethod
     def _string_to_uuid(s):
