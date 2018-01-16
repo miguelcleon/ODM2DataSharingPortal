@@ -61,6 +61,7 @@ class SiteSensor(models.Model):
     result_id = models.IntegerField(db_column='ResultID', unique=True)
     result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
 
+    # instrument_output_variable_id = models.IntegerField(db_column='InstrumentOutputVariableID', null=True)
     model_name = models.CharField(db_column='ModelName', max_length=255)
     model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255)
 

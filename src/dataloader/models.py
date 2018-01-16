@@ -294,11 +294,13 @@ class Medium(ControlledVocabulary):
 class MethodType(ControlledVocabulary):
     class Meta:
         db_table = 'cv_methodtype'
+        ordering = ['name']
 
 
 class OrganizationType(ControlledVocabulary):
     class Meta:
         db_table = 'cv_organizationtype'
+        ordering = ['name']
 
 
 class PropertyDataType(ControlledVocabulary):
@@ -364,16 +366,19 @@ class TaxonomicClassifierType(ControlledVocabulary):
 class UnitsType(ControlledVocabulary):
     class Meta:
         db_table = 'cv_unitstype'
+        ordering = ['name']
 
 
 class VariableName(ControlledVocabulary):
     class Meta:
         db_table = 'cv_variablename'
+        ordering = ['name']
 
 
 class VariableType(ControlledVocabulary):
     class Meta:
         db_table = 'cv_variabletype'
+        ordering = ['name']
 
 
 class ReferenceMaterialMedium(ControlledVocabulary):
@@ -421,7 +426,7 @@ class Organization(ODM2Model):
     people = models.ManyToManyField('People', through='Affiliation')
 
     def __str__(self):
-        return '%s' % self.organization_name
+        return '%s' % self.organization_code
 
     def __repr__(self):
         return "<Organization('%s', '%s', '%s', '%s')>" % (
@@ -430,6 +435,7 @@ class Organization(ODM2Model):
 
     class Meta:
         db_table = 'organizations'
+        ordering = ['organization_code']
 
 
 @python_2_unicode_compatible
@@ -710,6 +716,7 @@ class Unit(models.Model):
 
     class Meta:
         db_table = 'units'
+        ordering = ['unit_abbreviation']
 
 
 @python_2_unicode_compatible
@@ -719,7 +726,7 @@ class Variable(models.Model):
     variable_code = models.CharField(db_column='variablecode', max_length=50)
     variable_name = models.ForeignKey('VariableName', db_column='variablenamecv')
     variable_definition = models.CharField(db_column='variabledefinition', blank=True, max_length=500)
-    speciation = models.ForeignKey('Speciation', db_column='speciationcv')
+    speciation = models.ForeignKey('Speciation', db_column='speciationcv', blank=True, null=True)
     no_data_value = models.FloatField(db_column='nodatavalue')
 
     extension_property_values = models.ManyToManyField('ExtensionProperty', related_name='variables',
@@ -728,7 +735,7 @@ class Variable(models.Model):
                                                   through='VariableExternalIdentifier')
 
     def __str__(self):
-        return '%s: %s' % (self.variable_name_id, self.variable_code)
+        return '%s' % self.variable_code
 
     def __repr__(self):
         return "<Variable('%s', '%s', '%s', '%s')>" % (
@@ -737,6 +744,7 @@ class Variable(models.Model):
 
     class Meta:
         db_table = 'variables'
+        ordering = ['variable_code']
 
 
 @python_2_unicode_compatible
@@ -883,6 +891,7 @@ class EquipmentModel(models.Model):
 
     class Meta:
         db_table = 'equipmentmodels'
+        ordering = ['model_manufacturer', 'model_name']
 
 
 @python_2_unicode_compatible
@@ -899,7 +908,7 @@ class InstrumentOutputVariable(models.Model):
 
     def __str__(self):
         return '%s: %s measured in %s' % (
-            self.model.model_name, self.variable.variable_code,
+            self.model.model_manufacturer, self.variable.variable_code,
             self.instrument_raw_output_unit.unit_abbreviation
         )
 
@@ -912,6 +921,7 @@ class InstrumentOutputVariable(models.Model):
 
     class Meta:
         db_table = 'instrumentoutputvariables'
+        ordering = ['model__model_manufacturer', 'variable__variable_code']
 
 
 @python_2_unicode_compatible
@@ -1717,7 +1727,7 @@ class TaxonomicClassifierExternalIdentifier(ExternalIdentifierBridge):
 
 class VariableExternalIdentifier(ExternalIdentifierBridge):
     variable = models.ForeignKey('Variable', db_column='variableid')
-    variable_external_identifier = models.CharField(db_column='variableexternalidentifier', max_length=255)
+    variable_external_identifier = models.CharField(db_column='variableexternalidentifer', max_length=255)
     variable_external_identifier_uri = models.CharField(db_column='variableexternalidentifieruri', blank=True, max_length=255)
 
     def __repr__(self):
