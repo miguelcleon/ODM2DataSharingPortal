@@ -76,8 +76,8 @@ class SiteSensor(models.Model):
     last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)
     last_measurement_value = models.FloatField(db_column='LastMeasurementValue', blank=True, null=True)
     last_measurement_datetime = models.DateTimeField(db_column='LastMeasurementDatetime', blank=True, null=True)
-    last_measurement_utc_offset = models.IntegerField(db_column='LastMeasurementUtcOffset', blank=True, null=True)
-    last_measurement_utc_datetime = models.DateTimeField(db_column='LastMeasurementUtcDatetime', blank=True, null=True)
+    # last_measurement_utc_offset = models.IntegerField(db_column='LastMeasurementUtcOffset', blank=True, null=True)
+    # last_measurement_utc_datetime = models.DateTimeField(db_column='LastMeasurementUtcDatetime', blank=True, null=True)
 
     activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
     activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
@@ -126,7 +126,7 @@ class SiteSensor(models.Model):
         )
 
     def __str__(self):
-        return '%s %s' % (self.variable_name, self.unit_abbreviation)
+        return '%s %s' % (self.sensor_identity, self.unit_abbreviation)
 
     def __repr__(self):
         return "<SiteSensor('%s', [%s], '%s', '%s')>" % (

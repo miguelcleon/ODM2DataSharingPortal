@@ -4,6 +4,19 @@ from dataloader.models import *
 
 
 # Register your models here.
+from dataloaderinterface.models import SiteRegistration, SiteSensor
+
+
+@admin.register(SiteSensor)
+class SiteSensorAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(SiteRegistration)
+class SiteRegistrationAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     pass
