@@ -85,7 +85,7 @@
     {% for site in sites %}
         {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Volt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site|get_site_sensor:"EnviroDIY_Mayfly_FreeSRAM" %}
             <tr>
-                <td><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_code }}</a></td>
+                <td><a href="{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_code }}</a></td>
                 <td>{{ site.sampling_feature_name }}</td>
                 <td>{% if not site.latest_measurement %}
                     -{% else %}
@@ -118,7 +118,7 @@
     {% for site in followed_sites %}
         {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Volt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site|get_site_sensor:"EnviroDIY_Mayfly_FreeSRAM" %}
             <tr>
-                <td><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_code }}</a></td>
+                <td><a href="{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_code }}</a></td>
                 <td>{{ site.sampling_feature_name }}</td>
                 <td>{% if not site.latest_measurement %}
                     -{% else %}

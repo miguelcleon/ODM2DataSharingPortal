@@ -75,7 +75,7 @@
                                                 </a>
                                             </div>
                                             <div class="col-sm-3 col-xs-12">
-                                                <a href="{% url 'site_update' site.sampling_feature_code %}"
+                                                <a href="{% autoescape off %}{% url 'site_update' site.sampling_feature_code %}{% endautoescape %}"
                                                    id="btn-edit-site"
                                                    class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                                     <i class="material-icons center-icon">mode_edit</i> Edit Site
@@ -326,7 +326,7 @@
             </div>
         </div>
         <div class="mdl-dialog__actions">
-            <form method="POST" action="{% url 'site_delete' site.sampling_feature_code %}">
+            <form method="POST" action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
                 {% csrf_token %}
                 <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
             </form>

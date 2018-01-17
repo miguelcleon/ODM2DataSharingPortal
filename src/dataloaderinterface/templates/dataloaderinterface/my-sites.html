@@ -39,7 +39,7 @@
                     <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
                         <div class="mdl-card mdl-shadow--2dp site-card">
                             <div class="mdl-card__title">
-                                <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
+                                <h2 class="mdl-card__title-text"><a href="{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}">{% endautoescape %}{{ site.sampling_feature_name }}</a></h2>
                             </div>
 
                             <div class="mdl-card__supporting-text">
@@ -118,7 +118,7 @@
                     <div class="col-xs-12 col-sm-4 col-md-3 site" data-site="{{ site.sampling_feature_id }}">
                         <div class="mdl-card mdl-shadow--2dp site-card">
                             <div class="mdl-card__title">
-                                <h2 class="mdl-card__title-text"><a href="{% url 'site_detail' site.sampling_feature_code %}">{{ site.sampling_feature_name }}</a></h2>
+                                <h2 class="mdl-card__title-text"><a href="{% autoescape on %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_name }}</a></h2>
                             </div>
 
                             <div class="mdl-card__supporting-text">
@@ -200,7 +200,7 @@
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
                     "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
-                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                    "detail_link": "{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}"
                  }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
             {% endfor %}
             {% for site in followed_sites %}
@@ -212,7 +212,7 @@
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
                     "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
-                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                    "detail_link": "{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}"
                  }{% if not forloop.last %},{% endif %}
             {% endfor %}
             ]
