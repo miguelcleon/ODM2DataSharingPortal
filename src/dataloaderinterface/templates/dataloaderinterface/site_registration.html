@@ -245,7 +245,7 @@
                             <div style="margin-top: 20px;">
                                 <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                         {% if request.resolver_match.view_name == "site_update" %}
-                                   href="{% autoescape off %}{% url 'site_detail' sampling_feature_form.sampling_feature_code.value %}{% endautoescape %}"
+                                   href="{% url 'site_detail' sampling_feature_form.sampling_feature_code.value %}"
                                         {% else %}
                                    href="{% url 'sites_list' %}"
                                         {% endif %}

@@ -304,7 +304,7 @@
             </div>
         </div>
         <div class="mdl-dialog__actions">
-            <form method="POST" action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
+            <form method="POST" action="{% url 'site_delete' site.sampling_feature_code %}">
                 {% csrf_token %}
                 <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
             </form>
