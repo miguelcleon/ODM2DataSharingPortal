@@ -22,6 +22,7 @@
                 <div id="map"></div>
             </div>
 
+            {% autoescape off %}
             <script id="sites-data" type="application/json">
                 [
                 {% for site in sites %}
@@ -33,12 +34,12 @@
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
                     "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
-                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
-                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]
             </script>
+            {% endautoescape %}
 
             <script id="site-marker-content" type="text/plain">
                 <div>

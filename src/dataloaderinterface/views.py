@@ -183,7 +183,6 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
             raise Http404
 
         if request.user.id != site.django_user_id and not self.request.user.is_staff:
-            # temporary error. TODO: do something a little bit more elaborate. or maybe not...
             raise Http404
 
         sampling_feature = site.sampling_feature
@@ -444,7 +443,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             registration_data = {
                 'registration_token': uuid4(),
                 'registration_date': datetime.now(),
-                'django_user': request.user,
+                'django_user': User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
                 'affiliation_id': affiliation.affiliation_id,
                 'person': str(affiliation.person),
                 'organization': str(affiliation.organization),
