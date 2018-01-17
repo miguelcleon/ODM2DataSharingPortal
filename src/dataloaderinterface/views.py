@@ -182,8 +182,7 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
         if not site:
             raise Http404
 
-        if request.user.id != site.django_user_id:
-            # temporary error. TODO: do something a little bit more elaborate. or maybe not...
+        if request.user.id != site.django_user_id and not self.request.user.is_staff:
             raise Http404
 
         sampling_feature = site.sampling_feature
