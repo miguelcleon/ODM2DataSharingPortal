@@ -417,7 +417,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             registration_data = {
                 'registration_token': uuid4(),
                 'registration_date': datetime.now(),
-                'django_user': request.user,
+                'django_user': User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
                 'affiliation_id': affiliation.affiliation_id,
                 'person': str(affiliation.person),
                 'organization': str(affiliation.organization),
