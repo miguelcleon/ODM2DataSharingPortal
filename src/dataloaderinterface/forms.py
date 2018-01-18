@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
 
-from dataloaderinterface.models import ODM2User, HydroShareSiteSetting, HydroShareAccount, SiteRegistration, SiteAlert
+from dataloaderinterface.models import ODM2User, HydroShareResource, HydroShareAccount, SiteRegistration, SiteAlert
 
 
 class SiteTypeSelect(forms.Select):
@@ -33,12 +33,12 @@ class HydroShareSiteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(HydroShareSiteForm, self).__init__(*args, **kwargs)
         freq_choice_index = self.instance.get_udpate_freq_index()
-        self.initial['update_freq'] = HydroShareSiteSetting.FREQUENCY_CHOICES[freq_choice_index][0]
+        self.initial['update_freq'] = HydroShareResource.FREQUENCY_CHOICES[freq_choice_index][0]
 
     class Meta:
-        model = HydroShareSiteSetting
+        model = HydroShareResource
         fields = ['is_enabled', 'sync_type', 'update_freq', 'hs_account', 'site_registration']
-        widgets = { 'update_freq': forms.Select(choices=HydroShareSiteSetting.FREQUENCY_CHOICES) }
+        widgets = { 'update_freq': forms.Select(choices=HydroShareResource.FREQUENCY_CHOICES)}
 
 
 class UserRegistrationForm(UserCreationForm):

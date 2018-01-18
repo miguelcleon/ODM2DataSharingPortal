@@ -185,7 +185,7 @@
                     </div>
 
 
-
+                    {# HydroShare Account Information #}
                     <div class="row">
                         {% if hs_account %}
                         <div class="col-lg-6 col-sm-12">
@@ -201,34 +201,57 @@
                                         <td class="mdl-data-table__cell--non-numeric">{{ hs_account.name }}</td>
                                     </tr>
                                     <tr>
+                                        <td>
+                                            HydroShare Resource
+                                        </td>
+                                        <td>
+                                            {{ hs_resource.title }}
+                                            <div id="tt4" class="icon material-icons">info</div>
+                                            <div class="mdl-tooltip" for="tt4">
+                                                This is the resource title in hydroshare.org this site ({{ site.sampling_feature_name }}) is connected to.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="fa fa-share-alt"></i> Sharing
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric">
-                                            <strong>{% if hs_site.is_enabled %} On {% else %} Off {% endif %}</strong>
+                                            <strong>{% if hs_resource.is_enabled %} On {% else %} Off {% endif %}</strong>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="fa fa-circle" aria-hidden="true"></i> Update Frequency
                                         </td>
-                                    {% if hs_site.sync_type == 'S' %}
+                                    {% if hs_resource.sync_type == 'S' %}
                                         <td class="mdl-data-table__cell--non-numeric">
-                                            {{ hs_site.update_freq_verbose }}
+                                            {{ hs_resource.update_freq_verbose }}
                                         </td>
-                                    {% elif hs_site.sync_type == 'M' %}
+                                    {% elif hs_resource.sync_type == 'M' %}
                                         <td class="mdl-data-table__cell--non-numeric">
-                                            {{ hs_site.sync_type_verbose }}
+                                            {{ hs_resource.sync_type_verbose }}
                                         </td>
                                     {% endif %}
                                     </tr>
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
+                                            {# TODO: Display last sync datetime, and next scheduled sync datetime #}
                                             Manually push latest data to your HydroShare account.
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric">
-                                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-                                                    id="hs-update-btn">Sync Now</button>
+{#                                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"#}
+{#                                                    id="hs-update-btn">Sync Now</button>#}
+                                            <form method="post" id="hs-sync-form">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="sync" value="true">
+                                                <input type="hidden" name="site_registration_id" value="{{ site.registration_id }}">
+                                                <input type="hidden" name="hs_ext_resource_id" value="{{ hs_resource.ext_id }}">
+                                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
+                                                        type="submit">
+                                                    Sync Now
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -472,11 +495,32 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
-    <script>
-        $(function() {
-           $('#hs-update-btn').click(function() {
-               alert("This doesn't actually do anything yet...");
-           });
+    <script type="text/javascript" for="hydroshare-sync">
+    $(() => {
+        const syncForm = $('#hs-sync-form');
+
+        syncForm.submit((e) => {
+            e.preventDefault();
+            if (syncForm[0] && syncForm[0].baseURI) {
+                let url = syncForm[0].baseURI;
+                {#console.log($('#hs-sync-form').serialize());#}
+                $.post(url, $('#hs-sync-form').serialize())
+                    .done(data => {
+                       console.log('Data from response: ', data);
+                    })
+                    .fail((xhr) => {
+                        if (xhr && xhr.responseJSON) {
+                            let err = xhr.responseJSON.error;
+                            if (err) {
+                                console.error(err)
+                            } else {
+                                console.error(xhr.responseText)
+                            }
+                        }
+                    });
+            }
         });
+    });
     </script>
+
 {% endblock %}

@@ -1,10 +1,13 @@
 import logging
 import os
+from tempfile import mkstemp
+from re import search as regex_search
 from hs_restclient import HydroShareNotFound
 from hydroshare_util.adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass
 from coverage import Coverage
 
+TMP_FILE_PATH = '~$hydroshare_tmp_files'
 
 class Resource(HydroShareUtilityBaseClass):
     RESOURCE_TYPES = None
@@ -13,7 +16,7 @@ class Resource(HydroShareUtilityBaseClass):
                  funding_agency=None, agency_url=None, award_title="", award_number=None, files=list(), subjects=list(),
                  period_start=None, period_end=None, public=False, resource_map_url=None, resource_url=None,
                  date_created=None, date_last_updated=None, discoverable=None, published=None, resource_type=None,
-                 immutable=None, science_metadata_url=None, bag_url=None, coverages=None, shareable=None, **kwargs):
+                 immutable=None, science_metadata_url=None, bag_url=None, coverages=list(), shareable=None, **kwargs):
 
         self.client = client # type: HydroShareAdapter
         self._raw = raw
@@ -82,7 +85,7 @@ class Resource(HydroShareUtilityBaseClass):
         upload_success_count = 0
         for file in self.files:
             try:
-                self.client.deleteResourceFile(self.resource_id, os.path.basename(file))
+                self.client.delete_resource_file(self.resource_id, os.path.basename(file))
             except HydroShareNotFound:
                 pass
 
@@ -102,6 +105,29 @@ class Resource(HydroShareUtilityBaseClass):
                 raise e
         self._r_logger("successfully uploaded {count} files".format(count=upload_success_count),
                        level=logging.INFO)
+
+    def upload_file(self, filename, content):
+        try:
+            self.client.delete_resource_file(self.resource_id, filename)
+        except HydroShareNotFound:
+            pass # the file doesn't exist on hydroshare, it's okay, just keep breathing.
+
+        # Write file to disk... because that's how hs_restclient needs it to be done! Stupid, I know.
+        suffix = '.csv' if regex_search('\.csv', filename) else None
+        fd, path = mkstemp(suffix=suffix)
+
+        with open(path, 'w+') as f:
+            f.write(content)
+
+        # upload file
+        try:
+            return self.client.add_resource_file(self.resource_id, path, resource_filename=filename)
+        except Exception as e:
+            raise e
+        finally:
+            os.close(fd) # close the file descriptor
+            os.remove(path) # delete the tmp file
+
 
     def delete_files(self, files=None):
         if files is None:

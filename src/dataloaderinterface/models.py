@@ -158,7 +158,7 @@ class HydroShareAccount(models.Model):
     user = models.ForeignKey('ODM2User', db_column='user_id')
     name = models.CharField(max_length=255, default='HydroShare Account')
     is_enabled = models.BooleanField(default=False)
-    ext_hydroshare_id = models.IntegerField(unique=True)
+    ext_id = models.IntegerField(unique=True) # external hydroshare account id
 
     def save_token(self, token):
         if not isinstance(token, dict):
@@ -166,10 +166,10 @@ class HydroShareAccount(models.Model):
         oauth_token = OAuthToken(account=self, **token)
         oauth_token.save()
 
-    @property
-    def token(self):
+    def get_token(self):
         try:
-            return OAuthToken.objects.get(account=self)
+            oauth_token = OAuthToken.objects.get(account=self)
+            return oauth_token.to_dict()
         except ObjectDoesNotExist:
             return None
 
@@ -178,13 +178,13 @@ class HydroShareAccount(models.Model):
             'id': self.pk,
             'user_id': self.user.id,
             'name': self.name,
-            'ext_hydroshare_id': self.ext_hydroshare_id,
+            'ext_id': self.ext_id,
             'is_enabled': self.is_enabled
         }
         if include_token:
-            token = self.token
+            token = self.get_token()
             if token:
-                account['token'] = token.to_dict()
+                account['token'] = token
         return account
 
     def __str__(self):
@@ -195,7 +195,7 @@ class HydroShareAccount(models.Model):
 
 
 # "Settings" for a Hydroshare account connection
-class HydroShareSiteSetting(models.Model):
+class HydroShareResource(models.Model):
     FREQUENCY_CHOICES = (
         (timedelta(), 'Never'),
         (timedelta(hours=1).total_seconds(), 'Every Hour'),
@@ -209,7 +209,10 @@ class HydroShareSiteSetting(models.Model):
         (timedelta(days=30).total_seconds(), 'Monthly')
     )
 
-    hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE, null=True, blank=True)
+    hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE, null=True,
+                                   blank=True)
+    ext_id = models.CharField(max_length=255, blank=True, null=True, unique=True) # external hydroshare resource id
+    title = models.CharField(max_length=255, blank=True, null=True)
     site_registration = models.OneToOneField(SiteRegistration, unique=True)
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
     resource_id = models.CharField(max_length=255, blank=True)
@@ -223,14 +226,14 @@ class HydroShareSiteSetting(models.Model):
 
     @property
     def update_freq_verbose(self):
-        for choice in HydroShareSiteSetting.FREQUENCY_CHOICES:
+        for choice in HydroShareResource.FREQUENCY_CHOICES:
             if choice[0] == self.update_freq.total_seconds():
                 return choice[1]
         return 'NA'
 
     def get_udpate_freq_index(self):
         try:
-            return [choice[0] for choice in HydroShareSiteSetting.FREQUENCY_CHOICES].index(self.update_freq.total_seconds())
+            return [choice[0] for choice in HydroShareResource.FREQUENCY_CHOICES].index(self.update_freq.total_seconds())
         except Exception:
             return 0
 
@@ -247,17 +250,17 @@ class HydroShareSiteSetting(models.Model):
         }
 
     # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-    #     return super(HydroShareSiteSetting, self).save(force_insert, force_update, using, update_fields)
+    #     return super(HydroShareResource, self).save(force_insert, force_update, using, update_fields)
 
     class Meta:
-        db_table = 'hydroshare_site_setting'
+        db_table = 'hydroshare_resource'
 
 
 # HydroshareSyncLog - tracks scheduled or manual syncs with hydroshares API
 class HydroShareSyncLog(models.Model):
 
     # HydroshareSiteSharing object this log belongs to
-    site_sharing = models.ForeignKey(HydroShareSiteSetting, on_delete=models.CASCADE)
+    site_sharing = models.ForeignKey(HydroShareResource, on_delete=models.CASCADE)
 
     # timestamp for when data was synced with Hydroshare.
     sync_date = models.DateTimeField(auto_now_add=True)

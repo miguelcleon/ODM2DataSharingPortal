@@ -130,11 +130,12 @@
 
                             {% if hydroshare_account_form and hydroshare_settings_form %}
                             <fieldset id="hydroshare-form">
-                                <div class="panel panel-primary" id="hs-settings-panel">
-                                    <div class="panel-heading">
-                                        <h3 class="panel-title">HydroShare Settings</h3>
+                                <div class="card mb-3" id="hs-settings-card">
+                                    {# NOTE: CSS may be changed by the script at the bottom of this file #}
+                                    <div id="hs-settings-card-header" class="card-header bg-primary text-white">
+                                        HydroShare Settings
                                     </div>
-                                    <div class="panel-body">
+                                    <div class="card-body">
                                         <div class="row">
                                             <div class="col-lg-6 col-sm-12">
                                                 {% with hydroshare_account_form as form %}
@@ -430,7 +431,7 @@
     <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
     <script src="{% static 'dataloaderinterface/js/hydroshare-settings-update-form.js' %}"></script>
-    <script>
+    <script type="text/javascript">
         'use strict';
         $('#hs-disabled-warning').hide();
         $(function() {
@@ -446,7 +447,6 @@
             hsAccountSelectField.change(function(ev) {
                 for (let account of accounts) {
                     if (account.id == ev.target.value) {
-                        console.log(account);
                         showHSWarning(!account.is_enabled);
                         break;
                     }
@@ -456,10 +456,10 @@
             function showHSWarning(show) {
                 if (show) {
                     $('#hs-disabled-warning').show();
-                    document.getElementById('hs-settings-panel').className = "panel panel-warning";
+                    document.getElementById('hs-settings-card-header').className = "card-header text-white bg-warning";
                 } else {
                     $('#hs-disabled-warning').hide();
-                    document.getElementById('hs-settings-panel').className = "panel panel-primary";
+                    document.getElementById('hs-settings-card-header').className = "card-header text-white bg-primary";
                 }
             }
         });

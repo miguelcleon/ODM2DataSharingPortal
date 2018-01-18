@@ -8,9 +8,14 @@ class HydroShareAdapter(HydroShare):
         self._default_headers = default_headers
         super(HydroShareAdapter, self).__init__(hostname=hostname, port=port, use_https=use_https, verify=verify, auth=auth)
 
+    def _build_params(self, params): # type: (dict) -> str
+        param_vals = ['{param}={val}'.format(param=p, val=v) for p, v in params.iteritems()]
+        return "?{params}".format(params="&".join(param_vals))
+
     def _request(self, method, url, params=None, data=None, files=None, headers=None, stream=False):
         _headers = None
         if self._default_headers and headers:
+            _headers = headers
             _headers.update(self._default_headers)
         elif self._default_headers:
             _headers = self._default_headers

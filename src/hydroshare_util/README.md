@@ -125,13 +125,23 @@ user_info = util.get_user_info()
 # }
 ```
 
-To get a list of resources:
+To get a list of all resources:
 ```python
 from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.resource import Resource
 
 util = HydroShareUtility(...)
 resources = util.get_resources() # type: list
+resource = resources[0] # type: Resource
+```
+
+To get a list of resources for a specific user:
+```python
+from hydroshare_util.utility import HydroShareUtility
+from hydroshare_util.resource import Resource
+
+util = HydroShareUtility(...)
+resources = util.get_resources(owner='<your_hydroshare_username>') # type: list
 resource = resources[0] # type: Resource
 ```
 
