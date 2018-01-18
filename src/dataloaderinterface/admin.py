@@ -24,9 +24,14 @@ class SiteRegistrationAdmin(admin.ModelAdmin):
     pass
 
 
+@admin.register(Organization)
+class OrganizationAdmin(admin.ModelAdmin):
+    pass
+
+
 @admin.register(EquipmentModel)
 class EquipmentModelAdmin(admin.ModelAdmin):
-    sensor_fields = ['model_name', 'variable_code']
+    sensor_fields = ['model_name', 'model_manufacturer']
 
     def save_model(self, request, obj, form, change):
         if change:
