@@ -93,14 +93,14 @@
                                                                 {{ field.help_text }}
                                                             </div>
                                                         {% endif %}
+
                                                     </label>
                                                 </div>
                                             {% else %}
                                                 <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %} {% if not field.value %}hidden{% endif %}"
                                                      data-field="{{ field.name }}" style="margin-top: -15px;">
                                                     <label class="control-label"
-                                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
-
+                                                           for="{{ field.id_for_label }}">{{ field.label }}{{ field.label_suffix }}
                                                     {% if field.help_text %}
                                                         <i id="email-alert-help-{{ forloop.counter0 }}"
                                                            class="material-icons text-muted help-icon">help</i>
@@ -111,6 +111,8 @@
                                                         </div>
                                                     {% endif %}
                                                     {{ field|add_class:"form-control input-sm" }}
+                                                    {{ email_alert_form.suffix }}
+                                                    </label>
                                                 </div>
                                             {% endif %}
                                         {% endfor %}
