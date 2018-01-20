@@ -14,11 +14,7 @@
                     <header class="section-header">
                         <div class="page-title">{% if request.resolver_match.view_name == "site_update" %}Edit Site
                             Information{% else %}Register a Site{% endif %}</div>
-                        {% if messages %}
-                            {% for message in messages %}
-                                <span class="form-message {{ message.tags }}">{{ message }}</span>
-                            {% endfor %}
-                        {% endif %}
+                        {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
                     <div class="section-body">

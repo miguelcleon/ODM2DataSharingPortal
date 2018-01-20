@@ -40,15 +40,7 @@
             <div class="row">
                 <section class="page-content user-registration col-lg-12">
                     <header>
-                        {% if messages %}
-                            {% for message in messages %}
-                                <span class="alert alert-{{ message.tags }} alert-dismissible d-block"  role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span></button>
-                                    {{ message }}
-                                </span>
-                            {% endfor %}
-                        {% endif %}
+                        {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
                 </section>
             </div>

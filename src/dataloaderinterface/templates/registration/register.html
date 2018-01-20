@@ -12,9 +12,13 @@
             <section class="page-content user-registration col-lg-12">
                 <header>
                     {% if messages %}
-                        {% for message in messages %}
-                            <span class="form-message {{ message.tags }}">{{ message }}</span>
-                        {% endfor %}
+                        <div class="message-container text-center">
+                                <span class="mdl-chip mdl-chip--deletable shadow form-message {{ message.tags }}">
+                                    <span class="mdl-chip__text">{{ message }}</span>
+                                    <button type="button" class="mdl-chip__action action_cancel"><i
+                                            class="material-icons">cancel</i></button>
+                                </span>
+                        </div>
                     {% endif %}
                 </header>
 

@@ -68,12 +68,7 @@
                                 </div>
                             </div>
                         {% endif %}
-
-                        {% if messages %}
-                            {% for message in messages %}
-                                <p>{{ message }}</p>
-                            {% endfor %}
-                        {% endif %}
+                    {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
                     <div class="row">

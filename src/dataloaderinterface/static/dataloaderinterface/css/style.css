@@ -394,16 +394,17 @@ span.map-help {
     color: inherit;
 }
 
-span.form-message.error {
-    width: 100%;
-    display: block;
-    text-align: center;
-    padding: 5px;
-    background: #fff4db;
-    border-radius: 2px;
-    color: #565656;
-    margin-top: 5px;
+.form-message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
 }
+
+.form-message.success {
+    color: #155724;
+    background-color: #d4edda;
+}
+
 
 .sampling-feature-fields .help-icon {
     float: right;
