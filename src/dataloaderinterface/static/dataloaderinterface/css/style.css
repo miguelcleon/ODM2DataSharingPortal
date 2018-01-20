@@ -469,6 +469,12 @@ ul.errorlist {
     color: rgb(232, 0, 0);
 }
 
+ul.errorlist li {
+    font-size: small;
+    font-style: italic;
+    line-height: 1.5;
+}
+
 .organization-fields, .organization-fields .form-field {
     padding-left: 15px;
 }
