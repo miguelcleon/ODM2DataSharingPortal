@@ -244,6 +244,11 @@
                                     </div>
                                 </div>
                                 {% endfor %}
+                                {% if not sensors %}
+                                    <div class="col-12">
+                                        <p>No sensors have been added to this site.</p>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
