@@ -67,45 +67,47 @@ class UserUpdateView(UpdateView):
         form = UserUpdateForm(instance=user, initial={'organization': organization})
         return form
 
-    def get_hydroshare_accounts(self, user_id):
-        try:
-            odm2user = ODM2User.objects.get(pk=user_id)
-            return HydroShareAccount.objects.filter(user=odm2user).order_by('name').values()
-        except HydroShareAccount.DoesNotExist:
-            return []
+    def get_hydroshare_account(self):
+        hs_account = self.request.user.odm2user.hydroshare_account
+        if hs_account:
+            return hs_account
+        return None
 
     def get_context_data(self, **kwargs):
         context = super(UserUpdateView, self).get_context_data(**kwargs)
 
-        context['hs_accounts'] = self.get_hydroshare_accounts(self.request.user.id)
+        context['hs_account'] = self.get_hydroshare_account()
         context['organization_form'] = OrganizationForm()
         return context
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
+        # TODO: REMOVE! #############################
+        try:
+            hsaccount = HydroShareAccount.objects.get(pk=1)
+            self.request.user.odm2user.hydroshare_account = hsaccount
+            self.request.user.odm2user.save()
+        except:
+            pass
+        #############################################
         return super(UserUpdateView, self).get(request, *args, **kwargs)
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
 
-        if request.POST.get('_method'):
-            method = request.POST.get('_method')
-            if method == 'delete':
-                account_id = request.POST.get('account_id')
-                hs_account = HydroShareAccount.objects.get(pk=account_id)
-                hs_account.is_enabled = False
-                hs_account.delete()
-            elif method == 'put':
-                hs_account = HydroShareAccount.objects.get(pk=request.POST.get('account_id'))
-                is_enabled = True if request.POST.get('is_enabled') == 'true' else False
-                hs_account.is_enabled = is_enabled
-                hs_account.save()
+        if request.POST.get('disconnect-hydroshare-account'):
+            odm2user = request.user.odm2user
+            # TODO : After testing, remove these lines, and replace with...
+            odm2user.hydroshare_account = None
+            odm2user.save()
+            # TODO : After testing, uncomment the below line
+            # odm2user.hydroshare_account.delete()
 
             form = UserUpdateForm(instance=request.user, initial={'organization': request.user.odm2user.affiliation.organization})
             context = {
                 'form': form,
                 'organization_form': OrganizationForm(),
-                'hs_accounts': self.get_hydroshare_accounts(request.user.id)
+                'hs_accounts': None
             }
             return render(request, self.template_name, context=context)
         else:
@@ -120,19 +122,19 @@ class UserUpdateView(UpdateView):
                 messages.error(request, 'There were some errors in the form.')
                 return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
 
-
-class HydroShareView(TemplateView):
-    template_name = 'hydroshare/hydroshare_account.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(HydroShareView, self).get_context_data(**kwargs)
-
-        odm2user = ODM2User.objects.get(user=self.request.user.id)
-        hs_accounts = HydroShareAccount.objects.get(user=odm2user)
-        if not isinstance(hs_accounts, list):
-            hs_accounts = [hs_accounts]
-        context['hs_accounts'] = hs_accounts
-        return context
+# TODO: Prepare for removal
+# class HydroShareView(TemplateView):
+#     template_name = 'hydroshare/hydroshare_account.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super(HydroShareView, self).get_context_data(**kwargs)
+#
+#         odm2user = ODM2User.objects.get(user=self.request.user.id)
+#         hs_accounts = HydroShareAccount.objects.get(user=odm2user)
+#         if not isinstance(hs_accounts, list):
+#             hs_accounts = [hs_accounts]
+#         context['hs_accounts'] = hs_accounts
+#         return context
 
 
 class UserRegistrationView(CreateView):
@@ -261,10 +263,7 @@ class SiteDetailView(DetailView):
 
         results = re.findall('(?<=\")[\S\.]+\.csv(?=\")', req.headers['Content-Disposition'])
         if len(results) > 0:
-            return {
-                'filename': results[0],
-                'content': req.content
-            }
+            return (results[0], req.content)
         else:
             return JsonResponse({'error': "could not get filename or file is not in '.csv' format"}, status=500)
 
@@ -289,7 +288,7 @@ class SiteDetailView(DetailView):
         auth_util = AuthUtil.authorize(token=hsaccount.get_token())
         hs_util = HydroShareUtility(auth=auth_util)
 
-        site_file = self.get_site_file()
+        filename, content = self.get_site_file()
 
         # Get existing resource to see what files already exist
         resource = hs_util.get_resource_metadata(pid=hs_resource_ext_id)

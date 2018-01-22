@@ -1,78 +1,55 @@
 <style>
-    a.mdl-button {
-        margin-bottom: 16px;
+    .img-container {
+        width: 120px;
+        margin-bottom: 8px;
+    }
+    .img-container img {
+        width: 100%;
+        height: auto;
+    }
+    input.text-info {
+        background-color: initial;
+        border: none;
+        text-decoration: underline;
+    }
+
+    input.text-info:hover {
+        cursor: pointer;
     }
 </style>
 
-<a href="{% url 'hydroshareinterface:oauth' %}"
-   class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-    <i class="material-icons">share</i>
-    Add HydroShare Connection
-</a>
+{#<a href="{% url 'hydroshareinterface:oauth' %}"#}
+{#   class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">#}
+{#    <i class="material-icons">share</i>#}
+{#    Add HydroShare Connection#}
+{#</a>#}
+{##}
+{#<a href="{% url 'hydroshareinterface:shared_resources' %}"#}
+{#    class="mdl-button mdl-button--raised mdl-button--accent mdl-js-button mdl-js-ripple-effect">#}
+{#    View Shared Resources#}
+{#</a>#}
 
-<a href="{% url 'hydroshareinterface:shared_resources' %}"
-    class="mdl-button mdl-button--raised mdl-button--accent mdl-js-button mdl-js-ripple-effect">
-    View Shared Resources
-</a>
+{# TODO: Replace with dynamic url #}
+<div class="img-container">
+    <img src="https://www.hydroshare.org/static/img/logo-lg.png">
+</div>
 
-{% if hs_accounts %}
+{% if hs_account %}
 
-{% if data_profile_mode == 'view' %}
+    <form method="post" id="hs-discon-form">
+    {% csrf_token %}
+        <input type="hidden" name="disconnect-hydroshare-account" value="true">
+        <input type="submit" class="text-info" value="Disconnect HydroShareAccount">
+    </form>
 
-<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp full-width">
-    <thead>
-        <tr>
-            <th class="mdl-data-table__cell">#</th>
-            <th class="mdl-data-table__cell--non-numeric">Account Name</th>
-            <th class="mdl-data-table__cell--non-numeric">Status</th>
-            <th class="mdl-data-table__cell--non-numeric">On/Off</th>
-            <th class="mdl-data-table__cell--non-numeric"></th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for account in hs_accounts %}
-        <tr>
-            <td class="mdl-data-table__cell">
-                {{ forloop.counter }}
-            </td>
-            <td class="mdl-data-table__cell--non-numeric">
-                {{ account.name }}
-            </td>
-            <td class="mdl-data-table__cell--non-numeric">
-                {% if account.is_enabled %}Enabled{% else %}Disabled{% endif %}
-            </td>
-            <td>
-                <form method="post" id="hydroshare-udpate-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="account_id" value="{{ account.id }}">
-                    <input type="hidden" name="is_enabled" value="{% if account.is_enabled %}false{% else %}true{% endif %}">
-                    <input type="hidden" name="_method" value="put">
-                    <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch_for_hs_{{ account.id }}">
-                        <!--suppress HtmlUnknownAttribute -->
-                        <input type="checkbox" class="mdl-switch__input"
-                               id="switch_for_hs_{{ account.id }}"
-                               {% if account.is_enabled%} checked {% endif %}>
-                        <span class="mdl-switch__label"></span>
-                    </label>
-                </form>
-            </td>
-            <td class="mdl-data-table__cell--non-numeric">
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="account_id" value="{{ account.id }}">
-                    <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-color-text--red-500"
-                            type="submit"
-                            name="_method"
-                            value="delete">
-                        <i class="material-icons">delete</i>
-                    </button>
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-{% endif %}{# data_profile_mode == 'view' #}
+{% else %}
+
+    {% if data_profile_mode == 'view' %}
+
+        <p class="lead">Connect Account to HydroShare</p>
+        <a href="{% url 'hydroshareinterface:oauth' %}" class="mdl-button mdl-button--raised mdl-button--accent">Connect</a>
+
+    {% endif %}{# data_profile_mode == 'view' #}
 
 {% endif %}{# hs_accounts #}
 

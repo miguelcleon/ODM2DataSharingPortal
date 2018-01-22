@@ -144,6 +144,10 @@ class SiteSensor(models.Model):
 class ODM2User(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
+    hydroshare_account = models.OneToOneField('HydroShareAccount',
+                                              on_delete=models.CASCADE,
+                                              db_column='hs_account_id',
+                                              null=True)
 
     @property
     def affiliation(self):
@@ -155,28 +159,21 @@ class ODM2User(models.Model):
 
 # HSUAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
-    user = models.ForeignKey('ODM2User', db_column='user_id')
+    # user = models.ForeignKey('ODM2User', db_column='user_id')
     name = models.CharField(max_length=255, default='HydroShare Account')
     is_enabled = models.BooleanField(default=False)
     ext_id = models.IntegerField(unique=True) # external hydroshare account id
-
-    def save_token(self, token):
-        if not isinstance(token, dict):
-            raise TypeError("'token' must be of type 'dict'.")
-        oauth_token = OAuthToken(account=self, **token)
-        oauth_token.save()
+    token = models.ForeignKey('OAuthToken', db_column='token_id', null=True, blank=True, on_delete=models.CASCADE)
 
     def get_token(self):
         try:
-            oauth_token = OAuthToken.objects.get(account=self)
-            return oauth_token.to_dict()
+            return self.token.to_dict()
         except ObjectDoesNotExist:
             return None
 
     def to_dict(self, include_token=True):
         account = {
             'id': self.pk,
-            'user_id': self.user.id,
             'name': self.name,
             'ext_id': self.ext_id,
             'is_enabled': self.is_enabled
@@ -276,7 +273,6 @@ class HydroShareSyncLog(models.Model):
 
 
 class OAuthToken(models.Model):
-    account = models.ForeignKey(HydroShareAccount, db_column='account_id')
     access_token = models.CharField(max_length=255)
     refresh_token = models.CharField(max_length=255)
     token_type = models.CharField(max_length=len('Bearer'), default='Bearer', editable=False)
@@ -297,7 +293,7 @@ class OAuthToken(models.Model):
         super(OAuthToken, self).save(force_insert=force_insert, force_update=force_update, using=using,
                                      update_fields=update_fields)
 
-    def to_dict(self, include_account=False):
+    def to_dict(self):
         token = {
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
@@ -305,8 +301,6 @@ class OAuthToken(models.Model):
             'expires_in': int((self.expires_in - datetime.today()).total_seconds()),
             'scope': self.scope
         }
-        if include_account:
-            token['account'] = self.account.id
         return token
 
     class Meta:

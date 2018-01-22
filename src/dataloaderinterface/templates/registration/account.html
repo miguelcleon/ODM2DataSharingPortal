@@ -246,4 +246,14 @@
             });
         });
     </script>
+    <script for="on-hydroshare-disconnect">
+        $(() => {
+          const disconnectForm = $('#hs-discon-form');
+
+          disconnectForm.submit(() => {
+             return confirm('Are you sure you want to disconnect your HydroShare account?');
+          });
+
+        });
+    </script>
 {% endblock %}
