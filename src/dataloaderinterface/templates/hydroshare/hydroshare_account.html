@@ -16,6 +16,16 @@
     input.text-info:hover {
         cursor: pointer;
     }
+
+    dialog#hs-dialog {
+        width: 680px !important;
+    }
+
+    @media only screen and (max-width: 680px) {
+        dialog#hs-dialog {
+            width: 100% !important;
+        }
+    }
 </style>
 
 {#<a href="{% url 'hydroshareinterface:oauth' %}"#}
@@ -36,11 +46,25 @@
 
 {% if hs_account %}
 
-    <form method="post" id="hs-discon-form">
+    <form method="post" id="disconnect-hs-form">
     {% csrf_token %}
         <input type="hidden" name="disconnect-hydroshare-account" value="true">
-        <input type="submit" class="text-info" value="Disconnect HydroShareAccount">
+        <input type="submit" class="text-info" value="Disconnect HydroShare Account">
     </form>
+
+{#    <button id="show-dialog-btn" class="mdl-button mdl-button--raised mdl-button--accent">Disconnect HydroShare Account</button>#}
+
+    <dialog class="mdl-dialog" id="hs-dialog" hidden>
+        <div class="mdl-dialog__content">
+            <p>Are you sure you want to disconnect your HydroShare account?</p>
+            <p>Warning: Your sites on EnviroDIY will stop sharing data with <em>hydroshare.org</em> and your
+            HydroShare settings will be lost.</p>
+        </div>
+        <div class="mdl-dialog__actions">
+            <button type="button" class="mdl-button mdl-button--raised mdl-button--accent close">Cancel</button>
+            <button type="button" id="continue" class="mdl-button">Continue</button>
+        </div>
+    </dialog>
 
 {% else %}
 

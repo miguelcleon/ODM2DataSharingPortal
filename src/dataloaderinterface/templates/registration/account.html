@@ -74,6 +74,7 @@
                     </table>
                 </div>
 
+                {# HydroShare Info #}
                 <div class="col-lg-6 col-sm-12">
                     {% include 'hydroshare/hydroshare_account.html' with data_profile_mode='view' %}
                 </div>
@@ -201,6 +202,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css"
           rel="stylesheet"/>
+    <link style="{% static 'dataloaderinterface/css/vendor/mdl/dialog-polyfill.css' %}">
 {% endblock %}
 
 {% block scripts %}
@@ -209,7 +211,8 @@
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/user-form.js' %}"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
-    <script src="{% static 'dataloaderinterface/js/hydroshare-account-update-form.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/vendor/mdl/dialog-polyfill.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/profile-hydroshare-account.js' %}"></script>
     <script>
         function setMode(mode) {
             if (mode === "edit") {
@@ -246,14 +249,5 @@
             });
         });
     </script>
-    <script for="on-hydroshare-disconnect">
-        $(() => {
-          const disconnectForm = $('#hs-discon-form');
 
-          disconnectForm.submit(() => {
-             return confirm('Are you sure you want to disconnect your HydroShare account?');
-          });
-
-        });
-    </script>
 {% endblock %}
