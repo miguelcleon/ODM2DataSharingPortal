@@ -821,10 +821,6 @@ i.material-icons.site-card-icon {
     vertical-align: sub;
 }
 
-tr.no-sensors-row:hover {
-    background-color: #FFF !important;
-}
-
 label[for='id_hours_threshold']::after{
     display: none;
 }
