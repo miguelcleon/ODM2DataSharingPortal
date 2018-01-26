@@ -269,7 +269,7 @@ ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1,
 
 class SiteAlertForm(forms.ModelForm):
     notify = forms.BooleanField(required=False, initial=False)
-    hours_threshold = forms.IntegerField(min_value=1)
+    hours_threshold = forms.IntegerField(min_value=1, required=False)
 
     class Meta:
         model = SiteAlert

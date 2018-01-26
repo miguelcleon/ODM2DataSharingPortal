@@ -54,6 +54,7 @@ class HomeView(TemplateView):
     #         context['device_results'].append({'device': device, 'feature_actions': feature_actions})
     #     return context
 
+
 class UserUpdateView(UpdateView):
     form_class = UserUpdateForm
     template_name = 'registration/account.html'
