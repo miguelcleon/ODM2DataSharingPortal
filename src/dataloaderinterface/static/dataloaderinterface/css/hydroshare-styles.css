@@ -1,0 +1,13 @@
+.hydroshare-container {
+    margin-bottom: 24px;
+}
+.hydroshare-title {
+    margin: 8px 0;
+}
+.hs-img-container {
+    max-width: 120px;
+}
+.hs-img-container > img {
+    width: 100%;
+    height: auto;
+}

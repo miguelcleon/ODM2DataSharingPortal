@@ -30,7 +30,7 @@
             <p>If you haven't been redirected in 10 seconds, please click <b>Continue</b> to proceed.</p>
         </div>
         <div class="mdl-card__actions mdl-card--border">
-            <a href="{{ hydroshare_oauth_url }}" class="mdl-button mdl-button--accent">Continue</a>
+            <a href="{{ redirect_url }}" class="mdl-button mdl-button--accent">Continue</a>
         </div>
     </div>
 </div>
@@ -38,13 +38,13 @@
 {% endblock %}
 
 {% block scripts %}
-{{ super.block }}
+{{ block.super }}
 <script>
-    function suspendRedirect() {
+    $(() => {
         setTimeout(function () {
             window.location.replace('{{ redirect_url  }}');
         }, 3000);
-    }
-    suspendRedirect();
+    });
+
 </script>
 {% endblock %}

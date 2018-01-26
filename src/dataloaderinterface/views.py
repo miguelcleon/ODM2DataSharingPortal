@@ -25,11 +25,11 @@ from django.http.response import HttpResponseRedirect, Http404, HttpResponse, Js
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, CreateView, DeleteView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView
 from django.views.generic.list import ListView
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSelectAccountForm, SiteAlertForm
+    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert
 from hydroshare_util.auth import AuthUtil
@@ -82,14 +82,6 @@ class UserUpdateView(UpdateView):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        # TODO: REMOVE! #############################
-        try:
-            hsaccount = HydroShareAccount.objects.get(pk=1)
-            self.request.user.odm2user.hydroshare_account = hsaccount
-            self.request.user.odm2user.save()
-        except:
-            pass
-        #############################################
         return super(UserUpdateView, self).get(request, *args, **kwargs)
 
     @method_decorator(login_required)
@@ -97,11 +89,10 @@ class UserUpdateView(UpdateView):
 
         if request.POST.get('disconnect-hydroshare-account'):
             odm2user = request.user.odm2user
-            # TODO : After testing, remove these lines, and replace with...
+            hs_acct_id = odm2user.hydroshare_account.pk
             odm2user.hydroshare_account = None
+            HydroShareAccount.objects.get(pk=hs_acct_id).delete()
             odm2user.save()
-            # TODO : After testing, uncomment the below line
-            # odm2user.hydroshare_account.delete()
 
             form = UserUpdateForm(instance=request.user, initial={'organization': request.user.odm2user.affiliation.organization})
             context = {
@@ -229,16 +220,36 @@ class SiteDetailView(DetailView):
         context['tsa_url'] = settings.TSA_URL
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
 
+        hs_account = None
         try:
-            hs_resource = HydroShareResource.objects.get(site_registration=context['site'])
-            if hs_resource.title is None:
-                site = self.get_object()
-                hs_resource.title = site.sampling_feature_name
-                hs_resource.save()
-            context['hs_account'] = hs_resource.hs_account
-            context['hs_resource'] = hs_resource
-        except Exception:
-            context['hs_enabled'] = False
+            hs_account = self.request.user.odm2user.hydroshare_account
+            context['hs_account'] = hs_account
+            settings_form = HydroShareSettingsForm(initial={
+                'schedule_type': 'S',
+                'schedule_freq': 'daily',
+                'data_types': ''
+            })
+            context['hs_settings_form'] = settings_form
+        except AttributeError:
+            pass
+
+        if hs_account:
+            try:
+                hs_resource = HydroShareResource.objects.get(hs_account=hs_account.id)
+                context['hs_resource'] = hs_resource
+            except ObjectDoesNotExist:
+                pass
+
+        # try:
+        #     hs_resource = HydroShareResource.objects.get(site_registration=context['site'])
+        #     if hs_resource.title is None:
+        #         site = self.get_object()
+        #         hs_resource.title = site.sampling_feature_name
+        #         hs_resource.save()
+        #     context['hs_account'] = hs_resource.hs_account
+        #     context['hs_resource'] = hs_resource
+        # except Exception:
+        #     context['hs_enabled'] = False
 
         return context
 
@@ -268,43 +279,63 @@ class SiteDetailView(DetailView):
             return JsonResponse({'error': "could not get filename or file is not in '.csv' format"}, status=500)
 
     def post(self, request, *args, **kwargs):
-        # Check parameter values
-        if 'site_registration_id' in request.POST and 'hs_ext_resource_id' in request.POST:
-            site = self.get_object()
-            site_id = int(request.POST['site_registration_id'])
-            hs_resource_ext_id = request.POST['hs_ext_resource_id']
-
-            if site_id != site.registration_id:
-                return JsonResponse({'error': 'site id\'s do not match'}, status=400)
-            elif hs_resource_ext_id is None or hs_resource_ext_id == 'None':
-                return JsonResponse({'error': "'ext_id' is missing for hydroshare resource"}, status=400)
+        # if 'site_registration_id' in request.POST and 'hs_ext_resource_id' in request.POST:
+        #     site = self.get_object()
+        #     site_id = int(request.POST['site_registration_id'])
+        #     hs_resource_ext_id = request.POST['hs_ext_resource_id']
+        #     if site_id != site.registration_id:
+        #         return JsonResponse({'error': 'site id\'s do not match'}, status=400)
+        #     elif hs_resource_ext_id is None or hs_resource_ext_id == 'None':
+        #         return JsonResponse({'error': "'ext_id' is missing for hydroshare resource"}, status=400)
+        # else:
+        #     return JsonResponse({'error': 'malformed request.'}, status=400)
+        # hsresource = HydroShareResource.objects.get(site_registration=site)
+        # hsaccount = HydroShareAccount.objects.get(pk=hsresource.hs_account.id)
+        # auth_util = AuthUtil.authorize(token=hsaccount.get_token())
+        # hs_util = HydroShareUtility(auth=auth_util)
+        # filename, content = self.get_site_file()
+        # resource = hs_util.get_resource_metadata(pid=hs_resource_ext_id)
+        # try:
+        #     resource.upload_file(site_file['filename'], site_file['content'])
+        # except Exception as e:
+        #     return JsonResponse({'error': e}, status=500)
+        # resource.upload_files()
+        # data = {
+        #     'file': site_file,
+        #     'message': 'successfully uploaded file "{fname}" to hydroshare.org'.format(fname=site_file['filename'])
+        # }
+        # return JsonResponse(data)
+        form = HydroShareSettingsForm(request.POST)
+        if form.is_valid():
+            schedule_type = form.cleaned_data['schedule_type']
+            schedule_freq = form.cleaned_data['schedule_freq']
+            data_types = form.cleaned_data['data_types']
+            return HttpResponseRedirect(reverse('site_detail', kwargs={'sampling_feature_code': 'TestSite01'}))
         else:
-            return JsonResponse({'error': 'malformed request.'}, status=400)
+            return HttpResponseRedirect(reverse('site_detail', kwargs={'sampling_feature_code': 'TestSite01'}))
 
-        hsresource = HydroShareResource.objects.get(site_registration=site)
-        hsaccount = HydroShareAccount.objects.get(pk=hsresource.hs_account.id)
+class HydroShareResourceSettingsView(LoginRequiredMixin, UpdateView):
+    template_name = 'hydroshare/hydroshare_settings_view.html'
+    model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
+    object = None
+    fields = []
 
-        # Get HydroShareUtility object
-        auth_util = AuthUtil.authorize(token=hsaccount.get_token())
-        hs_util = HydroShareUtility(auth=auth_util)
+    def get(self, request, *args, **kwargs):
+        sf_code = kwargs['sampling_feature_code']
+        site = SiteRegistration.objects.get(sampling_feature_code=sf_code)
 
-        filename, content = self.get_site_file()
-
-        # Get existing resource to see what files already exist
-        resource = hs_util.get_resource_metadata(pid=hs_resource_ext_id)
         try:
-            resource.upload_file(site_file['filename'], site_file['content'])
-        except Exception as e:
-            return JsonResponse({'error': e}, status=500)
+            resource = HydroShareResource.objects.get(site_registration=site)
+        except ObjectDoesNotExist:
+            resource = HydroShareResource(site_registration=site)
+            resource.save()
 
-        resource.upload_files()
+        return super(HydroShareResourceSettingsView, self).get(request, args, kwargs)
 
-        data = {
-            'file': site_file,
-            'message': 'successfully uploaded file "{fname}" to hydroshare.org'.format(fname=site_file['filename'])
-        }
-
-        return JsonResponse(data)
+    def post(self, request, *args, **kwargs):
+        return HttpResponseRedirect(reverse('site_detail', kwargs={'sampling_feature_code': 'TestSite01'}))
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):
@@ -325,7 +356,7 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
         try:
             hs_site = HydroShareResource.objects.get(site_registration=self.get_object())
             hs_site.delete()
-        except HydroShareResource.DoesNotExist:
+        except ObjectDoesNotExist:
             pass
 
         sampling_feature = site.sampling_feature
@@ -395,28 +426,6 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         sampling_feature = self.get_object().sampling_feature
         action_by = sampling_feature.feature_actions.first().action.action_by.first()
 
-        if self.get_object().django_user == self.request.user:
-            try:
-                hs_account_form = HydroShareSelectAccountForm(self.request.user, initial=None)
-                try:
-                    hs_site = HydroShareResource.objects.get(site_registration=self.get_object())
-                    if hs_site.hs_account:
-                        hs_account_form = HydroShareSelectAccountForm(self.request.user, initial=hs_site.hs_account)
-                except HydroShareResource.DoesNotExist:
-                    # create new HydroShareResource if none are associated with this site registration.
-                    hs_site = HydroShareResource(site_registration=self.get_object(), hs_account=None, is_enabled=False)
-                    hs_site.save()
-
-                hs_site_form = HydroShareSiteForm(instance=hs_site)
-                accounts = HydroShareAccount.objects.filter(user=self.request.user.id)
-
-                if len(accounts):
-                    context['hydroshare_account_form'] = hs_account_form
-                    context['hydroshare_settings_form'] = hs_site_form
-                    context['hs_accounts_json'] = json.dumps([account.to_dict(include_token=False) for account in accounts])
-                    context['hydroshare_account'] = hs_site.hs_account
-            except ObjectDoesNotExist:
-                pass
         site_alert = self.request.user.site_alerts\
             .filter(site_registration__sampling_feature_code=sampling_feature.sampling_feature_code)\
             .first()

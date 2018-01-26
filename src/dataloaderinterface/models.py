@@ -145,9 +145,11 @@ class ODM2User(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
     hydroshare_account = models.OneToOneField('HydroShareAccount',
-                                              on_delete=models.CASCADE,
                                               db_column='hs_account_id',
                                               null=True)
+
+    def delete(self, using=None, keep_parents=False):
+        super(ODM2User, self).delete(using, keep_parents)
 
     @property
     def affiliation(self):
@@ -157,13 +159,56 @@ class ODM2User(models.Model):
         return self.user.is_staff or registration.user == self
 
 
+class OAuthToken(models.Model):
+    access_token = models.CharField(max_length=255)
+    refresh_token = models.CharField(max_length=255)
+    token_type = models.CharField(max_length=len('Bearer'), default='Bearer', editable=False)
+    expires_in = models.DateTimeField(default=timezone.now)
+    scope = models.CharField(max_length=255, default='read')
+
+    @property
+    def is_expired(self):
+        return datetime.today() > self.expires_in
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if isinstance(self.expires_in, str):
+            self.expires_in = int(self.expires_in)
+
+        if isinstance(self.expires_in, int):
+            self.expires_in = datetime.today() + timedelta(seconds=self.expires_in)
+
+        super(OAuthToken, self).save(force_insert=force_insert, force_update=force_update, using=using,
+                                     update_fields=update_fields)
+
+    def to_dict(self):
+        token = {
+            'access_token': self.access_token,
+            'refresh_token': self.refresh_token,
+            'token_type': self.token_type,
+            'expires_in': int((self.expires_in - datetime.today()).total_seconds()),
+            'scope': self.scope
+        }
+        return token
+
+    class Meta:
+        db_table = 'oauth_token'
+
+
 # HSUAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
     # user = models.ForeignKey('ODM2User', db_column='user_id')
     name = models.CharField(max_length=255, default='HydroShare Account')
     is_enabled = models.BooleanField(default=False)
     ext_id = models.IntegerField(unique=True) # external hydroshare account id
-    token = models.ForeignKey('OAuthToken', db_column='token_id', null=True, blank=True, on_delete=models.CASCADE)
+    token = models.ForeignKey(OAuthToken, db_column='token_id', null=True, on_delete=models.CASCADE)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super(HydroShareAccount, self).save(force_insert=force_insert, force_update=force_update, using=using,
+                                            update_fields=update_fields)
+
+    # def delete(self, using=None, keep_parents=False):
+    #     super(HydroShareAccount, self).delete(using, keep_parents)
 
     def get_token(self):
         try:
@@ -270,41 +315,6 @@ class HydroShareSyncLog(models.Model):
 
     class Meta:
         db_table = 'hydroshare_sync_log'
-
-
-class OAuthToken(models.Model):
-    access_token = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255)
-    token_type = models.CharField(max_length=len('Bearer'), default='Bearer', editable=False)
-    expires_in = models.DateTimeField(default=timezone.now)
-    scope = models.CharField(max_length=255, default='read')
-
-    @property
-    def is_expired(self):
-        return datetime.today() > self.expires_in
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if isinstance(self.expires_in, str):
-            self.expires_in = int(self.expires_in)
-
-        if isinstance(self.expires_in, int):
-            self.expires_in = datetime.today() + timedelta(seconds=self.expires_in)
-
-        super(OAuthToken, self).save(force_insert=force_insert, force_update=force_update, using=using,
-                                     update_fields=update_fields)
-
-    def to_dict(self):
-        token = {
-            'access_token': self.access_token,
-            'refresh_token': self.refresh_token,
-            'token_type': self.token_type,
-            'expires_in': int((self.expires_in - datetime.today()).total_seconds()),
-            'scope': self.scope
-        }
-        return token
-
-    class Meta:
-        db_table = 'oauth_token'
 
 
 class SiteAlert(models.Model):

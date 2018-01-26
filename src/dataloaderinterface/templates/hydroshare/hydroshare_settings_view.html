@@ -1,0 +1,76 @@
+{% extends 'dataloaderinterface/base.html' %}
+{% load staticfiles %}
+{% load site %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'dataloaderinterface/css/dialog-polyfill.css' %}">
+    <link rel="stylesheet" href="{% static 'dataloaderinterface/css/hydroshare-styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<style>
+    #hydroshare-settings-dialog {
+        width: 680px;
+    }
+</style>
+
+{#{% if hs_settings_form %}#}
+{#    {{ hs_settings_form.schedule_freq }}#}
+{#{% endif %}#}
+<div class="container">
+
+    {% with hs_settings_form as form %}
+    <form method="post">
+        {% csrf_token %}
+        <h3 class="mdl-dialog__title">Create Resource</h3>
+
+        <h4>Update Frequency</h4>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-12">
+                {{ form.schedule_type }}
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-12">
+                {{ form.schedule_freq }}
+            </div>
+        </div>
+
+        <h4>Data Types</h4>
+        <div class="row">
+            <div class="col-12">
+                {{ form.data_types }}
+    {#                    <label for="time-series-cb" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">#}
+    {#                      <input type="checkbox" id="time-series-cb" class="mdl-checkbox__input" checked>#}
+    {#                      <span class="mdl-checkbox__label">Time Series</span>#}
+    {#                    </label>#}
+    {##}
+    {#                    <label for="leaf-packet-cb" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">#}
+    {#                      <input type="checkbox" id="leaf-packet-cb" class="mdl-checkbox__input" checked>#}
+    {#                      <span class="mdl-checkbox__label">Leaf Packets</span>#}
+    {#                    </label>#}
+    {##}
+    {#                    <label for="stream-data-cb" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">#}
+    {#                      <input type="checkbox" id="stream-data-cb" class="mdl-checkbox__input" checked>#}
+    {#                      <span class="mdl-checkbox__label">Stream Data</span>#}
+    {#                    </label>#}
+            </div>
+        </div>
+
+        <div class="row">
+            <input type="submit"
+                   class="mdl-button mdl-button--raised mdl-button--accent"
+                   value="Start Sharing" />
+
+            <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
+        </div>
+
+    </form>
+    {% endwith %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+{% endblock %}

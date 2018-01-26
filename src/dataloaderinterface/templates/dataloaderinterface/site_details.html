@@ -5,6 +5,7 @@
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'dataloaderinterface/css/dialog-polyfill.css' %}">
+    <link rel="stylesheet" href="{% static 'dataloaderinterface/css/hydroshare-styles.css' %}">
 {% endblock %}
 
 {% block forced_scripts %}
@@ -186,99 +187,23 @@
 
 
                     {# HydroShare Account Information #}
-                    <div class="row">
-                        {% if hs_account %}
+                    {% if hs_account and site.django_user_id == request.user.id %}
+                    <div class="row hydroshare-container">
                         <div class="col-lg-6 col-sm-12">
-                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width site-table">
-                                <thead class="site-table-header">
-                                    <th class="mdl-data-table__cell--non-numeric" colspan="2">HydroShare Account Settings</th>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            <i class="fa fa-user-circle"></i> Account Name
-                                        </td>
-                                        <td class="mdl-data-table__cell--non-numeric">{{ hs_account.name }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            HydroShare Resource
-                                        </td>
-                                        <td>
-                                            {{ hs_resource.title }}
-                                            <div id="tt4" class="icon material-icons">info</div>
-                                            <div class="mdl-tooltip" for="tt4">
-                                                This is the resource title in hydroshare.org this site ({{ site.sampling_feature_name }}) is connected to.
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            <i class="fa fa-share-alt"></i> Sharing
-                                        </td>
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            <strong>{% if hs_resource.is_enabled %} On {% else %} Off {% endif %}</strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            <i class="fa fa-circle" aria-hidden="true"></i> Update Frequency
-                                        </td>
-                                    {% if hs_resource.sync_type == 'S' %}
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            {{ hs_resource.update_freq_verbose }}
-                                        </td>
-                                    {% elif hs_resource.sync_type == 'M' %}
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            {{ hs_resource.sync_type_verbose }}
-                                        </td>
-                                    {% endif %}
-                                    </tr>
-                                    <tr>
-                                        <td class="mdl-data-table__cell--non-numeric">
-                                            {# TODO: Display last sync datetime, and next scheduled sync datetime #}
-                                            Manually push latest data to your HydroShare account.
-                                        </td>
-                                        <td class="mdl-data-table__cell--non-numeric">
-{#                                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"#}
-{#                                                    id="hs-update-btn">Sync Now</button>#}
-                                            <form method="post" id="hs-sync-form">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="sync" value="true">
-                                                <input type="hidden" name="site_registration_id" value="{{ site.registration_id }}">
-                                                <input type="hidden" name="hs_ext_resource_id" value="{{ hs_resource.ext_id }}">
-                                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
-                                                        type="submit">
-                                                    Sync Now
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        {% elif site.django_user_id == request.user.id %}
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Connect a HydroShare Account</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <p class="lead">
-                                        Users can now share data between
-                                        <span class="text-info">data.envirodiy.org</span> and
-                                        <span class="text-info">hydroshare.org</span>.
-                                    </p>
-                                    <p class="lead">Click <span class="text-primary">Connect Account</span> to get started.</p>
-                                    <a href="{% url 'hydroshareinterface:oauth_redirect' %}"
-                                       class="mdl-button mdl-button--raised mdl-button--accent">
-                                        Connect Account
-                                    </a>
-                                </div>
+                            <div class="hs-img-container">
+                                <img src="https://www.hydroshare.org/static/img/logo-lg.png">
                             </div>
+                            <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
+                            <p class="lead">
+                                Share your data on <em>hydroshare.org</em>.
+                                {# TODO: Implement a 'click here to learn more' link... #}
+                                <a href="#" id="display-hydroshare-info">Click here</a> to learn more.
+                            </p>
+                            <a href="{% url 'hydroshare_settings' sampling_feature_code=site.sampling_feature_code %}"
+                               class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing</a>
                         </div>
-                        {% endif %}
                     </div>
+                    {% endif %}
 
                     <div class="row">
                         <div class="col-sm-12">
@@ -495,6 +420,7 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+    <script type="text/javascript" src="{% static 'dataloaderinterface/js/hydroshare_settings_modal.js' %}" for="hydroshare-settings-modal" ></script>
     <script type="text/javascript" for="hydroshare-sync">
     $(() => {
         const syncForm = $('#hs-sync-form');
@@ -522,5 +448,6 @@ const char *UUIDs[] =                                                      // UU
         });
     });
     </script>
+
 
 {% endblock %}

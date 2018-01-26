@@ -7,7 +7,7 @@ from django.utils.safestring import mark_safe
 from hs_restclient import HydroShareNotFound
 
 from hydroshare_util.adapter import HydroShareAdapter
-from dataloaderinterface.models import HydroShareAccount
+from dataloaderinterface.models import HydroShareAccount, OAuthToken
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.utility import HydroShareUtility
 import logging
@@ -91,8 +91,8 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
     def get(self, request, *args, **kwargs):
         if 'code' in request.GET:
             try:
-                token = AuthUtil.authorize_client_callback(request.GET['code'])  # type: dict
-                auth_utility = AuthUtil.authorize(token=token)  # type: AuthUtil
+                token_dict = AuthUtil.authorize_client_callback(request.GET['code'])  # type: dict
+                auth_utility = AuthUtil.authorize(token=token_dict)  # type: AuthUtil
             except Exception as e:
                 print 'Authorizition failure: {}'.format(e)
                 return HttpResponse('Error: Authorization failure!')
@@ -103,15 +103,29 @@ class OAuthAuthorize(HydroShareOAuthBaseClass):
 
             try:
                 # check if hydroshare account already exists
-                account = HydroShareAccount.objects.get(ext_hydroshare_id=user_info['id'])
+                account = HydroShareAccount.objects.get(ext_id=user_info['id'])
             except ObjectDoesNotExist:
                 # if account does not exist, create a new one
-                account = HydroShareAccount(user=self.request.user.odm2user, is_enabled=True,
-                                            ext_hydroshare_id=user_info['id'])
+                account = HydroShareAccount(is_enabled=True, ext_id=user_info['id'])
+
+            old_token = None
+            if account.token:
+                old_token = account.token
+                account.token = None
                 account.save()
 
-            # update/save token
-            account.save_token(token)
+            # Make updates to datatbase
+            token = OAuthToken(**token_dict)
+            token.save()
+
+            account.token = token
+            account.save()
+
+            if old_token:
+                old_token.delete()
+
+            request.user.odm2user.hydroshare_account = account
+            request.user.odm2user.save()
 
             return redirect('user_account')
         elif 'error' in request.GET:

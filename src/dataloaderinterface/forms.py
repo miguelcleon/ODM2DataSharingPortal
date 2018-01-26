@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-
 from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
     OrganizationType, ActionBy, SiteType
 from django import forms
@@ -7,6 +6,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
+from django.utils.safestring import mark_safe
+import re
 
 from dataloaderinterface.models import ODM2User, HydroShareResource, HydroShareAccount, SiteRegistration, SiteAlert
 
@@ -18,15 +19,54 @@ class SiteTypeSelect(forms.Select):
         return option
 
 
-class HydroShareSelectAccountForm(forms.ModelForm):
-    def __init__(self, odm2user, initial=None, *args, **kwargs):
-        super(HydroShareSelectAccountForm, self).__init__(*args, **kwargs)
-        self.fields['hs_account'] = forms.ModelChoiceField(queryset=HydroShareAccount.objects.filter(user=odm2user.pk),
-                                                         initial=initial, label="HydroShare Account")
+class MDLRadioButtonRenderer(forms.RadioSelect.renderer):
+    def render(self):
+        """Adds MDL HTML classes to label and input tags"""
+        html = mark_safe(u'\n'.join([u'{0}\n'.format(item) for item in self.__iter__()]))
+        html = re.sub(r'(<label )', r'\1class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ', html)
+        html = re.sub(r'(<input )', r'\1class="mdl-radio__button" ', html)
+        return html
 
-    class Meta:
-        model = HydroShareAccount
-        fields = ['is_enabled']
+
+class HydroShareSettingsForm(forms.Form):
+    schedule_choices = (
+        ('S', 'Scheduled'),
+        ('M', 'Manual')
+    )
+    data_type_choices = (
+        ('TS', 'Time Series'),
+        ('LP', 'Leaf Packet'),
+        ('SD', 'Stream Data')
+    )
+    schedule_freq_choices = (
+        ('daily', 'Daily'),
+        ('weekly', 'Weedkly'),
+        ('monthly', 'Monthly')
+    )
+
+    schedule_type = forms.ChoiceField(
+        required=True,
+        widget=forms.RadioSelect(renderer=MDLRadioButtonRenderer),
+        choices=schedule_choices,
+        initial='S'
+    )
+
+    schedule_freq = forms.MultipleChoiceField(
+        required=False,
+        widget=forms.Select,
+        choices=schedule_freq_choices,
+        initial='daily'
+    )
+
+    data_types = forms.MultipleChoiceField(
+        required=True,
+        # widget=forms.CheckboxSelectMultiple(attrs={"checked": ""}),
+        widget=forms.CheckboxSelectMultiple,
+        choices=data_type_choices
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(HydroShareSettingsForm, self).__init__(*args, **kwargs)
 
 
 class HydroShareSiteForm(forms.ModelForm):
