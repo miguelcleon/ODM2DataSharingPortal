@@ -315,28 +315,36 @@ class SiteDetailView(DetailView):
         else:
             return HttpResponseRedirect(reverse('site_detail', kwargs={'sampling_feature_code': 'TestSite01'}))
 
-class HydroShareResourceSettingsView(LoginRequiredMixin, UpdateView):
-    template_name = 'hydroshare/hydroshare_settings_view.html'
-    model = SiteRegistration
-    slug_field = 'sampling_feature_code'
-    slug_url_kwarg = 'sampling_feature_code'
-    object = None
-    fields = []
 
-    def get(self, request, *args, **kwargs):
-        sf_code = kwargs['sampling_feature_code']
-        site = SiteRegistration.objects.get(sampling_feature_code=sf_code)
+class HydroShareResourceSettingsView(UpdateView):
+    template_name = 'hydroshare/hydroshare_settings_modal.html'
+    model = HydroShareResource
+    object = None
+
+    def form_invalid(self, form):
+        response = super(HydroShareResourceSettingsView, self).form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
+    def form_valid(self, form):
+        data_types = ",".join(form.cleaned_data['data_types'])
+        schedule_freq = form.cleaned_data['schedule_freq']
+        schedule_type = form.cleaned_data['schedule_type']
 
         try:
-            resource = HydroShareResource.objects.get(site_registration=site)
-        except ObjectDoesNotExist:
-            resource = HydroShareResource(site_registration=site)
-            resource.save()
+            resource = HydroShareResource()
+        except Exception as e:
+            print(e)
 
-        return super(HydroShareResourceSettingsView, self).get(request, args, kwargs)
+        return JsonResponse({'foo': 'bar'})
 
     def post(self, request, *args, **kwargs):
-        return HttpResponseRedirect(reverse('site_detail', kwargs={'sampling_feature_code': 'TestSite01'}))
+        form = HydroShareSettingsForm(request.POST)
+        if form.is_valid():
+            return self.form_valid(form)
+        return self.form_invalid(form)
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):

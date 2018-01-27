@@ -148,9 +148,6 @@ class ODM2User(models.Model):
                                               db_column='hs_account_id',
                                               null=True)
 
-    def delete(self, using=None, keep_parents=False):
-        super(ODM2User, self).delete(using, keep_parents)
-
     @property
     def affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
@@ -261,6 +258,7 @@ class HydroShareResource(models.Model):
     update_freq = models.DurationField(verbose_name='Update Frequency', default=timedelta())
     is_enabled = models.BooleanField(default=False)
     last_sync_date = models.DateTimeField(blank=True, null=True)
+    data_types = models.CharField(max_length=255, blank=True, default='')
 
     @property
     def sync_type_verbose(self):

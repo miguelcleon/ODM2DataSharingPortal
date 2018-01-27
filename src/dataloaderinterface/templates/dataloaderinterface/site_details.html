@@ -196,11 +196,12 @@
                             <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
                             <p class="lead">
                                 Share your data on <em>hydroshare.org</em>.
-                                {# TODO: Implement a 'click here to learn more' link... #}
+                            {# TODO: Implement a 'click here to learn more' link... #}
                                 <a href="#" id="display-hydroshare-info">Click here</a> to learn more.
                             </p>
-                            <a href="{% url 'hydroshare_settings' sampling_feature_code=site.sampling_feature_code %}"
-                               class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing</a>
+                            <button id="show-hydroshare-settings-dialog"
+                                    class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing</button>
+                            {% include 'hydroshare/hydroshare_settings_modal.html' with form=hs_settings_form site=site %}
                         </div>
                     </div>
                     {% endif %}
@@ -420,7 +421,7 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
-    <script type="text/javascript" src="{% static 'dataloaderinterface/js/hydroshare_settings_modal.js' %}" for="hydroshare-settings-modal" ></script>
+    <script src="{% static 'dataloaderinterface/js/hydroshare-settings-modal.js' %}"></script>
     <script type="text/javascript" for="hydroshare-sync">
     $(() => {
         const syncForm = $('#hs-sync-form');
@@ -429,7 +430,7 @@ const char *UUIDs[] =                                                      // UU
             e.preventDefault();
             if (syncForm[0] && syncForm[0].baseURI) {
                 let url = syncForm[0].baseURI;
-                {#console.log($('#hs-sync-form').serialize());#}
+                console.log($('#hs-sync-form').serialize());
                 $.post(url, $('#hs-sync-form').serialize())
                     .done(data => {
                        console.log('Data from response: ', data);

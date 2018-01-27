@@ -40,7 +40,7 @@ class HydroShareSettingsForm(forms.Form):
     )
     schedule_freq_choices = (
         ('daily', 'Daily'),
-        ('weekly', 'Weedkly'),
+        ('weekly', 'Weekly'),
         ('monthly', 'Monthly')
     )
 
@@ -51,7 +51,7 @@ class HydroShareSettingsForm(forms.Form):
         initial='S'
     )
 
-    schedule_freq = forms.MultipleChoiceField(
+    schedule_freq = forms.ChoiceField(
         required=False,
         widget=forms.Select,
         choices=schedule_freq_choices,

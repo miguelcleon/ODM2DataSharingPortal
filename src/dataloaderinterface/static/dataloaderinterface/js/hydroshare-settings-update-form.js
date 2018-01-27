@@ -1,3 +1,6 @@
+/**
+ * @depracated This file will be removed once hydroshare settings are set using a modal instead of through a django form
+ */
 'use strict';
 
 $(function() {
