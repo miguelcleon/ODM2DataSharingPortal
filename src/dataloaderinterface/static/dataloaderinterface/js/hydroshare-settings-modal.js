@@ -26,23 +26,26 @@ $(() => {
          submitForm();
     });
 
-    setTimeout(() => {
-        dialog.showModal();
-    }, 0);
+    // setTimeout(() => { dialog.showModal(); }, 0);
 
     function submitForm() {
-        let url = `${hydroshareSettingsForm.baseURI}/hydroshare_settings`;
-        let serialized = $('#hydroshare-settings-form').serialize();
-        $.post(url, serialized)
+        let url = `${hydroshareSettingsForm.baseURI}hydroshare_settings/`;
+        let serializedForm = $(hydroshareSettingsForm).serialize();
+        let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-form-spinner');
+
+        progressSpinner.addClass('is-active');
+
+        $.post(url, serializedForm)
             .done(data => {
-               console.log('Data from request: ', data);
+                console.log(data);
+                dialog.close();
             })
             .fail((xhr) => {
-                let errors = xhr && xhr.responseJSON ? xhr.responseJSON : null;
-                if (errors) {
-                    console.error(errors);
-                    for (let err in errors) {
-                        let errList = errors[err];
+                let errJSON = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+                if (errJSON) {
+                    console.error(errJSON);
+                    for (let err in errJSON) {
+                        let errList = errJSON[err];
                         if (Array.isArray((errList))) {
                             let htmlInsertList = '';
                             for (let err of errList) { htmlInsertList += `<li>${err}</li>` }
@@ -51,8 +54,10 @@ $(() => {
                         }
                     }
                 }
-            });
-
+            })
+            .always(() => {
+                progressSpinner.removeClass('is-active');
+            })
     }
 
 

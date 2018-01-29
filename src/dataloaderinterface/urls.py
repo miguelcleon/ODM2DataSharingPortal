@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/hydroshare_settings',
+        HydroShareResourceSettingsView.as_view(), name='hydroshare_settings'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
-    url(r'^sites/(?P<sampling_feature_code>.*)/hydroshare_settings', HydroShareResourceSettingsView.as_view(), name='hydroshare_settings')
 ]

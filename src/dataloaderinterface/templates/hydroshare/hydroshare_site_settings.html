@@ -1,1 +1,38 @@
-<p>HydroShare Site Settings view</p>
+<div class="row hydroshare-container">
+    <div class="col-lg-6 col-sm-12">
+        <div class="hs-img-container">
+            <img src="https://www.hydroshare.org/static/img/logo-lg.png">
+        </div>
+
+        {% if resource %}
+
+            <p>Sharing with HydroShare is currently turned {% if resource.is_enabled %}ON{% else %}OFF{% endif %}</p>
+
+            <p>Last updated on <strong>{{ resource.last_sync_date }}</strong></p>
+
+            {% if resource.sync_type == 'scheduled' %}
+                <p>Next update schedule for <strong>{{ resource.next_sync_date_verbose }}</strong></p>
+            {% endif %}
+
+            <button id="show-hydroshare-settings-dialog"
+                    class="mdl-button mdl-button--raised mdl-button--accent">Settings
+            </button>
+
+        {% else %}
+
+            <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
+
+            <p class="lead">
+                Share your data on <em>hydroshare.org</em>.
+                {# TODO: Implement a 'click here to learn more' link... #}
+                <a href="#" id="display-hydroshare-info">Click here</a> to learn more.
+            </p>
+            <button id="show-hydroshare-settings-dialog"
+                    class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing
+            </button>
+
+        {% endif %}
+    </div>
+</div>
+
+{% include 'hydroshare/hydroshare_settings_modal.html' with form=form site=site %}

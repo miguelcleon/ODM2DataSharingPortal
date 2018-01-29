@@ -30,8 +30,8 @@ class MDLRadioButtonRenderer(forms.RadioSelect.renderer):
 
 class HydroShareSettingsForm(forms.Form):
     schedule_choices = (
-        ('S', 'Scheduled'),
-        ('M', 'Manual')
+        ('scheduled', 'Scheduled'),
+        ('manual', 'Manual')
     )
     data_type_choices = (
         ('TS', 'Time Series'),
@@ -44,14 +44,16 @@ class HydroShareSettingsForm(forms.Form):
         ('monthly', 'Monthly')
     )
 
+    site_registration = forms.CharField(max_length=255)
+
     schedule_type = forms.ChoiceField(
         required=True,
         widget=forms.RadioSelect(renderer=MDLRadioButtonRenderer),
         choices=schedule_choices,
-        initial='S'
+        initial='scheduled'
     )
 
-    schedule_freq = forms.ChoiceField(
+    update_freq = forms.ChoiceField(
         required=False,
         widget=forms.Select,
         choices=schedule_freq_choices,
@@ -60,9 +62,9 @@ class HydroShareSettingsForm(forms.Form):
 
     data_types = forms.MultipleChoiceField(
         required=True,
-        # widget=forms.CheckboxSelectMultiple(attrs={"checked": ""}),
-        widget=forms.CheckboxSelectMultiple,
-        choices=data_type_choices
+        widget=forms.CheckboxSelectMultiple(attrs={"checked": ""}),
+        choices=data_type_choices,
+        initial='TS'
     )
 
     def __init__(self, *args, **kwargs):

@@ -235,6 +235,7 @@ class HydroShareAccount(models.Model):
 
 # "Settings" for a Hydroshare account connection
 class HydroShareResource(models.Model):
+    SYNC_TYPES = ['scheduled', 'manual']
     FREQUENCY_CHOICES = (
         (timedelta(), 'Never'),
         (timedelta(hours=1).total_seconds(), 'Every Hour'),
@@ -254,9 +255,8 @@ class HydroShareResource(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
     site_registration = models.OneToOneField(SiteRegistration, unique=True)
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
-    resource_id = models.CharField(max_length=255, blank=True)
-    update_freq = models.DurationField(verbose_name='Update Frequency', default=timedelta())
-    is_enabled = models.BooleanField(default=False)
+    update_freq = models.CharField(max_length=32, verbose_name='Update Frequency', default='daily')
+    is_enabled = models.BooleanField(default=True)
     last_sync_date = models.DateTimeField(blank=True, null=True)
     data_types = models.CharField(max_length=255, blank=True, default='')
 
@@ -271,6 +271,18 @@ class HydroShareResource(models.Model):
                 return choice[1]
         return 'NA'
 
+    @property
+    def next_sync_date_verbose(self):
+        days = None
+        if self.update_freq == 'daily':
+            days = 1
+        elif self.update_freq == 'weekly':
+            days = 7
+        elif self.update_freq == 'monthly':
+            days = 30
+        date = self.last_sync_date.date() + timedelta(days=days)
+        return date
+
     def get_udpate_freq_index(self):
         try:
             return [choice[0] for choice in HydroShareResource.FREQUENCY_CHOICES].index(self.update_freq.total_seconds())
@@ -280,13 +292,13 @@ class HydroShareResource(models.Model):
     def to_dict(self):
         return {
             'id': self.pk,
-            'hs_account': self.hs_account,
-            'site_registration': self.site_registration,
+            'hs_account': self.hs_account.id,
+            'site_registration': self.site_registration.registration_id,
             'sync_type': self.sync_type,
-            'resource_id': self.resource_id,
             'update_freq': self.update_freq,
             'is_enabled': self.is_enabled,
-            'last_sync_date': self.last_sync_date
+            'last_sync_date': self.last_sync_date,
+            'data_types': self.data_types.split(",")
         }
 
     # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

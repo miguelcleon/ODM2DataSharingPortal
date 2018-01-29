@@ -186,25 +186,17 @@
                     </div>
 
 
-                    {# HydroShare Account Information #}
+
+
+
+                    {######    HydroShare Settings    #######}
                     {% if hs_account and site.django_user_id == request.user.id %}
-                    <div class="row hydroshare-container">
-                        <div class="col-lg-6 col-sm-12">
-                            <div class="hs-img-container">
-                                <img src="https://www.hydroshare.org/static/img/logo-lg.png">
-                            </div>
-                            <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
-                            <p class="lead">
-                                Share your data on <em>hydroshare.org</em>.
-                            {# TODO: Implement a 'click here to learn more' link... #}
-                                <a href="#" id="display-hydroshare-info">Click here</a> to learn more.
-                            </p>
-                            <button id="show-hydroshare-settings-dialog"
-                                    class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing</button>
-                            {% include 'hydroshare/hydroshare_settings_modal.html' with form=hs_settings_form site=site %}
-                        </div>
-                    </div>
+                        {% include 'hydroshare/hydroshare_site_settings.html' with resource=hs_resource form=hs_settings_form site=site %}
                     {% endif %}
+
+
+
+
 
                     <div class="row">
                         <div class="col-sm-12">
