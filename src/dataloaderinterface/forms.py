@@ -44,6 +44,8 @@ class HydroShareSettingsForm(forms.Form):
         ('monthly', 'Monthly')
     )
 
+    enabled = forms.BooleanField(initial=True, label='Sharing On/Off')
+
     site_registration = forms.CharField(max_length=255)
 
     schedule_type = forms.ChoiceField(
@@ -62,13 +64,17 @@ class HydroShareSettingsForm(forms.Form):
 
     data_types = forms.MultipleChoiceField(
         required=True,
-        widget=forms.CheckboxSelectMultiple(attrs={"checked": ""}),
+        widget=forms.CheckboxSelectMultiple,
         choices=data_type_choices,
         initial='TS'
     )
 
     def __init__(self, *args, **kwargs):
         super(HydroShareSettingsForm, self).__init__(*args, **kwargs)
+
+    # class Meta:
+    #     model = HydroShareResource
+    #     fields = ['hs_account', 'ext_id', 'site_registration', 'sync_type', 'update_freq', 'is_enabled', 'data_types']
 
 
 class HydroShareSiteForm(forms.ModelForm):

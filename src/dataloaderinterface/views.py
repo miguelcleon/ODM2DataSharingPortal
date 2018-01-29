@@ -226,22 +226,26 @@ class SiteDetailView(DetailView):
         try:
             hs_account = self.request.user.odm2user.hydroshare_account
             context['hs_account'] = hs_account
-            settings_form = HydroShareSettingsForm(initial={
-                'sync_type': 'S',
-                'update_freq': 'daily',
-                'data_types': '',
-                'site_registration': self.get_object().registration_id
-            })
-            context['hs_settings_form'] = settings_form
         except AttributeError:
             pass
 
+
         if hs_account:
             try:
-                hs_resource = HydroShareResource.objects.get(hs_account=hs_account.id)
+                hs_resource = HydroShareResource.objects.get(site_registration=self.get_object().registration_id)
                 context['hs_resource'] = hs_resource
+                settings_form = HydroShareSettingsForm(initial={
+                    'site_registration': self.get_object().registration_id,
+                    'update_freq': hs_resource.update_freq,
+                    'schedule_type': hs_resource.sync_type,
+                    'enabled': hs_resource.is_enabled,
+                    'data_types': hs_resource.data_types.split(",")
+                })
             except ObjectDoesNotExist:
-                pass
+                settings_form = HydroShareSettingsForm(initial={'site_registration': self.get_object().registration_id,
+                                                                'data_types': [HydroShareSettingsForm.data_type_choices[0][0]]})
+
+            context['hs_settings_form'] = settings_form
 
         # try:
         #     hs_resource = HydroShareResource.objects.get(site_registration=context['site'])
@@ -299,6 +303,7 @@ class HydroShareResourceSettingsView(UpdateView):
         data_types = ",".join(form.cleaned_data['data_types'])
         update_freq = form.cleaned_data['update_freq']
         schedule_type = form.cleaned_data['schedule_type']
+        is_enabled = form.cleaned_data['enabled']
 
         try:
             account = self.request.user.odm2user.hydroshare_account
@@ -307,25 +312,30 @@ class HydroShareResourceSettingsView(UpdateView):
 
         try:
             resource = HydroShareResource.objects.get(site_registration=site)
+            resource.hs_account = account
             resource.sync_type = schedule_type
             resource.update_freq = update_freq
             resource.data_types = data_types
             resource.last_sync_date = timezone.now()
+            resource.is_enabled = is_enabled
         except ObjectDoesNotExist:
             try:
                 resource = HydroShareResource(hs_account=account, site_registration=site,
                                               sync_type=schedule_type, update_freq=update_freq,
-                                              is_enabled=True, last_sync_date=timezone.now(),
+                                              is_enabled=is_enabled, last_sync_date=timezone.now(),
                                               data_types=data_types)
             except Exception as e:
                 return JsonResponse({'error': e.message}, status=500)
 
         resource.save()
 
+        success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
+
         if self.request.is_ajax():
-            return JsonResponse({'resource': resource.to_dict()})
+            return JsonResponse({'resource': resource.to_dict(),
+                                 'redirect': success_url})
         else:
-            return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
+            return redirect(success_url)
 
     def post(self, request, *args, **kwargs):
         form = HydroShareSettingsForm(request.POST)
@@ -447,16 +457,6 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         action_by_form = ActionByForm(request.POST)
         notify_form = SiteAlertForm(request.POST)
         registration_form = self.get_form()
-
-        # update hydroshare site information
-        accounts = self.get_hydroshare_accounts()
-        if len(accounts) > 0:
-            # Get HydroShareResource to use for `instance` value in hs_site_form constructor
-            hs_site = HydroShareResource.objects.get(site_registration=self.get_object())
-            # Add 'site_registration' value to request.POST
-            request.POST.update({'site_registration': self.get_object().registration_id})
-            hs_site_form = HydroShareSiteForm(data=request.POST, instance=hs_site)
-            hs_site_form.save()
 
         if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset,
                            notify_form):

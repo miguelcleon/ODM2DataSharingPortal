@@ -1,4 +1,4 @@
-<div class="row hydroshare-container">
+<div class="row hydroshare-container" id="hydroshare-settings-container">
     <div class="col-lg-6 col-sm-12">
         <div class="hs-img-container">
             <img src="https://www.hydroshare.org/static/img/logo-lg.png">
@@ -6,17 +6,21 @@
 
         {% if resource %}
 
-            <p>Sharing with HydroShare is currently turned {% if resource.is_enabled %}ON{% else %}OFF{% endif %}</p>
+            <p>Sharing with HydroShare is currently turned <strong>{% if resource.is_enabled %}ON{% else %}OFF{% endif %}</strong></p>
 
             <p>Last updated on <strong>{{ resource.last_sync_date }}</strong></p>
 
             {% if resource.sync_type == 'scheduled' %}
-                <p>Next update schedule for <strong>{{ resource.next_sync_date_verbose }}</strong></p>
+                <p>Next update scheduled for <strong>{{ resource.next_sync_date_verbose }}</strong></p>
             {% endif %}
 
+            <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>
+
+            <button id="update-now-button"
+                    class="mdl-button mdl-button--raised mdl-button--accent">Update Now</button>
+
             <button id="show-hydroshare-settings-dialog"
-                    class="mdl-button mdl-button--raised mdl-button--accent">Settings
-            </button>
+                    class="mdl-button mdl-button--raised mdl-button--accent">Settings</button>
 
         {% else %}
 
@@ -35,4 +39,4 @@
     </div>
 </div>
 
-{% include 'hydroshare/hydroshare_settings_modal.html' with form=form site=site %}
+{% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
