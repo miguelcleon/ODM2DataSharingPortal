@@ -14,11 +14,7 @@
                     <header class="section-header">
                         <div class="page-title">{% if request.resolver_match.view_name == "site_update" %}Edit Site
                             Information{% else %}Register a Site{% endif %}</div>
-                        {% if messages %}
-                            {% for message in messages %}
-                                <span class="form-message {{ message.tags }}">{{ message }}</span>
-                            {% endfor %}
-                        {% endif %}
+                        {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
                     <div class="section-body">
@@ -36,9 +32,9 @@
                                                 <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                      data-field="{{ field.name }}">
                                                     <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                    <i id="sampling-feature-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
+                                                    <i id="action-by-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
                                                     {{ field.errors }}
-                                                    <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="sampling-feature-help{{ forloop.counter0 }}">
+                                                    <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="action-by-help{{ forloop.counter0 }}">
                                                         {{ field.help_text }}
                                                     </div>
                                                     {{ field|add_class:"form-control input-sm" }}
@@ -84,16 +80,18 @@
                                                         {{ field|add_class:"mdl-checkbox__input" }}
                                                         {{ field.label }}
 
+                                                        {{ field.errors }}
                                                         {% if field.help_text %}
                                                             <i id="email-alert-help-{{ forloop.counter0 }}"
                                                                class="material-icons text-muted help-icon">help</i>
-                                                            {{ field.errors }}
+                                                        {% endif %}
+
+                                                        {% if field.help_text %}
                                                             <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
                                                                  data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
                                                                 {{ field.help_text }}
                                                             </div>
                                                         {% endif %}
-
                                                     </label>
                                                 </div>
                                             {% else %}
@@ -203,6 +201,9 @@
                                                         </tr>
                                                     {% endif %}
                                                 {% endfor %}
+                                                <tr class="no-sensors-row bg-white {% if result_form|length > 0 %}hidden{% endif %}">
+                                                    <td colspan="6" class="text-center">No sensors have been added.</td>
+                                                </tr>
                                                 </tbody>
                                             </table>
                                         </div>

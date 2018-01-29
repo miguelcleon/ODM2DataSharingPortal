@@ -43,10 +43,8 @@
                                     </label>
                                 </div>
                             {% endif %}
-
                         </div>
 
-                        {# TODO: make and use template tag  #}
                         {% if site.django_user_id == request.user.id or request.user.is_staff %}
                             <div class="buttons-toolbar row">
                                 <div class="col-sm-12 text-right">
@@ -68,12 +66,7 @@
                                 </div>
                             </div>
                         {% endif %}
-
-                        {% if messages %}
-                            {% for message in messages %}
-                                <p>{{ message }}</p>
-                            {% endfor %}
-                        {% endif %}
+                        {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
                     <div class="row">
@@ -164,6 +157,7 @@
                                 longer than 6 hours. Plots shaded in green have recent data. Plots shaded in red have
                                 not reported data in the last 72 hours.
                             </div>
+                            <hr>
                             <div class="row">
                                 {% for sensor in site.sensors.all %}
                                 <div class="col-sm-12 col-md-6">
@@ -190,40 +184,40 @@
                                                         </tr>
                                                     </table>
                                                 </div>
+
                                                 <div class="col-sm-12 col-md-5">
-                                                {#  View data table button  #}
-                                                <span id="table-trigger-{{ forloop.counter0 }}"
-                                                      class="fa fa-table table-trigger pull-right white-shadow"
-                                                      aria-hidden="true"></span>
-                                                <div class="mdl-tooltip mdl-tooltip--left"
-                                                     data-mdl-for="table-trigger-{{ forloop.counter0 }}">
-                                                    View Data Table
-                                                </div>
+                                                    {#  View data table button  #}
+                                                    <span id="table-trigger-{{ forloop.counter0 }}"
+                                                          class="fa fa-table table-trigger pull-right white-shadow"
+                                                          aria-hidden="true"></span>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="table-trigger-{{ forloop.counter0 }}">
+                                                        View Data Table
+                                                    </div>
 
-                                                {#  Download data button  #}
-                                                <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
-                                                        <span id="download-trigger-{{ forloop.counter0 }}"
-                                                              class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
-                                                </a>
-                                                <div class="mdl-tooltip mdl-tooltip--left"
-                                                     data-mdl-for="download-trigger-{{ forloop.counter0 }}">
-                                                    Download Data
-                                                </div>
+                                                    {#  Download data button  #}
+                                                    <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
+                                                            <span id="download-trigger-{{ forloop.counter0 }}"
+                                                                  class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                        Download Data
+                                                    </div>
 
-                                                {#  View on TSA button  #}
-                                                <a target="_blank"
-                                                   href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
-                                                        <span id="tsa-trigger-{{ forloop.counter0 }}"
-                                                              class="fa fa-external-link tsa-trigger pull-right white-shadow"
-                                                              aria-hidden="true"></span>
-                                                </a>
-                                                <div class="mdl-tooltip mdl-tooltip--left"
-                                                     data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
-                                                    Open in Time Series Analyst
+                                                    {#  View on TSA button  #}
+                                                    <a target="_blank"
+                                                       href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
+                                                            <span id="tsa-trigger-{{ forloop.counter0 }}"
+                                                                  class="fa fa-external-link tsa-trigger pull-right white-shadow"
+                                                                  aria-hidden="true"></span>
+                                                    </a>
+                                                    <div class="mdl-tooltip mdl-tooltip--left"
+                                                         data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
+                                                        Open in Time Series Analyst
+                                                    </div>
                                                 </div>
                                             </div>
-                                            </div>
-
                                         </div>
 
                                         <table class="full-width">
@@ -249,6 +243,11 @@
                                     </div>
                                 </div>
                                 {% endfor %}
+                                {% if not site.sensors.all %}
+                                    <div class="col-12">
+                                        <p>No sensors have been added to this site.</p>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

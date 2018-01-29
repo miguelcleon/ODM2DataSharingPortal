@@ -91,7 +91,7 @@ class UserUpdateForm(UserChangeForm):
 
 class ActionByForm(forms.ModelForm):
     use_required_attribute = False
-    affiliation = forms.ModelChoiceField(queryset=Affiliation.objects.all(), required=False, help_text='', label='Deployed By')
+    affiliation = forms.ModelChoiceField(queryset=Affiliation.objects.all(), required=False, help_text='Select the user that deployed or manages the site', label='Deployed By')
 
     class Meta:
         model = ActionBy
@@ -209,7 +209,7 @@ ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1,
 
 class SiteAlertForm(forms.ModelForm):
     notify = forms.BooleanField(required=False, initial=False, label='Notify me if site stops receiving sensor data')
-    hours_threshold = forms.IntegerField(min_value=1, label='Notify after ')
+    hours_threshold = forms.IntegerField(required=False, min_value=1, label='Notify after ')
     suffix = ' hours of site inactivity'
 
     class Meta:

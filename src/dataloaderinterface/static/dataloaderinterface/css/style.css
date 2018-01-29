@@ -394,15 +394,15 @@ span.map-help {
     color: inherit;
 }
 
-span.form-message.error {
-    width: 100%;
-    display: block;
-    text-align: center;
-    padding: 5px;
-    background: #fff4db;
-    border-radius: 2px;
-    color: #565656;
-    margin-top: 5px;
+.form-message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.form-message.success {
+    color: #155724;
+    background-color: #d4edda;
 }
 
 .sampling-feature-fields .help-icon {
@@ -466,6 +466,12 @@ ul.errorlist {
     list-style: none;
     padding: 0;
     color: rgb(232, 0, 0);
+}
+
+ul.errorlist li {
+    font-size: small;
+    font-style: italic;
+    line-height: 1.5;
 }
 
 .organization-fields, .organization-fields .form-field {
@@ -813,6 +819,10 @@ i.material-icons.site-card-icon {
     margin-left: 10px;
     margin-bottom: -10px;
     vertical-align: sub;
+}
+
+label[for='id_hours_threshold']::after{
+    display: none;
 }
 
 /*LOGIN STYLING*/
