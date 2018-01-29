@@ -115,20 +115,6 @@ class UserUpdateView(UpdateView):
                 messages.error(request, 'There were some errors in the form.')
                 return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
 
-# TODO: Prepare for removal
-# class HydroShareView(TemplateView):
-#     template_name = 'hydroshare/hydroshare_account.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(HydroShareView, self).get_context_data(**kwargs)
-#
-#         odm2user = ODM2User.objects.get(user=self.request.user.id)
-#         hs_accounts = HydroShareAccount.objects.get(user=odm2user)
-#         if not isinstance(hs_accounts, list):
-#             hs_accounts = [hs_accounts]
-#         context['hs_accounts'] = hs_accounts
-#         return context
-
 
 class UserRegistrationView(CreateView):
     template_name = 'registration/register.html'
@@ -229,34 +215,22 @@ class SiteDetailView(DetailView):
         except AttributeError:
             pass
 
-
         if hs_account:
             try:
-                hs_resource = HydroShareResource.objects.get(site_registration=self.get_object().registration_id)
+                hs_resource = HydroShareResource.objects.get(site_registration=context['site'].pk)
                 context['hs_resource'] = hs_resource
                 settings_form = HydroShareSettingsForm(initial={
-                    'site_registration': self.get_object().registration_id,
+                    'site_registration': context['site'].pk,
                     'update_freq': hs_resource.update_freq,
                     'schedule_type': hs_resource.sync_type,
                     'enabled': hs_resource.is_enabled,
                     'data_types': hs_resource.data_types.split(",")
                 })
             except ObjectDoesNotExist:
-                settings_form = HydroShareSettingsForm(initial={'site_registration': self.get_object().registration_id,
+                settings_form = HydroShareSettingsForm(initial={'site_registration': context['site'].pk,
                                                                 'data_types': [HydroShareSettingsForm.data_type_choices[0][0]]})
 
             context['hs_settings_form'] = settings_form
-
-        # try:
-        #     hs_resource = HydroShareResource.objects.get(site_registration=context['site'])
-        #     if hs_resource.title is None:
-        #         site = self.get_object()
-        #         hs_resource.title = site.sampling_feature_name
-        #         hs_resource.save()
-        #     context['hs_account'] = hs_resource.hs_account
-        #     context['hs_resource'] = hs_resource
-        # except Exception:
-        #     context['hs_enabled'] = False
 
         return context
 
@@ -290,6 +264,17 @@ class HydroShareResourceSettingsView(UpdateView):
     template_name = 'hydroshare/hydroshare_settings_modal.html'
     model = HydroShareResource
     object = None
+
+    def update_hs_resource(self, resource): # type: (HydroShareResource) -> None
+        account = self.request.user.odm2user.hydroshare_account
+        tokenJSON = account.get_token()
+        auth_util = AuthUtil.authorize(token=tokenJSON)
+        hsResource = Resource(auth_util.get_client())
+        hsResource.owner = "{0} {1}".format(self.request.user.first_name, self.request.user.last_name)
+        hsResource.abstract = "Automatically Generated Abstract"
+        hsResource.title = resource.site_registration.sampling_feature_name
+        hsResource.resource_type = 'Composite'
+        hsResource.update()
 
     def form_invalid(self, form):
         response = super(HydroShareResourceSettingsView, self).form_invalid(form)
@@ -326,6 +311,13 @@ class HydroShareResourceSettingsView(UpdateView):
                                               data_types=data_types)
             except Exception as e:
                 return JsonResponse({'error': e.message}, status=500)
+
+
+        # if resource.ext_id is None, create a new resource in HydroShare
+        if resource.ext_id is None:
+            # self.update_hs_resource(resource)
+            raise Exception('Make sure this actually works before running...')
+
 
         resource.save()
 

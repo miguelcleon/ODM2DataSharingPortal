@@ -1,6 +1,7 @@
 from dataloader.models import SamplingFeature, Result
 from django import template
 from django.core.exceptions import ObjectDoesNotExist
+import re
 
 from dataloaderinterface.models import SiteRegistration, SiteSensor
 
@@ -36,3 +37,11 @@ def get_site_sensor(site, variable_code):
 def can_administer_site():
     pass
     # return DeviceRegistration.objects.filter(deployment_sampling_feature_uuid__exact=sampling_feature.sampling_feature_uuid).first()
+
+
+@register.filter(name='add_input_class', is_safe=True)
+def add_input_class(value, arg):
+    if re.search(r'class', value, re.IGNORECASE):
+        return re.sub(r'(class=")', r'\1{0} '.format(arg), value)
+    else:
+        return re.sub(r'(<input)', r'\1 class="{0}"'.format(arg), value)
