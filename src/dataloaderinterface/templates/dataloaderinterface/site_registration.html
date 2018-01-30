@@ -359,38 +359,4 @@
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
-    <script src="{% static 'dataloaderinterface/js/hydroshare-settings-update-form.js' %}"></script>
-    <script type="text/javascript">
-        'use strict';
-        $('#hs-disabled-warning').hide();
-        $(function() {
-            const hsAccountSelectField = $('#id_hs_account');
-            let accountsJSON = "{{ hs_accounts_json }}".replace(/&quot;/g, '\"');
-            const accounts = JSON.parse(accountsJSON);
-
-            for (let account of accounts) {
-                let selectedId = hsAccountSelectField[0].value;
-                showHSWarning((selectedId == account.id) && !account.is_enabled);
-            }
-
-            hsAccountSelectField.change(function(ev) {
-                for (let account of accounts) {
-                    if (account.id == ev.target.value) {
-                        showHSWarning(!account.is_enabled);
-                        break;
-                    }
-                }
-            });
-
-            function showHSWarning(show) {
-                if (show) {
-                    $('#hs-disabled-warning').show();
-                    document.getElementById('hs-settings-card-header').className = "card-header text-white bg-warning";
-                } else {
-                    $('#hs-disabled-warning').hide();
-                    document.getElementById('hs-settings-card-header').className = "card-header text-white bg-primary";
-                }
-            }
-        });
-    </script>
 {% endblock %}

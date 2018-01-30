@@ -265,16 +265,23 @@ class HydroShareResourceSettingsView(UpdateView):
     model = HydroShareResource
     object = None
 
-    def update_hs_resource(self, resource): # type: (HydroShareResource) -> None
+    def get_hs_resource(self, resource): # type: (HydroShareResource) -> Resource
+        """Creates a Resource object from hydroshare_util"""
         account = self.request.user.odm2user.hydroshare_account
         tokenJSON = account.get_token()
-        auth_util = AuthUtil.authorize(token=tokenJSON)
-        hsResource = Resource(auth_util.get_client())
+        client = AuthUtil.authorize(token=tokenJSON).get_client()
+        hsResource = Resource(client)
         hsResource.owner = "{0} {1}".format(self.request.user.first_name, self.request.user.last_name)
-        hsResource.abstract = "Automatically Generated Abstract"
+        hsResource.abstract = "Automatically Generated Abstract."
         hsResource.title = resource.site_registration.sampling_feature_name
-        hsResource.resource_type = 'Composite'
-        hsResource.update()
+        hsResource.resource_type = 'CompositeResource'
+        return hsResource
+
+    def update_hydroshare_resource(self):
+        pass
+
+    def create_hydroshare_resource(self):
+        pass
 
     def form_invalid(self, form):
         response = super(HydroShareResourceSettingsView, self).form_invalid(form)
@@ -283,57 +290,62 @@ class HydroShareResourceSettingsView(UpdateView):
         else:
             return response
 
-    def form_valid(self, form):
-        site = SiteRegistration.objects.get(pk=form.cleaned_data['site_registration'])
-        data_types = ",".join(form.cleaned_data['data_types'])
-        update_freq = form.cleaned_data['update_freq']
-        schedule_type = form.cleaned_data['schedule_type']
-        is_enabled = form.cleaned_data['enabled']
-
-        try:
-            account = self.request.user.odm2user.hydroshare_account
-        except AttributeError:
-            return JsonResponse({'error': 'HydroShare account not found for user'}, status=400)
-
-        try:
-            resource = HydroShareResource.objects.get(site_registration=site)
-            resource.hs_account = account
-            resource.sync_type = schedule_type
-            resource.update_freq = update_freq
-            resource.data_types = data_types
-            resource.last_sync_date = timezone.now()
-            resource.is_enabled = is_enabled
-        except ObjectDoesNotExist:
-            try:
-                resource = HydroShareResource(hs_account=account, site_registration=site,
-                                              sync_type=schedule_type, update_freq=update_freq,
-                                              is_enabled=is_enabled, last_sync_date=timezone.now(),
-                                              data_types=data_types)
-            except Exception as e:
-                return JsonResponse({'error': e.message}, status=500)
-
-
-        # if resource.ext_id is None, create a new resource in HydroShare
-        if resource.ext_id is None:
-            # self.update_hs_resource(resource)
-            raise Exception('Make sure this actually works before running...')
-
-
-        resource.save()
-
-        success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
-
-        if self.request.is_ajax():
-            return JsonResponse({'resource': resource.to_dict(),
-                                 'redirect': success_url})
-        else:
-            return redirect(success_url)
-
     def post(self, request, *args, **kwargs):
         form = HydroShareSettingsForm(request.POST)
+
         if form.is_valid():
-            return self.form_valid(form)
-        return self.form_invalid(form)
+            """
+            Create or udpates a resource in hydroshare.org from form data.
+
+            NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only be
+            used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
+            """
+            site = SiteRegistration.objects.get(pk=form.cleaned_data['site_registration'])
+            data_types = ",".join(form.cleaned_data['data_types'])
+            update_freq = form.cleaned_data['update_freq']
+            schedule_type = form.cleaned_data['schedule_type']
+            is_enabled = form.cleaned_data['enabled']
+
+            try:
+                account = self.request.user.odm2user.hydroshare_account
+            except AttributeError:
+                return JsonResponse({'error': 'HydroShare account not found for user'}, status=400)
+
+            try:
+                resource_data = HydroShareResource.objects.get(site_registration=site)
+                resource_data.hs_account = account
+                resource_data.sync_type = schedule_type
+                resource_data.update_freq = update_freq
+                resource_data.data_types = data_types
+                resource_data.last_sync_date = timezone.now()
+                resource_data.is_enabled = is_enabled
+            except ObjectDoesNotExist:
+                try:
+                    resource_data = HydroShareResource(hs_account=account, site_registration=site,
+                                                       sync_type=schedule_type, update_freq=update_freq,
+                                                       is_enabled=is_enabled, last_sync_date=timezone.now(),
+                                                       data_types=data_types)
+                except Exception as e:
+                    return JsonResponse({'error': e.message}, status=500)
+
+            hsResource = self.get_hs_resource(resource_data)
+            """if resource_data.ext_id is None, create a new resource in HydroShare"""
+            if resource_data.ext_id is None:
+                resource_data.ext_id = hsResource.create()
+            elif 'update_resource' in request.POST:
+                data = hsResource.update()
+
+            resource_data.save()
+
+            success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
+
+            if self.request.is_ajax():
+                return JsonResponse({'resource': resource_data.to_dict(),
+                                     'redirect': success_url})
+            else:
+                return redirect(success_url)
+        else:
+            return self.form_invalid(form)
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):

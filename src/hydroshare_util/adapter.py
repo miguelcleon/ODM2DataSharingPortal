@@ -1,5 +1,6 @@
 # adapter.py
-from hs_restclient import HydroShare, DEFAULT_HOSTNAME
+from hs_restclient import HydroShare, DEFAULT_HOSTNAME, HydroShareNotAuthorized, HydroShareNotFound, \
+    HydroShareHTTPException
 
 
 class HydroShareAdapter(HydroShare):

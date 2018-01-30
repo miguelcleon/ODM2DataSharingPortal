@@ -413,34 +413,8 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
-    <script src="{% static 'dataloaderinterface/js/hydroshare-settings-modal.js' %}"></script>
-    <script type="text/javascript" for="hydroshare-sync">
-    $(() => {
-        const syncForm = $('#hs-sync-form');
-
-        syncForm.submit((e) => {
-            e.preventDefault();
-            if (syncForm[0] && syncForm[0].baseURI) {
-                let url = syncForm[0].baseURI;
-                console.log($('#hs-sync-form').serialize());
-                $.post(url, $('#hs-sync-form').serialize())
-                    .done(data => {
-                       console.log('Data from response: ', data);
-                    })
-                    .fail((xhr) => {
-                        if (xhr && xhr.responseJSON) {
-                            let err = xhr.responseJSON.error;
-                            if (err) {
-                                console.error(err)
-                            } else {
-                                console.error(xhr.responseText)
-                            }
-                        }
-                    });
-            }
-        });
-    });
-    </script>
+    <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-resource-update.js' %}"></script>
 
 
 {% endblock %}
