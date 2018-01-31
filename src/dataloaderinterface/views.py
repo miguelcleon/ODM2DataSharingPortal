@@ -234,30 +234,30 @@ class SiteDetailView(DetailView):
 
         return context
 
-    def get_site_file(self):
-        site = self.get_object()
-        site_sensor = SiteSensor.objects.get(registration=site.pk)
-        path = reverse('csv_data_service')
-        url_proto = "{scheme}://{host}:{port}{path}?result_id={result_id}"
-        url = url_proto.format(scheme='http', host='localhost', port=8000, path=path,
-                               result_id=site_sensor.result_id)
-
-        req = requests.get(url)
-
-        print("GET \"{url}\" {status}".format(url=url, status=req.status_code))
-        print("\theaders:")
-        for header in req.headers:
-            print("\t'{}': {}".format(header, req.headers[header]))
-
-        status = req.status_code
-        if status != 200:
-            return JsonResponse({'error': 'request failed', 'status': status})
-
-        results = re.findall('(?<=\")[\S\.]+\.csv(?=\")', req.headers['Content-Disposition'])
-        if len(results) > 0:
-            return (results[0], req.content)
-        else:
-            return JsonResponse({'error': "could not get filename or file is not in '.csv' format"}, status=500)
+    # def get_site_file(self):
+    #     site = self.get_object()
+    #     site_sensor = SiteSensor.objects.get(registration=site.pk)
+    #     path = reverse('csv_data_service')
+    #     url_proto = "{scheme}://{host}:{port}{path}?result_id={result_id}"
+    #     url = url_proto.format(scheme='http', host='localhost', port=8000, path=path,
+    #                            result_id=site_sensor.result_id)
+    #
+    #     req = requests.get(url)
+    #
+    #     print("GET \"{url}\" {status}".format(url=url, status=req.status_code))
+    #     print("\theaders:")
+    #     for header in req.headers:
+    #         print("\t'{}': {}".format(header, req.headers[header]))
+    #
+    #     status = req.status_code
+    #     if status != 200:
+    #         return JsonResponse({'error': 'request failed', 'status': status})
+    #
+    #     results = re.findall('(?<=\")[\S\.]+\.csv(?=\")', req.headers['Content-Disposition'])
+    #     if len(results) > 0:
+    #         return (results[0], req.content)
+    #     else:
+    #         return JsonResponse({'error': "could not get filename or file is not in '.csv' format"}, status=500)
 
 
 class HydroShareResourceSettingsView(UpdateView):
@@ -265,23 +265,18 @@ class HydroShareResourceSettingsView(UpdateView):
     model = HydroShareResource
     object = None
 
-    def get_hs_resource(self, resource): # type: (HydroShareResource) -> Resource
-        """Creates a Resource object from hydroshare_util"""
+    def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
+        """ Creates a 'hydroshare_util.Resource' object """
         account = self.request.user.odm2user.hydroshare_account
-        tokenJSON = account.get_token()
-        client = AuthUtil.authorize(token=tokenJSON).get_client()
-        hsResource = Resource(client)
-        hsResource.owner = "{0} {1}".format(self.request.user.first_name, self.request.user.last_name)
-        hsResource.abstract = "Automatically Generated Abstract."
-        hsResource.title = resource.site_registration.sampling_feature_name
-        hsResource.resource_type = 'CompositeResource'
-        return hsResource
-
-    def update_hydroshare_resource(self):
-        pass
-
-    def create_hydroshare_resource(self):
-        pass
+        token_json = account.get_token()
+        client = AuthUtil.authorize(token=token_json).get_client()
+        hs_resource = Resource(client)
+        hs_resource.owner = "{0} {1}".format(self.request.user.first_name, self.request.user.last_name)
+        hs_resource.abstract = "Automatically Generated Abstract."
+        hs_resource.title = resource.site_registration.sampling_feature_name
+        hs_resource.resource_type = 'CompositeResource'
+        hs_resource.resource_id = resource.ext_id
+        return hs_resource
 
     def form_invalid(self, form):
         response = super(HydroShareResourceSettingsView, self).form_invalid(form)
@@ -312,6 +307,7 @@ class HydroShareResourceSettingsView(UpdateView):
                 return JsonResponse({'error': 'HydroShare account not found for user'}, status=400)
 
             try:
+                # Try to find current hydroshare resource. Update data if found.
                 resource_data = HydroShareResource.objects.get(site_registration=site)
                 resource_data.hs_account = account
                 resource_data.sync_type = schedule_type
@@ -321,6 +317,7 @@ class HydroShareResourceSettingsView(UpdateView):
                 resource_data.is_enabled = is_enabled
             except ObjectDoesNotExist:
                 try:
+                    # If the resource does not exist, create a new one
                     resource_data = HydroShareResource(hs_account=account, site_registration=site,
                                                        sync_type=schedule_type, update_freq=update_freq,
                                                        is_enabled=is_enabled, last_sync_date=timezone.now(),
@@ -328,20 +325,29 @@ class HydroShareResourceSettingsView(UpdateView):
                 except Exception as e:
                     return JsonResponse({'error': e.message}, status=500)
 
-            hsResource = self.get_hs_resource(resource_data)
-            """if resource_data.ext_id is None, create a new resource in HydroShare"""
-            if resource_data.ext_id is None:
-                resource_data.ext_id = hsResource.create()
-            elif 'update_resource' in request.POST:
-                data = hsResource.update()
+            hs_resource = self.get_hs_resource(resource_data)
 
+            if hs_resource.resource_id is None:
+                # If resource_data.ext_id is 'None', call the create() method to create the resource in hydroshare.org
+                resource_data.ext_id = hs_resource.create()
+            # elif 'update_resource' in request.POST:
+            else:
+                hs_resource.get_metadata()
+                # Call the udpate() method to update the resource in hydroshare.org.
+                # Only invoke update() if the resource metadata changes or if there are changes to the site data.
+                data = hs_resource.update()
+
+            # Upload the most recent resource files
+            hs_resource.upload_file('foo', 'foobar')
+
+            # 'resource_data.save()' saves pertinent information in the ODM2WebSDL database (as opposed to
+            # 'hs_resource.update()' or 'hs_resource.create()' that pushes data to hydroshare.org).
             resource_data.save()
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
             if self.request.is_ajax():
-                return JsonResponse({'resource': resource_data.to_dict(),
-                                     'redirect': success_url})
+                return JsonResponse({'resource': resource_data.to_dict(), 'redirect': success_url})
             else:
                 return redirect(success_url)
         else:
@@ -748,3 +754,24 @@ def delete_result(result):
     feature_action.delete()
     action.delete()
     SiteSensor.objects.filter(result_id=result_id).delete()
+
+
+def get_site_file(site_registration):
+    site_sensors = SiteSensor.objects.filter(registration=site_registration.pk)
+    path = reverse('csv_data_service')
+
+    files = []
+    for site_sensor in site_sensors:
+        url = "{scheme}://{host}:{port}{path}?result_id={result_id}".format(scheme='http', host='localhost', port=8000,
+                                                                            path=path, result_id=site_sensor.result_id)
+        req = requests.get(url)
+
+        status = req.status_code
+        if status == 200:
+            file_name = re.findall('(?<=\")[\S\.]+\.csv(?=\")', req.headers['Content-Disposition']).pop()
+            content = req.content
+            files.append({'file_name': file_name, 'content': content})
+        elif status == 404:
+            raise Http404("file not found, sensor ID: " + str(site_sensor.pk))
+
+    return files

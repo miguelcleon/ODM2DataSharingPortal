@@ -2,7 +2,7 @@ import logging
 import os
 from tempfile import mkstemp
 from re import search as regex_search
-from hs_restclient import HydroShareNotFound
+from hs_restclient import HydroShareNotFound, HydroShareNotAuthorized
 from hydroshare_util.adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass
 from coverage import Coverage
@@ -107,13 +107,19 @@ class Resource(HydroShareUtilityBaseClass):
                        level=logging.INFO)
 
     def upload_file(self, filename, content):
+        if self.resource_id is None:
+            raise HydroShareNotFound("resource has no resource_id")
+
         try:
             self.client.delete_resource_file(self.resource_id, filename)
         except HydroShareNotFound:
-            pass # the file doesn't exist on hydroshare, it's okay, just keep breathing.
+            # If file doesn't exist on hydroshare, it's okay, just keep breathing.
+            pass
+        except HydroShareNotAuthorized:
+            pass
 
         # Write file to disk... because that's how hs_restclient needs it to be done! Stupid, I know.
-        suffix = '.csv' if regex_search('\.csv', filename) else None
+        suffix = '.csv' if regex_search('\.csv', filename) else ''
         fd, path = mkstemp(suffix=suffix)
 
         with open(path, 'w+') as f:
@@ -125,9 +131,11 @@ class Resource(HydroShareUtilityBaseClass):
         except Exception as e:
             raise e
         finally:
-            os.close(fd) # close the file descriptor
-            os.remove(path) # delete the tmp file
+            # close the file descriptor
+            os.close(fd)
 
+            # delete the tmp file
+            os.remove(path)
 
     def delete_files(self, files=None):
         if files is None:
