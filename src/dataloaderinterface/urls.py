@@ -16,7 +16,8 @@ Including another URLconf
 from django.conf.urls import url
 
 from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, \
-    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceSettingsView
+    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceUpdateView, \
+    HydroShareResourceCreateView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -26,7 +27,7 @@ urlpatterns = [
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
-    url(r'^sites/(?P<sampling_feature_code>.*)/hydroshare_settings',
-        HydroShareResourceSettingsView.as_view(), name='hydroshare_settings'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/hsr/create/$', HydroShareResourceCreateView.as_view(), name='hs_resource_create'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/hsr/update/$', HydroShareResourceUpdateView.as_view(), name='hs_resource_update'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
 ]

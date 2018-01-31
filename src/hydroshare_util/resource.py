@@ -156,9 +156,9 @@ class Resource(HydroShareUtilityBaseClass):
         self.client.delete_resource(self.resource_id)
 
     def create(self):
-        resource_id = self.client.create_resource(resource_type=self.resource_type, title=self.title,
+        self.resource_id = self.client.create_resource(resource_type=self.resource_type, title=self.title,
                                                   abstract=self.abstract)
-        return resource_id
+        return self.resource_id
 
     def update(self):
         return self.client.update_science_metadata(self.resource_id, self.get_metadata())

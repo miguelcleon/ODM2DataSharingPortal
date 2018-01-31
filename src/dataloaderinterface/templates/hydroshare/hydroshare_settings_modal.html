@@ -1,5 +1,6 @@
 {% load widget_tweaks %}
 {% load site %}
+{% load static %}
 <style>
     #hydroshare-settings-dialog {
         width: 680px;
@@ -20,7 +21,7 @@
     {% csrf_token %}
     <dialog id="hydroshare-settings-dialog">
         <div class="mdl-spinner-container">
-            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-form-spinner"></div>
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
         </div>
         <h3 class="mdl-dialog__title">Create Resource</h3>
 
@@ -71,8 +72,14 @@
 
         <div class="mdl-dialog__actions">
             <input type="submit"
-                   class="mdl-button mdl-button--raised mdl-button--accent"
-                   value="{% if resource.id %}Save{% else %}Start Sharing{% endif %}" />
+            {% if resource.id %}
+                   value="Save"
+                   id="update-resource"
+            {% else %}
+                   value="Start Sharing"
+                   id="create-resource"
+            {% endif %}
+                   class="mdl-button mdl-button--raised mdl-button--accent"/>
 
             <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
 

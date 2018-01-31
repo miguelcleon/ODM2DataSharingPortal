@@ -4,74 +4,91 @@
  */
 
 $(() => {
-    const dialog = document.querySelector('#hydroshare-settings-dialog');
-    const showDialogButton = document.querySelector('#show-hydroshare-settings-dialog');
-    const hydroshareSettingsForm = document.querySelector('#hydroshare-settings-form');
-    const scheduledCB = document.querySelector('input#id_schedule_type_0');
-    const manualCB = document.querySelector('input#id_schedule_type_1');
-    const updateFreqSelect = document.querySelector('select#id_update_freq');
+    setTimeout(() => {
 
-    if (!dialog.showModal) {
-        console.log("Registering modal");
-        dialogPolyfill.registerDialog(dialog);
-    }
+        console.log("Loading hydroshare-settings-modal.js");
 
-    showDialogButton.addEventListener('click', () => {
-        dialog.showModal();
-    });
+        const dialog = $('#hydroshare-settings-dialog')[0];
+        const showDialogButton = $('#show-hydroshare-settings-dialog')[0];
+        const hydroshareSettingsForm = $('#hydroshare-settings-form')[0];
+        const scheduledCB = $('input#id_schedule_type_0')[0];
+        const manualCB = $('input#id_schedule_type_1')[0];
+        const updateFreqSelect = $('select#id_update_freq')[0];
 
-    dialog.querySelector('.close').addEventListener('click', () => {
-        dialog.close();
-    });
+        if (!dialog.showModal) {
+            console.log("registering dialog");
+            dialogPolyfill.registerDialog(dialog);
+        }
 
-    hydroshareSettingsForm.addEventListener('submit', (e) => {
-         e.preventDefault();
-         submitForm();
-    });
+        showDialogButton.addEventListener('click', () => {
+            dialog.showModal();
+        });
 
-    // setTimeout(() => { dialog.showModal(); }, 0);
+        dialog.querySelector('.close').addEventListener('click', () => {
+            dialog.close();
+        });
 
-    manualCB.addEventListener('change', onCBChange);
-    scheduledCB.addEventListener('change', onCBChange);
-    function onCBChange(e) {
-        const shouldHide = $(scheduledCB).closest(`label[for=id_schedule_type_0]`).hasClass('is-checked');
-        $(updateFreqSelect).attr('hidden', shouldHide);
-    }
+        hydroshareSettingsForm.addEventListener('submit', (e) => {
+             e.preventDefault();
+             submitForm();
+        });
+
+        // dialog.showModal();
+
+        $(manualCB).change(onCBChange);
+        $(scheduledCB).change(onCBChange);
+        function onCBChange(e) {
+            const shouldHide = $(scheduledCB).closest(`label[for=id_schedule_type_0]`).hasClass('is-checked');
+            $(updateFreqSelect).attr('hidden', shouldHide);
+        }
 
 
-    function submitForm() {
-        let url = `${hydroshareSettingsForm.baseURI}hydroshare_settings/`;
-        let serializedForm = $(hydroshareSettingsForm).serialize();
-        let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-form-spinner');
+        function submitForm() {
+            const inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
 
-        progressSpinner.addClass('is-active');
+            let method = '';
+            if (inputField.id === 'create-resource') {
+                method = 'create';
+            } else if (inputField.id === 'update-resource') {
+                method = 'update';
+            }
 
-        $.post(url, serializedForm)
-            .done(data => {
-                if (data.redirect)
-                    window.location.href = data.redirect;
-                else
-                    dialog.close();
-            })
-            .fail((xhr) => {
-                let errJSON = xhr && xhr.responseJSON ? xhr.responseJSON : null;
-                if (errJSON) {
-                    console.error(errJSON);
-                    for (let err in errJSON) {
-                        let errList = errJSON[err];
-                        if (Array.isArray((errList))) {
-                            let htmlInsertList = '';
-                            for (let err of errList) { htmlInsertList += `<li>${err}</li>` }
-                            let inputField = $(`#id_${err}`);
-                            inputField.after(`<ul class="errorlist">${htmlInsertList}</ul>`);
+            let url = `${hydroshareSettingsForm.baseURI}hsr/${method}/`;
+            let serializedForm = $(hydroshareSettingsForm).serialize();
+            let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-progress-spinner');
+
+            progressSpinner.addClass('is-active');
+
+            $.post(url, serializedForm)
+                .done(data => {
+                    console.log(data);
+                    if (data.redirect)
+                        window.location.href = data.redirect;
+                    else
+                        dialog.close();
+                })
+                .fail((xhr) => {
+                    let errJSON = xhr && xhr.responseJSON ? xhr.responseJSON : null;
+                    if (errJSON) {
+                        console.error(errJSON);
+                        for (let err in errJSON) {
+                            let errList = errJSON[err];
+                            if (Array.isArray((errList))) {
+                                let htmlInsertList = '';
+                                for (let err of errList) { htmlInsertList += `<li>${err}</li>` }
+                                let inputField = $(`#id_${err}`);
+                                inputField.after(`<ul class="errorlist">${htmlInsertList}</ul>`);
+                            }
                         }
+                    } else {
+                        console.error(xhr.responseText);
                     }
-                }
-            })
-            .always(() => {
-                progressSpinner.removeClass('is-active');
-            })
-    }
+                })
+                .always(() => {
+                    progressSpinner.removeClass('is-active');
+                })
+        }
+    }, 0);
 
 
 
