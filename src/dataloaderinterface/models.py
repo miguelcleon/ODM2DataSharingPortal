@@ -257,7 +257,7 @@ class HydroShareResource(models.Model):
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
     update_freq = models.CharField(max_length=32, verbose_name='Update Frequency', default='daily')
     is_enabled = models.BooleanField(default=True)
-    last_sync_date = models.DateTimeField(blank=True, null=True)
+    last_sync_date = models.DateTimeField(auto_created=True)
     data_types = models.CharField(max_length=255, blank=True, default='')
 
     @property

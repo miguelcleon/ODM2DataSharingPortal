@@ -41,7 +41,7 @@
             </div>
             {% endif %}
 
-            <h4>Update Frequency</h4>
+            <h4>{{ form.schedule_type.label }}</h4>
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-12">
                     {{ form.schedule_type.errors }}
@@ -57,14 +57,15 @@
                 </div>
             </div>
 
-            <h4>Data Types</h4>
+            <h4>{{ form.data_types.label }}</h4>
             <div class="row">
                 <div class="col-12">
+                    <span id="id_{{ form.data_types.name }}"></span>
                     {% for checkbox in form.data_types %}
-                        <label class="mdl-checkbox mdl-js-checkbox" for="{{ checkbox.id_for_label }}">
-                            {{ checkbox.tag|add_input_class:"mdl-checkbox__input" }}
-                            <span class="mdl-checkbox__label">{{ checkbox.choice_label }}</span>
-                        </label>
+                    <label class="mdl-checkbox mdl-js-checkbox" for="{{ checkbox.id_for_label }}">
+                        {{ checkbox.tag|add_input_class:"mdl-checkbox__input" }}
+                        <span class="mdl-checkbox__label">{{ checkbox.choice_label }}</span>
+                    </label>
                     {% endfor %}
                 </div>
             </div>

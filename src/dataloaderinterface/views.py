@@ -236,19 +236,29 @@ class SiteDetailView(DetailView):
         return context
 
 
-class HydroShareResourceCreateView(CreateView):
-    template_name = 'hydroshare/hydroshare_site_settings.html'
-    model = HydroShareResource
-    object = None
-    slug_field = 'slug'
-    fields = '__all__'
+class HydroShareResourceUpdateCreateView(UpdateView):
+    def form_invalid(self, form):
+        response = super(HydroShareResourceUpdateCreateView, self).form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
 
     def get_object(self, queryset=None):
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
         try:
-            return HydroShareResource.objects.get(site_registration=site.registration_id)
+            resource = HydroShareResource.objects.get(site_registration=site.registration_id)
         except ObjectDoesNotExist:
-            return None
+            resource = None
+        return resource
+
+
+class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
+    template_name = 'hydroshare/hydroshare_site_settings.html'
+    model = HydroShareResource
+    object = None
+    slug_field = 'sampling_feature_code'
+    fields = '__all__'
 
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceCreateView, self).get_context_data(**kwargs)
@@ -260,13 +270,6 @@ class HydroShareResourceCreateView(CreateView):
                                                           'data_types': [initial_datatype],
                                                           'enabled': True})
         return context
-
-    def form_invalid(self, form):
-        response = super(HydroShareResourceCreateView, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
 
     def post(self, request, *args, **kwargs):
         """
@@ -306,28 +309,20 @@ class HydroShareResourceCreateView(CreateView):
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
             if self.request.is_ajax():
-                return JsonResponse({'resource': resource.to_dict(), 'redirect': success_url})
+                return JsonResponse({'redirect': success_url})
             else:
                 return redirect(success_url)
         else:
             return self.form_invalid(form)
 
 
-class HydroShareResourceUpdateView(UpdateView):
+class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hydroshare_site_settings.html'
     model = HydroShareResource
     object = None
     slug_field = 'sampling_feature_code'
     slug_url_kwarg = 'hydroshare_settings_id'
     fields = '__all__'
-
-    def get_object(self, queryset=None):
-        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
-        try:
-            resource = HydroShareResource.objects.get(site_registration=site.registration_id)
-        except ObjectDoesNotExist:
-            resource = None
-        return resource
 
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceUpdateView, self).get_context_data(**kwargs)
@@ -344,7 +339,6 @@ class HydroShareResourceUpdateView(UpdateView):
         })
         return context
 
-
     def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
         """ Creates a 'hydroshare_util.Resource' object """
         account = self.request.user.odm2user.hydroshare_account
@@ -353,13 +347,6 @@ class HydroShareResourceUpdateView(UpdateView):
         hs_resource = Resource(client)
         hs_resource.resource_id = resource.ext_id
         return hs_resource
-
-    def form_invalid(self, form):
-        response = super(HydroShareResourceUpdateView, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
 
     def post(self, request, *args, **kwargs):
         form = HydroShareSettingsForm(request.POST)
@@ -372,7 +359,11 @@ class HydroShareResourceUpdateView(UpdateView):
                 # Get hs_resource with hydroshare_util
                 hs_resource = self.get_hs_resource(resource_data)
                 # Upload the most recent resource files
-                upload_hydroshare_resource_files(site, hs_resource)
+                # upload_hydroshare_resource_files(site, hs_resource)
+                from django.core.management import call_command
+                call_command('update_hydroshare_resource_files')
+
+                # update last sync date on resource
                 resource_data.last_sync_date = timezone.now()
             else:
                 resource_data.data_types = ",".join(form.cleaned_data['data_types'])
@@ -380,18 +371,19 @@ class HydroShareResourceUpdateView(UpdateView):
                 resource_data.sync_type = form.cleaned_data['schedule_type']
                 resource_data.is_enabled = form.cleaned_data['enabled']
 
-                # 'resource_data.save()' saves pertinent information in the ODM2WebSDL database (as opposed to
-                # 'hs_resource.update()' or 'hs_resource.create()' that pushes data to hydroshare.org).
-                resource_data.save()
+            # 'resource_data.save()' saves pertinent information in the ODM2WebSDL database (as opposed to
+            # 'hs_resource.update()' or 'hs_resource.create()' that pushes data to hydroshare.org).
+            resource_data.save()
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
             if self.request.is_ajax():
-                return JsonResponse({'resource': resource_data.to_dict(), 'redirect': success_url})
+                return JsonResponse({'redirect': success_url})
             else:
                 return redirect(success_url)
         else:
-            return self.form_invalid(form)
+            response = self.form_invalid(form)
+            return response
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):
@@ -819,7 +811,7 @@ def get_site_files(site_registration):
 
 def upload_hydroshare_resource_files(site, resource):  # type: (SiteRegistration, Resource) -> None
     files = get_site_files(site)
-    for file in files:
-        file_name = file['file_name']
-        content = file['content']
+    for file_ in files:
+        file_name = file_['file_name']
+        content = file_['content']
         resource.upload_file(file_name, content)

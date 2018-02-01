@@ -66,7 +66,8 @@ class HydroShareSettingsForm(forms.Form):
         required=True,
         widget=forms.CheckboxSelectMultiple,
         choices=data_type_choices,
-        initial='TS'
+        initial='TS',
+        error_messages={'required': 'Please select at least one data type.'}
     )
 
     def __init__(self, *args, **kwargs):

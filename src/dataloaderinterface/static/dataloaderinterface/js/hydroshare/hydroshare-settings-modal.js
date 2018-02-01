@@ -68,16 +68,25 @@ $(() => {
                         dialog.close();
                 })
                 .fail((xhr) => {
-                    let errJSON = xhr && xhr.responseJSON ? xhr.responseJSON : null;
-                    if (errJSON) {
-                        console.error(errJSON);
-                        for (let err in errJSON) {
-                            let errList = errJSON[err];
-                            if (Array.isArray((errList))) {
-                                let htmlInsertList = '';
-                                for (let err of errList) { htmlInsertList += `<li>${err}</li>` }
-                                let inputField = $(`#id_${err}`);
-                                inputField.after(`<ul class="errorlist">${htmlInsertList}</ul>`);
+
+                    let errors = xhr.responseJSON;
+                    if (errors) {
+                        console.error(xhr.responseJSON);
+                        for (let [errorName, errorList] of Object.entries(errors)) {
+                            if (Array.isArray(errorList)) {
+                                let fieldContainer = $(`#id_${errorName}`);
+                                let errorContainer = $(fieldContainer).find('ul.errorlist');
+
+                                if (errorContainer.length) {
+                                    $(errorContainer).html('');
+                                } else {
+                                    $(fieldContainer).prepend(`<ul class="errorlist"></ul>`);
+                                    errorContainer = $(fieldContainer).find('ul.errorlist');
+                                }
+
+                                for (let err of errorList) {
+                                    $(errorContainer).append(`<li>${err}</li>`);
+                                }
                             }
                         }
                     } else {
