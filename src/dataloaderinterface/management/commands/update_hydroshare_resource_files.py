@@ -4,13 +4,15 @@ from dataloaderinterface.views import upload_hydroshare_resource_files
 from hydroshare_util.resource import Resource
 from hydroshare_util.utility import AuthUtil
 from django.utils.termcolors import colorize
+from datetime import datetime
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
         resources = HydroShareResource.objects.all()
         upload_success_count = 0
         upload_fail_count = 0
-        self.stdout.write(colorize('\nStarting Job: ', fg='blue') + 'Uploading site data to hydroshare')
+        self.stdout.write(colorize('\n' + str(datetime.now()) + ' Starting Job: ', fg='blue') + 'Uploading site data to hydroshare')
         for resource in resources:
             site = resource.site_registration
 

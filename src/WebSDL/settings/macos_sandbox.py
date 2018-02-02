@@ -16,8 +16,8 @@ STATIC_URL = '/static/'
 SITE_URL = ''
 
 """
-Installing PostgreSQL instructions on a mac
--------------------------------------------
+Installing postgreSQL on MacOS
+------------------------------
 1. Setting up Homebrew
     1a. If you don't have Homebrew installed, visit https://brew.sh/ for installation instructions
     1b. If Homebrew is already installed, run:

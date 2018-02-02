@@ -465,7 +465,6 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         except ObjectDoesNotExist:
             return []
 
-
     def get_context_data(self, **kwargs):
         if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
             raise Http404

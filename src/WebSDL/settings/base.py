@@ -14,9 +14,9 @@ import os
 import json
 import logging
 
-LOGGING_LEVEL = logging.INFO
-logging.basicConfig(level=LOGGING_LEVEL)
-logging.info("Starting logging, level='{0}'".format(LOGGING_LEVEL))
+# LOGGING_LEVEL = logging.INFO
+# logging.basicConfig(level=LOGGING_LEVEL)
+# logging.info("Starting logging, level='{0}'".format(LOGGING_LEVEL))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
