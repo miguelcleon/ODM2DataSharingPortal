@@ -1,22 +1,22 @@
 import os
+import subprocess
 import fnmatch
 from crontab import CronTab
 import re
 from django.utils.termcolors import colorize
-import subprocess
+from WebSDL.settings.base import CRONTAB_LOGFILE as LOGFILE
 
 JOB_COMMENT_PREPENDER = "__odm2websdl__"
-LOG_OUTPUT_FILE = '/home/craig/crontab.log'
 SETTINGS_MODULE = 'WebSDL.linux_sandbox'
 
 
 def start_jobs():
-    manage_path = locate_file('manage.py')
+    manage_path = locate_file('manage.py')  # get the file path of 'manage.py'
     if manage_path is None:
         raise Exception('the file "manage.py" was not found')
 
-    output = subprocess.check_output(['which', 'python'])
-    python_path = re.sub(r"(?<=[a-z])\r?\n", " ", output)
+    output = subprocess.check_output(['which', 'python'])  # get the python path used by the current process
+    python_path = re.sub(r"(?<=[a-z])\r?\n", " ", output)  # remove newlines from 'output'...
 
     # get cron object for managing crontab jobs
     cron = CronTab(user='craig')
@@ -29,19 +29,32 @@ def start_jobs():
             cron.remove(job)
             cron.write()
 
-    # hydroshare upload job
+    """
+    create crontab job for scheduled hydroshare file uploads
+    
+    Example of what the crontab job would look like from this command:
+        0 */5 * * * python manage.py update_hydroshare_resource_files --settings=WebSDL.linux_sandbox >> \ 
+        /crontab.log 2>> /crontab.log # __odm2websdl__upload_hydroshare_files
+
+    """
     command_name = 'update_hydroshare_resource_files'
     job = cron.new(command="""{python} {manage} {command} --settings={settings} >> {logfile} 2>> {logfile}""".format(
         python=python_path,
         manage=manage_path,
         command=command_name,
         settings=SETTINGS_MODULE,
-        logfile=LOG_OUTPUT_FILE), comment=JOB_COMMENT_PREPENDER + 'upload_hydroshare_files')
+        logfile=LOGFILE),
+        comment=JOB_COMMENT_PREPENDER + 'upload_hydroshare_files')
     job.every().day()  # run everyday
-    job.hour.every(5)  # run at 5:00 AM
+    job.hour.every(5)  # at 5:00 AM
 
-    cron.write()
+    cron.write()  # write, i.e. 'save' job
 
+    """ 
+    Add additional jobs below here if ever needed... 
+    """
+
+    # print jobs created
     print(colorize("Started crontab jobs: ", fg='blue'))
     for job in cron:
         print(colorize('\t' + str(job), fg='green'))

@@ -186,3 +186,5 @@ INFLUX_URL_QUERY = data['influx_query']
 SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data else '2'
 
 TSA_URL = data['tsa_url'] if 'tsa_url' in data else ''
+
+CRONTAB_LOGFILE = data['crontabLogFile']
