@@ -29,13 +29,13 @@
 
         <div class="hydroshare-actions">
             <button id="update-now-button"
-                    class="mdl-button mdl-button--raised mdl-button--accent">Update Now</button>
+                    class="mdl-button mdl-button--raised mdl-button--accent"
+                    {% if not resource.is_enabled %}disabled{% endif %}>Update Now</button>
 
             <button id="show-hydroshare-settings-dialog"
                     class="mdl-button mdl-button--raised mdl-button--accent">Settings</button>
-{#            <div class="mdl-spinner-container">#}
-                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
-{#            </div>#}
+
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
         </div>
     {% else %}
 

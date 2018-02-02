@@ -28,6 +28,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView
 from django.views.generic.list import ListView
+from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm
@@ -283,11 +284,12 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
             resource = self.get_object()
             if resource is None:
-                resource = HydroShareResource(site_registration=site.registration_id,
+                resource = HydroShareResource(site_registration=site,
                                               data_types=",".join(form.cleaned_data['data_types']),
                                               update_freq=form.cleaned_data['update_freq'],
-                                              schedule_type=form.cleaned_data['schedule_type'],
-                                              is_enabled=True)
+                                              sync_type=form.cleaned_data['schedule_type'],
+                                              is_enabled=True,
+                                              last_sync_date=timezone.now())
 
             account = self.request.user.odm2user.hydroshare_account
             token_json = account.get_token()
@@ -302,7 +304,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 
             resource.ext_id = hs_resource.create()
 
-            upload_hydroshare_resource_files(site, resource)
+            upload_hydroshare_resource_files(site, hs_resource)
 
             resource.save()
 
@@ -355,15 +357,15 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             site = SiteRegistration.objects.get(pk=form.cleaned_data['site_registration'])
             resource_data = self.get_object()
 
-            if 'update_files' in request.POST:
+            if 'update_files' in request.POST and resource_data.is_enabled:
                 # Get hs_resource with hydroshare_util
                 hs_resource = self.get_hs_resource(resource_data)
+
                 # Upload the most recent resource files
-                # upload_hydroshare_resource_files(site, hs_resource)
-                from django.core.management import call_command
+                upload_hydroshare_resource_files(site, hs_resource)
                 call_command('update_hydroshare_resource_files')
 
-                # update last sync date on resource
+                # update last sync date on resource_data
                 resource_data.last_sync_date = timezone.now()
             else:
                 resource_data.data_types = ",".join(form.cleaned_data['data_types'])

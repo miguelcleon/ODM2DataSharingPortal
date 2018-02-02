@@ -271,6 +271,9 @@ class HydroShareResource(models.Model):
                 return choice[1]
         return 'NA'
 
+    def next_sync_date(self):
+        return self.next_sync_date_verbose
+
     @property
     def next_sync_date_verbose(self):
         days = None
