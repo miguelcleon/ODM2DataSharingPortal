@@ -1,5 +1,6 @@
 {% extends 'dataloaderinterface/base.html' %}
 {% load staticfiles %}
+{% load helpers %}
 
 {% block content %}
     <div class="container-fluid page-header">
@@ -102,7 +103,7 @@
                                                 <tr>
                                                     <td></td>
                                                     <td>{{ site.latest_measurement }}
-                                                        ({{ site.latest_measurement|timesince }} ago)
+                                                        ({{ site.latest_measurement_utc|utc_timesince }} ago)
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -188,7 +189,7 @@
                                             </tr>
                                             <tr>
                                                 <td></td>
-                                                <td>{{ site.latest_measurement }} <br>({{ site.latest_measurement|timesince }} ago)</td>
+                                                <td>{{ site.latest_measurement }} <br>({{ site.latest_measurement_utc|utc_timesince }} ago)</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -230,7 +231,7 @@
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
+                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                  }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
             {% endfor %}
@@ -242,7 +243,7 @@
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
+                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                  }{% if not forloop.last %},{% endif %}
             {% endfor %}
