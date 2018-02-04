@@ -106,13 +106,13 @@ class SitesListView(LoginRequiredMixin, ListView):
         return super(SitesListView, self).get_queryset()\
             .filter(django_user_id=self.request.user.id)\
             .prefetch_related('sensors')\
-            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'), latest_measurement_utc=Max('sensors__last_measurement_utc_datetime'))
 
     def get_context_data(self, **kwargs):
         context = super(SitesListView, self).get_context_data()
         context['followed_sites'] = self.request.user.followed_sites\
             .prefetch_related('sensors')\
-            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))\
+            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'), latest_measurement_utc=Max('sensors__last_measurement_utc_datetime'))\
             .all()
         return context
 
