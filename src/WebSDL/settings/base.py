@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import json
-import logging
+import getpass
+# import logging
 
 # LOGGING_LEVEL = logging.INFO
 # logging.basicConfig(level=LOGGING_LEVEL)
@@ -187,4 +188,10 @@ SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data 
 
 TSA_URL = data['tsa_url'] if 'tsa_url' in data else ''
 
-CRONTAB_LOGFILE = data['crontabLogFile']
+# crontab job settings
+CRONTAB_USER = data.get('user', getpass.getuser())
+
+CRONTAB_LOGFILE = data.get('crontabLogfile', '/tmp/crontab.log')
+
+CRONTAB_EXECUTE_DAILY_AT_HOUR = data.get('crontabExecuteDailyAtHour', 5)
+

@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
-import subprocess
 
 from django.apps import AppConfig
-import scheduledJobs
-
+import crontab_jobs
+from django.utils.termcolors import colorize
 
 class DataloaderinterfaceConfig(AppConfig):
     name = 'dataloaderinterface'
 
-    def ready(self):
-        scheduledJobs.start_jobs(user=True)
+    # def ready(self):
+    #     user = True
+    #     scheduledJobs.start_jobs(user=user)

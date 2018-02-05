@@ -362,8 +362,8 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
                 hs_resource = self.get_hs_resource(resource_data)
 
                 # Upload the most recent resource files
-                upload_hydroshare_resource_files(site, hs_resource)
-                # call_command('update_hydroshare_resource_files', force_update=False)
+                # upload_hydroshare_resource_files(site, hs_resource)
+                call_command('update_hydroshare_resource_files')
 
                 # update last sync date on resource_data
                 resource_data.last_sync_date = timezone.now()

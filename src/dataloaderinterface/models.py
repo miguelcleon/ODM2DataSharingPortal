@@ -265,11 +265,26 @@ class HydroShareResource(models.Model):
                 return choice[1]
         return 'NA'
 
-    def next_sync_date(self):
-        return self.next_sync_date_verbose
+    @property
+    def m_next_sync_date(self):
+        return self.next_sync_date()
 
     @property
-    def next_sync_date_verbose(self):
+    def sync_at_hour(self):
+        """
+        :returns a string representation of the hour that files for this resource will sync at. For example, if
+        sync_at_hour equals '5', then this resource will sync at 5:00 AM on days the resource fils are synced with
+        hydroshare.org.
+        """
+        return str(settings.CRONTAB_EXECUTE_DAILY_AT_HOUR)
+
+    def get_udpate_freq_index(self):
+        try:
+            return [choice[0] for choice in HydroShareResource.FREQUENCY_CHOICES].index(self.update_freq.total_seconds())
+        except Exception:
+            return 0
+
+    def next_sync_date(self):
         days = 0
         if self.update_freq == 'daily':
             days = 1
@@ -284,12 +299,6 @@ class HydroShareResource(models.Model):
             date = datetime.combine(self.last_sync_date.date(), datetime.min.time())
 
         return date + timedelta(days=days)
-
-    def get_udpate_freq_index(self):
-        try:
-            return [choice[0] for choice in HydroShareResource.FREQUENCY_CHOICES].index(self.update_freq.total_seconds())
-        except Exception:
-            return 0
 
     def to_dict(self):
         return {

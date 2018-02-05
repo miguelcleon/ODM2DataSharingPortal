@@ -9,7 +9,24 @@ from datetime import datetime, timedelta, date
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        super(Command, self).add_arguments(parser)
+        parser.add_argument('-f', '--force-update', action='store_true')
+
     def handle(self, force_update=False, *args, **options):
+        # if len(args) > 0:
+        #     for arg in args:
+        #         if arg == 'force-update':
+        #             # force_update = True
+        #             print("FORCE UPDATING, YAY!!!!!!!")
+        #
+        # for key, value in options.iteritems():
+        #     if key == 'force_update':
+        #         if isinstance(value, bool):
+        #             force_update = value
+        #         elif isinstance(value, str):
+        #             force_update = True if value.lower() == 'true' else False
+
         resources = HydroShareResource.objects.all()
         upload_success_count = 0
         upload_fail_count = 0
@@ -22,7 +39,10 @@ class Command(BaseCommand):
                 continue
 
             # Skip resources that are not "due" for upload unless 'force_udpate' is True
-            if (timezone.now() - resource.next_sync_date()).total_seconds() < 0 and not force_update:
+            next_sync = resource.next_sync_date()
+            now = timezone.now()
+            diff = (now - next_sync).total_seconds()
+            if diff < 0 or force_update is True:
                 upload_skipped_count += 1
                 continue
 

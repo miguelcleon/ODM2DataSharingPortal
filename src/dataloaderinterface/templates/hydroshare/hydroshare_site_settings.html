@@ -6,11 +6,16 @@
         flex-direction: row;
     }
     .hydroshare-actions > * {
-        margin: 8px;
+        margin: 8px 16px 8px 0;
+    }
+    p {
+        margin-bottom: 4px;
     }
 </style>
 
+
 <div class="col-lg-6 col-sm-12">
+    <hr>
     <div class="hs-img-container">
         <img src="https://www.hydroshare.org/static/img/logo-lg.png">
     </div>
@@ -19,13 +24,13 @@
 
         <p>Sharing with HydroShare is currently turned <strong>{% if resource.is_enabled %}ON{% else %}OFF{% endif %}</strong></p>
 
-        <p>Last updated on <strong>{{ resource.last_sync_date }}</strong></p>
+        <p>Last updated on <strong>{{ resource.last_sync_date|date:'N j, Y' }}</strong></p>
 
         {% if resource.sync_type == 'scheduled' %}
-            <p>Next update scheduled for <strong>{{ resource.next_sync_date_verbose }}</strong></p>
+            <p>Next update scheduled for <strong>{{ resource.m_next_sync_date|date:'N j, Y' }}</strong></p>
         {% endif %}
 
-        <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>
+{#        <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>#}
 
         <div class="hydroshare-actions">
             <button id="update-now-button"
@@ -33,7 +38,9 @@
                     {% if not resource.is_enabled %}disabled{% endif %}>Update Now</button>
 
             <button id="show-hydroshare-settings-dialog"
-                    class="mdl-button mdl-button--raised mdl-button--accent">Settings</button>
+                    class="mdl-button mdl-button--raised mdl-button--accent">
+                <i class="fa fa-cog fa-lg"></i>
+                Settings</button>
 
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
         </div>
@@ -51,6 +58,7 @@
         </button>
 
     {% endif %}
+    <hr>
 </div>
 
 {% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
