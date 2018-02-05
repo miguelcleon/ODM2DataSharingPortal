@@ -1,9 +1,11 @@
 import codecs
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from StringIO import StringIO
 
+import requests
+from django.conf import settings
 from django.http.response import HttpResponse
 from django.views.generic.base import View
 from unicodecsv.py2 import UnicodeWriter
@@ -240,5 +242,15 @@ class TimeSeriesValuesApi(APIView):
                 'result_datetime', 'value_count', 'result_datetime_utc_offset',
                 'valid_datetime', 'valid_datetime_utc_offset'
             ])
+
+            # Insert data value into influx instance.
+            influx_request_url = settings.INFLUX_UPDATE_URL
+            influx_request_body = settings.INFLUX_UPDATE_BODY.format(
+                result_uuid=str(site_sensor.result_uuid).replace('-', '_'),
+                data_value=result_value.data_value,
+                utc_offset=result_value.value_datetime_utc_offset,
+                timestamp_s=long((result_value.value_datetime - datetime.utcfromtimestamp(0)).total_seconds()),
+            )
+            requests.post(influx_request_url, influx_request_body.encode())
 
         return Response({}, status.HTTP_201_CREATED)
