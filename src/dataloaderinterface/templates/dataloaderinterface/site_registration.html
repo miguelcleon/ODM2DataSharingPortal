@@ -278,10 +278,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="form-group col-lg-12 result-form">
+                            <div class="form-group col-12 result-form">
                             {% for field in results_formset.empty_form %}
                                 {% if field.name != "DELETE" %}
-                                <div class="form-field col-lg-12 {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
+                                <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
                                     <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
                                     {% with "placeholder:"|add:field.help_text as placeholder %}
                                         {{ field|add_class:"form-control input-sm"|attr:placeholder }}
@@ -289,7 +289,29 @@
                                 </div>
                                 {% endif %}
                             {% endfor %}
-                        </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="alert alert-light mdl-card" style="width: 100%; min-height: initial;">
+                                    <strong>Don't see your sensor in the list of equipment models?</strong>
+                                    <small>Click <a href="mailto:someone@example.com?Subject=Hello%20again">here</a> to send an email to
+                                    a system administrator with a request to add new sensors. Please provide us with the
+                                    manufacturer and make/model information for the sensor, as well as a link to a
+                                    website description if you can.</small>
+
+                                    <div class="input-group mb-3">
+                                        <input readonly id="adminEmail" type="text" class="form-control" value="iutah.ci@gmail.com"
+                                               aria-label="Administrator's email">
+
+                                        <div class="input-group-append">
+                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="btn-copy clipboard-copy mdl-button mdl-js-button mdl-js-ripple-effect"
+                                                    data-target="adminEmail">
+                                                Copy to clipboard
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="clearfix"></div>
@@ -354,5 +376,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}

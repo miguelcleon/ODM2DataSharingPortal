@@ -949,6 +949,10 @@ label.checkbox-label {
     border-color: #ebccd1;
 }
 
+.alert-light {
+    border: 1px solid #DDD;
+}
+
 /*TRANSITIONS*/
 .mdl-button--trans {
     -webkit-transition: all 300ms;
