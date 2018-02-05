@@ -228,12 +228,13 @@ class TimeSeriesValuesApi(APIView):
 
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
-                    site_sensor.registration.deployment_date_utc_offset = utc_offset
-                    site_sensor.registration.save(update_fields=['deployment_date', 'deployment_date_utc_offset'])
+                    # site_sensor.registration.deployment_date_utc_offset = utc_offset
+                    site_sensor.registration.save(update_fields=['deployment_date'])
 
             site_sensor.save(update_fields=[
                 'last_measurement_id', 'last_measurement_value', 'last_measurement_datetime',
-                'last_measurement_utc_offset', 'activation_date', 'activation_date_utc_offset'
+                'last_measurement_utc_datetime', 'last_measurement_utc_offset',
+                'activation_date', 'activation_date_utc_offset'
             ])
             result.save(update_fields=[
                 'result_datetime', 'value_count', 'result_datetime_utc_offset',
