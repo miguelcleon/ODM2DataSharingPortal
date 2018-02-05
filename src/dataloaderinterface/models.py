@@ -237,16 +237,10 @@ class HydroShareAccount(models.Model):
 class HydroShareResource(models.Model):
     SYNC_TYPES = ['scheduled', 'manual']
     FREQUENCY_CHOICES = (
-        (timedelta(), 'Never'),
-        (timedelta(hours=1).total_seconds(), 'Every Hour'),
-        (timedelta(hours=3).total_seconds(), 'Every 3 Hours'),
-        (timedelta(hours=6).total_seconds(), 'Every 6 Hours'),
-        (timedelta(days=1).total_seconds(), 'Daily'),
-        (timedelta(days=2).total_seconds(), 'Every 2 Days'),
-        (timedelta(days=3).total_seconds(), 'Every 3 Days'),
-        (timedelta(weeks=1).total_seconds(), 'Weekly'),
-        (timedelta(weeks=2).total_seconds(), 'Bi Monthly'),
-        (timedelta(days=30).total_seconds(), 'Monthly')
+        (timedelta(), 'never'),
+        (timedelta(days=1).total_seconds(), 'daily'),
+        (timedelta(weeks=1).total_seconds(), 'weekly'),
+        (timedelta(days=30).total_seconds(), 'monthly')
     )
 
     hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE, null=True,
@@ -276,15 +270,20 @@ class HydroShareResource(models.Model):
 
     @property
     def next_sync_date_verbose(self):
-        days = None
+        days = 0
         if self.update_freq == 'daily':
             days = 1
         elif self.update_freq == 'weekly':
             days = 7
         elif self.update_freq == 'monthly':
             days = 30
-        date = self.last_sync_date.date() + timedelta(days=days)
-        return date
+
+        if isinstance(self.last_sync_date, datetime):
+            date = self.last_sync_date
+        else:
+            date = datetime.combine(self.last_sync_date.date(), datetime.min.time())
+
+        return date + timedelta(days=days)
 
     def get_udpate_freq_index(self):
         try:

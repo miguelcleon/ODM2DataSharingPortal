@@ -363,7 +363,7 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
 
                 # Upload the most recent resource files
                 upload_hydroshare_resource_files(site, hs_resource)
-                call_command('update_hydroshare_resource_files')
+                # call_command('update_hydroshare_resource_files', force_update=False)
 
                 # update last sync date on resource_data
                 resource_data.last_sync_date = timezone.now()
@@ -373,12 +373,10 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
                 resource_data.sync_type = form.cleaned_data['schedule_type']
                 resource_data.is_enabled = form.cleaned_data['enabled']
 
-            # 'resource_data.save()' saves pertinent information in the ODM2WebSDL database (as opposed to
-            # 'hs_resource.update()' or 'hs_resource.create()' that pushes data to hydroshare.org).
+            # save resource_data
             resource_data.save()
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
-
             if self.request.is_ajax():
                 return JsonResponse({'redirect': success_url})
             else:

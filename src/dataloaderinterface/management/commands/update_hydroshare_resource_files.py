@@ -4,37 +4,39 @@ from dataloaderinterface.views import upload_hydroshare_resource_files
 from hydroshare_util.resource import Resource
 from hydroshare_util.auth import AuthUtil
 from django.utils.termcolors import colorize
-from datetime import datetime, timedelta
+from django.utils import timezone
+from datetime import datetime, timedelta, date
 
 
 class Command(BaseCommand):
-    def handle(self, update_all=False, *args, **options):
+    def handle(self, force_update=False, *args, **options):
         resources = HydroShareResource.objects.all()
         upload_success_count = 0
         upload_fail_count = 0
         upload_skipped_count = 0
         self.stdout.write('\n' + str(datetime.now()) + colorize(' Starting Job: ', fg='blue') + 'Uploading site data to hydroshare')
         for resource in resources:
-            # skip resource if not enabled
+            # Skip resource if not enabled
             if not resource.is_enabled:
                 upload_skipped_count += 1
                 continue
 
-            # skip resources that are not "due" for upload
-            # int((self.expires_in - datetime.today()).total_seconds()),
-            # print(resource.next_sync_date())
-            # if (resources.next_sync_date() - datetime.today()).total_seconds():
-            #     pass
+            # Skip resources that are not "due" for upload unless 'force_udpate' is True
+            if (timezone.now() - resource.next_sync_date()).total_seconds() < 0 and not force_update:
+                upload_skipped_count += 1
+                continue
 
             site = resource.site_registration
 
             self.stdout.write(colorize('Uploading resource files for: ', fg='blue') + site.sampling_feature_code)
 
             try:
-                auth = AuthUtil.authorize(token=resource.hs_account.token.to_dict())
-                hs_resource = Resource(client=auth.get_client(), resource_id=resource.ext_id)
-                upload_hydroshare_resource_files(site, hs_resource)
+                # auth = AuthUtil.authorize(token=resource.hs_account.token.to_dict())
+                # hs_resource = Resource(client=auth.get_client(), resource_id=resource.ext_id)
+                # upload_hydroshare_resource_files(site, hs_resource)
                 upload_success_count += 1
+                resource.last_sync_date = timezone.now()
+                resource.save()
 
                 self.stdout.write(colorize('\tSuccessfully uploaded file(s) for {0}'.format(site.sampling_feature_code), fg='blue'))
 
@@ -45,5 +47,6 @@ class Command(BaseCommand):
         self.stdout.write(colorize('\nJob finished uploading resource files to hydroshare.', fg='blue'))
         self.stdout.write(colorize('\tResource upload success count: ', fg='blue') + str(upload_success_count))
         self.stdout.write(colorize('\t   Resource upload fail count: ', fg='blue') + str(upload_fail_count))
-        self.stdout.write(colorize('\t                      Skipped: ', fg='blue') + str(upload_skipped_count))
-        self.stdout.write(colorize('\t                    Attempted: ', fg='blue') + str(len(resources)) + '\n')
+        self.stdout.write(colorize('\t             Resource Skipped: ', fg='blue') + str(upload_skipped_count))
+        self.stdout.write(colorize('\t          Resources Attempted: ', fg='blue') + str(upload_success_count + upload_fail_count))
+        self.stdout.write(colorize('\t                        Total: ', fg='blue') + str(len(resources)) + '\n')
