@@ -74,6 +74,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'user_account' %}">
                                 <i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}</a></li>
+                        {% if user.is_staff %}
+                            <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-sign-out"
                                                                              aria-hidden="true"></i>
