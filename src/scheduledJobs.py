@@ -10,7 +10,7 @@ JOB_COMMENT_PREPENDER = "__odm2websdl__"
 SETTINGS_MODULE = 'WebSDL.linux_sandbox'
 
 
-def start_jobs():
+def start_jobs(user=True):
     manage_path = locate_file('manage.py')  # get the file path of 'manage.py'
     if manage_path is None:
         raise Exception('the file "manage.py" was not found')
@@ -19,15 +19,16 @@ def start_jobs():
     python_path = re.sub(r"(?<=[a-z])\r?\n", " ", output)  # remove newlines from 'output'...
 
     # get cron object for managing crontab jobs
-    cron = CronTab(user='craig')
+    cron = CronTab(user=user)
 
     # remove jobs so they are not duplicated
-    print(colorize("\nStopping crontab jobs: ", fg='blue'))
-    for job in cron:
-        if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):
-            print("\t" + colorize(str(job.comment), fg='green'))
-            cron.remove(job)
-            cron.write()
+    if len(cron):
+        print(colorize("\nStopping crontab jobs: ", fg='blue'))
+        for job in cron:
+            if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):
+                print("\t" + colorize(str(job.comment), fg='green'))
+                cron.remove(job)
+                cron.write()
 
     """
     create crontab job for scheduled hydroshare file uploads
@@ -48,7 +49,7 @@ def start_jobs():
     job.every().day()  # run everyday
     job.hour.every(5)  # at 5:00 AM
 
-    cron.write()  # write, i.e. 'save' job
+    cron.write()  # write, i.e. 'save' crontab job
 
     """ 
     Add additional jobs below here if ever needed... 
