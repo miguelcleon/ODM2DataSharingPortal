@@ -31,6 +31,7 @@
         {% endif %}
 
 {#        <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>#}
+        <p class="text-danger" id="hydroshare-error"></p>
 
         <div class="hydroshare-actions">
             <button id="update-now-button"
@@ -61,7 +62,13 @@
     <hr>
 </div>
 
-{% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
+<div id="hs-target">
+    {% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
+</div>
+
+{#{% block styles %}#}
+{#    <link rel="prefetch" href="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}" as="script">#}
+{#{% endblock %}#}
 
 {% block scripts %}
     <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}"></script>

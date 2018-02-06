@@ -15,7 +15,7 @@ $(() => {
         const manualCB = $('input#id_schedule_type_1')[0];
         const updateFreqSelect = $('select#id_update_freq')[0];
 
-        if (!dialog.showModal) {
+        if (dialog && dialog.showModal) {
             console.log("registering dialog");
             dialogPolyfill.registerDialog(dialog);
         }

@@ -14,19 +14,6 @@ class Command(BaseCommand):
         parser.add_argument('-f', '--force-update', action='store_true')
 
     def handle(self, force_update=False, *args, **options):
-        # if len(args) > 0:
-        #     for arg in args:
-        #         if arg == 'force-update':
-        #             # force_update = True
-        #             print("FORCE UPDATING, YAY!!!!!!!")
-        #
-        # for key, value in options.iteritems():
-        #     if key == 'force_update':
-        #         if isinstance(value, bool):
-        #             force_update = value
-        #         elif isinstance(value, str):
-        #             force_update = True if value.lower() == 'true' else False
-
         resources = HydroShareResource.objects.all()
         upload_success_count = 0
         upload_fail_count = 0
@@ -35,6 +22,11 @@ class Command(BaseCommand):
         for resource in resources:
             # Skip resource if not enabled
             if not resource.is_enabled:
+                upload_skipped_count += 1
+                continue
+
+            # Skip if resource sync type is 'manual'
+            if resource.sync_type.lower() == 'manual' and force_update is False:
                 upload_skipped_count += 1
                 continue
 
@@ -51,10 +43,13 @@ class Command(BaseCommand):
             self.stdout.write(colorize('Uploading resource files for: ', fg='blue') + site.sampling_feature_code)
 
             try:
-                # auth = AuthUtil.authorize(token=resource.hs_account.token.to_dict())
-                # hs_resource = Resource(client=auth.get_client(), resource_id=resource.ext_id)
-                # upload_hydroshare_resource_files(site, hs_resource)
+                # get auth token and upload files to resource
+                auth = AuthUtil.authorize(token=resource.hs_account.token.to_dict())
+                hs_resource = Resource(client=auth.get_client(), resource_id=resource.ext_id)
+                upload_hydroshare_resource_files(site, hs_resource)
+
                 upload_success_count += 1
+
                 resource.last_sync_date = timezone.now()
                 resource.save()
 

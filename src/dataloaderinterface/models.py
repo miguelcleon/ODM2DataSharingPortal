@@ -245,7 +245,7 @@ class HydroShareResource(models.Model):
 
     hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE, null=True,
                                    blank=True)
-    ext_id = models.CharField(max_length=255, blank=True, null=True, unique=True) # external hydroshare resource id
+    ext_id = models.CharField(max_length=255, blank=True, null=True, unique=True)  # external hydroshare resource id
     title = models.CharField(max_length=255, blank=True, null=True)
     site_registration = models.OneToOneField(SiteRegistration, unique=True)
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)

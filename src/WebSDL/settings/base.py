@@ -191,7 +191,7 @@ TSA_URL = data['tsa_url'] if 'tsa_url' in data else ''
 # crontab job settings
 CRONTAB_USER = data.get('user', getpass.getuser())
 
-CRONTAB_LOGFILE = data.get('crontabLogfile', '/tmp/crontab.log')
+CRONTAB_LOGFILE_PATH = data.get('crontabLogfile', '/var/log/odm2websdl-cron.log')
 
 CRONTAB_EXECUTE_DAILY_AT_HOUR = data.get('crontabExecuteDailyAtHour', 5)
 

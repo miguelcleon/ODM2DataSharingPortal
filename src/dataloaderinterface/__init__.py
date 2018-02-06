@@ -12,3 +12,4 @@ def on_dataloaderinterface_shutdown(*args):
 
 
 signal.signal(signal.SIGINT, on_dataloaderinterface_shutdown)
+signal.signal(signal.SIGTERM, on_dataloaderinterface_shutdown)
