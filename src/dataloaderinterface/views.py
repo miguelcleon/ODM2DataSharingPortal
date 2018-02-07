@@ -269,8 +269,10 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         if form.is_valid():
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
             resource = self.get_object()
+            hs_account = self.request.user.odm2user.hydroshare_account
             if resource is None:
                 resource = HydroShareResource(site_registration=site,
+                                              hs_account=hs_account,
                                               data_types=",".join(form.cleaned_data['data_types']),
                                               update_freq=form.cleaned_data['update_freq'],
                                               sync_type=form.cleaned_data['schedule_type'],
@@ -756,6 +758,83 @@ def create_result(site_registration, result_form, sampling_feature, affiliation,
     site_sensor.save()
 
     return result
+
+
+class OAuthAuthorize(TemplateView):
+    """handles the OAuth 2.0 authorization workflow with hydroshare.org"""
+    def get(self, request, *args, **kwargs):
+        if 'code' in request.GET:
+            try:
+                token_dict = AuthUtil.authorize_client_callback(request.GET['code'])  # type: dict
+                auth_utility = AuthUtil.authorize(token=token_dict)  # type: AuthUtil
+            except Exception as e:
+                print 'Authorizition failure: {}'.format(e)
+                return HttpResponse('Error: Authorization failure!')
+
+            client = auth_utility.get_client()  # type: HydroShareAdapter
+            user_info = client.get_user_info()
+            logging.info('\nuser_info: %s', json.dumps(user_info, indent=3))
+
+            try:
+                # check if hydroshare account already exists
+                account = HydroShareAccount.objects.get(ext_id=user_info['id'])
+            except ObjectDoesNotExist:
+                # if account does not exist, create a new one
+                account = HydroShareAccount(is_enabled=True, ext_id=user_info['id'])
+
+            old_token = None
+            if account.token:
+                old_token = account.token
+                account.token = None
+                account.save()
+
+            # Make updates to datatbase
+            token = OAuthToken(**token_dict)
+            token.save()
+
+            account.token = token
+            account.save()
+
+            if old_token:
+                old_token.delete()
+
+            request.user.odm2user.hydroshare_account = account
+            request.user.odm2user.save()
+
+            return redirect('user_account')
+        elif 'error' in request.GET:
+            return HttpResponseServerError(request.GET['error'])
+        else:
+            return AuthUtil.authorize_client()
+
+
+class OAuthAuthorizeRedirect(TemplateView):
+    """
+    handles notifying a user they are being redirected, then handles the actual redirection
+
+    When a user comes to this view, 'self.get()' checks for a 'redirect' value in the url parameters.
+
+        - If the value is found, the user will be immediately redirected to www.hydroshare.org for client
+        authorization.
+
+        - If the value is NOT found, the user is sent to a page notifying them that they are about to be redirected.
+        After a couple of seconds, they are redirected back to this view with the 'redirect' parameter contained in the
+        url, and sent off to www.hydroshare.org.
+    """
+    template_name = 'hydroshare/oauth_redirect.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OAuthAuthorizeRedirect, self).get_context_data(**kwargs)
+        # Add 'redirect' as a url parameter
+        url = reverse('dataloaderinterface:hydroshare_oauth_redirect') + '?redirect=true'
+        context['redirect_url'] = mark_safe(url)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if 'redirect' in request.GET and request.GET['redirect'] == 'true':
+            return AuthUtil.authorize_client()
+        else:
+            return super(OAuthAuthorizeRedirect, self).get(request, args, kwargs)
 
 
 def delete_result(result):

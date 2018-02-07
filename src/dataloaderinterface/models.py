@@ -193,8 +193,6 @@ class OAuthToken(models.Model):
 
 # HSUAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
-    # user = models.ForeignKey('ODM2User', db_column='user_id')
-    name = models.CharField(max_length=255, default='HydroShare Account')
     is_enabled = models.BooleanField(default=False)
     ext_id = models.IntegerField(unique=True) # external hydroshare account id
     token = models.ForeignKey(OAuthToken, db_column='token_id', null=True, on_delete=models.CASCADE)

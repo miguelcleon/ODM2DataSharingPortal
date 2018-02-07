@@ -28,17 +28,6 @@
     }
 </style>
 
-{#<a href="{% url 'hydroshareinterface:oauth' %}"#}
-{#   class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">#}
-{#    <i class="material-icons">share</i>#}
-{#    Add HydroShare Connection#}
-{#</a>#}
-{##}
-{#<a href="{% url 'hydroshareinterface:shared_resources' %}"#}
-{#    class="mdl-button mdl-button--raised mdl-button--accent mdl-js-button mdl-js-ripple-effect">#}
-{#    View Shared Resources#}
-{#</a>#}
-
 {# TODO: Replace with dynamic url #}
 <div class="img-container">
     <img src="https://www.hydroshare.org/static/img/logo-lg.png">
@@ -57,7 +46,7 @@
     <dialog class="mdl-dialog" id="hs-dialog" hidden>
         <div class="mdl-dialog__content">
             <p>Are you sure you want to disconnect your HydroShare account?</p>
-            <p>Warning: Your sites on EnviroDIY will stop sharing data with <em>hydroshare.org</em> and your
+            <p><span class="text-warning">Warning:</span> Your sites on EnviroDIY will stop sharing data with <em>hydroshare.org</em> and your
             HydroShare settings will be lost.</p>
         </div>
         <div class="mdl-dialog__actions">
@@ -71,7 +60,7 @@
     {% if data_profile_mode == 'view' %}
 
         <p class="lead">Connect Account to HydroShare</p>
-        <a href="{% url 'hydroshareinterface:oauth_redirect' %}" class="mdl-button mdl-button--raised mdl-button--accent">Connect</a>
+        <a href="{% url 'dataloaderinterface:hydroshare_oauth_redirect' %}" class="mdl-button mdl-button--raised mdl-button--accent">Connect</a>
 
     {% endif %}{# data_profile_mode == 'view' #}
 

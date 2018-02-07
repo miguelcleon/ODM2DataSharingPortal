@@ -14,7 +14,6 @@ function initializeHydroShareSettingsDialog() {
     const updateFreqSelect = $('select#id_update_freq')[0];
 
     if (dialog && dialog.showModal) {
-        console.log("registering dialog");
         dialogPolyfill.registerDialog(dialog);
     }
 

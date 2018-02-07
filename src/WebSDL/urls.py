@@ -52,6 +52,5 @@ urlpatterns = [
     url(r'^' + BASE_URL + 'account/$', UserUpdateView.as_view(), name='user_account'),
     url(r'^' + BASE_URL + 'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(BASE_URL, include('dataloaderinterface.urls')),
-    url(BASE_URL, include('dataloaderservices.urls')),
-    url(r'^' + BASE_URL + 'hydroshare/', include('hydroshareinterface.urls', namespace='hydroshareinterface'))
+    url(BASE_URL, include('dataloaderservices.urls'))
 ]

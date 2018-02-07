@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'dataloader',
     'dataloaderservices',
     'dataloaderinterface',
-    'hydroshareinterface',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
