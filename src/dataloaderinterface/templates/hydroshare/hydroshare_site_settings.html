@@ -8,11 +8,11 @@
     .hydroshare-actions > * {
         margin: 8px 16px 8px 0;
     }
-    p {
-        margin-bottom: 4px;
+    .hs-img-container {
+        margin-bottom: 8px;
     }
-</style>
 
+</style>
 
 <div class="col-lg-6 col-sm-12">
     <hr>
@@ -22,41 +22,50 @@
 
     {% if resource %}
 
-        <p>Sharing with HydroShare is currently turned <strong>{% if resource.is_enabled %}ON{% else %}OFF{% endif %}</strong></p>
+    <p>Sharing with HydroShare is currently turned
+        <strong>
+            {% if resource.is_enabled %}
+                <span class="text-primary">ON</span>
+            {% else %}
+                <span class="text-warning">OFF</span>
+            {% endif %}
+        </strong>
+    </p>
 
-        <p>Last updated on <strong>{{ resource.last_sync_date|date:'N j, Y' }}</strong></p>
+    <p>Last updated on <strong>{{ resource.last_sync_date|date:'N j, Y' }}</strong></p>
 
-        {% if resource.sync_type == 'scheduled' %}
-            <p>Next update scheduled for <strong>{{ resource.m_next_sync_date|date:'N j, Y' }}</strong></p>
-        {% endif %}
+    {% if resource.sync_type == 'scheduled' %}
+        <p>Next update scheduled for <strong>{{ resource.m_next_sync_date|date:'N j, Y' }}</strong></p>
+    {% endif %}
 
-{#        <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>#}
-        <p class="text-danger" id="hydroshare-error"></p>
+{#    <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>#}
+    <p class="text-danger" id="hydroshare-error"></p>
 
-        <div class="hydroshare-actions">
-            <button id="update-now-button"
-                    class="mdl-button mdl-button--raised mdl-button--accent"
-                    {% if not resource.is_enabled %}disabled{% endif %}>Update Now</button>
+    <div class="hydroshare-actions">
+        <button id="update-now-button"
+                class="mdl-button mdl-button--raised mdl-button--accent"
+                {% if not resource.is_enabled %}disabled{% endif %}>Update Now</button>
 
-            <button id="show-hydroshare-settings-dialog"
-                    class="mdl-button mdl-button--raised mdl-button--accent">
-                <i class="fa fa-cog fa-lg"></i>
-                Settings</button>
+        <button id="show-hydroshare-settings-dialog"
+                class="mdl-button mdl-button--raised mdl-button--accent">
+            <i class="fa fa-cog fa-lg"></i>
+            Settings</button>
 
-            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
-        </div>
+        <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
+    </div>
+
     {% else %}
 
-        <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
+    <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
 
-        <p class="lead">
-            Share your data on <em>hydroshare.org</em>.
-            {# TODO: Implement a 'click here to learn more' link... #}
-            <a href="#" id="display-hydroshare-info">Click here</a> to learn more.
-        </p>
-        <button id="show-hydroshare-settings-dialog"
-                class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing
-        </button>
+    <p class="lead">
+        Share your data on <em>hydroshare.org</em>.
+        {# TODO: Implement a 'click here to learn more' link... #}
+        <a href="#" id="display-hydroshare-info">Click here</a> to learn more.
+    </p>
+    <button id="show-hydroshare-settings-dialog"
+            class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing
+    </button>
 
     {% endif %}
     <hr>
@@ -65,11 +74,3 @@
 <div id="hs-target">
     {% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
 </div>
-
-{#{% block styles %}#}
-{#    <link rel="prefetch" href="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}" as="script">#}
-{#{% endblock %}#}
-
-{% block scripts %}
-    <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}"></script>
-{% endblock %}

@@ -9,6 +9,8 @@ $(hydroshareContainer).load(resource_template_url, () => {
     const hydroshareSettingsForm = $('#hydroshare-settings-form');
     const hydroshareError = $('p#hydroshare-error');
 
+    initializeHydroShareSettingsDialog(); // called from `hydroshare-resource-modal.js`
+
     $(updateNowButton).click((e) => {
         $('p#hydroshare-error').text('');
         console.log(hydroshareError);

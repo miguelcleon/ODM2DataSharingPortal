@@ -209,30 +209,16 @@ class SiteDetailView(DetailView):
         context['tsa_url'] = settings.TSA_URL
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
 
-        hs_account = None
         try:
-            hs_account = self.request.user.odm2user.hydroshare_account
-            context['hs_account'] = hs_account
+            context["hydroshare_account"] = self.request.user.odm2user.hydroshare_account
         except AttributeError:
             pass
 
-        if hs_account:
-            try:
-                hs_resource = HydroShareResource.objects.get(site_registration=context['site'].pk)
-                context['resource_is_connected'] = True
-                # settings_form = HydroShareSettingsForm(initial={
-                #     'site_registration': context['site'].pk,
-                #     'update_freq': hs_resource.update_freq,
-                #     'schedule_type': hs_resource.sync_type,
-                #     'enabled': hs_resource.is_enabled,
-                #     'data_types': hs_resource.data_types.split(",")
-                # })
-            except ObjectDoesNotExist:
-                # settings_form = HydroShareSettingsForm(initial={'site_registration': context['site'].pk,
-                #                                                 'data_types': [HydroShareSettingsForm.data_type_choices[0][0]]})
-                pass
-
-            # context['hs_settings_form'] = settings_form
+        try:
+            resources = HydroShareResource.objects.filter(site_registration=context['site'].pk)
+            context['resource_is_connected'] = len(resources) > 0
+        except ObjectDoesNotExist:
+            pass
 
         return context
 

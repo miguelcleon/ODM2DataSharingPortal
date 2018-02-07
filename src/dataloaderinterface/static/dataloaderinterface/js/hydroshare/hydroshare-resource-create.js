@@ -9,8 +9,10 @@ $(() => {
 
    $.get(template_url)
        .done(data => {
-           // console.log(data);
            $(hydroshareContainer).html(data);
+
+           // called from `hydroshare-resource-modal.js`
+           initializeHydroShareSettingsDialog();
        })
        .fail(xhr => {
            if (xhr.responseJSON)
