@@ -9,6 +9,7 @@ from django.conf import settings
 from django.db.models.aggregates import Max
 from django.db.models.expressions import F
 from django.db.models.query import Prefetch
+from django.utils.safestring import mark_safe
 
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
@@ -22,7 +23,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
-from django.http.response import HttpResponseRedirect, Http404, HttpResponse, JsonResponse
+from django.http.response import HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseServerError
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -33,9 +34,9 @@ from django.core.management import call_command
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
-    SiteAlert
+    SiteAlert, OAuthToken
+from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
-from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.resource import Resource
 
 class LoginRequiredMixin(object):
@@ -773,7 +774,7 @@ class OAuthAuthorize(TemplateView):
 
             client = auth_utility.get_client()  # type: HydroShareAdapter
             user_info = client.get_user_info()
-            logging.info('\nuser_info: %s', json.dumps(user_info, indent=3))
+            print('\nuser_info: %s', json.dumps(user_info, indent=3))
 
             try:
                 # check if hydroshare account already exists
@@ -808,7 +809,7 @@ class OAuthAuthorize(TemplateView):
             return AuthUtil.authorize_client()
 
 
-class OAuthAuthorizeRedirect(TemplateView):
+class OAuthRedirect(TemplateView):
     """
     handles notifying a user they are being redirected, then handles the actual redirection
 
@@ -824,9 +825,9 @@ class OAuthAuthorizeRedirect(TemplateView):
     template_name = 'hydroshare/oauth_redirect.html'
 
     def get_context_data(self, **kwargs):
-        context = super(OAuthAuthorizeRedirect, self).get_context_data(**kwargs)
+        context = super(OAuthRedirect, self).get_context_data(**kwargs)
         # Add 'redirect' as a url parameter
-        url = reverse('dataloaderinterface:hydroshare_oauth_redirect') + '?redirect=true'
+        url = reverse('hydroshare_oauth_redirect') + '?redirect=true'
         context['redirect_url'] = mark_safe(url)
         return context
 
@@ -834,7 +835,7 @@ class OAuthAuthorizeRedirect(TemplateView):
         if 'redirect' in request.GET and request.GET['redirect'] == 'true':
             return AuthUtil.authorize_client()
         else:
-            return super(OAuthAuthorizeRedirect, self).get(request, args, kwargs)
+            return super(OAuthRedirect, self).get(request, args, kwargs)
 
 
 def delete_result(result):
