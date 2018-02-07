@@ -1,8 +1,7 @@
 /**
 * hydroshare-settings-modal.js
-* @description Determines how the hydroshare settings modal is presented in 'site_details.html'.
+* @description Initializes the hydroshare settings modal for presentation on 'site_details.html'.
 */
-
 
 function initializeHydroShareSettingsDialog() {
 
@@ -13,12 +12,14 @@ function initializeHydroShareSettingsDialog() {
     const manualCB = $('input#id_schedule_type_1')[0];
     const updateFreqSelect = $('select#id_update_freq')[0];
 
-    if (dialog && dialog.showModal) {
+    if (dialog && !dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
     }
 
     showDialogButton.addEventListener('click', () => {
         dialog.showModal();
+        let closest = $(scheduledCB).closest(`label[for=id_schedule_type_0]`);
+        toggleUpdateFreqSelect(!closest.hasClass('is-checked'));
     });
 
     dialog.querySelector('.close').addEventListener('click', () => {
@@ -30,15 +31,18 @@ function initializeHydroShareSettingsDialog() {
          submitForm();
     });
 
-    // dialog.showModal();
+    $(manualCB).change(toggleUpdateFreqSelect);
+    $(scheduledCB).change(toggleUpdateFreqSelect);
 
-    $(manualCB).change(onCBChange);
-    $(scheduledCB).change(onCBChange);
-    function onCBChange(e) {
-        const shouldHide = $(scheduledCB).closest(`label[for=id_schedule_type_0]`).hasClass('is-checked');
-        $(updateFreqSelect).attr('hidden', shouldHide);
+    /**
+     * toggleUpdateFreqSelect
+     * @description: Shows the "update frequency" select element when the selected update type is "scheduled".
+     * Otherwise hides the "update frequency" select element when the selected upate type is "manual".
+     */
+    function toggleUpdateFreqSelect(e) {
+        const show = typeof e == 'boolean' ? e : e.target.value.toLowerCase() == 'manual';
+        $(updateFreqSelect).attr('hidden', show);
     }
-
 
     function submitForm() {
         const inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
@@ -63,9 +67,7 @@ function initializeHydroShareSettingsDialog() {
                     window.location.href = data.redirect;
                 else
                     dialog.close();
-            })
-            .fail((xhr) => {
-
+            }).fail((xhr) => {
                 let errors = xhr.responseJSON;
                 if (errors) {
                     console.error(xhr.responseJSON);
@@ -89,9 +91,8 @@ function initializeHydroShareSettingsDialog() {
                 } else {
                     console.error(xhr.responseText);
                 }
-            })
-            .always(() => {
+            }).always(() => {
                 progressSpinner.removeClass('is-active');
-            })
+            });
     }
 }

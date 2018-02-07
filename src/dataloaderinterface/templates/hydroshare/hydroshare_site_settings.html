@@ -32,7 +32,7 @@
         </strong>
     </p>
 
-    <p>Last updated on <strong>{{ resource.last_sync_date|date:'N j, Y' }}</strong></p>
+    <p>Last updated on <strong>{{ resource.last_sync_date|date:'N j, Y P' }}</strong></p>
 
     {% if resource.sync_type == 'scheduled' %}
         <p>Next update scheduled for <strong>{{ resource.m_next_sync_date|date:'N j, Y' }}</strong></p>
