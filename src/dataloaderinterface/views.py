@@ -39,6 +39,7 @@ from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
 
+
 class LoginRequiredMixin(object):
     @classmethod
     def as_view(cls):
@@ -248,6 +249,12 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     slug_field = 'sampling_feature_code'
     fields = '__all__'
 
+    def generate_abstract(self, site):
+        return "This is some sample abstract-text for {0}.".format(site.sampling_feature_name)
+
+    def generate_title(self, site):
+        return site.sampling_feature_name
+
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceCreateView, self).get_context_data(**kwargs)
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
@@ -256,7 +263,9 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         context['site'] = site
         context['form'] = HydroShareSettingsForm(initial={'site_registration': site.pk,
                                                           'data_types': [initial_datatype],
-                                                          'enabled': True})
+                                                          'enabled': True,
+                                                          'title': self.generate_title(site),
+                                                          'abstract': self.generate_abstract(site)})
         return context
 
     def post(self, request, *args, **kwargs):
@@ -286,13 +295,15 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             hs_resource = Resource(client)
 
             hs_resource.owner = "{0} {1}".format(self.request.user.first_name, self.request.user.last_name)
-            hs_resource.abstract = "Automatically Generated Abstract."
-            hs_resource.title = resource.site_registration.sampling_feature_name
+            hs_resource.abstract = form.cleaned_data['abstract']
+            hs_resource.title = form.cleaned_data['title']
             hs_resource.resource_type = 'CompositeResource'
             hs_resource.resource_id = resource.ext_id
 
+            # Create the resource in hydroshare
             resource.ext_id = hs_resource.create()
 
+            # Upload data files to the newly created resource
             upload_hydroshare_resource_files(site, hs_resource)
 
             resource.save()

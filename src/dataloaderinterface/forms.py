@@ -9,7 +9,7 @@ from django.forms.formsets import formset_factory
 from django.utils.safestring import mark_safe
 import re
 
-from dataloaderinterface.models import ODM2User, HydroShareResource, HydroShareAccount, SiteRegistration, SiteAlert
+from dataloaderinterface.models import ODM2User, HydroShareResource, SiteRegistration, SiteAlert
 
 
 class SiteTypeSelect(forms.Select):
@@ -68,6 +68,17 @@ class HydroShareSettingsForm(forms.Form):
         choices=data_type_choices,
         initial='TS',
         error_messages={'required': 'Please select at least one data type.'}
+    )
+
+    abstract = forms.CharField(
+        required=False,
+        widget=forms.Textarea
+    )
+
+    title = forms.CharField(
+        required=False,
+        widget=forms.TextInput,
+        label='Resource Title'
     )
 
     def __init__(self, *args, **kwargs):

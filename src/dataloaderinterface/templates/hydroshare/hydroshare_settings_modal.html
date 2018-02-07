@@ -3,7 +3,7 @@
 {% load static %}
 <style>
     #hydroshare-settings-dialog {
-        width: 680px;
+        max-width: 960px;
     }
     .mdl-spinner-container {
         display: flex;
@@ -27,10 +27,9 @@
 
         <div class="mdl-dialog__content">
             {{ form.site_registration.as_hidden }}
-{#            <i class="fa fa-info-circle" aria-hidden="true"></i>#}
 
+{# If resource.id is None, then this resource hasn't been created yet and `enabled` should be True by default #}
             {% if resource.id %}
-            {# If resource.id is None, then this resource hasn't been created yet and `enabled` should be True by default #}
             <div class="row">
                 <div class="col-12">
                     <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.enabled.id_for_label }}">
@@ -41,25 +40,29 @@
             </div>
             {% endif %}
 
-            <h4>{{ form.schedule_type.label }}</h4>
             <div class="row">
-                <div class="col-lg-6 col-md-6 col-12">
-                    {{ form.schedule_type.errors }}
-                    {{ form.schedule_type }}
+                <div class="col-12">
+                    <h4>{{ form.schedule_type.label }}</h4>
                 </div>
+                <div class="row col-12">
+                    <div class="col-lg-6 col-md-6 col-12">
+                        {{ form.schedule_type.errors }}
+                        {{ form.schedule_type }}
+                    </div>
 
-                <div class="col-lg-6 col-md-6 col-12">
-                    <div class="form-group">
-                        <label for="{{ form.update_freq.id_for_label }}" style="width: 100%;">
-                        {{ form.update_freq|add_class:"form-control" }}
-                        </label>
+                    <div class="col-lg-6 col-md-6 col-12">
+                        <div class="form-group">
+                            <label for="{{ form.update_freq.id_for_label }}" style="width: 100%;">
+                            {{ form.update_freq|add_class:"form-control" }}
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <h4>{{ form.data_types.label }}</h4>
             <div class="row">
                 <div class="col-12">
+                    <h4>{{ form.data_types.label }}</h4>
                     <span id="id_{{ form.data_types.name }}"></span>
                     {% for checkbox in form.data_types %}
                     <label class="mdl-checkbox mdl-js-checkbox" for="{{ checkbox.id_for_label }}">
@@ -69,6 +72,34 @@
                     {% endfor %}
                 </div>
             </div>
+
+
+            {% if not resource.id %}
+
+{#                Resource Title#}
+            <div class="row">
+                <h4 class="col-12">{{ form.title.label }}</h4>
+                <div class="col-12">
+                    <div class="mdl-textfield mdl-js-textfield">
+                        {{ form.title|add_class:'mdl-textfield__input' }}
+                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+{#                Resource Abstract#}
+            <div class="row">
+                <h4 class="col-12">{{ form.abstract.label }}</h4>
+                <div class="col-12">
+                    <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
+                        {{ form.abstract|add_class:"mdl-textfield__input" }}
+                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+
         </div>
 
         <div class="mdl-dialog__actions">
