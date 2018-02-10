@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 from tempfile import mkstemp
 from re import search as regex_search
 from hs_restclient import HydroShareNotFound, HydroShareNotAuthorized
@@ -162,8 +163,12 @@ class Resource(HydroShareUtilityBaseClass):
         self.client.delete_resource(self.resource_id)
 
     def create(self):
-        self.resource_id = self.client.create_resource(resource_type=self.resource_type, title=self.title,
-                                                  abstract=self.abstract)
+        metadata = {'coverage': [coverage.to_dict() for coverage in self.coverages]}
+        self.resource_id = self.client.create_resource(resource_type=self.resource_type,
+                                                       title=self.title,
+                                                       metadata=json.dumps(metadata),
+                                                       keywords=self.keywords,
+                                                       abstract=self.abstract)
         return self.resource_id
 
     def update(self):

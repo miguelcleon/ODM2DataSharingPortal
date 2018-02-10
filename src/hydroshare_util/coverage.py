@@ -63,12 +63,12 @@ class BoxCoverage(BaseCoverageClass):
 
 
 class PointCoverage(BaseCoverageClass):
-    def __init__(self, name=None, north=None, east=None, projection=None, units=None, **kwargs):
+    def __init__(self, name=None, latitude=None, longitude=None, projection=None, units=None, **kwargs):
         super(PointCoverage, self).__init__(**kwargs)
         self.type = 'point'
         self.name = name
-        self.north = north
-        self.east = east
+        self.north = latitude
+        self.east = longitude
         self.projection = projection
         self.units = units
 

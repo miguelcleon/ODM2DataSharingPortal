@@ -308,13 +308,12 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             hs_resource.abstract = form.cleaned_data['abstract']
             hs_resource.title = form.cleaned_data['title']
 
-            coverage = PointCoverage(name=site.sampling_feature_name, north=site.latitude, east=site.longitude)
-            hs_resource.add_coverage(coverage=coverage)
+            coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
+            hs_resource.add_coverage(coverage)
 
             sensors = SiteSensor.objects.filter(registration=site)
             for sensor in sensors:
                 hs_resource.keywords.add(sensor.variable_name)
-
 
             # Create the resource in hydroshare
             resource.ext_id = hs_resource.create()
