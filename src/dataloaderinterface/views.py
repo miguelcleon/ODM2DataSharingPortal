@@ -38,6 +38,7 @@ from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, H
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
+from hydroshare_util.coverage import PointCoverage
 
 
 class LoginRequiredMixin(object):
@@ -249,11 +250,17 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     slug_field = 'sampling_feature_code'
     fields = '__all__'
 
+    ABSTRACT_PROTO = "The data contained in this resource were uploaded from the WikiWatershed Data Sharing Portal – " \
+        "http://data.wikiwatershed.org. They were collected at a site named {site_name}. The full URL to access this " \
+        "site in the WikiWatershed Data Sharing portal is: http://data.wikiwatershed.org/sites/{site_code}/."
+
+    TITLE_PROTO = "Data from {site_name} uploaded from the WikiWatershed Data Sharing Portal"
+
     def generate_abstract(self, site):
-        return "This is some sample abstract-text for {0}.".format(site.sampling_feature_name)
+        return self.ABSTRACT_PROTO.format(site_name=site.sampling_feature_name, site_code=site.sampling_feature_code)
 
     def generate_title(self, site):
-        return site.sampling_feature_name
+        return self.TITLE_PROTO.format(site_name=site.sampling_feature_name)
 
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceCreateView, self).get_context_data(**kwargs)
@@ -294,11 +301,20 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             client = AuthUtil.authorize(token=token_json).get_client()
             hs_resource = Resource(client)
 
-            hs_resource.owner = "{0} {1}".format(self.request.user.first_name, self.request.user.last_name)
+            hs_resource.resource_id = resource.ext_id
+            hs_resource.owner = Resource.DEFAULT_OWNER
+            hs_resource.resource_type = Resource.COMPOSITE_RESOURCE
+            hs_resource.creator = '{0} {1}'.format(self.request.user.first_name, self.request.user.last_name)
             hs_resource.abstract = form.cleaned_data['abstract']
             hs_resource.title = form.cleaned_data['title']
-            hs_resource.resource_type = 'CompositeResource'
-            hs_resource.resource_id = resource.ext_id
+
+            coverage = PointCoverage(name=site.sampling_feature_name, north=site.latitude, east=site.longitude)
+            hs_resource.add_coverage(coverage=coverage)
+
+            sensors = SiteSensor.objects.filter(registration=site)
+            for sensor in sensors:
+                hs_resource.keywords.add(sensor.variable_name)
+
 
             # Create the resource in hydroshare
             resource.ext_id = hs_resource.create()

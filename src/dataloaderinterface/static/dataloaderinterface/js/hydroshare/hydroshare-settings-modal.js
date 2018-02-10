@@ -12,7 +12,7 @@ function initializeHydroShareSettingsDialog() {
     const manualCB = $('input#id_schedule_type_1')[0];
     const updateFreqSelect = $('select#id_update_freq')[0];
 
-    if (dialog && !dialog.showModal) {
+    if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
     }
 

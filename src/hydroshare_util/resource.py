@@ -5,12 +5,15 @@ from re import search as regex_search
 from hs_restclient import HydroShareNotFound, HydroShareNotAuthorized
 from hydroshare_util.adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass
-from coverage import Coverage
+from coverage import Coverage, CoverageImplementor
 
 TMP_FILE_PATH = '~$hydroshare_tmp_files'
 
+
 class Resource(HydroShareUtilityBaseClass):
     RESOURCE_TYPES = None
+    COMPOSITE_RESOURCE = 'CompositeResource'
+    DEFAULT_OWNER = 'HydroShare'
 
     def __init__(self, client, raw=None, resource_id=None, creator=None, title="", abstract="", keywords=set(),
                  funding_agency=None, agency_url=None, award_title="", award_number=None, files=list(), subjects=list(),
@@ -67,7 +70,10 @@ class Resource(HydroShareUtilityBaseClass):
                 setattr(self, key, value)
 
     def add_coverage(self, coverage):
-        self.coverages.append(Coverage(coverage=coverage))
+        if isinstance(coverage, CoverageImplementor):
+            self.coverages.append(coverage)
+        else:
+            self.coverages.append(Coverage(coverage=coverage))
 
     def update_file_list(self):
         try:

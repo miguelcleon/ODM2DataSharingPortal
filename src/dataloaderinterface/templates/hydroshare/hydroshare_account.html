@@ -17,10 +17,6 @@
         cursor: pointer;
     }
 
-    dialog#hs-dialog {
-        width: 680px !important;
-    }
-
     @media only screen and (max-width: 680px) {
         dialog#hs-dialog {
             width: 100% !important;
@@ -41,8 +37,6 @@
         <input type="submit" class="text-info" value="Disconnect HydroShare Account">
     </form>
 
-{#    <button id="show-dialog-btn" class="mdl-button mdl-button--raised mdl-button--accent">Disconnect HydroShare Account</button>#}
-
     <dialog class="mdl-dialog" id="hs-dialog" hidden>
         <div class="mdl-dialog__content">
             <p>Are you sure you want to disconnect your HydroShare account?</p>
@@ -62,7 +56,7 @@
         <p class="lead">Connect Account to HydroShare</p>
         <a href="{% url 'hydroshare_oauth_redirect' %}" class="mdl-button mdl-button--raised mdl-button--accent">Connect</a>
 
-    {% endif %}{# data_profile_mode == 'view' #}
+    {% endif %}
 
-{% endif %}{# hs_accounts #}
+{% endif %}
 

@@ -15,10 +15,10 @@ class Coverage(object):
         if implementation:
             self.__implementation = implementation
         elif coverage:
-            type = str(coverage['type'])
-            if type.lower() == 'box':
+            type_ = str(coverage['type'])
+            if type_.lower() == 'box':
                 self.__implementation = BoxCoverage(**coverage)
-            elif type.lower() == 'point':
+            elif type_.lower() == 'point':
                 self.__implementation = PointCoverage(**coverage)
             else:
                 self.__implementation = BaseCoverageClass(**coverage)
