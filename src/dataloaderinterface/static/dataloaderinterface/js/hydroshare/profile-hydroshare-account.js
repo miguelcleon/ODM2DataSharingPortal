@@ -3,37 +3,36 @@
 
     try {
         const disconnectForm = $('#disconnect-hs-form');
-        const hsDialog = document.querySelector('#hs-dialog');
+        const dialog = document.querySelector('#hs-dialog');
 
         let shouldDisconnectHSAccount = false;
 
         disconnectForm.submit((e) => {
             if (!shouldDisconnectHSAccount) {
                 e.preventDefault();
-                hsDialog.removeAttribute('hidden');
-                hsDialog.showModal();
+                dialog.removeAttribute('hidden');
+                dialog.showModal();
             }
         });
 
-
-        if (!hsDialog.showModal) {
-            dialogPolyfill.registerDialog(hsDialog);
+        if (!dialog.showModal) {
+            dialogPolyfill.registerDialog(dialog);
         }
 
-        hsDialog.querySelector('.close').addEventListener('click', () => {
-            hsDialog.close();
-            hsDialog.setAttribute('hidden', '');
+        dialog.querySelector('.close').addEventListener('click', () => {
+            dialog.close();
+            dialog.setAttribute('hidden', '');
             shouldDisconnectHSAccount = false;
         });
 
-        hsDialog.querySelector('#continue').addEventListener('click', () => {
-            hsDialog.close();
-            hsDialog.setAttribute('hidden', '');
+        dialog.querySelector('#continue').addEventListener('click', () => {
+            dialog.close();
+            dialog.setAttribute('hidden', '');
             shouldDisconnectHSAccount = true;
             disconnectForm.submit();
         });
     } catch (e) {
-        // ignore error :D
+        // ignore error :-D
     }
 
 
