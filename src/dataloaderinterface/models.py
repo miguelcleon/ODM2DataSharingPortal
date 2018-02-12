@@ -182,7 +182,7 @@ class OAuthToken(models.Model):
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
             'token_type': self.token_type,
-            'expires_in': int((self.expires_in - datetime.today()).total_seconds()),
+            'expires_in': int((self.expires_in - timezone.now()).total_seconds()),
             'scope': self.scope
         }
         return token
@@ -236,6 +236,7 @@ class HydroShareResource(models.Model):
     SYNC_TYPES = ['scheduled', 'manual']
     FREQUENCY_CHOICES = (
         (timedelta(), 'never'),
+        (timedelta(minutes=1), 'minute'),
         (timedelta(days=1).total_seconds(), 'daily'),
         (timedelta(weeks=1).total_seconds(), 'weekly'),
         (timedelta(days=30).total_seconds(), 'monthly')
@@ -284,6 +285,9 @@ class HydroShareResource(models.Model):
 
     def next_sync_date(self):
         days = 0
+        minutes = 0
+        if self.update_freq == 'minute':
+            minutes = 1
         if self.update_freq == 'daily':
             days = 1
         elif self.update_freq == 'weekly':
@@ -296,7 +300,7 @@ class HydroShareResource(models.Model):
         else:
             date = datetime.combine(self.last_sync_date.date(), datetime.min.time())
 
-        return date + timedelta(days=days)
+        return date + timedelta(days=days, minutes=minutes)
 
     def to_dict(self):
         return {

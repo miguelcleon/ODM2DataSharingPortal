@@ -241,6 +241,11 @@ class HydroShareResourceUpdateCreateView(UpdateView):
             resource = None
         return resource
 
+    def get_context_data(self, **kwargs):
+        context = super(HydroShareResourceUpdateCreateView, self).get_context_data(**kwargs)
+        context['date_format'] = settings.DATETIME_FORMAT
+        return context
+
 
 class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hydroshare_site_settings.html'
@@ -321,10 +326,10 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hydroshare_site_settings.html'
     model = HydroShareResource
-    object = None
     slug_field = 'sampling_feature_code'
     slug_url_kwarg = 'hydroshare_settings_id'
     fields = '__all__'
+    object = None
 
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceUpdateView, self).get_context_data(**kwargs)
@@ -339,6 +344,7 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             'enabled': resource.is_enabled,
             'data_types': resource.data_types.split(",")
         })
+        tzdate = timezone.now()
         return context
 
     def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource

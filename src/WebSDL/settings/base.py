@@ -171,8 +171,7 @@ EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
 
 EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
-DATETIME_FORMAT = "N j, Y, H:m"
-
+DATETIME_FORMAT = "N j, Y P"
 
 HYDROSHARE_UTIL_CONFIG = {
     'CLIENT_ID': data["hydroshare_oauth"]["client_id"],

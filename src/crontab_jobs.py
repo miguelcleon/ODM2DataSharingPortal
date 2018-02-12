@@ -66,8 +66,9 @@ def start_jobs(user=True):
             settings=SETTINGS_MODULE,
             logfile=LOGFILE),
             comment=JOB_COMMENT_PREPENDER + 'upload_hydroshare_files')
-        job.every().day()  # run everyday
-        job.hour.every(AT_HOUR)  # at the time specified by AT_HOUR
+        # job.every().day()  # run everyday
+        # job.hour.every(AT_HOUR)  # at the time specified by AT_HOUR
+        job.minute.every(1)
 
         cron.write()  # write, i.e. 'save' crontab job
 
@@ -85,8 +86,10 @@ def stop_jobs(cron=None, user=None):
     """ Stops crontab jobs containing JOB_COMMENT_PREPENDER in the job's comment """
     if cron is None and user:
         cron = CronTab(user=user)
+        print(colorize("\nRestarting crontab jobs: ", fg='blue'))
+    else:
+        print(colorize("\nStopping crontab jobs: ", fg='blue'))
 
-    print(colorize("\nStopping crontab jobs: ", fg='blue'))
     for job in cron:
         if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):
             job_name = re.sub(re.escape(JOB_COMMENT_PREPENDER), r'', job.comment)
