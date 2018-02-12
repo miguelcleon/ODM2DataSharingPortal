@@ -163,10 +163,10 @@ class Resource(HydroShareUtilityBaseClass):
         self.client.delete_resource(self.resource_id)
 
     def create(self):
+        # metadata = self.get_metadata()
         self.resource_id = self.client.create_resource(resource_type=self.resource_type,
                                                        title=self.title,
-                                                       metadata=self.get_metadata(),
-                                                       keywords=self.keywords,
+                                                       keywords=list(self.keywords),
                                                        abstract=self.abstract)
         return self.resource_id
 
@@ -185,6 +185,11 @@ class Resource(HydroShareUtilityBaseClass):
             for coverage in self.coverages:
                 if isinstance(coverage, Coverage):
                     metadata['coverage'].append(coverage.to_dict())
+
+        for key, value in metadata.iteritems():
+            if isinstance(value, set):
+                metadata[key] = list(value)  # change sets into lists because sets are not json serializeable
+
         return metadata
 
     def make_public(self, public=True):
