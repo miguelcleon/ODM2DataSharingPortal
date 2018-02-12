@@ -38,7 +38,7 @@ from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, H
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
-from hydroshare_util.coverage import PointCoverage
+from hydroshare_util.coverage import PointCoverage, BoxCoverage, PeriodCoverage, Coverage
 
 
 class LoginRequiredMixin(object):
@@ -278,9 +278,6 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     def post(self, request, *args, **kwargs):
         """
         Creates a resource in hydroshare.org from form data.
-
-        NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only be
-        used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
         """
         form = HydroShareSettingsForm(request.POST)
         if form.is_valid():
@@ -315,7 +312,10 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             for sensor in sensors:
                 hs_resource.keywords.add(sensor.variable_name)
 
-            # Create the resource in hydroshare
+            """
+            NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
+            be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
+            """
             resource.ext_id = hs_resource.create()
 
             # Upload data files to the newly created resource
@@ -354,6 +354,10 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             'enabled': resource.is_enabled,
             'data_types': resource.data_types.split(",")
         })
+        # from hs_restclient import HydroShare
+        # hs = HydroShare()
+        # for resource in hs.resources():
+        #     print resource
         return context
 
     def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
@@ -373,7 +377,8 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             resource_data = self.get_object()
 
             if 'update_files' in request.POST and resource_data.is_enabled:
-                # Get hs_resource with hydroshare_util
+                # get hydroshare resource info using hydroshare_util; this will get authentication info needed to
+                # upload files to the resource.
                 hs_resource = self.get_hs_resource(resource_data)
 
                 # Upload the most recent resource files
@@ -385,6 +390,25 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
                 # update last sync date on resource_data
                 resource_data.last_sync_date = timezone.now()
             else:
+                #---------- DEV CODE START
+
+                # hs_resource = self.get_hs_resource(resource_data)
+                # hs_resource.title = HydroShareResourceCreateView.TITLE_PROTO.format(site_name=site.sampling_feature_name)
+                # hs_resource.abstract = HydroShareResourceCreateView.ABSTRACT_PROTO.format(site_name=site.sampling_feature_name,
+                #                                                                           site_code=site.sampling_feature_code)
+                #
+                # coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude,
+                #                          longitude=site.longitude)
+                # hs_resource.add_coverage(coverage)
+                #
+                # sensors = SiteSensor.objects.filter(registration=site)
+                # for sensor in sensors:
+                #     hs_resource.keywords.add(sensor.variable_name)
+                #
+                # data = hs_resource.update()
+
+                #---------- DEV CODE END
+
                 resource_data.data_types = ",".join(form.cleaned_data['data_types'])
                 resource_data.update_freq = form.cleaned_data['update_freq']
                 resource_data.sync_type = form.cleaned_data['schedule_type']

@@ -6,7 +6,7 @@ from re import search as regex_search
 from hs_restclient import HydroShareNotFound, HydroShareNotAuthorized
 from hydroshare_util.adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass
-from coverage import Coverage, CoverageImplementor
+from coverage import CoverageFactory, Coverage
 
 TMP_FILE_PATH = '~$hydroshare_tmp_files'
 
@@ -59,7 +59,7 @@ class Resource(HydroShareUtilityBaseClass):
         self.coverages = list()
         for coverage in coverages:
             if isinstance(coverage, dict):
-                self.coverages.append(Coverage(coverage=coverage))
+                self.coverages.append(CoverageFactory(coverage=coverage))
 
         for key, value in kwargs.iteritems():
             if key == 'public':
@@ -71,10 +71,10 @@ class Resource(HydroShareUtilityBaseClass):
                 setattr(self, key, value)
 
     def add_coverage(self, coverage):
-        if isinstance(coverage, CoverageImplementor):
+        if isinstance(coverage, Coverage):
             self.coverages.append(coverage)
         else:
-            self.coverages.append(Coverage(coverage=coverage))
+            self.coverages.append(CoverageFactory(coverage=coverage))
 
     def update_file_list(self):
         try:
@@ -149,8 +149,8 @@ class Resource(HydroShareUtilityBaseClass):
             self.update_file_list()
             files = self.files
 
-        for file in files:
-            url = file['url']
+        for file_ in files:
+            url = file_['url']
             self._r_logger("Deleting resource file\n\tfile: {file}".format(file=os.path.basename(url)),
                            level=logging.INFO)
             self.client.delete_resource_file(self.resource_id, os.path.basename(url))
@@ -163,10 +163,9 @@ class Resource(HydroShareUtilityBaseClass):
         self.client.delete_resource(self.resource_id)
 
     def create(self):
-        metadata = {'coverage': [coverage.to_dict() for coverage in self.coverages]}
         self.resource_id = self.client.create_resource(resource_type=self.resource_type,
                                                        title=self.title,
-                                                       metadata=json.dumps(metadata),
+                                                       metadata=self.get_metadata(),
                                                        keywords=self.keywords,
                                                        abstract=self.abstract)
         return self.resource_id
@@ -174,22 +173,22 @@ class Resource(HydroShareUtilityBaseClass):
     def update(self):
         return self.client.update_science_metadata(self.resource_id, self.get_metadata())
 
-    def get_metadata(self):
-        return {
-            'title': self.title,
-            'description': self.abstract,
-            'funding_agencies': [{'agency_name': self.funding_agency,
-                                  'award_title': self.award_title,
-                                  'award_number': self.award_number,
-                                  'agency_url': self.agency_url}],
-            "coverage": [{"type": "period",
-                          "value": {"start": self.period_start,
-                                    "end": self.period_end}}]
-        }
+    def get_metadata(self, clean=True):
+        metadata = super(Resource, self).get_metadata(clean=clean)
+
+        # replace keyword 'coverages' with keyword 'coverage'...
+        metadata['coverage'] = getattr(metadata, 'coverages', list())
+        del metadata['coverages']
+
+        if self.coverages and len(self.coverages) > 0:
+            metadata['coverage'] = list()
+            for coverage in self.coverages:
+                if isinstance(coverage, Coverage):
+                    metadata['coverage'].append(coverage.to_dict())
+        return metadata
 
     def make_public(self, public=True):
         return self.client.set_access_rules(self.resource_id, public=public)
-
 
     def to_dict(self):
         return {

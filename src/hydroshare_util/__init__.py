@@ -19,15 +19,16 @@ class HydroShareUtilityBaseClass(object):
         return self.__class__.__name__
 
     def __iter__(self):
-        for attr, value in self.__dict__.iteritmes():
+        for attr, value in self.__dict__.iteritems():
             yield attr, value
 
-    def get_metadata(self):
+    def get_metadata(self, clean=False):
         copy = {}
         for key, value in self:
-            if value is None:
-                copy[key] = ""
-            else:
+            if clean is True and value is not None:
+                if (isinstance(value, str) or getattr(value, '__iter__', None)) and len(value) > 0:
+                    copy[key] = value
+            elif not clean:
                 copy[key] = value
         return copy
 

@@ -10,7 +10,7 @@ class CoverageImplementor(object):
         pass
 
 
-class Coverage(object):
+class CoverageFactory(object):
     def __init__(self, coverage=None, implementation=None):
         if implementation:
             self.__implementation = implementation
@@ -21,9 +21,9 @@ class Coverage(object):
             elif type_.lower() == 'point':
                 self.__implementation = PointCoverage(**coverage)
             else:
-                self.__implementation = BaseCoverageClass(**coverage)
+                self.__implementation = Coverage(**coverage)
         else:
-            self.__implementation = BaseCoverageClass()
+            self.__implementation = Coverage()
 
     @property
     def type(self):
@@ -33,24 +33,24 @@ class Coverage(object):
         return self.__implementation.to_dict()
 
 
-class BaseCoverageClass(CoverageImplementor):
+class Coverage(CoverageImplementor):
     def __init__(self, **kwargs):
-        self.type = None
         for attr, value in kwargs.iteritems():
             setattr(self, attr, value)
 
     def to_dict(self):
-        type = self.type if self.type else ''
         value = {}
         for attr in self.__dict__:
             value[attr] = self.__dict__[attr]
         return {
-            'type': type,
+            'type': self.type_,
             'value': value
         }
 
 
-class BoxCoverage(BaseCoverageClass):
+class BoxCoverage(Coverage):
+    type_ = 'box'
+
     def __init__(self, northlimit=None, eastlimit=None, southlimit=None, westlimit=None, projection=None, units=None,
                  **kwargs):
         super(BoxCoverage, self).__init__(**kwargs)
@@ -61,11 +61,25 @@ class BoxCoverage(BaseCoverageClass):
         self.projection = projection
         self.units = units
 
+    def to_dict(self):
+        return {
+            'type': self.type_,
+            'value': {
+                'northlimit': self.northlimit,
+                'eastlimit': self.eastlimit,
+                'southlimit': self.southlimit,
+                'westlimit': self.westlimit,
+                'units': self.units,
+                'projection': self.projection
+            }
+        }
 
-class PointCoverage(BaseCoverageClass):
+
+class PointCoverage(Coverage):
+    type_ = 'point'
+
     def __init__(self, name=None, latitude=None, longitude=None, projection=None, units=None, **kwargs):
         super(PointCoverage, self).__init__(**kwargs)
-        self.type = 'point'
         self.name = name
         self.north = latitude
         self.east = longitude
@@ -74,7 +88,8 @@ class PointCoverage(BaseCoverageClass):
 
     def to_dict(self):
         return {
-            'type': self.type,
+            'type': self.type_,
+            'name': self.name,
             'value': {
                 'north': self.north,
                 'east': self.east,
@@ -83,4 +98,23 @@ class PointCoverage(BaseCoverageClass):
             }
         }
 
-__all__ = ["Coverage", "BaseCoverageClass", "BoxCoverage", "PointCoverage"]
+
+class PeriodCoverage(Coverage):
+    type_ = 'period'
+
+    def __init__(self, start=None, end=None, **kwargs):
+        super(PeriodCoverage, self).__init__(**kwargs)
+        self.start = start
+        self.end = end
+
+    def to_dict(self):
+        return {
+            'type': self.type_,
+            'value': {
+                'start': self.start,
+                'end': self.end
+            }
+        }
+
+
+__all__ = ["CoverageFactory", "Coverage", "BoxCoverage", "PointCoverage", "PeriodCoverage"]
