@@ -156,9 +156,11 @@ RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
 EMAIL_SENDER = data['password_email_sender'] if 'password_email_sender' in data else '',
 
-NOTIFY_EMAIL_SENDER = data['notify_email_sender'] if 'notify_email_sender' in data else ''
+NOTIFY_EMAIL = data['notify_email_sender'] if 'notify_email_sender' in data else ''
 
 DEFAULT_FROM_EMAIL = EMAIL_SENDER[0] if isinstance(EMAIL_SENDER, tuple) else EMAIL_SENDER
+
+NOTIFY_EMAIL_SENDER = NOTIFY_EMAIL[0] if isinstance(NOTIFY_EMAIL, tuple) else NOTIFY_EMAIL
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 from django.conf import settings
@@ -248,7 +248,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         site_alert = self.request.user.site_alerts\
             .filter(site_registration__sampling_feature_code=sampling_feature.sampling_feature_code)\
             .first()
-        alert_data = {'notify': True, 'hours_threshold': site_alert.hours_threshold} if site_alert else {}
+        alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} if site_alert else {}
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
@@ -271,8 +271,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         notify_form = SiteAlertForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset,
-                           notify_form):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
             data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
@@ -281,13 +280,13 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             site_alert = self.request.user.site_alerts.filter(site_registration=site_registration).first()
 
             if notify_form.cleaned_data['notify'] and site_alert:
-                site_alert.hours_threshold = notify_form['hours_threshold'].value()
+                site_alert.hours_threshold = timedelta(hours=int(notify_form.data['hours_threshold']))
                 site_alert.save()
 
             elif notify_form.cleaned_data['notify'] and not site_alert:
                 self.request.user.site_alerts.create(
                     site_registration=site_registration,
-                    hours_threshold=notify_form.cleaned_data['hours_threshold']
+                    hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
                 )
 
             elif not notify_form.cleaned_data['notify'] and site_alert:
@@ -463,7 +462,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             if notify_form.cleaned_data['notify']:
                 self.request.user.site_alerts.create(
                     site_registration=site_registration,
-                    hours_threshold=notify_form.cleaned_data['hours_threshold']
+                    hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
                 )
 
             for result_form in results_formset.forms:

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.models import ExpressionWrapper, F, DurationField, Q
 from django.db.models.aggregates import Max
 from django.core.mail import send_mail
 
@@ -16,22 +17,16 @@ class Command(BaseCommand):
         return True if success == 1 else False
 
     def handle(self, *args, **options):
-        all_alert_sites = SiteAlert.objects\
-            .prefetch_related('site_registration__sensors', 'user')\
-            .annotate(last_measurement_utc_datetime=Max('site_registration__sensors__last_measurement_utc_datetime'))\
-            .filter(last_measurement_utc_datetime__isnull=False)
+        # MAGICAL BEAUTIFUL QUERY
+        all_site_alerts = SiteAlert.objects \
+            .prefetch_related('site_registration__sensors', 'user') \
+            .annotate(last_measurement_utc_datetime=Max('site_registration__sensors__last_measurement_utc_datetime')) \
+            .filter(last_measurement_utc_datetime__isnull=False) \
+            .annotate(data_gap=ExpressionWrapper(datetime.utcnow() - F('last_measurement_utc_datetime'), output_field=DurationField())) \
+            .filter(Q(last_alerted__isnull=True) | Q(last_measurement_utc_datetime__gt=F('last_alerted')), data_gap__gte=F('hours_threshold'))
 
-        for site_alert in all_alert_sites:
-            time_delta = datetime.utcnow() - site_alert.last_measurement_utc_datetime
-            if time_delta < timedelta(hours=site_alert.hours_threshold):
-                # print 'Still within the time delta'
-                continue
-
-            if site_alert.last_alerted is not None:
-                if site_alert.last_alerted > site_alert.last_measurement_utc_datetime:
-                    continue  # We've already emailed them for this issue, let's not spam them
-
-            time_delta_string = str(time_delta).split(',')[0]
+        for site_alert in all_site_alerts:
+            time_delta_string = str(site_alert.hours_threshold).split(',')[0]
 
             subject = 'EnviroDIY Notification: No data received for site' \
                       ' {} in the last {}'.format(site_alert.site_registration.sampling_feature_name, time_delta_string)
