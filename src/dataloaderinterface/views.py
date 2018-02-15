@@ -412,7 +412,13 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
                 # for sensor in sensors:
                 #     hs_resource.keywords.add(sensor.variable_name)
                 #
-                # data = hs_resource.update()
+                # metadata = {
+                #     "coverage": [coverage.to_dict() for coverage in hs_resource.coverages],
+                #     # "shareable": False,
+                #     # "resource_type": hs_resource.resource_type
+                # }
+                # data = hs_resource.update(metadata=metadata)
+                # print(data)
 
                 #---------- DEV CODE END
 

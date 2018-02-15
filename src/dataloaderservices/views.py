@@ -169,7 +169,7 @@ class TimeSeriesValuesApi(APIView):
         if not measurement_datetime:
             raise exceptions.ParseError('The timestamp value is not well formatted.')
 
-        if not measurement_datetime.utcoffset():
+        if measurement_datetime.utcoffset() is None:
             raise exceptions.ParseError('The timestamp value requires timezone information.')
 
         utc_offset = int(measurement_datetime.utcoffset().total_seconds() / timedelta(hours=1).total_seconds())
@@ -229,7 +229,7 @@ class TimeSeriesValuesApi(APIView):
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
                     site_sensor.registration.deployment_date_utc_offset = utc_offset
-                    site_sensor.registration.save(update_fields=['deployment_date', 'deployment_date_utc_offset'])
+                    site_sensor.registration.save(update_fields=['deployment_date'])
 
             site_sensor.save(update_fields=[
                 'last_measurement_id', 'last_measurement_value', 'last_measurement_datetime',

@@ -162,16 +162,27 @@ class Resource(HydroShareUtilityBaseClass):
         self._r_logger("Deleting resource!", level=logging.INFO)
         self.client.delete_resource(self.resource_id)
 
-    def create(self):
-        # metadata = self.get_metadata()
+    def create(self, metadata=None):
+        if metadata is True:
+            metadata = self.get_metadata()
+            del metadata['title']
+            del metadata['keywords']
+            del metadata['abstract']
+            del metadata['resource_type']
+
         self.resource_id = self.client.create_resource(resource_type=self.resource_type,
                                                        title=self.title,
+                                                       metadata=metadata,
                                                        keywords=list(self.keywords),
                                                        abstract=self.abstract)
         return self.resource_id
 
-    def update(self):
-        return self.client.update_science_metadata(self.resource_id, self.get_metadata())
+    def update(self, metadata=None):
+        if metadata is True:
+            metadata = self.get_metadata()
+        elif metadata is None:
+            metadata = self.get_metadata()
+        return self.client.update_science_metadata(self.resource_id, metadata)
 
     def get_metadata(self, clean=True):
         metadata = super(Resource, self).get_metadata(clean=clean)

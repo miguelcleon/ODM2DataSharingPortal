@@ -9,7 +9,6 @@ from WebSDL.settings.base import CRONTAB_LOGFILE_PATH as LOGFILE
 from WebSDL.settings.base import CRONTAB_EXECUTE_DAILY_AT_HOUR as AT_HOUR
 
 JOB_COMMENT_PREPENDER = "__odm2websdl__"
-SETTINGS_MODULE = 'WebSDL.linux_sandbox'
 
 
 def start_jobs(user=True):
@@ -63,12 +62,11 @@ def start_jobs(user=True):
             python=python_path,
             manage=manage_path,
             command=command_name,
-            settings=SETTINGS_MODULE,
+            settings=os.environ['DJANGO_SETTINGS_MODULE'],
             logfile=LOGFILE),
             comment=JOB_COMMENT_PREPENDER + 'upload_hydroshare_files')
-        # job.every().day()  # run everyday
-        # job.hour.every(AT_HOUR)  # at the time specified by AT_HOUR
-        job.minute.every(1)
+        job.every().day()  # run everyday
+        job.hour.every(AT_HOUR)  # at the time specified by AT_HOUR
 
         cron.write()  # write, i.e. 'save' crontab job
 
@@ -84,11 +82,9 @@ def start_jobs(user=True):
 
 def stop_jobs(cron=None, user=None):
     """ Stops crontab jobs containing JOB_COMMENT_PREPENDER in the job's comment """
+    print(colorize("\nStopping crontab jobs: ", fg='blue'))
     if cron is None and user:
         cron = CronTab(user=user)
-        print(colorize("\nRestarting crontab jobs: ", fg='blue'))
-    else:
-        print(colorize("\nStopping crontab jobs: ", fg='blue'))
 
     for job in cron:
         if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):
