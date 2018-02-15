@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'widget_tweaks'
+    'widget_tweaks',
+    'requests',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -180,6 +181,10 @@ HYDROSHARE_UTIL_CONFIG = {
 }
 
 INFLUX_URL_QUERY = data['influx_query']
+
+INFLUX_UPDATE_URL = data['influx_updater_query']['url']
+
+INFLUX_UPDATE_BODY = data['influx_updater_query']['body']
 
 # This data period is measured in days
 SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data else '2'

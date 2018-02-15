@@ -74,6 +74,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'user_account' %}">
                                 <i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}</a></li>
+                        {% if user.is_staff %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-sign-out"
                                                                              aria-hidden="true"></i>
@@ -96,6 +99,10 @@
     </header>
     {% block home_page_banner %}{% endblock %}
     {% block content %}{% endblock %}
+    <div id="clipboard-snackbar" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action hidden" type="button"></button>
+    </div>
 </div>
 
 {% block footer %}
@@ -115,6 +122,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/vendor/mdl/material.min.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/vendor/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/websdl-utils.js' %}"></script>
 {% endblock %}
 </body>
 </html>

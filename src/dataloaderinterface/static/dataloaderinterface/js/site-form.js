@@ -200,6 +200,10 @@ function bindResultEvents(resultForm) {
     unitSelect.trigger('change', [true]);
 }
 
+function defaultTableMessage() {
+    $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
+}
+
 function initializeResultsForm() {
     var form = $('div#result-dialog .result-form');
     bindResultEvents(form);
@@ -243,6 +247,7 @@ function initializeResultsForm() {
                 bindResultDeleteEvent(newRow);
         
                 $('div.results-table table').append(newRow);
+                defaultTableMessage();
                 $('#result-dialog').modal('toggle');
                 
             } else if (xhr.status == 206) {
@@ -275,6 +280,9 @@ function initializeResultsForm() {
         updateRowData(row);
         dialog.modal('toggle');
     });
+
+    defaultTableMessage();
+    notifyInputStatus();
 }
 
 function validateResultForm() {
@@ -336,6 +344,17 @@ function initializeResultsTable() {
     bindResultDeleteEvent(rows);
 }
 
+function notifyInputStatus() {
+    if (!$("#id_notify").prop("checked")) {
+        $("#id_hours_threshold").removeAttr("name");
+        $("#id_hours_threshold").removeAttr("required");
+    }
+    else {
+        $("#id_hours_threshold").attr("name", "hours_threshold");
+        $("#id_hours_threshold").attr("required", true);
+    }
+}
+
 $(document).ready(function() {
     $('nav .menu-register-site').addClass('active');
 
@@ -349,9 +368,11 @@ $(document).ready(function() {
 
         dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
         dialog.modal('toggle');
+        defaultTableMessage();
     });
 
     $("#id_notify").change(function() {
         $("div[data-field='hours_threshold']").toggleClass("hidden", !this.checked);
+        notifyInputStatus();
     });
 });

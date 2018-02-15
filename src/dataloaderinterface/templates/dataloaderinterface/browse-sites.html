@@ -8,8 +8,9 @@
             <div class="browse-sites-header mdl-shadow--2dp">
                 <div class="page-title">
                     <span>Browse Data Collection Sites&nbsp;</span>
-                    <i class="glyphicon glyphicon-info-sign"  data-toggle="collapse"
-                     data-target="#browseDescription" aria-expanded="true" aria-controls="#browseDescription"></i>
+                    <i class="material-icons" style="margin-left: 10px;"
+                       data-toggle="collapse" data-target="#browseDescription"
+                       aria-expanded="true" aria-controls="#browseDescription">info</i>
                 </div>
 
                 <div class="collapse" id="browseDescription">
@@ -22,6 +23,7 @@
                 <div id="map"></div>
             </div>
 
+            {% autoescape off %}
             <script id="sites-data" type="application/json">
                 [
                 {% for site in sites %}
@@ -33,12 +35,12 @@
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
                     "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
-                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
-                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]
             </script>
+            {% endautoescape %}
 
             <script id="site-marker-content" type="text/plain">
                 <div>
