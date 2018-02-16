@@ -12,6 +12,7 @@ $(hydroshareContainer).load(resource_template_url, () => {
     initializeHydroShareSettingsDialog(); // called from `hydroshare-resource-modal.js`
 
     $(updateNowButton).click((e) => {
+        $(updateNowButton).prop('disabled', true);
         $('p#hydroshare-error').text('');
         console.log(hydroshareError);
         const url = `${hydroshareSettingsForm[0].baseURI}hsr/update/`;
@@ -39,6 +40,7 @@ $(hydroshareContainer).load(resource_template_url, () => {
             })
             .always(() => {
                 progressSpinner.removeClass('is-active');
+                $(updateNowButton).prop('disabled', false);
             });
     });
 });

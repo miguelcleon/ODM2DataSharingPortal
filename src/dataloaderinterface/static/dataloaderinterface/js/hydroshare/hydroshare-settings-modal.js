@@ -45,6 +45,9 @@ function initializeHydroShareSettingsDialog() {
     }
 
     function submitForm() {
+        let submitButton = $(hydroshareSettingsForm).find('input[type=submit]');
+        $(submitButton).prop('disabled', true);
+
         const inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
 
         let method = '';
@@ -93,6 +96,7 @@ function initializeHydroShareSettingsDialog() {
                 }
             }).always(() => {
                 progressSpinner.removeClass('is-active');
+                $(submitButton).prop('disabled', false);
             });
     }
 }

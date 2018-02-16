@@ -5,25 +5,16 @@
     #hydroshare-settings-dialog {
         max-width: 960px;
     }
-    .mdl-spinner-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 0;
-    }
-    .mdl-spinner-container > .mdl-spinner {
-        position: absolute;
-        top: 8px;
-    }
 </style>
 
 <form method="post" id="hydroshare-settings-form">
     {% csrf_token %}
     <dialog id="hydroshare-settings-dialog">
-        <div class="mdl-spinner-container">
-            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
-        </div>
+        {% if resource.id %}
+        <h3 class="mdl-dialog__title">Update Settings</h3>
+        {% else %}
         <h3 class="mdl-dialog__title">Create Resource</h3>
+        {% endif %}
 
         <div class="mdl-dialog__content">
             {{ form.site_registration.as_hidden }}
@@ -114,6 +105,8 @@
                    class="mdl-button mdl-button--raised mdl-button--accent"/>
 
             <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
+
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
 
         </div>
     </dialog>

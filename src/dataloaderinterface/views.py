@@ -285,6 +285,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         Creates a resource in hydroshare.org from form data.
         """
         form = HydroShareSettingsForm(request.POST)
+
         if form.is_valid():
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
             resource = self.get_object()
