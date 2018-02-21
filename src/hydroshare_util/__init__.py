@@ -5,6 +5,8 @@ Utility library for consuming HydroShare's REST API.
 Built on top of the 'hs_restclient' library.
 
 """
+from hs_restclient import HydroShareNotFound
+
 __title__ = 'hydroshare_util'
 __version__ = '1.0'
 
@@ -22,7 +24,7 @@ class HydroShareUtilityBaseClass(object):
         for attr, value in self.__dict__.iteritems():
             yield attr, value
 
-    def get_metadata(self, clean=False):
+    def to_object(self, clean=False):
         copy = {}
         for key, value in self:
             if clean is True and value is not None:
@@ -71,4 +73,4 @@ class ImproperlyConfiguredError(Exception):
         super(ImproperlyConfiguredError, self).__init__(arg, kwargs)
 
 
-__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError"]
+__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError", "HydroShareNotFound"]

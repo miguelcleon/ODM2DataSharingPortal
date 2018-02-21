@@ -17,7 +17,7 @@ from django.conf.urls import url
 
 from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, \
     HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceUpdateView, \
-    HydroShareResourceCreateView, OAuthAuthorize, OAuthRedirect
+    HydroShareResourceCreateView, HydroShareResourceDeleteView, OAuthAuthorize, OAuthRedirect
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/create/$', HydroShareResourceCreateView.as_view(), name='hs_resource_create'),
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/update/$', HydroShareResourceUpdateView.as_view(), name='hs_resource_update'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/hsr/delete/$', HydroShareResourceDeleteView.as_view(), name='hs_resource_delete'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
     url(r'hydroshare/oauth/$', OAuthAuthorize.as_view(), name='hydroshare_oauth'),
     url(r'hydroshare/oauth/redirect/$', OAuthRedirect.as_view(), name='hydroshare_oauth_redirect'),

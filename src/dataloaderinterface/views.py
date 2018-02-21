@@ -35,6 +35,7 @@ from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteFo
     OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
+from hydroshare_util import HydroShareNotFound
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
@@ -248,14 +249,17 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        from hs_restclient import HydroShare
-        hs = HydroShare()
-        resource_md = hs.getSystemMetadata('40929fb6bb9f4f4f8e058609827a4dae')
-        print(resource_md)
+        # from hs_restclient import HydroShare
+        #
+        # hs = HydroShare()
+        #
+        # resource_md = hs.getSystemMetadata('40929fb6bb9f4f4f8e058609827a4dae')
+        # print(resource_md)
+        #
         # for resource in hs.resources():
         #     print resource
+        #
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
-
 
 
 class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
@@ -360,21 +364,27 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceUpdateView, self).get_context_data(**kwargs)
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
-        resource = self.get_object()
+        hs_resource = self.get_object()
         context['site'] = site
-        context['resource'] = resource
+        context['resource'] = hs_resource
         context['form'] = HydroShareSettingsForm(initial={
             'site_registration': site.pk,
-            'update_freq': resource.update_freq,
-            'schedule_type': resource.sync_type,
-            'enabled': resource.is_enabled,
-            'data_types': resource.data_types.split(",")
+            'update_freq': hs_resource.update_freq,
+            'schedule_type': hs_resource.sync_type,
+            'enabled': hs_resource.is_enabled,
+            'data_types': hs_resource.data_types.split(",")
         })
 
-        # from hs_restclient import HydroShare
-        # hs = HydroShare()
-        # for resource in hs.resources():
-        #     print resource
+        resource_util = self.get_hs_resource(hs_resource)
+        try:
+            resource_md = resource_util.get_system_metadata()
+            context['resource_not_found'] = resource_md is None
+        except HydroShareNotFound:
+            context['resource_not_found'] = True
+
+        if context['resource_not_found'] is True:
+            context['delete_resource_url'] = reverse('hs_resource_delete', kwargs={'sampling_feature_code':
+                                                                                       site.sampling_feature_code})
 
         return context
 
@@ -449,6 +459,13 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
         else:
             response = self.form_invalid(form)
             return response
+
+
+class HydroShareResourceDeleteView(DeleteView):
+    model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
+    success_url = reverse_lazy('sites_list')
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):

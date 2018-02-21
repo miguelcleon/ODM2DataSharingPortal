@@ -18,7 +18,7 @@ class HSUAccount(HydroShareUtilityBaseClass):
                 raise HSUClassAttributeError(self, key)
 
     def to_dict(self):
-        account = self.get_metadata()
+        account = self.to_object()
         return {
             'id': account['id'],
             'email': account['email'],

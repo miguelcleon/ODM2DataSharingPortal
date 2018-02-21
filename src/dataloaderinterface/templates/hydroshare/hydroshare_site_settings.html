@@ -22,15 +22,25 @@
 
     {% if resource %}
 
-    <p>Sharing with HydroShare is currently turned
-        <strong>
-            {% if resource.is_enabled %}
-                <span class="text-primary">ON</span>
-            {% else %}
-                <span class="text-warning">OFF</span>
-            {% endif %}
-        </strong>
-    </p>
+        {% if resource_not_found %}
+            <p class="lead">
+                <span class="text-danger">Error:</span>
+                HydroShare Resource not found.
+            </p>
+            <form method="post" action="{{ delete_resource_url }}">
+                <input type="submit" value="Disconnect Resource" class="mdl-button mdl-button--raised mdl-button--primary">
+            </form>
+        {% else %}
+            <p>Sharing with HydroShare is currently turned
+                <strong>
+                    {% if resource.is_enabled %}
+                        <span class="text-primary">ON</span>
+                    {% else %}
+                        <span class="text-warning">OFF</span>
+                    {% endif %}
+                </strong>
+            </p>
+        {% endif %}
 
     <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
 
@@ -44,7 +54,7 @@
     <div class="hydroshare-actions">
         <button id="update-now-button"
                 class="mdl-button mdl-button--raised mdl-button--accent"
-                {% if not resource.is_enabled %}disabled{% endif %}>Update Now</button>
+                {% if not resource.is_enabled or resource_not_found %}disabled{% endif %}>Update Now</button>
 
         <button id="show-hydroshare-settings-dialog"
                 class="mdl-button mdl-button--raised mdl-button--accent">

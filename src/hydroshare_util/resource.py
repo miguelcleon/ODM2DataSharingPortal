@@ -83,9 +83,12 @@ class Resource(HydroShareUtilityBaseClass):
         except Exception as e:
             self._r_logger("Error updating resource file list", error=e)
 
+    def get_system_metadata(self):
+        return self.client.get_system_metadata(self.resource_id)
+
     def update_metadata(self, data=None):
         if data is None:
-            data = self.get_metadata()
+            data = self.to_object()
         return self.client.update_science_metadata(self.resource_id, data)
 
     def upload_files(self):
@@ -164,7 +167,7 @@ class Resource(HydroShareUtilityBaseClass):
 
     def create(self, metadata=None):
         if metadata is True:
-            metadata = self.get_metadata()
+            metadata = self.to_object()
             del metadata['title']
             del metadata['keywords']
             del metadata['abstract']
@@ -223,13 +226,13 @@ class Resource(HydroShareUtilityBaseClass):
 
     def update(self, metadata=None):
         if metadata is True:
-            metadata = self.get_metadata()
+            metadata = self.to_object()
         elif metadata is None:
-            metadata = self.get_metadata()
+            metadata = self.to_object()
         return self.client.update_science_metadata(self.resource_id, metadata)
 
-    def get_metadata(self, clean=True):
-        metadata = super(Resource, self).get_metadata(clean=clean)
+    def to_object(self, clean=True):
+        metadata = super(Resource, self).to_object(clean=clean)
 
         # replace keyword 'coverages' with keyword 'coverage'...
         metadata['coverage'] = getattr(metadata, 'coverages', list())
