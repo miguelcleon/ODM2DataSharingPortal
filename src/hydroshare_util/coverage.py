@@ -81,6 +81,9 @@ class BoxCoverage(Coverage):
 class PointCoverage(Coverage):
     type_ = 'point'
 
+    DEFAULT_PROJECTION = "WGS 84 EPSG:4326"
+    DEFAULT_UNITS = "Decimal degrees"
+
     def __init__(self, name=None, latitude=None, longitude=None, projection=None, units=None, **kwargs):
         super(PointCoverage, self).__init__(**kwargs)
         self.name = name.encode('ascii') if name is not None else None
@@ -97,8 +100,8 @@ class PointCoverage(Coverage):
             'value': {
                 'north': self.north if self.north is not None else "",
                 'east': self.east if self.east is not None else "",
-                'projection': self.projection if self.projection is not None else "Unknown",
-                'units': self.units if self.units is not None else "Decimal degrees",
+                'projection': self.projection if self.projection is not None else self.DEFAULT_PROJECTION,
+                'units': self.units if self.units is not None else self.DEFAULT_UNITS,
                 'name': self.name if self.name is not None else ""
             }
         }

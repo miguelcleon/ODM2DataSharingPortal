@@ -5,7 +5,7 @@ from hydroshare_util.resource import Resource
 from hydroshare_util.auth import AuthUtil
 from django.utils.termcolors import colorize
 from django.utils import timezone
-from datetime import datetime, timedelta, date
+from datetime import datetime
 
 
 class Command(BaseCommand):
@@ -15,11 +15,21 @@ class Command(BaseCommand):
 
     def handle(self, force_update=False, *args, **options):
         resources = HydroShareResource.objects.all()
+
         upload_success_count = 0
         upload_fail_count = 0
         upload_skipped_count = 0
         self.stdout.write('\n' + str(datetime.now()) + colorize(' Starting Job: ', fg='blue') + 'Uploading site data to hydroshare')
+
         for resource in resources:
+
+            if resource.hs_account is None:
+                # If resource does not have hs_account, remove the resource.
+                # This case should only happen to resources that have been disconnected
+                # from the resource in HydroShare.
+                resource.delete()
+                continue
+
             # Skip resource if not enabled
             if not resource.is_enabled:
                 upload_skipped_count += 1
@@ -34,7 +44,7 @@ class Command(BaseCommand):
             next_sync = resource.next_sync_date()
             now = timezone.now()
             diff = (now - next_sync).total_seconds()
-            if diff < 0 or force_update is True:
+            if diff < 0 and force_update is False:
                 upload_skipped_count += 1
                 continue
 
@@ -60,8 +70,7 @@ class Command(BaseCommand):
                 self.stderr.write(colorize('\nERROR: file upload failed, reason given:\n\t{0}'.format(e.message), fg='red'))
 
         self.stdout.write(colorize('\nJob finished uploading resource files to hydroshare.', fg='blue'))
-        self.stdout.write(colorize('\tResource upload success count: ', fg='blue') + str(upload_success_count))
-        self.stdout.write(colorize('\t   Resource upload fail count: ', fg='blue') + str(upload_fail_count))
-        self.stdout.write(colorize('\t             Resource Skipped: ', fg='blue') + str(upload_skipped_count))
-        self.stdout.write(colorize('\t          Resources Attempted: ', fg='blue') + str(upload_success_count + upload_fail_count))
+        self.stdout.write(colorize('\t           Uploads successful: ', fg='blue') + str(upload_success_count))
+        self.stdout.write(colorize('\t               Uploads failed: ', fg='blue') + str(upload_fail_count))
+        self.stdout.write(colorize('\t            Resources skipped: ', fg='blue') + str(upload_skipped_count))
         self.stdout.write(colorize('\t                        Total: ', fg='blue') + str(len(resources)) + '\n')

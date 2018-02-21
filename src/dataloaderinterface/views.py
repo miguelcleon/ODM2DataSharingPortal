@@ -249,6 +249,8 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
+        call_command('update_hydroshare_resource_files', '--force-update')
+        # call_command('update_hydroshare_resource_files')
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
@@ -292,19 +294,18 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 
         if form.is_valid():
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
-            resource = self.get_object()
-            hs_account = self.request.user.odm2user.hydroshare_account
-            if resource is None:
-                resource = HydroShareResource(site_registration=site,
-                                              hs_account=hs_account,
-                                              data_types=",".join(form.cleaned_data['data_types']),
-                                              update_freq=form.cleaned_data['update_freq'],
-                                              sync_type=form.cleaned_data['schedule_type'],
-                                              is_enabled=True,
-                                              last_sync_date=timezone.now())
 
-            account = self.request.user.odm2user.hydroshare_account
-            token_json = account.get_token()
+            hs_account = self.request.user.odm2user.hydroshare_account
+
+            resource = HydroShareResource(site_registration=site,
+                                          hs_account=hs_account,
+                                          data_types=",".join(form.cleaned_data['data_types']),
+                                          update_freq=form.cleaned_data['update_freq'],
+                                          sync_type=form.cleaned_data['schedule_type'],
+                                          is_enabled=True,
+                                          last_sync_date=timezone.now())
+
+            token_json = hs_account.get_token()
             client = AuthUtil.authorize(token=token_json).get_client()
             hs_resource = Resource(client)
 
@@ -332,10 +333,10 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
                 # TODO: Return a meaningful error message to display to users
                 return JsonResponse({"error": e.message}, status=e.status_code)
 
+            resource.save()
+
             # Upload data files to the newly created resource
             upload_hydroshare_resource_files(site, hs_resource)
-
-            resource.save()
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
