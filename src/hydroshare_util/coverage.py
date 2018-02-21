@@ -62,6 +62,9 @@ class BoxCoverage(Coverage):
         self.units = units
 
     def to_dict(self):
+        # {u'coverages': [{u'type': u'box', u'value': {u'northlimit': 0.0, u'uplimit': None,
+        # u'projection': u'WGS 84 EPSG:4326', u'downlimit': None, u'zunits': None, u'units': u'Decimal degrees',
+        # u'southlimit': 0.0, u'westlimit': -180.0, u'eastlimit': 180.0, u'name': None}}
         return {
             'type': self.type_,
             'value': {
@@ -87,14 +90,16 @@ class PointCoverage(Coverage):
         self.units = units
 
     def to_dict(self):
+        # {'coverages': {u'type': u'point', u'value': {
+        #   u'units': u'Decimal degrees', u'east': -111.946402, u'north': 41.718473, u'projection': u'Unknown'}}
         return {
             'type': self.type_,
-            'name': self.name,
             'value': {
-                'north': self.north,
-                'east': self.east,
-                'projection': self.projection,
-                'units': self.units
+                'north': self.north if self.north is not None else "",
+                'east': self.east if self.east is not None else "",
+                'projection': self.projection if self.projection is not None else "Unknown",
+                'units': self.units if self.units is not None else "Decimal degrees",
+                'name': self.name if self.name is not None else ""
             }
         }
 
@@ -108,6 +113,8 @@ class PeriodCoverage(Coverage):
         self.end = end
 
     def to_dict(self):
+        # {u'coverages': [
+        #     {u'type': u'period', u'value': {u'start': u'1979-01-01 06:00:00', u'end': u'2015-03-31 06:00:00'}}
         return {
             'type': self.type_,
             'value': {

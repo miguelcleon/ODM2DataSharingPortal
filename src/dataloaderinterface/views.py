@@ -247,6 +247,16 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         context['date_format'] = settings.DATETIME_FORMAT
         return context
 
+    def get(self, request, *args, **kwargs):
+        from hs_restclient import HydroShare
+        hs = HydroShare()
+        resource_md = hs.getSystemMetadata('40929fb6bb9f4f4f8e058609827a4dae')
+        print(resource_md)
+        # for resource in hs.resources():
+        #     print resource
+        return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
+
+
 
 class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hydroshare_site_settings.html'
