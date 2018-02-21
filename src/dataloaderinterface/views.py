@@ -249,8 +249,6 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        call_command('update_hydroshare_resource_files', '--force-update')
-        # call_command('update_hydroshare_resource_files')
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
