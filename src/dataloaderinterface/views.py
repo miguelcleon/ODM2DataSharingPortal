@@ -35,7 +35,7 @@ from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteFo
     OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
-from hydroshare_util import HydroShareNotFound
+from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
@@ -336,7 +336,10 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
             be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
             """
-            resource.ext_id = hs_resource.create()
+            try:
+                resource.ext_id = hs_resource.create()
+            except HydroShareHTTPException as e:
+                return JsonResponse({"error": e.message}, status=e.status_code)
 
             # Upload data files to the newly created resource
             upload_hydroshare_resource_files(site, hs_resource)
@@ -381,10 +384,12 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             context['resource_not_found'] = resource_md is None
         except HydroShareNotFound:
             context['resource_not_found'] = True
-
-        if context['resource_not_found'] is True:
-            context['delete_resource_url'] = reverse('hs_resource_delete', kwargs={'sampling_feature_code':
-                                                                                       site.sampling_feature_code})
+        except Exception:
+            context['resource_did_not_load'] = True
+        finally:
+            if context['resource_not_found'] is True:
+                context['delete_resource_url'] = reverse('hs_resource_delete',
+                                                         kwargs={'sampling_feature_code': site.sampling_feature_code})
 
         return context
 
@@ -461,11 +466,23 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             return response
 
 
-class HydroShareResourceDeleteView(DeleteView):
-    model = SiteRegistration
+class HydroShareResourceDeleteView(LoginRequiredMixin, DeleteView):
+    model = HydroShareResource
     slug_field = 'sampling_feature_code'
     slug_url_kwarg = 'sampling_feature_code'
-    success_url = reverse_lazy('sites_list')
+
+    def get_object(self, queryset=None):
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        try:
+            resource = HydroShareResource.objects.get(site_registration=site.registration_id)
+        except ObjectDoesNotExist:
+            resource = None
+        return site, resource
+
+    def post(self, request, *args, **kwargs):
+        site, resource = self.get_object()
+        resource.delete()
+        return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
 
 
 class SiteDeleteView(LoginRequiredMixin, DeleteView):

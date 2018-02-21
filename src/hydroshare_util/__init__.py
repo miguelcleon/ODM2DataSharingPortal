@@ -5,7 +5,7 @@ Utility library for consuming HydroShare's REST API.
 Built on top of the 'hs_restclient' library.
 
 """
-from hs_restclient import HydroShareNotFound
+from hs_restclient import HydroShareNotFound, HydroShareHTTPException
 
 __title__ = 'hydroshare_util'
 __version__ = '1.0'
@@ -73,4 +73,5 @@ class ImproperlyConfiguredError(Exception):
         super(ImproperlyConfiguredError, self).__init__(arg, kwargs)
 
 
-__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError", "HydroShareNotFound"]
+__all__ = ["HSUClassAttributeError", "HSUOAuthCredentialsTypeError", "NotAuthorizedError", "HydroShareNotFound",
+           "HydroShareHTTPException"]

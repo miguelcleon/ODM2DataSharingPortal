@@ -83,11 +83,11 @@ class PointCoverage(Coverage):
 
     def __init__(self, name=None, latitude=None, longitude=None, projection=None, units=None, **kwargs):
         super(PointCoverage, self).__init__(**kwargs)
-        self.name = name
+        self.name = name.encode('ascii') if name is not None else None
         self.north = latitude
         self.east = longitude
-        self.projection = projection
-        self.units = units
+        self.projection = projection.encode('ascii') if projection is not None else None
+        self.units = units.encode('ascii') if units is not None else None
 
     def to_dict(self):
         # {'coverages': {u'type': u'point', u'value': {

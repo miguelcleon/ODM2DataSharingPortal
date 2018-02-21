@@ -22,12 +22,19 @@
 
     {% if resource %}
 
+        {% if resource_did_not_load %}
+            <p><span class="text-danger">Error:</span>
+                Failed to connect to <a href="https://www.hydroshare.org">hydroshare.org</a>. Updating site data information might not work.
+            </p>
+        {% endif %}
+
         {% if resource_not_found %}
-            <p class="lead">
+            <p>
                 <span class="text-danger">Error:</span>
                 HydroShare Resource not found.
             </p>
             <form method="post" action="{{ delete_resource_url }}">
+                {% csrf_token %}
                 <input type="submit" value="Disconnect Resource" class="mdl-button mdl-button--raised mdl-button--primary">
             </form>
         {% else %}

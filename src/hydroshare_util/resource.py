@@ -165,63 +165,26 @@ class Resource(HydroShareUtilityBaseClass):
         self._r_logger("Deleting resource!", level=logging.INFO)
         self.client.delete_resource(self.resource_id)
 
-    def create(self, metadata=None):
-        if metadata is True:
-            metadata = self.to_object()
-            del metadata['title']
-            del metadata['keywords']
-            del metadata['abstract']
-            del metadata['resource_type']
+    def create(self):
 
-        coverage = getattr(metadata, 'coverage', None)
-        if coverage is not None:
-            metadata['coverages'] = metadata['coverage']  # Must change 'coverage' to 'coverages' in create method.
-            del metadata['coverage']
+        metadata = []
 
-        # metadata = [{"coverage":{"type":"period", "value":{"start":"01/01/2000", "end":"12/12/2010"}}}]
+        for coverage in self.coverages:
+            coverage_dict = {"coverage": coverage.to_dict()}
+            metadata.append(coverage_dict)
 
-        # metadata = [{"coverage": self.coverages[0].to_dict()}]
-        # 'east': -111.946402, u'north': 41.718473
-        expected_coverage = {"coverage": {
-            "type": "point",
-            "value": {"north": 41.70405,
-                      "east": -111.88118,
-                      "projection": "Unknown",
-                      "units": "Decimal degrees"}}}
-
-        actual_coverage = {"coverage": self.coverages[0].to_dict()}
-
-        import unittest
-
-        class UnitTest(unittest.TestCase):
-
-            D1 = dict()
-            D2 = dict()
-
-            def __init__(self, d1, d2, method_name='run_test'):
-                super(UnitTest, self).__init__(method_name)
-                self.D1 = d1
-                self.D2 = d2
-
-            def run_test(self):
-                self.assertDictEqual(self.D1, self.D2, "assertion failed.")
-
-        unit_test = UnitTest(expected_coverage, actual_coverage)
-        unit_test.run_test()
-
-        metadata = [actual_coverage]
-        metadata_string = self._stringify_metadata(metadata)
-        print(metadata_string)
+        metadata_as_string = self._stringify_metadata(metadata)
+        # metadata_as_string = '[{"coverage":{"type":"point","value":{"units":"Decimal degrees", "east":-112.01214, "north":41.80126, "projection": "Unknown", "name":"Demo Site (LOCALHOST)"}}}]'
         self.resource_id = self.client.create_resource(resource_type=self.resource_type,
                                                        title=self.title,
-                                                       metadata=metadata_string,
+                                                       metadata=metadata_as_string,
                                                        keywords=list(self.keywords),
                                                        abstract=self.abstract)
         return self.resource_id
 
     def _stringify_metadata(self, metadata):
         string = str(metadata)
-        string = string.replace("'", '"').replace(" ", "")
+        string = string.replace("'", '"')  # .replace(" ", "")
         return string
 
     def update(self, metadata=None):
