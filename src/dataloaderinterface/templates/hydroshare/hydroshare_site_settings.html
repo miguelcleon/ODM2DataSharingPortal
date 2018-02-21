@@ -34,7 +34,7 @@
 
             <p>
                 This site was previously connected to a resource on <a href="https://www.hydroshare.org">hydroshare.org</a>,
-                but it appears the resource does not exist anymore. Disconnect this resource to start sharing site data again on HydroShare.
+                but it appears the resource does not exist anymore. Disconnect this resource to start sharing site data again with HydroShare.
             </p>
 
             <form method="post" action="{{ delete_resource_url }}">
@@ -58,6 +58,8 @@
             {% if resource.sync_type == 'scheduled' %}
                 <p>Next update scheduled for <strong>{{ resource.m_next_sync_date|date:date_format }}</strong></p>
             {% endif %}
+
+            <p><a href="https://www.hydroshare.org/resource/{{ resource.resource_id }}/">View data from this site in HydroShare</a></p>
 
         {#    <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>#}
             <p class="text-danger" id="hydroshare-error"></p>
