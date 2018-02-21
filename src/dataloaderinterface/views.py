@@ -249,16 +249,6 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        # from hs_restclient import HydroShare
-        #
-        # hs = HydroShare()
-        #
-        # resource_md = hs.getSystemMetadata('40929fb6bb9f4f4f8e058609827a4dae')
-        # print(resource_md)
-        #
-        # for resource in hs.resources():
-        #     print resource
-        #
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
@@ -339,6 +329,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             try:
                 resource.ext_id = hs_resource.create()
             except HydroShareHTTPException as e:
+                # TODO: Return a meaningful error message to display to users
                 return JsonResponse({"error": e.message}, status=e.status_code)
 
             # Upload data files to the newly created resource
@@ -423,31 +414,6 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
                 # update last sync date on resource_data
                 resource_data.last_sync_date = timezone.now()
             else:
-                #---------- DEV CODE START
-
-                # hs_resource = self.get_hs_resource(resource_data)
-                # hs_resource.title = HydroShareResourceCreateView.TITLE_PROTO.format(site_name=site.sampling_feature_name)
-                # hs_resource.abstract = HydroShareResourceCreateView.ABSTRACT_PROTO.format(site_name=site.sampling_feature_name,
-                #                                                                           site_code=site.sampling_feature_code)
-                #
-                # coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude,
-                #                          longitude=site.longitude)
-                # hs_resource.add_coverage(coverage)
-                #
-                # sensors = SiteSensor.objects.filter(registration=site)
-                # for sensor in sensors:
-                #     hs_resource.keywords.add(sensor.variable_name)
-                #
-                # metadata = {
-                #     "coverage": [coverage.to_dict() for coverage in hs_resource.coverages],
-                #     # "shareable": False,
-                #     # "resource_type": hs_resource.resource_type
-                # }
-                # data = hs_resource.update(metadata=metadata)
-                # print(data)
-
-                #---------- DEV CODE END
-
                 resource_data.data_types = ",".join(form.cleaned_data['data_types'])
                 resource_data.update_freq = form.cleaned_data['update_freq']
                 resource_data.sync_type = form.cleaned_data['schedule_type']
