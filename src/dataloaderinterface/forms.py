@@ -55,6 +55,8 @@ class HydroShareSettingsForm(forms.Form):
 
     enabled = forms.BooleanField(initial=True, label='Sharing On/Off', required=False)
 
+    # enabled = forms.
+
     site_registration = forms.CharField(max_length=255)
 
     schedule_type = forms.ChoiceField(
@@ -104,7 +106,14 @@ class HydroShareSiteForm(forms.ModelForm):
     class Meta:
         model = HydroShareResource
         fields = ['is_enabled', 'sync_type', 'update_freq', 'hs_account', 'site_registration']
-        widgets = { 'update_freq': forms.Select(choices=HydroShareResource.FREQUENCY_CHOICES)}
+        widgets = {'update_freq': forms.Select(choices=HydroShareResource.FREQUENCY_CHOICES)}
+
+
+class HydroShareResourceDeleteForm(forms.Form):
+
+    delete_external_resource = forms.BooleanField(initial=False,
+                                                  label="Check this box to delete the resource in HydroShare.",
+                                                  required=False)
 
 
 class UserRegistrationForm(UserCreationForm):

@@ -32,7 +32,8 @@ from django.views.generic.list import ListView
 from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm
+    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm, \
+    HydroShareResourceDeleteForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
@@ -368,6 +369,14 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             'data_types': hs_resource.data_types.split(",")
         })
 
+        # TODO: Remove special case for jeff after app is deployed
+        if self.request.user.email == 'jeff.horsburgh@usu.edu':
+            # For Jeff...
+            context['delete_form'] = HydroShareResourceDeleteForm(initial={'delete_external_resource': True})
+        else:
+            # For everyone else...
+            context['delete_form'] = HydroShareResourceDeleteForm()
+
         resource_util = self.get_hs_resource(hs_resource)
         try:
             resource_md = resource_util.get_system_metadata()
@@ -444,9 +453,17 @@ class HydroShareResourceDeleteView(LoginRequiredMixin, DeleteView):
             resource = None
         return site, resource
 
+    def get(self, request, *arg, **kwargs):
+        site = self.get_object()[0]
+        return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
+
     def post(self, request, *args, **kwargs):
+        form = HydroShareResourceDeleteForm(request.POST)
         site, resource = self.get_object()
-        resource.delete()
+
+        if form.is_valid():
+            resource.delete()
+
         return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
 
 

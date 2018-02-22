@@ -34,12 +34,12 @@
 
             <p>
                 This site was previously connected to a resource on <a href="https://www.hydroshare.org">hydroshare.org</a>,
-                but it appears the resource does not exist anymore. Disconnect this resource to start sharing site data again with HydroShare.
+                but it appears the resource does not exist anymore. Click the stop-sharing button to disconnect this site from HydroShare.
             </p>
 
             <form method="post" action="{{ delete_resource_url }}">
                 {% csrf_token %}
-                <input type="submit" value="Disconnect Resource" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
+                <input type="submit" value="Stop Sharing" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
             </form>
         {% else %}
             <p>Sharing with HydroShare is currently turned
@@ -74,6 +74,11 @@
                     <i class="fa fa-cog fa-lg"></i>
                     Settings</button>
 
+                <button class="mdl-button mdl-button--raised mdl-color--grey-200 mdl-color-text--red-400"
+                    id="show-hydroshare-delete-dialog">
+                    Stop Sharing
+                </button>
+
                 <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
             </div>
         {% endif %}
@@ -97,3 +102,5 @@
 <div id="hs-target">
     {% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
 </div>
+
+{% include 'hydroshare/hydroshare_delete_modal.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}

@@ -9,7 +9,8 @@ $(hydroshareContainer).load(resource_template_url, () => {
     const hydroshareSettingsForm = $('#hydroshare-settings-form');
     const hydroshareError = $('p#hydroshare-error');
 
-    initializeHydroShareSettingsDialog(); // called from `hydroshare-resource-modal.js`
+    initializeHydroShareSettingsDialog(); // called from `hydroshare-settings-modal.js`
+    initializeHydroShareDeleteDialog(); // called from `hydroshare-delete-resource.js`
 
     $(updateNowButton).click((e) => {
         $(updateNowButton).prop('disabled', true);

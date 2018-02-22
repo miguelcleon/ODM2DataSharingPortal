@@ -5,12 +5,13 @@
 
 function initializeHydroShareSettingsDialog() {
 
-    const dialog = $('#hydroshare-settings-dialog')[0];
+    const dialog = $('dialog#hydroshare-settings-dialog')[0];
     const showDialogButton = $('#show-hydroshare-settings-dialog')[0];
     const hydroshareSettingsForm = $('#hydroshare-settings-form')[0];
     const scheduledCB = $('input#id_schedule_type_0')[0];
     const manualCB = $('input#id_schedule_type_1')[0];
     const updateFreqSelect = $('select#id_update_freq')[0];
+    const toggleSharingButton = $('button#hs-toggle-sharing-btn');
 
     if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
@@ -43,6 +44,13 @@ function initializeHydroShareSettingsDialog() {
         const show = typeof e == 'boolean' ? e : e.target.value.toLowerCase() == 'manual';
         $(updateFreqSelect).attr('hidden', show);
     }
+
+    $(toggleSharingButton).click(() => {
+        let enabledCB = $(hydroshareSettingsForm).find('input#id_enabled');
+        enabledCB[0].checked = !enabledCB[0].checked;
+        enabledCB[0].value = enabledCB[0].value.toLowerCase() != "true";
+        submitForm();
+    });
 
     function submitForm() {
         let submitButton = $(hydroshareSettingsForm).find('input[type=submit]');

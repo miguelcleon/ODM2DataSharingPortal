@@ -406,6 +406,7 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}"></script>
     {% if site.django_user_id == request.user.id and resource_is_connected and hydroshare_account %}
         <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-resource-update.js' %}"></script>
+        <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-delete-resource.js' %}"></script>
     {% elif site.django_user_id == request.user.id and hydroshare_account %}
         <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-resource-create.js' %}"></script>
     {% endif %}

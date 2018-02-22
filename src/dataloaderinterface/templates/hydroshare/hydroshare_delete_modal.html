@@ -1,0 +1,24 @@
+{% load widget_tweaks %}
+{% load site %}
+{% load static %}
+
+<form method="post" action="/sites/{{ sampling_feature_code }}/hsr/delete/">
+    {% csrf_token %}
+    <dialog id="hydroshare-delete-dialog">
+        <div class="mdl-dialog__title">
+            <h5>Stop Sharing?</h5>
+        </div>
+        <div class="mdl-dialog__content">
+            <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.delete_external_resource.id_for_label }}">
+                {{ form.delete_external_resource|add_class:"mdl-checkbox__input" }}
+                <span class="mdl-checkbox__label">{{ form.delete_external_resource.label }}</span>
+            </label>
+        </div>
+        <div class="mdl-dialog__actions">
+
+            <input type="submit" value="Stop Sharing"
+                   class="mdl-button mdl-button-raised mdl-color--red-400 mdl-color-text--white">
+            <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
+        </div>
+    </dialog>
+</form>

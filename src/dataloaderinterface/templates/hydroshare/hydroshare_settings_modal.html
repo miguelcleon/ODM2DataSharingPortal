@@ -19,16 +19,21 @@
         <div class="mdl-dialog__content">
             {{ form.site_registration.as_hidden }}
 
-{# If resource.id is None, then this resource hasn't been created yet and `enabled` should be True by default #}
+{# If resource.id is None, then this resource hasn't been created yet (i.e., don't show option to pause sharing) #}
             {% if resource.id %}
-            <div class="row">
-                <div class="col-12">
-                    <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.enabled.id_for_label }}">
-                        {{ form.enabled|add_class:"mdl-checkbox__input" }}
-                        <span class="mdl-checkbox__label">{{ form.enabled.label }}</span>
-                    </label>
+                <div class="row">
+                    <div class="col-12">
+                        <button class="mdl-button mdl-button--raised mdl-button--accent"
+                                id="hs-toggle-sharing-btn"
+                                type="button" >
+                            {% if form.enabled.value %}Pause Sharing{% else %}Start Sharing{% endif %}
+                        </button>
+
+                        <input type="checkbox" name="{{ form.enabled.name }}"
+                               value="{{ form.enabled.value }}" id="{{ form.enabled.auto_id }}" hidden>
+
+                    </div>
                 </div>
-            </div>
             {% endif %}
 
             <div class="row">
