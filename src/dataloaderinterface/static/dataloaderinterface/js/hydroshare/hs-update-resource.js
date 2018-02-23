@@ -3,7 +3,7 @@
 const resource_template_url = `${window.location.href}hsr/update/`;
 const hydroshareContainer = $('#hydroshare-settings-container');
 
-// makes a GET request to fetch HTML for hydroshare settings modal
+// Make a GET request to fetch HTML for hydroshare settings modal
 $(hydroshareContainer).load(resource_template_url, () => {
     const updateNowButton = $('button#update-now-button');
     const hydroshareSettingsForm = $('#hydroshare-settings-form');
@@ -12,7 +12,7 @@ $(hydroshareContainer).load(resource_template_url, () => {
     initializeHydroShareSettingsDialog(); // called from `hs-settings-dialog.js`
     initializeHydroShareDeleteDialog(); // called from `hs-delete-resource.js`
 
-    $(updateNowButton).click((e) => {
+    $(updateNowButton).click(() => {
         $(updateNowButton).prop('disabled', true);
         $('p#hydroshare-error').text('');
         console.log(hydroshareError);

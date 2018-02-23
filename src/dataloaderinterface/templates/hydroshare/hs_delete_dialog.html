@@ -2,7 +2,7 @@
 {% load site %}
 {% load static %}
 
-<form method="post" action="/sites/{{ sampling_feature_code }}/hsr/delete/">
+<form method="post" action="/sites/{{ sampling_feature_code }}/hsr/delete/" id="hs-delete-form">
     {% csrf_token %}
     <dialog id="hydroshare-delete-dialog">
         <div class="mdl-dialog__title">
@@ -16,9 +16,12 @@
         </div>
         <div class="mdl-dialog__actions">
 
-            <input type="submit" value="Stop Sharing"
+            <input type="submit" value="Stop Sharing" id="stop-sharing-submit"
                    class="mdl-button mdl-button-raised mdl-color--red-400 mdl-color-text--white">
+
             <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
+
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner"></div>
         </div>
     </dialog>
 </form>

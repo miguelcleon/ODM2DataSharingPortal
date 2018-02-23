@@ -411,4 +411,12 @@ const char *UUIDs[] =                                                      // UU
         <script src="{% static 'dataloaderinterface/js/hydroshare/hs-create-resource.js' %}"></script>
     {% endif %}
 
+    <script>
+    $(() => {
+        {# Fix for problem where spinner does not render #}
+       const hsProgressSpinner = $('#hydroshare-progress-spinner')[0];
+       componentHandler.upgradeElement(hsProgressSpinner);
+    });
+    </script>
+
 {% endblock %}

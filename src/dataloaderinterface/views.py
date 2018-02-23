@@ -228,6 +228,17 @@ class SiteDetailView(DetailView):
         return context
 
 
+class HydroShareResourceViewMixin:
+    def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
+        """ Creates a 'hydroshare_util.Resource' object """
+        account = self.request.user.odm2user.hydroshare_account
+        token_json = account.get_token()
+        client = AuthUtil.authorize(token=token_json).get_client()
+        hs_resource = Resource(client)
+        hs_resource.resource_id = resource.ext_id
+        return hs_resource
+
+
 class HydroShareResourceUpdateCreateView(UpdateView):
     def form_invalid(self, form):
         response = super(HydroShareResourceUpdateCreateView, self).form_invalid(form)
@@ -347,7 +358,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             return self.form_invalid(form)
 
 
-class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
+class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     slug_field = 'sampling_feature_code'
@@ -392,15 +403,6 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
 
         return context
 
-    def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
-        """ Creates a 'hydroshare_util.Resource' object """
-        account = self.request.user.odm2user.hydroshare_account
-        token_json = account.get_token()
-        client = AuthUtil.authorize(token=token_json).get_client()
-        hs_resource = Resource(client)
-        hs_resource.resource_id = resource.ext_id
-        return hs_resource
-
     def post(self, request, *args, **kwargs):
         form = HydroShareSettingsForm(request.POST)
 
@@ -440,13 +442,21 @@ class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
             return response
 
 
-class HydroShareResourceDeleteView(LoginRequiredMixin, DeleteView):
+class HydroShareResourceDeleteView(LoginRequiredMixin, HydroShareResourceViewMixin, DeleteView):
     model = HydroShareResource
     slug_field = 'sampling_feature_code'
     slug_url_kwarg = 'sampling_feature_code'
 
+    def get_site_registration(self):
+        try:
+            code = self.kwargs.get('sampling_feature_code', '')
+            site = SiteRegistration.objects.get(sampling_feature_code=code)
+        except ObjectDoesNotExist:
+            return None
+        return site
+
     def get_object(self, queryset=None):
-        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        site = self.get_site_registration()
         try:
             resource = HydroShareResource.objects.get(site_registration=site.registration_id)
         except ObjectDoesNotExist:
@@ -454,14 +464,25 @@ class HydroShareResourceDeleteView(LoginRequiredMixin, DeleteView):
         return site, resource
 
     def get(self, request, *arg, **kwargs):
-        site = self.get_object()[0]
+        site = self.get_site_registration()
         return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
 
     def post(self, request, *args, **kwargs):
-        form = HydroShareResourceDeleteForm(request.POST)
         site, resource = self.get_object()
 
+        form = HydroShareResourceDeleteForm(request.POST)
         if form.is_valid():
+            delete_external_resource = form.cleaned_data.get('delete_external_resource')
+
+            # delete resource in hydroshare.org if delete_external_resource is True
+            if delete_external_resource is True:
+                hs_resource = self.get_hs_resource(resource)
+                try:
+                    hs_resource.delete()
+                except Exception as error:
+                    print(error)
+
+            # always delete the resource data stored on our server
             resource.delete()
 
         return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))

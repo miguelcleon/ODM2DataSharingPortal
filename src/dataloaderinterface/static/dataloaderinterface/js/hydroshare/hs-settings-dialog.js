@@ -13,14 +13,20 @@ function initializeHydroShareSettingsDialog() {
     const updateFreqSelect = $('select#id_update_freq')[0];
     const toggleSharingButton = $('button#hs-toggle-sharing-btn');
 
+    if (!showDialogButton) {
+        // If showDialogButton is undefined, return immediately and do not register dialog.
+        // This most likely happens when the hydroshare resource was not found because
+        // the user deleted the resource in hydroshare.org.
+        return;
+    }
+
     if (!dialog.showModal) {
         dialogPolyfill.registerDialog(dialog);
     }
 
     showDialogButton.addEventListener('click', () => {
         dialog.showModal();
-        let closest = $(scheduledCB).closest(`label[for=id_schedule_type_0]`);
-        toggleUpdateFreqSelect(!closest.hasClass('is-checked'));
+        toggleUpdateFreqSelect(!!$(manualCB).attr('checked'))
     });
 
     dialog.querySelector('.close').addEventListener('click', () => {
@@ -41,8 +47,8 @@ function initializeHydroShareSettingsDialog() {
      * Otherwise hides the "update frequency" select element when the selected upate type is "manual".
      */
     function toggleUpdateFreqSelect(e) {
-        const show = typeof e == 'boolean' ? e : e.target.value.toLowerCase() == 'manual';
-        $(updateFreqSelect).attr('hidden', show);
+        const hide = typeof e === 'boolean' ? e : e.target.value.toLowerCase() == 'manual';
+        $(updateFreqSelect).attr('hidden', hide);
     }
 
     $(toggleSharingButton).click(() => {
@@ -56,7 +62,12 @@ function initializeHydroShareSettingsDialog() {
         let submitButton = $(hydroshareSettingsForm).find('input[type=submit]');
         $(submitButton).prop('disabled', true);
 
-        const inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
+        let cancelButton = $(hydroshareSettingsForm).find('button.close');
+        $(cancelButton).prop('disabled', true);
+
+        let enabledCB = $(hydroshareSettingsForm).find('input#id_enabled');
+
+        let inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
 
         let method = '';
         if (inputField.id === 'create-resource') {
@@ -68,6 +79,12 @@ function initializeHydroShareSettingsDialog() {
         let url = `${hydroshareSettingsForm.baseURI}hsr/${method}/`;
         let serializedForm = $(hydroshareSettingsForm).serialize();
         let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-progress-spinner');
+
+        if (!serializedForm.match('enabled')) {
+            serializedForm += `&enabled=${enabledCB[0].value}`;
+        }
+
+        console.log(serializedForm);
 
         progressSpinner.addClass('is-active');
 
@@ -106,5 +123,7 @@ function initializeHydroShareSettingsDialog() {
                 progressSpinner.removeClass('is-active');
                 $(submitButton).prop('disabled', false);
             });
+
+        componentHandler.upgradeElement(progressSpinner[0]); // upgradeElement to fix issue where spinner doesn't render
     }
 }
