@@ -34,12 +34,26 @@
 
     {% if resource %}
 
+        {# Message if the resource did not load #}
         {% if resource_did_not_load %}
+
             <p><span class="text-danger">Error:</span>
                 Failed to connect to <a href="https://www.hydroshare.org">hydroshare.org</a>. Updating site data information might not work.
             </p>
+
+        {# Message if the resource has been published #}
+        {% elif resource_is_published %}
+
+            <p class="text-info lead"><strong>The resource this site is connected to is published. Once a resource is published, you cannot change the resource's content.</strong></p>
+            <p class="lead">If you would like to continue sharing data from this site to HydroShare:</p>
+            <ol>
+                <li class="lead">Click <span class="text-primary">DISCONNECT RESOURCE</span>.</li>
+                <li class="lead">Click on <span class="text-primary">START SHARING</span> after the page reloads to start sharing with a new, unpublished resource.</li>
+            </ol>
+
         {% endif %}
 
+        {# Actions if the resource was not found #}
         {% if resource_not_found %}
 
             <p class="text-danger"> <strong>HydroShare Resource not found. </strong></p>
@@ -53,7 +67,19 @@
                 {% csrf_token %}
                 <input type="submit" value="Stop Sharing" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
             </form>
+
+        {# Actions if the resource has been published #}
+        {% elif resource_is_published %}
+
+            <form method="post" action="{{ delete_resource_url }}">
+                {% csrf_token %}
+                <input type="submit" value="DISCONNECT RESOURCE" class="mdl-button mdl-button--raised mdl-button--primary">
+            </form>
+
+
+        {# All other messages and actions #}
         {% else %}
+
             {% if not resource.is_enabled %}
                 <p><strong>Sharing with HydroShare is currently <span class="text-warning">paused</span>.</strong></p>
             {% endif %}
@@ -89,6 +115,8 @@
                 <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
             </div>
         {% endif %}
+
+    {# The action if the user is not sharing data with HydroShare #}
     {% else %}
 
         <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>

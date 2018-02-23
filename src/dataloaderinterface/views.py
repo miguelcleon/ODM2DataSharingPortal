@@ -385,6 +385,7 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
         resource_util = self.get_hs_resource(hs_resource)
         try:
             resource_md = resource_util.get_system_metadata()
+            context['resource_is_published'] = resource_md.get("published", False)
             context['resource_not_found'] = resource_md is None
         except HydroShareNotFound:
             context['resource_not_found'] = True
