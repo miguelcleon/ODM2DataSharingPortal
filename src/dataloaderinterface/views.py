@@ -380,13 +380,7 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
             'data_types': hs_resource.data_types.split(",")
         })
 
-        # TODO: Remove special case for jeff after app is deployed
-        if self.request.user.email == 'jeff.horsburgh@usu.edu':
-            # For Jeff...
-            context['delete_form'] = HydroShareResourceDeleteForm(initial={'delete_external_resource': True})
-        else:
-            # For everyone else...
-            context['delete_form'] = HydroShareResourceDeleteForm()
+        context['delete_form'] = HydroShareResourceDeleteForm()
 
         resource_util = self.get_hs_resource(hs_resource)
         try:

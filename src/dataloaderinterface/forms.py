@@ -47,7 +47,7 @@ class HydroShareSettingsForm(forms.Form):
         ('monthly', 'Monthly')
     )
 
-    enabled = forms.BooleanField(initial=True, label='Sharing On/Off', required=False)
+    enabled = forms.BooleanField(initial=True, label='Pause Sharing', required=False)
 
     site_registration = forms.CharField(max_length=255)
 
@@ -105,7 +105,7 @@ class HydroShareSiteForm(forms.ModelForm):
 class HydroShareResourceDeleteForm(forms.Form):
 
     delete_external_resource = forms.BooleanField(initial=False,
-                                                  label="Check this box to delete the resource in HydroShare.",
+                                                  label="Delete connected resource in HydroShare.",
                                                   required=False)
 
 

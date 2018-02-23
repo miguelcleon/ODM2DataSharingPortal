@@ -11,8 +11,20 @@
     .hs-img-container {
         margin-bottom: 8px;
     }
-
+    @media only screen and (min-width: 480px) {
+        dialog.mdl-dialog {
+            min-width: 480px;
+        }
+    }
 </style>
+
+{% if resource.ext_id %}
+    {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code resource=resource %}
+{% endif %}
+
+<div id="hs-target">
+    {% include 'hydroshare/hs_settings_dialog.html' with resource=resource form=form site=site %}
+</div>
 
 <div class="col-lg-6 col-sm-12">
     <hr>
@@ -99,9 +111,3 @@
     {% endif %}
     <hr>
 </div>
-
-<div id="hs-target">
-    {% include 'hydroshare/hs_settings_dialog.html' with resource=resource form=form site=site %}
-</div>
-
-{% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}

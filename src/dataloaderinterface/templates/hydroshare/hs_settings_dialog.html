@@ -9,7 +9,7 @@
 
 <form method="post" id="hydroshare-settings-form">
     {% csrf_token %}
-    <dialog id="hydroshare-settings-dialog">
+    <dialog class="mdl-dialog" id="hydroshare-settings-dialog">
         {% if resource.id %}
         <h3 class="mdl-dialog__title">Update Settings</h3>
         {% else %}
@@ -23,15 +23,10 @@
             {% if resource.id %}
                 <div class="row">
                     <div class="col-12">
-                        <button class="mdl-button mdl-button--raised mdl-button--accent"
-                                id="hs-toggle-sharing-btn"
-                                type="button" >
-                            {% if form.enabled.value %}Pause Sharing{% else %}Start Sharing{% endif %}
-                        </button>
-
-                        <input type="checkbox" name="{{ form.enabled.name }}"
-                               value="{{ form.enabled.value }}" id="{{ form.enabled.auto_id }}" hidden>
-
+                        <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.enabled.id_for_label }}">
+                            {{ form.enabled|add_class:"mdl-checkbox__input" }}
+                            <span class="mdl-checkbox__label">{{ form.enabled.label }}</span>
+                        </label>
                     </div>
                 </div>
             {% endif %}
@@ -78,7 +73,7 @@
                 <div class="col-12">
                     <div class="mdl-textfield mdl-js-textfield" style="width: 100%;">
                         {{ form.title|add_class:'mdl-textfield__input' }}
-{#                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>#}
+                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
                     </div>
                 </div>
             </div>
@@ -89,7 +84,7 @@
                 <div class="col-12">
                     <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
                         {{ form.abstract|add_class:"mdl-textfield__input" }}
-{#                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>#}
+                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>
                     </div>
                 </div>
             </div>

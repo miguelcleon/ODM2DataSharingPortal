@@ -11,7 +11,6 @@ function initializeHydroShareSettingsDialog() {
     const scheduledCB = $('input#id_schedule_type_0')[0];
     const manualCB = $('input#id_schedule_type_1')[0];
     const updateFreqSelect = $('select#id_update_freq')[0];
-    const toggleSharingButton = $('button#hs-toggle-sharing-btn');
 
     if (!showDialogButton) {
         // If showDialogButton is undefined, return immediately and do not register dialog.
@@ -26,6 +25,7 @@ function initializeHydroShareSettingsDialog() {
 
     showDialogButton.addEventListener('click', () => {
         dialog.showModal();
+        $('label[for="id_enabled"]').removeClass('is-focused');
         toggleUpdateFreqSelect(!!$(manualCB).attr('checked'))
     });
 
@@ -51,21 +51,12 @@ function initializeHydroShareSettingsDialog() {
         $(updateFreqSelect).attr('hidden', hide);
     }
 
-    $(toggleSharingButton).click(() => {
-        let enabledCB = $(hydroshareSettingsForm).find('input#id_enabled');
-        enabledCB[0].checked = !enabledCB[0].checked;
-        enabledCB[0].value = enabledCB[0].value.toLowerCase() != "true";
-        submitForm();
-    });
-
     function submitForm() {
         let submitButton = $(hydroshareSettingsForm).find('input[type=submit]');
         $(submitButton).prop('disabled', true);
 
         let cancelButton = $(hydroshareSettingsForm).find('button.close');
         $(cancelButton).prop('disabled', true);
-
-        let enabledCB = $(hydroshareSettingsForm).find('input#id_enabled');
 
         let inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
 
@@ -79,12 +70,6 @@ function initializeHydroShareSettingsDialog() {
         let url = `${hydroshareSettingsForm.baseURI}hsr/${method}/`;
         let serializedForm = $(hydroshareSettingsForm).serialize();
         let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-progress-spinner');
-
-        if (!serializedForm.match('enabled')) {
-            serializedForm += `&enabled=${enabledCB[0].value}`;
-        }
-
-        console.log(serializedForm);
 
         progressSpinner.addClass('is-active');
 
