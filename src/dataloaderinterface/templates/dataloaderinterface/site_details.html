@@ -403,12 +403,12 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 
-    <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-settings-modal.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/hydroshare/hs-settings-dialog.js' %}"></script>
     {% if site.django_user_id == request.user.id and resource_is_connected and hydroshare_account %}
-        <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-resource-update.js' %}"></script>
-        <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-delete-resource.js' %}"></script>
+        <script src="{% static 'dataloaderinterface/js/hydroshare/hs-update-resource.js' %}"></script>
+        <script src="{% static 'dataloaderinterface/js/hydroshare/hs-delete-resource.js' %}"></script>
     {% elif site.django_user_id == request.user.id and hydroshare_account %}
-        <script src="{% static 'dataloaderinterface/js/hydroshare/hydroshare-resource-create.js' %}"></script>
+        <script src="{% static 'dataloaderinterface/js/hydroshare/hs-create-resource.js' %}"></script>
     {% endif %}
 
 {% endblock %}

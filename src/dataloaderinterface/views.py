@@ -254,7 +254,7 @@ class HydroShareResourceUpdateCreateView(UpdateView):
 
 
 class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
-    template_name = 'hydroshare/hydroshare_site_settings.html'
+    template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     object = None
     slug_field = 'sampling_feature_code'
@@ -348,7 +348,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 
 
 class HydroShareResourceUpdateView(HydroShareResourceUpdateCreateView):
-    template_name = 'hydroshare/hydroshare_site_settings.html'
+    template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     slug_field = 'sampling_feature_code'
     slug_url_kwarg = 'hydroshare_settings_id'

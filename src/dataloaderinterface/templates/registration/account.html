@@ -68,7 +68,7 @@
 
                 {# HydroShare Info #}
                 <div class="col-lg-6 col-sm-12">
-                    {% include 'hydroshare/hydroshare_account.html' with data_profile_mode='view' %}
+                    {% include 'hydroshare/hs_profile.html' with data_profile_mode='view' %}
                 </div>
             </div>
 
@@ -205,7 +205,7 @@
     <script src="{% static 'dataloaderinterface/js/user-form.js' %}"></script>
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script src="{% static 'dataloaderinterface/js/vendor/mdl/dialog-polyfill.js' %}"></script>
-    <script src="{% static 'dataloaderinterface/js/hydroshare/profile-hydroshare-account.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/hydroshare/hs-profile-dialog.js' %}"></script>
     <script>
         function setMode(mode) {
             if (mode === "edit") {

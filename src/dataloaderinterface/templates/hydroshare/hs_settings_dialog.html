@@ -74,22 +74,22 @@
 
 {#                Resource Title#}
             <div class="row">
-                <h4 class="col-12">{{ form.title.label }}</h4>
+                <h4 class="col-12" style="margin-bottom: 0;">{{ form.title.label }}</h4>
                 <div class="col-12">
                     <div class="mdl-textfield mdl-js-textfield" style="width: 100%;">
                         {{ form.title|add_class:'mdl-textfield__input' }}
-                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+{#                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>#}
                     </div>
                 </div>
             </div>
 
 {#                Resource Abstract#}
             <div class="row">
-                <h4 class="col-12">{{ form.abstract.label }}</h4>
+                <h4 class="col-12" style="margin-bottom: 0;">{{ form.abstract.label }}</h4>
                 <div class="col-12">
                     <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
                         {{ form.abstract|add_class:"mdl-textfield__input" }}
-                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>
+{#                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>#}
                     </div>
                 </div>
             </div>

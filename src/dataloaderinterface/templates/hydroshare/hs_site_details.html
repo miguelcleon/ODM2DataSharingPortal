@@ -100,7 +100,7 @@
 </div>
 
 <div id="hs-target">
-    {% include 'hydroshare/hydroshare_settings_modal.html' with resource=resource form=form site=site %}
+    {% include 'hydroshare/hs_settings_dialog.html' with resource=resource form=form site=site %}
 </div>
 
-{% include 'hydroshare/hydroshare_delete_modal.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}
+{% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}

@@ -31,12 +31,6 @@ class MDLRadioButtonRenderer(forms.RadioSelect.renderer):
 class HydroShareSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(HydroShareSettingsForm, self).__init__(*args, **kwargs)
-        # choices = tuple([('minute', 'Every Minute')]) + self.schedule_freq_choices
-        # self.fields['update_freq'] = forms.ChoiceField(
-        #     widget=forms.Select,
-        #     choices=choices,
-        #     initial='daily'
-        # )
 
     schedule_choices = (
         ('scheduled', 'Scheduled'),
@@ -54,8 +48,6 @@ class HydroShareSettingsForm(forms.Form):
     )
 
     enabled = forms.BooleanField(initial=True, label='Sharing On/Off', required=False)
-
-    # enabled = forms.
 
     site_registration = forms.CharField(max_length=255)
 
@@ -83,13 +75,14 @@ class HydroShareSettingsForm(forms.Form):
 
     abstract = forms.CharField(
         required=False,
-        widget=forms.Textarea
+        widget=forms.Textarea,
+        label='Abstract'
     )
 
     title = forms.CharField(
         required=False,
         widget=forms.TextInput,
-        label='Resource Title'
+        label='Resource Title',
     )
 
     # class Meta:

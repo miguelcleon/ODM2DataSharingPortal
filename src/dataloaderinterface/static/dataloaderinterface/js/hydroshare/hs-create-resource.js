@@ -1,7 +1,7 @@
 
 
 $(() => {
-    // console.log("Loading hydroshare-resource-create.js");
+    // console.log("Loading hs-create-resource.js");
    const template_url = `${window.location.href}hsr/create/`;
    const hydroshareContainer = $('#hydroshare-settings-container');
 

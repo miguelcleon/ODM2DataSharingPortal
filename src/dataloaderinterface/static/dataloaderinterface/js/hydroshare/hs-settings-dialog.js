@@ -1,5 +1,5 @@
 /**
-* hydroshare-settings-modal.js
+* hs-settings-dialog.js
 * @description Initializes the hydroshare settings modal for presentation on 'site_details.html'.
 */
 
