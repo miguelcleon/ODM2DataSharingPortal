@@ -25,7 +25,7 @@ function initializeHydroShareSettingsDialog() {
 
     showDialogButton.addEventListener('click', () => {
         dialog.showModal();
-        $('label[for="id_enabled"]').removeClass('is-focused');
+        $('label[for="id_pause_sharing"]').removeClass('is-focused');
         toggleUpdateFreqSelect(!!$(manualCB).attr('checked'))
     });
 
@@ -52,20 +52,14 @@ function initializeHydroShareSettingsDialog() {
     }
 
     function submitForm() {
-        let submitButton = $(hydroshareSettingsForm).find('input[type=submit]');
-        $(submitButton).prop('disabled', true);
+        let dialogButtons = $(hydroshareSettingsForm).find('.mdl-dialog__actions').find('button');
+        $(dialogButtons).removeClass();
+        $(dialogButtons).addClass('mdl-button mdl-button--raised');
+        $(dialogButtons).prop('disabled', true);
 
-        let cancelButton = $(hydroshareSettingsForm).find('button.close');
-        $(cancelButton).prop('disabled', true);
+        let submitButton = $(hydroshareSettingsForm).find('button[type=submit]')[0];
 
-        let inputField = $(hydroshareSettingsForm).find('input[type=submit]')[0];
-
-        let method = '';
-        if (inputField.id === 'create-resource') {
-            method = 'create';
-        } else if (inputField.id === 'update-resource') {
-            method = 'update';
-        }
+        let method = submitButton.id === 'create-resource' ? 'create' : 'update';
 
         let url = `${hydroshareSettingsForm.baseURI}hsr/${method}/`;
         let serializedForm = $(hydroshareSettingsForm).serialize();

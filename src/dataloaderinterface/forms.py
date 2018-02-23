@@ -47,7 +47,7 @@ class HydroShareSettingsForm(forms.Form):
         ('monthly', 'Monthly')
     )
 
-    enabled = forms.BooleanField(initial=True, label='Pause Sharing', required=False)
+    pause_sharing = forms.BooleanField(initial=False, label='Pause Sharing', required=False)
 
     site_registration = forms.CharField(max_length=255)
 

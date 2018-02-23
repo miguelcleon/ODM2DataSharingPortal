@@ -66,7 +66,7 @@ def start_jobs(user=True):
             logfile=LOGFILE),
             comment=JOB_COMMENT_PREPENDER + 'upload_hydroshare_files')
         job.every().day()  # run everyday
-        job.hour.every(AT_HOUR)  # at the time specified by AT_HOUR
+        job.hour.on(AT_HOUR)  # at the time specified by AT_HOUR
 
         cron.write()  # write, i.e. 'save' crontab job
 

@@ -291,7 +291,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         context['site'] = site
         context['form'] = HydroShareSettingsForm(initial={'site_registration': site.pk,
                                                           'data_types': [initial_datatype],
-                                                          'enabled': True,
+                                                          'pause_sharing': False,
                                                           'title': self.generate_title(site),
                                                           'abstract': self.generate_abstract(site)})
         return context
@@ -376,7 +376,7 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
             'site_registration': site.pk,
             'update_freq': hs_resource.update_freq,
             'schedule_type': hs_resource.sync_type,
-            'enabled': hs_resource.is_enabled,
+            'pause_sharing': not hs_resource.is_enabled,
             'data_types': hs_resource.data_types.split(",")
         })
 
@@ -421,7 +421,7 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
                 resource_data.data_types = ",".join(form.cleaned_data['data_types'])
                 resource_data.update_freq = form.cleaned_data['update_freq']
                 resource_data.sync_type = form.cleaned_data['schedule_type']
-                resource_data.is_enabled = form.cleaned_data['enabled']
+                resource_data.is_enabled = not form.cleaned_data["pause_sharing"]
 
             # save resource_data
             resource_data.save()

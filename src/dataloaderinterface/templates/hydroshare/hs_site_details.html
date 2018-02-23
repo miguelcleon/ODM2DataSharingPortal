@@ -19,7 +19,7 @@
 </style>
 
 {% if resource.ext_id %}
-    {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code resource=resource %}
+    {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}
 {% endif %}
 
 <div id="hs-target">
@@ -54,15 +54,9 @@
                 <input type="submit" value="Stop Sharing" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
             </form>
         {% else %}
-            <p>Sharing with HydroShare is currently turned
-                <strong>
-                    {% if resource.is_enabled %}
-                        <span class="text-primary">ON</span>
-                    {% else %}
-                        <span class="text-warning">OFF</span>
-                    {% endif %}
-                </strong>
-            </p>
+            {% if not resource.is_enabled %}
+                <p><strong>Sharing with HydroShare is currently <span class="text-warning">paused</span>.</strong></p>
+            {% endif %}
 
 
             <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>

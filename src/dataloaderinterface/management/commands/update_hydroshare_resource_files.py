@@ -30,7 +30,7 @@ class Command(BaseCommand):
                 resource.delete()
                 continue
 
-            # Skip resource if not enabled
+            # Skip resource if not pause_sharing
             if not resource.is_enabled:
                 upload_skipped_count += 1
                 continue
