@@ -20,15 +20,14 @@ function initializeHydroShareDeleteDialog() {
     });
 
     deleteForm.submit((e) => {
-        const submitButton = $(deleteFormDialog).find('input[type=submit]');
-        submitButton[0].setAttribute('disabled', '');
-        $(submitButton[0]).removeClass('mdl-color--red-400');
-        $(submitButton[0]).addClass('mdl-color--grey');
+        let dialogButtons = $(deleteFormDialog).find('button');
+        $(dialogButtons).removeClass();
+        $(dialogButtons).addClass('mdl-button mdl-buton--raised');
+        $(dialogButtons).prop('disabled', true);
 
         const spinner = $(deleteFormDialog).find('.mdl-js-spinner')[0];
         $(spinner).addClass('is-active');
         componentHandler.upgradeElement(spinner);
-
     });
 
     deleteResourceCB.change(() => {
