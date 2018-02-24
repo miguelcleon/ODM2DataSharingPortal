@@ -100,7 +100,8 @@ function initializeHydroShareSettingsDialog() {
                 }
             }).always(() => {
                 progressSpinner.removeClass('is-active');
-                $(submitButton).prop('disabled', false);
+                $(dialogButtons).prop('disabled', false);
+                $(submitButton).addClass('mdl-button--accent');
             });
 
         componentHandler.upgradeElement(progressSpinner[0]); // upgradeElement to fix issue where spinner doesn't render

@@ -300,7 +300,11 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         """
         Creates a resource in hydroshare.org from form data.
         """
-        form = HydroShareSettingsForm(request.POST)
+
+        # NOTE: Eventually EnviroDIY will support multiple data types. For now, always default to 'Time Series'
+        post_data = request.POST.copy()
+        post_data.update({'data_types': 'TS'})
+        form = HydroShareSettingsForm(post_data)
 
         if form.is_valid():
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
@@ -387,6 +391,7 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
             resource_md = resource_util.get_system_metadata()
             context['resource_is_published'] = resource_md.get("published", False)
             context['resource_not_found'] = resource_md is None
+            # context['resource_is_published'] = True
         except HydroShareNotFound:
             context['resource_not_found'] = True
         except Exception:
