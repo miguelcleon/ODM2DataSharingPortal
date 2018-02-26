@@ -171,7 +171,9 @@ function bindResultEvents(resultForm) {
         var outputVariableData = equipmentModelSelect.find('option[value=' + modelId + ']').data('output-variables');
         unitSelect.data('filters-applied', true);
 
-        filterSelectOptions(unitSelect, outputVariableData.variables[variableId]);
+        if (outputVariableData) {
+            filterSelectOptions(unitSelect, outputVariableData.variables[variableId]);
+        }
     });
     variableSelect.trigger('change', [true]);
 
@@ -196,6 +198,10 @@ function bindResultEvents(resultForm) {
         filterSelectOptions(variableSelect, outputVariableData.units[unitId]);
     });
     unitSelect.trigger('change', [true]);
+}
+
+function defaultTableMessage() {
+    $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
 }
 
 function initializeResultsForm() {
@@ -241,6 +247,7 @@ function initializeResultsForm() {
                 bindResultDeleteEvent(newRow);
         
                 $('div.results-table table').append(newRow);
+                defaultTableMessage();
                 $('#result-dialog').modal('toggle');
                 
             } else if (xhr.status == 206) {
@@ -273,6 +280,9 @@ function initializeResultsForm() {
         updateRowData(row);
         dialog.modal('toggle');
     });
+
+    defaultTableMessage();
+    notifyInputStatus();
 }
 
 function validateResultForm() {
@@ -334,6 +344,17 @@ function initializeResultsTable() {
     bindResultDeleteEvent(rows);
 }
 
+function notifyInputStatus() {
+    if (!$("#id_notify").prop("checked")) {
+        $("#id_hours_threshold").removeAttr("name");
+        $("#id_hours_threshold").removeAttr("required");
+    }
+    else {
+        $("#id_hours_threshold").attr("name", "hours_threshold");
+        $("#id_hours_threshold").attr("required", true);
+    }
+}
+
 $(document).ready(function() {
     $('nav .menu-register-site').addClass('active');
 
@@ -347,5 +368,11 @@ $(document).ready(function() {
 
         dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
         dialog.modal('toggle');
+        defaultTableMessage();
+    });
+
+    $("#id_notify").change(function() {
+        $("div[data-field='hours_threshold']").toggleClass("hidden", !this.checked);
+        notifyInputStatus();
     });
 });

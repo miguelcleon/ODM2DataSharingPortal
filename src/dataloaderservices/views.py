@@ -1,9 +1,11 @@
 import codecs
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from StringIO import StringIO
 
+import requests
+from django.conf import settings
 from django.http.response import HttpResponse
 from django.views.generic.base import View
 from unicodecsv.py2 import UnicodeWriter
@@ -218,6 +220,7 @@ class TimeSeriesValuesApi(APIView):
             site_sensor.last_measurement_value = result_value.data_value
             site_sensor.last_measurement_datetime = result_value.value_datetime
             site_sensor.last_measurement_utc_offset = result_value.value_datetime_utc_offset
+            site_sensor.last_measurement_utc_datetime = result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset)
 
             if is_first_value:
                 result.valid_datetime = measurement_datetime
@@ -232,11 +235,22 @@ class TimeSeriesValuesApi(APIView):
 
             site_sensor.save(update_fields=[
                 'last_measurement_id', 'last_measurement_value', 'last_measurement_datetime',
-                'last_measurement_utc_offset', 'activation_date', 'activation_date_utc_offset'
+                'last_measurement_utc_datetime', 'last_measurement_utc_offset',
+                'activation_date', 'activation_date_utc_offset'
             ])
             result.save(update_fields=[
                 'result_datetime', 'value_count', 'result_datetime_utc_offset',
                 'valid_datetime', 'valid_datetime_utc_offset'
             ])
+
+            # Insert data value into influx instance.
+            influx_request_url = settings.INFLUX_UPDATE_URL
+            influx_request_body = settings.INFLUX_UPDATE_BODY.format(
+                result_uuid=str(site_sensor.result_uuid).replace('-', '_'),
+                data_value=result_value.data_value,
+                utc_offset=result_value.value_datetime_utc_offset,
+                timestamp_s=long((result_value.value_datetime - datetime.utcfromtimestamp(0)).total_seconds()),
+            )
+            requests.post(influx_request_url, influx_request_body.encode())
 
         return Response({}, status.HTTP_201_CREATED)

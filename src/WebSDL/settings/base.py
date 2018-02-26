@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'widget_tweaks'
+    'widget_tweaks',
+    'requests',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -61,6 +62,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 REST_FRAMEWORK = {
    'DEFAULT_RENDERER_CLASSES': (
        'rest_framework.renderers.JSONRenderer',
@@ -152,10 +154,13 @@ RECAPTCHA_USER_KEY = data["recaptcha_user_key"] if "recaptcha_user_key" in data 
 
 RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
+EMAIL_SENDER = data['password_email_sender'] if 'password_email_sender' in data else '',
 
-EMAIL_SENDER = data['email_sender'] if 'email_sender' in data else '',
+NOTIFY_EMAIL = data['notify_email_sender'] if 'notify_email_sender' in data else ''
 
 DEFAULT_FROM_EMAIL = EMAIL_SENDER[0] if isinstance(EMAIL_SENDER, tuple) else EMAIL_SENDER
+
+NOTIFY_EMAIL_SENDER = NOTIFY_EMAIL[0] if isinstance(NOTIFY_EMAIL, tuple) else NOTIFY_EMAIL
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -166,6 +171,10 @@ EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVE
 DATETIME_FORMAT = "N j, Y, H:m"
 
 INFLUX_URL_QUERY = data['influx_query']
+
+INFLUX_UPDATE_URL = data['influx_updater_query']['url']
+
+INFLUX_UPDATE_BODY = data['influx_updater_query']['body']
 
 # This data period is measured in days
 SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data else '2'
