@@ -86,6 +86,9 @@ class Resource(HydroShareUtilityBaseClass):
     def get_system_metadata(self, **kwargs):
         return self.client.get_system_metadata(self.resource_id, **kwargs)
 
+    def get_science_metadata(self):
+        return self.client.get_science_metadata(self.resource_id)
+
     def update_metadata(self, data=None):
         if data is None:
             data = self.to_object()
@@ -93,25 +96,25 @@ class Resource(HydroShareUtilityBaseClass):
 
     def upload_files(self):
         upload_success_count = 0
-        for file in self.files:
+        for file_ in self.files:
             try:
-                self.client.delete_resource_file(self.resource_id, os.path.basename(file))
+                self.client.delete_resource_file(self.resource_id, os.path.basename(file_))
             except HydroShareNotFound:
                 pass
 
-            if not isinstance(file, str):
-                file = str(file)
+            if not isinstance(file_, str):
+                file_ = str(file_)
 
             try:
-                self.client.addResourceFile(self.resource_id, file)
-                self._r_logger("File upload successful: '{filename}'".format(filename=os.path.basename(file)),
+                self.client.addResourceFile(self.resource_id, file_)
+                self._r_logger("File upload successful: '{filename}'".format(filename=os.path.basename(file_)),
                                level=logging.INFO)
                 upload_success_count += 1
             except KeyError as e:
                 self._log_error('File upload failed; incorrectly formatted arguments given.', e)
                 raise e
             except Exception as e:
-                self._log_error("File upload failed: \n\t{fname}\n".format(fname=os.path.basename(file)), e)
+                self._log_error("File upload failed: \n\t{fname}\n".format(fname=os.path.basename(file_)), e)
                 raise e
         self._r_logger("successfully uploaded {count} files".format(count=upload_success_count),
                        level=logging.INFO)
@@ -174,7 +177,7 @@ class Resource(HydroShareUtilityBaseClass):
             metadata.append(coverage_dict)
 
         metadata_as_string = self._stringify_metadata(metadata)
-        # metadata_as_string = '[{"coverage":{"type":"point","value":{"units":"Decimal degrees", "east":-112.01214, "north":41.80126, "projection": "Unknown", "name":"Demo Site (LOCALHOST)"}}}]'
+
         self.resource_id = self.client.create_resource(resource_type=self.resource_type,
                                                        title=self.title,
                                                        metadata=metadata_as_string,
@@ -184,7 +187,7 @@ class Resource(HydroShareUtilityBaseClass):
 
     def _stringify_metadata(self, metadata):
         string = str(metadata)
-        string = string.replace("'", '"')  # .replace(" ", "")
+        string = string.replace("'", '"')
         return string
 
     def update(self, metadata=None):

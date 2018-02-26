@@ -11,25 +11,40 @@ class HydroShareAdapter(HydroShare):
         super(HydroShareAdapter, self).__init__(hostname=hostname, port=port, use_https=use_https, verify=verify,
                                                 auth=auth)
 
-    def _build_params(self, params): # type: (dict) -> str
+    def _build_params(self, params):  # type: (dict) -> str
         param_vals = ['{param}={val}'.format(param=p, val=v) for p, v in params.iteritems()]
         return "?{params}".format(params="&".join(param_vals))
 
-    def _request(self, method, url, params=None, data=None, files=None, headers=None, stream=False):
-        _headers = None
-        if self._default_headers and headers:
-            _headers = headers
-            _headers.update(self._default_headers)
-        elif self._default_headers:
-            _headers = self._default_headers
+    def _request(self, method, url, params=None, data=None, files=None, headers=None, stream=False, **kwargs):
 
-        return super(HydroShareAdapter, self)._request(method, url, params=params, data=data, files=files, stream=stream, headers=_headers)
+        timeout = None
+        if 'timeout' in kwargs:
+            timeout = kwargs.get('timeout', None)
+
+        if self._default_headers and headers:
+            headers = headers
+            headers.update(self._default_headers)
+        elif self._default_headers:
+            headers = self._default_headers
+
+        try:
+            request = self.session.request(method, url, params=params, data=data, files=files, headers=headers,
+                                           stream=stream, verify=self.verify, timeout=timeout)
+        except requests.ConnectionError:
+            self._initializeSession()
+            request = self.session.request(method, url, params=params, data=data, files=files, headers=headers,
+                                           stream=stream, verify=self.verify, timeout=timeout)
+        return request
 
     def get_resource_list(self, **kwargs):
         return self.getResourceList(**kwargs)
 
     def get_system_metadata(self, pid, **kwargs):
-
+        """
+        Returns system metadata for a resource which includes the dublin core elements
+        NOTE: get_system_metadata does not call getSystemMetadata() from hs_restclient so that
+        a timeout can be specified for the request.
+        """
         timeout = None
         if 'timeout' in kwargs:
             timeout = kwargs.get('timeout', None)
@@ -53,8 +68,8 @@ class HydroShareAdapter(HydroShare):
 
         return req.json()
 
-    def get_science_metadata_RDF(self, pid):
-        return self.getScienceMetadata(pid)
+    def get_science_metadataRDF(self, pid):
+        return self.getScienceMetadataRDF(pid)
 
     def get_science_metadata(self, pid):
         return self.getScienceMetadata(pid)
@@ -67,9 +82,6 @@ class HydroShareAdapter(HydroShare):
 
     def get_resource(self, pid, destination=None, unzip=False, wait_for_bag_creation=True):
         return self.getResource(pid, destination=destination, unzip=unzip, wait_for_bag_creation=wait_for_bag_creation)
-
-    def get_resource_metadata(self, pid):
-        return self.get_system_metadata(pid)
 
     def get_resource_types(self):
         return self.getResourceTypes()

@@ -151,6 +151,6 @@ from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.resource import Resource
 
 util = HydroShareUtility(...)
-resource = util.get_resource_metadata(<your_resource_id>) # type: Resource
+resource = util.get_resource_system_metadata(<your_resource_id>) # type: Resource
 ```
 

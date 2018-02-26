@@ -19,7 +19,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
     XML_COVERAGE_PROTO = "start={start}; end={end}; scheme=W3C-DTF"
     TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
-    def __init__(self, auth=None): # type: (AuthUtil) -> None
+    def __init__(self, auth=None):  # type: (AuthUtil) -> None
         self.auth = auth
 
     @property
@@ -56,8 +56,8 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
         return resources
 
-    def get_resource_metadata(self, pid):
-        data = self.client.get_resource_metadata(pid)
+    def get_resource_system_metadata(self, pid):
+        data = self.client.get_system_metadata(pid)
         logging.info("Fetched resource metadata: {json_data}".format(json_data=json.dumps(data)))
         return Resource(self.client, **data)
 

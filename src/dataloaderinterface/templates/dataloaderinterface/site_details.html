@@ -279,7 +279,7 @@
                                                 <td class="variable-description">
                                                     <div class="variable-data text-center">
                                                         <div class="variable-name">{{ sensor.variable_name }}</div>
-                                                                <div class="latest-value">{{ sensor.last_measurement_value|default:"-" }}</div>
+                                                                <div class="latest-value">{{ sensor.last_measurement_value|roundfloat:4|default:"-" }}</div>
                                                         <div class="unit">({{ sensor.unit_abbreviation }})</div>
                                                     </div>
                                                 </td>
@@ -420,8 +420,6 @@ const char *UUIDs[] =                                                      // UU
     {% elif site.django_user_id == request.user.id and hydroshare_account %}
         <script src="{% static 'dataloaderinterface/js/hydroshare/hs-create-resource.js' %}"></script>
     {% endif %}
-    {% endif %}
-
     <script>
     $(() => {
         {# Fix for problem where spinner does not render #}
@@ -429,5 +427,7 @@ const char *UUIDs[] =                                                      // UU
        componentHandler.upgradeElement(hsProgressSpinner);
     });
     </script>
+    {% endif %}
+
 
 {% endblock %}

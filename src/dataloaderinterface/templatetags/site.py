@@ -45,3 +45,14 @@ def add_input_class(value, arg):
         return re.sub(r'(class=")', r'\1{0} '.format(arg), value)
     else:
         return re.sub(r'(<input)', r'\1 class="{0}"'.format(arg), value)
+
+
+@register.filter("roundfloat")
+def round_float(value, argv):
+    if isinstance(value, float):
+        round_to = 1
+        if argv is not None and isinstance(argv, int):
+            round_to = argv
+        return round(value, round_to)
+    else:
+        return value
