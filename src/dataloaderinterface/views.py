@@ -388,16 +388,15 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
 
         resource_util = self.get_hs_resource(hs_resource)
         try:
-            resource_md = resource_util.get_system_metadata()
+            resource_md = resource_util.get_system_metadata(timeout=10.0)
             context['resource_is_published'] = resource_md.get("published", False)
             context['resource_not_found'] = resource_md is None
-            # context['resource_is_published'] = True
         except HydroShareNotFound:
             context['resource_not_found'] = True
-        except Exception:
+        except requests.exceptions.Timeout:
             context['resource_did_not_load'] = True
         finally:
-            if context['resource_not_found'] is True:
+            if context.get('resource_not_found', None) is True:
                 context['delete_resource_url'] = reverse('hs_resource_delete',
                                                          kwargs={'sampling_feature_code': site.sampling_feature_code})
 

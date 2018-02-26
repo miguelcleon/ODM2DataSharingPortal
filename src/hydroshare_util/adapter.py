@@ -1,4 +1,5 @@
 # adapter.py
+import requests
 from hs_restclient import HydroShare, DEFAULT_HOSTNAME, HydroShareNotAuthorized, HydroShareNotFound, \
     HydroShareHTTPException
 
@@ -7,7 +8,8 @@ class HydroShareAdapter(HydroShare):
     def __init__(self, hostname=DEFAULT_HOSTNAME, port=None, use_https=True, verify=True,
                  auth=None, default_headers=None):
         self._default_headers = default_headers
-        super(HydroShareAdapter, self).__init__(hostname=hostname, port=port, use_https=use_https, verify=verify, auth=auth)
+        super(HydroShareAdapter, self).__init__(hostname=hostname, port=port, use_https=use_https, verify=verify,
+                                                auth=auth)
 
     def _build_params(self, params): # type: (dict) -> str
         param_vals = ['{param}={val}'.format(param=p, val=v) for p, v in params.iteritems()]
@@ -26,8 +28,30 @@ class HydroShareAdapter(HydroShare):
     def get_resource_list(self, **kwargs):
         return self.getResourceList(**kwargs)
 
-    def get_system_metadata(self, pid):
-        return self.getSystemMetadata(pid)
+    def get_system_metadata(self, pid, **kwargs):
+
+        timeout = None
+        if 'timeout' in kwargs:
+            timeout = kwargs.get('timeout', None)
+
+        url = "{url_base}/resource/{pid}/sysmeta/".format(url_base=self.url_base,
+                                                          pid=pid)
+        headers = self._default_headers
+
+        access_token = self.auth.token.get('access_token', None)
+        if access_token is not None:
+            headers['Authorization'] = 'Bearer {0}'.format(access_token)
+
+        req = requests.get(url, headers=headers, timeout=timeout)
+        if req.status_code != 200:
+            if req.status_code == 403:
+                raise HydroShareNotAuthorized(('GET', url))
+            elif req.status_code == 404:
+                raise HydroShareNotFound((pid,))
+            else:
+                raise HydroShareHTTPException((url, 'GET', req.status_code))
+
+        return req.json()
 
     def get_science_metadata_RDF(self, pid):
         return self.getScienceMetadata(pid)

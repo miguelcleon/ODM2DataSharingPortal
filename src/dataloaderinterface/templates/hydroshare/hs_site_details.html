@@ -1,23 +1,5 @@
 {% load static %}
 
-<style>
-    .hydroshare-actions {
-        display: flex;
-        flex-direction: row;
-    }
-    .hydroshare-actions > * {
-        margin: 8px 16px 8px 0;
-    }
-    .hs-img-container {
-        margin-bottom: 8px;
-    }
-    @media only screen and (min-width: 480px) {
-        dialog.mdl-dialog {
-            min-width: 480px;
-        }
-    }
-</style>
-
 {% if resource.ext_id %}
     {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}
 {% endif %}
@@ -29,27 +11,17 @@
 <div class="col-lg-6 col-sm-12">
     <hr>
     <div class="hs-img-container">
-        <img src="https://www.hydroshare.org/static/img/logo-lg.png">
+        <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
     </div>
 
     {% if resource %}
 
-        {# Message if the resource did not load #}
-        {% if resource_did_not_load %}
+        {# Message if the resource did not load due to a request timeout #}
+        {% if request_timeout %}
 
             <p><span class="text-danger">Error:</span>
                 Failed to connect to <a href="https://www.hydroshare.org">hydroshare.org</a>. Updating site data information might not work.
             </p>
-
-        {# Message if the resource has been published #}
-        {% elif resource_is_published %}
-
-            <p class="text-info lead"><strong>The resource this site is connected to is published. Once a resource is published, you cannot change the resource's content.</strong></p>
-            <p class="lead">If you would like to continue sharing data from this site to HydroShare:</p>
-            <ol>
-                <li class="lead">Click <span class="text-primary">DISCONNECT RESOURCE</span>.</li>
-                <li class="lead">Click on <span class="text-primary">START SHARING</span> after the page reloads to start sharing with a new, unpublished resource.</li>
-            </ol>
 
         {% endif %}
 
@@ -65,17 +37,23 @@
 
             <form method="post" action="{{ delete_resource_url }}">
                 {% csrf_token %}
-                <input type="submit" value="Stop Sharing" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
+                <input type="submit" value="STOP SHARING" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
             </form>
 
         {# Actions if the resource has been published #}
         {% elif resource_is_published %}
 
+            <p class="text-info lead"><strong>The resource this site is connected to is published. Once a resource is published, you cannot change the resource's content.</strong></p>
+            <p class="lead">If you would like to continue sharing data from this site to HydroShare:</p>
+            <ol>
+                <li class="lead">Click <span class="text-primary">DISCONNECT RESOURCE</span>.</li>
+                <li class="lead">Click on <span class="text-primary">START SHARING</span> after the page reloads to start sharing with a new, unpublished resource.</li>
+            </ol>
+
             <form method="post" action="{{ delete_resource_url }}">
                 {% csrf_token %}
                 <input type="submit" value="DISCONNECT RESOURCE" class="mdl-button mdl-button--raised mdl-button--primary">
             </form>
-
 
         {# All other messages and actions #}
         {% else %}
@@ -93,7 +71,6 @@
 
             <p><a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">View data from this site in HydroShare</a></p>
 
-        {#    <p>Click <span class="text-info">Update Now</span> to share latest data with HydroShare.</p>#}
             <p class="text-danger" id="hydroshare-error"></p>
 
             <div class="hydroshare-actions">
@@ -123,7 +100,6 @@
 
         <p class="lead">
             Share your data on <em>hydroshare.org</em>.
-            {# TODO: Implement a 'click here to learn more' link... #}
             <a href="https://help.hydroshare.org/introduction-to-hydroshare/" id="display-hydroshare-info">Click here</a> to learn more.
         </p>
         <button id="show-hydroshare-settings-dialog"

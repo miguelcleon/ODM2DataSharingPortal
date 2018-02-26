@@ -22,7 +22,7 @@ class Resource(HydroShareUtilityBaseClass):
                  date_created=None, date_last_updated=None, discoverable=None, published=None, resource_type=None,
                  immutable=None, science_metadata_url=None, bag_url=None, coverages=list(), shareable=None, **kwargs):
 
-        self.client = client # type: HydroShareAdapter
+        self.client = client  # type: HydroShareAdapter
         self._raw = raw
 
         self.abstract = abstract
@@ -83,8 +83,8 @@ class Resource(HydroShareUtilityBaseClass):
         except Exception as e:
             self._r_logger("Error updating resource file list", error=e)
 
-    def get_system_metadata(self):
-        return self.client.get_system_metadata(self.resource_id)
+    def get_system_metadata(self, **kwargs):
+        return self.client.get_system_metadata(self.resource_id, **kwargs)
 
     def update_metadata(self, data=None):
         if data is None:
