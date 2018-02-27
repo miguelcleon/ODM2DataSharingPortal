@@ -7,8 +7,6 @@ from hs_restclient import HydroShareAuthOAuth2, HydroShareAuthBasic
 from adapter import HydroShareAdapter
 from . import HydroShareUtilityBaseClass, ImproperlyConfiguredError
 from django.shortcuts import redirect
-# from django.core.exceptions import PermissionDenied
-# from django.http import HttpResponseServerError
 from django.conf import settings
 import logging as logger
 
@@ -116,6 +114,10 @@ class OAuthUtil(AuthUtilImplementor):
             self.__authorization_grant_type = OAUTH_AC
 
     def get_token(self):
+        """
+        Get the authorization token dict
+        :return: a dictionary representing the oauth token
+        """
         token = {
             'access_token': self.access_token,
             'token_type': self.token_type,
@@ -131,8 +133,10 @@ class OAuthUtil(AuthUtilImplementor):
                     raise AttributeError("missing attributes(s) for token: {attrs}".format(attrs=missing_attrs))
         return token
 
-    def get_client(self):
-        """Provides authentication details to 'hs_restclient.HydroShare' and returns the object"""
+    def get_client(self):  # type: () -> HydroShareAdapter
+        """
+        Passes authentication details to underlying HydroShare object for authorization via OAuth 2.0.
+        """
         if self.auth_type == OAUTH_AC:
             token = self.get_token()
             auth = HydroShareAuthOAuth2(self.__client_id, self.__client_secret, token=token)
@@ -146,7 +150,15 @@ class OAuthUtil(AuthUtilImplementor):
         return HydroShareAdapter(auth=auth, default_headers=authorization_header)
 
     @staticmethod
-    def authorize_client(response_type=None): # type: (str) -> None
+    def authorize_client(response_type=None):  # type: (str) -> None
+        """
+        Redirects user from the client (data.envirodiy.org) to www.hydroshare.org/o/authorize/. After the user provides
+        their hydroshare account credentials and authorizes the requesting client, the user is redirected back to the
+        client website.
+
+        :param response_type: a string representing the auth response type (defaults is 'code').
+        :return: None
+        """
         if response_type:
             auth = OAuthUtil(response_type=response_type)
         else:
@@ -157,6 +169,12 @@ class OAuthUtil(AuthUtilImplementor):
 
     @staticmethod
     def authorize_client_callback(code, response_type=None):
+        """
+        Callback handler after a user authorizes the client (data.envirodiy.org).
+        :param code: a string representing the authorization code recieved by hydroshare.org
+        :param response_type: a string representing the oauth response_type
+        :return: a dictionary representing the token
+        """
         # type: (str, str) -> dict
         if response_type:
             auth = OAuthUtil(response_type=response_type)
@@ -176,7 +194,8 @@ class OAuthUtil(AuthUtilImplementor):
             if key in self.__dict__:
                 setattr(self, key, value)
             else:
-                logger.warning("skipped setting attribute '{attr}' on '{clsname}".format(attr=key, clsname=self.classname))
+                logger.warning("skipped setting attribute '{attr}' on '{clsname}".format(attr=key,
+                                                                                         clsname=self.classname))
 
     def _refresh_authentication(self):
         """Does the same thing as 'get_client()', but attempts to refresh 'self.access_token' first"""
@@ -206,7 +225,7 @@ class OAuthUtil(AuthUtilImplementor):
 
         return self.get_client()
 
-    def _build_oauth_url(self, path, params=None): # type: (str, list) -> str
+    def _build_oauth_url(self, path, params=None):  # type: (str, dict) -> str
         if params is None:
             params = {}
 
@@ -271,7 +290,7 @@ class BasicAuthUtil(AuthUtilImplementor):
 
 class SelfSignSecurityCertAuth(AuthUtilImplementor):
     """Used to connect to a development HydroShare server that uses a self-sign security certificate"""
-    def __init__(self, hostname, port=None): # type: (str, int) -> None
+    def __init__(self, hostname, port=None):  # type: (str, int) -> None
         self.hostname = hostname
         self.port = port
         self.use_https = False
@@ -290,6 +309,7 @@ class SelfSignSecurityCertAuth(AuthUtilImplementor):
 
     def get_token(self):
         return None
+
 
 class AuthUtilFactory(object):
     """

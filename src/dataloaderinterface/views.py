@@ -229,6 +229,9 @@ class SiteDetailView(DetailView):
 
 
 class HydroShareResourceViewMixin:
+    def __init__(self):
+        self.request = None
+
     def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
         """ Creates a 'hydroshare_util.Resource' object """
         account = self.request.user.odm2user.hydroshare_account
@@ -428,7 +431,6 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
                 resource_data.sync_type = form.cleaned_data['schedule_type']
                 resource_data.is_enabled = not form.cleaned_data["pause_sharing"]
 
-            # save resource_data
             resource_data.save()
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})

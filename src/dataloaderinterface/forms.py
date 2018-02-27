@@ -52,7 +52,6 @@ class HydroShareSettingsForm(forms.Form):
     site_registration = forms.CharField(max_length=255)
 
     schedule_type = forms.ChoiceField(
-        required=True,
         widget=forms.RadioSelect(renderer=MDLRadioButtonRenderer),
         choices=schedule_choices,
         initial='scheduled'
@@ -66,7 +65,8 @@ class HydroShareSettingsForm(forms.Form):
     )
 
     data_types = forms.MultipleChoiceField(
-        required=True,
+        # TODO: When EnviroDIY supports multiple data types, the 'required' attribute should be set to True
+        required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=data_type_choices,
         initial='TS',
