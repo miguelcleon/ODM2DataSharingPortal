@@ -36,7 +36,7 @@
                     <div class="col-6">
                         <h4 data-toggle="collapse" href="#mySitesCollapse"
                         aria-expanded="false" aria-controls="mySitesCollapse"
-                            style="cursor: pointer;"
+                            style="cursor: pointer;  display: inline-block;"
                         >My sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
                     </div>
                     <div class="col-6 text-right">
@@ -133,11 +133,12 @@
             {% endif %}
 
             <div class="col-sm-12">
-                <h4 style="margin-top: 40px; cursor: pointer;" data-toggle="collapse" href="#followedSitesCollapse"
+                <h4 style="margin-top: 40px; cursor: pointer; display: inline-block;" data-toggle="collapse" href="#followedSitesCollapse"
                     aria-expanded="false" aria-controls="followedSitesCollapse"
                     >Followed Sites <span class="badge badge-secondary">{{ followed_sites|length }}</span></h4>
                 <hr>
             </div>
+
             {% if followed_sites %}
                 <div class="col-12 collapse show" id="followedSitesCollapse">
                     <button id="btnOrderFollowedSites"
@@ -145,31 +146,38 @@
                         Order <i class="material-icons">arrow_drop_down</i>
                     </button>
 
-                    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect menu-order"
+                    <ul class="menu-sort mdl-menu mdl-menu--bottom-left mdl-js-menu menu-order"
                         for="btnOrderFollowedSites">
-                        <li class="mdl-menu__item active">
+                        <li class="mdl-menu__item active" data-sort-by="alphabetically">
                             <i class="material-icons center-icon">sort_by_alpha</i> Alphabetically
                         </li>
-                        <li class="mdl-menu__item">
+                        <li class="mdl-menu__item" data-sort-by="registrationDate">
                             <i class="material-icons center-icon">today</i> By Registration Date
                         </li>
-                        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">
+                        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" data-sort-by="lastUpdated">
                             <i class="material-icons center-icon">query_builder</i> By Last Updated
                         </li>
-                        <li class="mdl-menu__item active">
+                        <li class="mdl-menu__item active" data-order="ascending">
                             <i class="material-icons center-icon">arrow_upward</i> Ascending
                         </li>
-                        <li class="mdl-menu__item">
+                        <li class="mdl-menu__item" data-order="ascending">
                             <i class="material-icons center-icon">arrow_downward</i> Descending
                         </li>
                     </ul>
 
-                    <div class="row">
+                    <div class="row followed-sites">
                         {% for site in followed_sites %}
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site" data-site="{{ site.sampling_feature_id }}">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site"
+                                 data-site="{{ site.sampling_feature_id }}"
+                                 data-siteCode="{{ site.sampling_feature_code }}"
+                                 data-registrationDate="{{ site.registration_date }}"
+                                 data-lastUpdated="{{ site.latest_measurement }}"
+                            >
                                 <div class="mdl-card mdl-shadow--2dp site-card">
                                     <div class="mdl-card__title">
-                                        <h2 class="mdl-card__title-text"><a href="{% autoescape on %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_name }}</a></h2>
+                                        <h2 class="mdl-card__title-text">
+                                            <a href="{% autoescape on %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_name }}</a>
+                                        </h2>
                                     </div>
                                     <div class="mdl-card__supporting-text">
                                         <table>
