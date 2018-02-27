@@ -236,8 +236,17 @@ class HydroShareResourceViewMixin:
         """ Creates a 'hydroshare_util.Resource' object """
         account = self.request.user.odm2user.hydroshare_account
         token_json = account.get_token()
-        client = AuthUtil.authorize(token=token_json).get_client()
-        hs_resource = Resource(client)
+        auth_util = AuthUtil.authorize(token=token_json)
+
+        # if the oauth access_token expires in less than a week, refresh the token
+        if token_json.get('expires_in', None) < 60*60*24*7:
+            try:
+                auth_util.refresh_token()
+                account.update_token(auth_util.get_token())
+            except Exception as e:
+                print(e)
+
+        hs_resource = Resource(auth_util.get_client())
         hs_resource.resource_id = resource.ext_id
         return hs_resource
 

@@ -203,19 +203,22 @@ class HydroShareAccount(models.Model):
         super(HydroShareAccount, self).save(force_insert=force_insert, force_update=force_update, using=using,
                                             update_fields=update_fields)
 
-    # def delete(self, using=None, keep_parents=False):
-    #     super(HydroShareAccount, self).delete(using, keep_parents)
-
     def get_token(self):
         try:
             return self.token.to_dict()
         except ObjectDoesNotExist:
             return None
 
+    def update_token(self, token_dict):  # type: (dict) -> None
+        if isinstance(self.token, OAuthToken):
+            self.token.delete(keep_parents=True)
+        self.token = OAuthToken(**token_dict)
+        self.save()
+
+
     def to_dict(self, include_token=True):
         account = {
             'id': self.pk,
-            'name': self.name,
             'ext_id': self.ext_id,
             'is_enabled': self.is_enabled
         }
@@ -224,9 +227,6 @@ class HydroShareAccount(models.Model):
             if token:
                 account['token'] = token
         return account
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         db_table = 'hydroshare_account'

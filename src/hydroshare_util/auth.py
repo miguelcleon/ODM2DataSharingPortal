@@ -32,6 +32,11 @@ class AuthUtil(HydroShareUtilityBaseClass):
     def get_token(self):
         return self.__implementation.get_token()
 
+    def refresh_token(self):
+        auth_type = self.auth_type
+        if auth_type == OAUTH_ROPC or auth_type == OAUTH_AC:
+            return self.__implementation.refresh_access_token()
+
     @staticmethod
     def authorize_client(response_type=None):
         return OAuthUtil.authorize_client(response_type=response_type)
@@ -197,13 +202,15 @@ class OAuthUtil(AuthUtilImplementor):
                 logger.warning("skipped setting attribute '{attr}' on '{clsname}".format(attr=key,
                                                                                          clsname=self.classname))
 
-    def _refresh_authentication(self):
-        """Does the same thing as 'get_client()', but attempts to refresh 'self.access_token' first"""
+    def refresh_access_token(self):
+        """
+        Refresh oauth token using the refresh_token
+        :return: a dictionary representing the refreshed token
+        """
         params = {
             'grant_type': 'refresh_token',
             'client_id': self.__client_id,
             'client_secret': self.__client_secret,
-            'redirect_uri': self.__redirect_uri,
             'refresh_token': self.refresh_token
         }
 
@@ -221,9 +228,9 @@ class OAuthUtil(AuthUtilImplementor):
 
         else:
             # TODO: better exception handling
-            raise Exception("failed to refresh access token")
+            raise Exception("failed to refresh access token", response.json())
 
-        return self.get_client()
+        return self.get_token()
 
     def _build_oauth_url(self, path, params=None):  # type: (str, dict) -> str
         if params is None:

@@ -69,7 +69,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
     def get_resource_types(self):
         try:
-            Resource.RESOURCE_TYPES = [type for type in self.client.get_resource_types()]
+            Resource.RESOURCE_TYPES = [type_ for type_ in self.client.get_resource_types()]
         except Exception as e:
             logging.error("Failed to get resource types!\n{error}".format(error=e))
 
