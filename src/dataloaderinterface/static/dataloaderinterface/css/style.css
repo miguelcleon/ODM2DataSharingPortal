@@ -602,6 +602,26 @@ footer .separator {
     margin-bottom: 2px;
 }
 
+.menu-order li > i {
+    margin-right: 10px;
+}
+
+.menu-order li > i {
+    color: #92d050;
+}
+
+.menu-order li > i {
+    opacity: 0;
+}
+
+.menu-order li.active > i {
+    opacity: 1;
+}
+
+.menu-order li.active {
+    font-weight: bold;
+}
+
 .result-uuid {
     border-bottom: 0 !important;
 }
@@ -775,6 +795,7 @@ button:focus {
     text-decoration: none;
     font-weight: normal;
 }
+
 .site-card {
     margin-top: 20px;
     width: auto;

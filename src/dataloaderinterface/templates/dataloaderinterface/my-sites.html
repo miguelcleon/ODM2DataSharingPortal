@@ -140,6 +140,30 @@
             </div>
             {% if followed_sites %}
                 <div class="col-12 collapse show" id="followedSitesCollapse">
+                    <button id="btnOrderFollowedSites"
+                            class="mdl-button mdl-js-button">
+                        Order <i class="material-icons">arrow_drop_down</i>
+                    </button>
+
+                    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect menu-order"
+                        for="btnOrderFollowedSites">
+                        <li class="mdl-menu__item active">
+                            <i class="material-icons center-icon">sort_by_alpha</i> Alphabetically
+                        </li>
+                        <li class="mdl-menu__item">
+                            <i class="material-icons center-icon">today</i> By Registration Date
+                        </li>
+                        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider">
+                            <i class="material-icons center-icon">query_builder</i> By Last Updated
+                        </li>
+                        <li class="mdl-menu__item active">
+                            <i class="material-icons center-icon">arrow_upward</i> Ascending
+                        </li>
+                        <li class="mdl-menu__item">
+                            <i class="material-icons center-icon">arrow_downward</i> Descending
+                        </li>
+                    </ul>
+
                     <div class="row">
                         {% for site in followed_sites %}
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site" data-site="{{ site.sampling_feature_id }}">
@@ -210,7 +234,6 @@
                         {% endfor %}
                     </div>
                 </div>
-
             {% else %}
                 <div class="col-sm-12">
                     <p>No followed sites to display</p>
