@@ -778,6 +778,8 @@ button:focus {
 .site-card .mdl-card__title-text a {
     color: #FFF;
     font-weight: 300;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .site-card .mdl-card__title {
