@@ -620,6 +620,7 @@ footer .separator {
 
 .menu-order li.active {
     font-weight: bold;
+    pointer-events: none;
 }
 
 .result-uuid {

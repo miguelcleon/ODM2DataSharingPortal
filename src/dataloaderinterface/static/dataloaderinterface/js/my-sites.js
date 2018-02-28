@@ -82,36 +82,6 @@ function initMap() {
     if (!sessionStorage.getItem('MY_CURRENT_CENTER')){
         map.fitBounds(bounds);
     }
-
-    $(".menu-sort li").click(function() {
-        if ($(this).attr("data-sort-by")) {
-            $(".menu-sort li[data-sort-by]").removeClass("active");
-            $(this).addClass("active");
-
-            switch ($(this).attr("data-sort-by")){
-                case "alphabetically":
-                    $('.followed-sites .site').sort(function (a, b) {
-                        return a.dataset.sitecode > b.dataset.sitecode;
-                    }).appendTo('.followed-sites');
-                    break;
-                case "registrationDate":
-                    $('.followed-sites .site').sort(function (a, b) {
-                        return a.dataset.registrationdate > b.dataset.registrationdate;
-                    }).appendTo('.followed-sites');
-                    break;
-                case "lastUpdated":
-                    $('.followed-sites .site').sort(function (a, b) {
-                        return a.dataset.lastupdated > b.dataset.lastupdated;
-                    }).appendTo('.followed-sites');
-                    break;
-                default: break;
-            }
-        }
-        else {
-            $(".menu-sort li[data-order]").removeClass("active");
-            $(this).addClass("active");
-        }
-    });
 }
 
 function createInfoWindowContent(siteInfo) {
