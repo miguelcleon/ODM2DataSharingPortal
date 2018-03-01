@@ -57,8 +57,15 @@
     border-radius: 2px 2px 0 0;
 }
 
+.content-section > .container {
+    border: 1px solid #DDD;
+    background-color: #FFF;
+    position: relative;
+}
+
 .content-section {
     padding: 40px 0;
+    background-color: #e8e8e8;
 }
 
 .section-gray {
@@ -81,7 +88,6 @@
     font-size: 34px;
     font-weight: 400;
     line-height: 40px;
-    margin-bottom: 40px;
 }
 
 .section-image {
@@ -117,4 +123,26 @@ h4.visit-link.text-left {
 
 .card-header-image {
     width: 100%;
+}
+
+#how-it-works-section {
+    margin-top: -90px;
+    padding: 40px 15px;
+}
+
+#companion-section {
+    padding: 60px 15px;
+}
+
+.card {
+    box-shadow: none;
+}
+
+img.home-how-it-works-img {
+    max-height: 50px;
+}
+
+.img-row {
+    background-color: #37474f;
+    padding: 24px 12px;
 }

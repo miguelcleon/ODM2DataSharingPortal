@@ -25,13 +25,25 @@
 
 {% block content %}
     <div class="container-fluid content-section">
-        <div class="container">
+        <div class="container" id="how-it-works-section">
             <div class="row">
                 <section class="col-sm-12">
                     <div class="text-center section-title">How it works</div>
+                    <h4 class="text-center">The WikiWatershed Data Portal supports multiple types of water quality data.</h4>
+                    <br><br>
                     <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <span class="img-row">
+                                <img class="home-how-it-works-img"
+                                     src="{% static 'dataloaderinterface/images/site_logo.png' %}"
+                                     alt="Data Sharing Portal">
+                            </span>
+
+                            <h4>Sensor Datasets</h4>
+                            <br><br>
+                        </div>
                         <div class="col-sm-12 col-lg-8 offset-lg-2">
-                            <div class="row text-center" id="how-it-works">
+                            <div class="row text-center">
                                 <div class="col-sm-12 col-md-4 text-center row-eq-height">
                                     <div class="card">
                                         <h3 class="step-number">1</h3>
@@ -58,20 +70,52 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 text-center">
+                            <span class="img-row">
+                                <img class="home-how-it-works-img"
+                                     src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo_horiz.png' %}"
+                                     alt="Leaf Pack Network logo">
+                            </span>
+                            <h4>Experiment Datasets</h4>
+                            <br><br>
+                        </div>
+                        <div class="col-sm-12 col-lg-8 offset-lg-2">
+                            <div class="row text-center">
+                                <div class="col-sm-12 col-md-4 text-center row-eq-height">
+                                    <div class="card">
+                                        <h3 class="step-number">1</h3>
+                                        <i class="fa fa-laptop step-icon" aria-hidden="true"></i>
+                                        <h4>Conduct your Leaf Pack experiment.</h4>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12 col-md-4 text-center row-eq-height">
+                                    <div class="card">
+                                        <h3 class="step-number">2</h3>
+                                        <i class="material-icons step-icon">settings_remote</i>
+                                        <h4>Register your location and enter your data.</h4>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12 col-md-4 text-center row-eq-height">
+                                    <div class="card">
+                                        <h3 class="step-number">3</h3>
+                                        <i class="fa fa-cloud-upload step-icon" aria-hidden="true"></i>
+                                        <h4>Explore your data and those contributed by others.</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid content-section section-image">
-        <div class="section-image"
-             style='background-image: url("{% static "dataloaderinterface/images/section_image_1.jpg" %}");
-                     background-position: 50% 9%;'>
-        </div>
-    </div>
-
     <div class="container-fluid content-section">
-        <div class="container">
+        <div class="container" id="companion-section">
             <div class="col-sm-12">
                 <div class="text-center section-title">Explore our Companion Projects</div>
 
@@ -83,7 +127,7 @@
                             <div class="explore-image-container">
                                 <img class="card-header-image"
                                      src="{% static 'dataloaderinterface/images/site_logo.png' %}"
-                                     alt="WebSDL">
+                                     alt="EnviroDIY logo">
                             </div>
                             <h3 class="text-left">EnviroDIY</h3>
                             <h4 class="text-left">A community of enthusiasts sharing do-it-yourself ideas for
@@ -103,7 +147,7 @@
                             <div class="explore-image-container">
                                 <img class="card-header-image"
                                      src="{% static 'dataloaderinterface/images/WikiWatershed_logo.png' %}"
-                                     alt="WebSDL">
+                                     alt="WikiWatershed logo">
                             </div>
                             <h3 class="text-left">WikiWatershed</h3>
                             <h4 class="text-left">Web tools for collaboratively advancing knowledge and stewardship of
@@ -121,7 +165,7 @@
                             <div class="explore-image-container">
                                 <img class="card-header-image"
                                      src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo_horiz.png' %}"
-                                     alt="WebSDL">
+                                     alt="Leaf Pack Network logo">
                             </div>
                             <h3 class="text-left">Leaf Pack Network</h3>
                             <h4 class="text-left">Description here</h4>
@@ -140,7 +184,7 @@
 
     {% if not user.is_authenticated %}
         <div class="container-fluid section-gray content-section">
-            <div class="container">
+            <div class="container" style="background: none; border: 0;">
                 <div class="col-sm-12">
                     <section class="col-sm-12 text-center">
                         <h3>Ready to join?</h3>
