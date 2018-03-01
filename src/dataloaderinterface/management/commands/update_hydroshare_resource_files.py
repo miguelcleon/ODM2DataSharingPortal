@@ -53,9 +53,22 @@ class Command(BaseCommand):
             self.stdout.write(colorize('Uploading resource files for: ', fg='blue') + site.sampling_feature_code)
 
             try:
+                token = resource.hs_account.token.to_dict()
+
                 # get auth token and upload files to resource
-                auth = AuthUtil.authorize(token=resource.hs_account.token.to_dict())
-                hs_resource = Resource(client=auth.get_client(), resource_id=resource.ext_id)
+                auth_util = AuthUtil.authorize(token=token)
+
+                # if the oauth access_token expires in less than a week, refresh the token
+                seconds_in_week = 60 * 60 * 24 * 7
+                if token.get('expires_in', seconds_in_week) < seconds_in_week:
+                    try:
+                        auth_util.refresh_token()
+                        account.update_token(auth_util.get_token())
+                    except Exception as e:
+                        self.stderr.write(colorize('Failed to refresh oauth token. Token expires in {0}: {1}'.format(
+                            token.get('expires_in', 'NA'), e.message), fg='red'))
+
+                hs_resource = Resource(client=auth_util.get_client(), resource_id=resource.ext_id)
                 upload_hydroshare_resource_files(site, hs_resource)
 
                 upload_success_count += 1
