@@ -32,8 +32,7 @@
                     <div class="row">
                         <div class="col-sm-12 col-lg-8 offset-lg-2">
                             <div class="row text-center" id="how-it-works">
-
-                                <div class="col-sm-12 col-md-4 text-center">
+                                <div class="col-sm-12 col-md-4 text-center row-eq-height">
                                     <div class="card">
                                         <h3 class="step-number">1</h3>
                                         <i class="fa fa-laptop step-icon" aria-hidden="true"></i>
@@ -41,17 +40,15 @@
                                     </div>
                                 </div>
 
-                                <div class="col-sm-12 col-md-4 text-center">
+                                <div class="col-sm-12 col-md-4 text-center row-eq-height">
                                     <div class="card">
                                         <h3 class="step-number">2</h3>
                                         <i class="material-icons step-icon">settings_remote</i>
-                                        {#                                        <i class="fa fa-wifi step-icon" aria-hidden="true"></i>#}
                                         <h4>Deploy your data logger and start collecting data.</h4>
-
                                     </div>
                                 </div>
 
-                                <div class="col-sm-12 col-md-4 text-center">
+                                <div class="col-sm-12 col-md-4 text-center row-eq-height">
                                     <div class="card">
                                         <h3 class="step-number">3</h3>
                                         <i class="fa fa-cloud-upload step-icon" aria-hidden="true"></i>
@@ -59,7 +56,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </section>
@@ -79,8 +75,10 @@
             <div class="col-sm-12">
                 <div class="text-center section-title">Explore our Companion Projects</div>
 
-                <div class="row">
-                    <div class="col-sm-12 col-md-5 offset-md-1 col-lg-3 offset-lg-3 text-center">
+                <div class="row text-center">
+                    <div class="col"></div>
+
+                    <div class="col-sm-12 col-lg-3 row-eq-height">
                         <div class="card">
                             <div class="explore-image-container">
                                 <img class="card-header-image"
@@ -93,13 +91,14 @@
                                 science and
                                 monitoring
                             </h4>
-                            <h4 class="visit-link text-left"><a href="https://envirodiy.org/" target="_blank">VISIT SITE
-                                <i
-                                        class="glyphicon glyphicon-chevron-right"></i></a></h4>
+                            <br><br><br>
+                            <h4 class="visit-link text-left">
+                                <a href="https://envirodiy.org/" target="_blank">VISIT SITE <i class="material-icons center-icon">chevron_right</i></a>
+                            </h4>
                         </div>
                     </div>
 
-                    <div class="col-sm-12 col-md-5 col-lg-3 text-center">
+                    <div class="col-sm-12 col-lg-3 row-eq-height">
                         <div class="card">
                             <div class="explore-image-container">
                                 <img class="card-header-image"
@@ -110,14 +109,31 @@
                             <h4 class="text-left">Web tools for collaboratively advancing knowledge and stewardship of
                                 fresh
                                 water</h4>
-                            <h4 class="visit-link text-left"><a href="https://wikiwatershed.org/" target="_blank">VISIT
-                                SITE
-                                <i class="glyphicon glyphicon-chevron-right"></i></a></h4>
+                            <h4 class="visit-link text-left"><a href="https://wikiwatershed.org/" target="_blank">
+                                VISIT SITE <i class="material-icons center-icon">chevron_right</i></a>
+                            </h4>
+                            <br><br><br>
                         </div>
                     </div>
 
-                </div>
+                    <div class="col-sm-12 col-lg-3 row-eq-height">
+                        <div class="card">
+                            <div class="explore-image-container">
+                                <img class="card-header-image"
+                                     src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo_horiz.png' %}"
+                                     alt="WebSDL">
+                            </div>
+                            <h3 class="text-left">Leaf Pack Network</h3>
+                            <h4 class="text-left">Description here</h4>
+                            <h4 class="visit-link text-left"><a href="https://leafpacknetwork.org/" target="_blank">
+                                VISIT SITE <i class="material-icons center-icon">chevron_right</i></a>
+                            </h4>
+                            <br><br><br>
+                        </div>
+                    </div>
 
+                    <div class="col"></div>
+                </div>
             </div>
         </div>
     </div>

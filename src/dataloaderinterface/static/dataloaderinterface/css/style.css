@@ -515,7 +515,7 @@ ul.errorlist li {
 }
 
 .navbar-nav > li > a:hover {
-    border-bottom: 3px solid #FFF;
+    border-bottom: 3px solid #66cbcb;
 }
 
 .navbar-header {
@@ -743,10 +743,6 @@ button:focus {
     border-radius: 2px;
     box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12);
     margin-bottom: 50px;
-}
-
-#how-it-works .card {
-    height: 300px;
 }
 
 .card h4 {
@@ -1016,4 +1012,9 @@ label.checkbox-label {
 .site-link {
     margin-top: 20px;
     display: block;
+}
+
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
 }
