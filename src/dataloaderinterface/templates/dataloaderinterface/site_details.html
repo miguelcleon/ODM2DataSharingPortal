@@ -180,7 +180,7 @@
 
 
                     {######    HydroShare Settings    #######}
-                {% if site.django_user_id == request.user.id %}
+                {% if site.django_user_id == request.user.id and hydroshare_account %}
                     <div class="row hydroshare-container" id="hydroshare-settings-container">
                         <div class="col-12">
                             <div class="hs-img-container">
@@ -412,7 +412,7 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 
-    {% if site.django_user_id == request.user.id %}
+    {% if site.django_user_id == request.user.id and hydroshare_account%}
     <script src="{% static 'dataloaderinterface/js/hydroshare/hs-settings-dialog.js' %}"></script>
     {% if site.django_user_id == request.user.id and resource_is_connected and hydroshare_account %}
         <script src="{% static 'dataloaderinterface/js/hydroshare/hs-update-resource.js' %}"></script>

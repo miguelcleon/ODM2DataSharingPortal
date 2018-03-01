@@ -76,12 +76,13 @@ class UserUpdateView(UpdateView):
         return form
 
     def get_hydroshare_account(self):
-        hs_account = self.request.user.odm2user.hydroshare_account
-        if hs_account:
-            return hs_account
-        return None
+        hs_account = None
+        if self.request.user.odm2user is not None:
+            hs_account = self.request.user.odm2user.hydroshare_account
+        return hs_account
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         context = super(UserUpdateView, self).get_context_data(**kwargs)
 
         context['hs_account'] = self.get_hydroshare_account()
@@ -239,7 +240,8 @@ class HydroShareResourceViewMixin:
         auth_util = AuthUtil.authorize(token=token_json)
 
         # if the oauth access_token expires in less than a week, refresh the token
-        if token_json.get('expires_in', None) < 60*60*24*7:
+        seconds_in_week = 60*60*24*7
+        if token_json.get('expires_in', seconds_in_week) < seconds_in_week:
             try:
                 auth_util.refresh_token()
                 account.update_token(auth_util.get_token())

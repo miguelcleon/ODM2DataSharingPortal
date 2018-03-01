@@ -195,8 +195,8 @@ class OAuthToken(models.Model):
 # HSUAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
     is_enabled = models.BooleanField(default=False)
-    ext_id = models.IntegerField(unique=True) # external hydroshare account id
-    token = models.ForeignKey(OAuthToken, db_column='token_id', null=True, on_delete=models.CASCADE)
+    ext_id = models.IntegerField(unique=True)  # external hydroshare account id
+    token = models.ForeignKey(OAuthToken, db_column='token_id', null=True)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -211,10 +211,13 @@ class HydroShareAccount(models.Model):
 
     def update_token(self, token_dict):  # type: (dict) -> None
         if isinstance(self.token, OAuthToken):
-            self.token.delete(keep_parents=True)
-        self.token = OAuthToken(**token_dict)
+            self.token.access_token = token_dict.get('access_token')
+            self.token.refresh_token = token_dict.get('refresh_token')
+            self.token.token_type = token_dict.get('token_type')
+            self.token.expires_in = token_dict.get('expires_in')
+            self.token.scope = token_dict.get('scope')
+            self.token.save()
         self.save()
-
 
     def to_dict(self, include_token=True):
         account = {
