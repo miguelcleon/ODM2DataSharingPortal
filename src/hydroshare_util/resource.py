@@ -1,6 +1,6 @@
 import logging
 import os
-import json
+from django.http import Http404
 from tempfile import mkstemp
 from re import search as regex_search
 from hs_restclient import HydroShareNotFound, HydroShareNotAuthorized
@@ -141,6 +141,8 @@ class Resource(HydroShareUtilityBaseClass):
         # upload file
         try:
             return self.client.add_resource_file(self.resource_id, path, resource_filename=filename)
+        except HydroShareNotFound:
+            raise Http404(u"Resource '{0}' was not found".format(self.resource_id))
         except Exception as e:
             raise e
         finally:

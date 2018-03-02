@@ -5,7 +5,7 @@ from hydroshare_util.resource import Resource
 from hydroshare_util.auth import AuthUtil
 from django.utils.termcolors import colorize
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Command(BaseCommand):
@@ -63,10 +63,11 @@ class Command(BaseCommand):
                 if token.get('expires_in', seconds_in_week) < seconds_in_week:
                     try:
                         auth_util.refresh_token()
-                        account.update_token(auth_util.get_token())
+                        resource.hs_account.update_token(auth_util.get_token())
                     except Exception as e:
-                        self.stderr.write(colorize('Failed to refresh oauth token. Token expires in {0}: {1}'.format(
-                            token.get('expires_in', 'NA'), e.message), fg='red'))
+                        expire_date = datetime.now() + timedelta(seconds=token['expires_in']) if 'expires_in' in token else 'NA'
+                        self.stderr.write(colorize('Failed to refresh oauth token. Token expires on: {0}\n\t{1}'.format(
+                            expire_date.strftime('%c'), e.message), fg='red'))
 
                 hs_resource = Resource(client=auth_util.get_client(), resource_id=resource.ext_id)
                 upload_hydroshare_resource_files(site, hs_resource)
@@ -80,7 +81,7 @@ class Command(BaseCommand):
 
             except Exception as e:
                 upload_fail_count += 1
-                self.stderr.write(colorize('\nERROR: file upload failed, reason given:\n\t{0}'.format(e.message), fg='red'))
+                self.stderr.write(colorize('\nError: file upload failed, reason given:\n\t{0}'.format(e), fg='red'))
 
         self.stdout.write(colorize('\nJob finished uploading resource files to hydroshare.', fg='blue'))
         self.stdout.write(colorize('\t           Uploads successful: ', fg='blue') + str(upload_success_count))
