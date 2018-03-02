@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from django.forms import NumberInput, TimeInput
 from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
     OrganizationType, ActionBy, SiteType
 from django import forms
@@ -232,7 +233,7 @@ class SiteForm(forms.ModelForm):
     allowed_site_types = [
         'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
         'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Observation well', 'Soil hole',
-        'Storm sewer', 'Stream gage', 'Tidal stream', 'Water quality station', 'Weather station', 'Wetland'
+        'Storm sewer', 'Stream gage', 'Tidal stream', 'Water quality station', 'Weather station', 'Wetland', 'Other'
     ]
 
     site_type = forms.ModelChoiceField(
@@ -297,7 +298,7 @@ ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1,
 
 class SiteAlertForm(forms.ModelForm):
     notify = forms.BooleanField(required=False, initial=False, label='Notify me if site stops receiving sensor data')
-    hours_threshold = forms.IntegerField(required=False, min_value=1, label='Notify after ')
+    hours_threshold = forms.DurationField(required=False, label='Notify after', widget=NumberInput(attrs={'min': 1}))
     suffix = ' hours of site inactivity'
 
     class Meta:
