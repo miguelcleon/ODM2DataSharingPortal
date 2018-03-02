@@ -43,11 +43,12 @@
         {# Actions if the resource has been published #}
         {% elif resource_is_published %}
 
-            <p class="text-info lead"><strong>The resource this site is connected to is published. Once a resource is published, you cannot change the resource's content.</strong></p>
+            <p class="text-info lead"><strong>The data from this site are no longer being copied to hydroshare.</strong></p>
+            <p class="lead">The hydroshare resource this site is connected to has been formally published. Once a resource has been published, you cannot change the resource’s content.</p>
             <p class="lead">If you would like to continue sharing data from this site to HydroShare:</p>
             <ol>
-                <li class="lead">Click <span class="text-primary">DISCONNECT RESOURCE</span>.</li>
-                <li class="lead">Click on <span class="text-primary">START SHARING</span> after the page reloads to start sharing with a new, unpublished resource.</li>
+                <li class="lead">Click <span class="text-primary">Disconnect Resource</span>.</li>
+                <li class="lead">Click on <span class="text-primary">Start Sharing</span> after the page reloads to start sharing with a new, unpublished resource.</li>
             </ol>
 
             <form method="post" action="{{ delete_resource_url }}">
