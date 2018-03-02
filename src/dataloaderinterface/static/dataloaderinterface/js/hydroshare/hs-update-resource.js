@@ -1,3 +1,11 @@
+/*
+* hs-update-resource.js
+* This script is loaded into the browser at /site/:sampling_feature_code/ when a user has a hydroshare account and
+* they have started sharing data with hydroshare.org.
+*
+* The script makes an ajax request to the server to grab the page content used to manage hydroshare-sharing settings
+* and loads the page content into the DOM.
+* */
 'use strict';
 
 const resource_template_url = `${window.location.href}hsr/update/`;

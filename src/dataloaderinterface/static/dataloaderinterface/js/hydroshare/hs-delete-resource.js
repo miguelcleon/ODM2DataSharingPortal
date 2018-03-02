@@ -1,3 +1,11 @@
+/*
+* hs-delete-resource.js
+* This script is loaded into the browser at /site/:sampling_feature_code/ when a user has a hydroshare account and
+* they have started sharing data with hydroshare.org.
+*
+* The script performs setup on the hydroshare-delete-modal that allows users to delete the site
+* connection to HydroShare and/or delete the associated resource in HydroShare.
+* */
 'use strict';
 
 function initializeHydroShareDeleteDialog() {

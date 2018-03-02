@@ -7,6 +7,7 @@ import logging
 import json
 import time
 
+
 class HydroShareUtility(HydroShareUtilityBaseClass):
     """Utility class for accessing and consuming HydroShare's REST API."""
     RE_PERIOD = re.compile(r'(?P<tag_start>^start=)(?P<start>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_end>end=)'
@@ -63,13 +64,13 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
     def get_user_info(self):
         try:
-            return self.client.get_user_info()
+            return self.client.getUserInfo()
         except Exception:
             return None
 
     def get_resource_types(self):
         try:
-            Resource.RESOURCE_TYPES = [type_ for type_ in self.client.get_resource_types()]
+            Resource.RESOURCE_TYPES = [type_ for type_ in self.client.getResourceTypes()]
         except Exception as e:
             logging.error("Failed to get resource types!\n{error}".format(error=e))
 

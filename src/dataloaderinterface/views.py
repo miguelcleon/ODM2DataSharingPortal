@@ -275,7 +275,7 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        call_command('update_hydroshare_resource_files', '--force-update')
+        # call_command('update_hydroshare_resource_files', '--force-update')
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
@@ -405,11 +405,10 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
         try:
             resource_md = resource_util.get_system_metadata(timeout=10.0)
             context['resource_is_published'] = resource_md.get("published", False)
-            context['resource_not_found'] = resource_md is None
         except HydroShareNotFound:
             context['resource_not_found'] = True
         except requests.exceptions.Timeout:
-            context['resource_did_not_load'] = True
+            context['request_timeout'] = True
         finally:
             if context.get('resource_not_found', None) is True:
                 context['delete_resource_url'] = reverse('hs_resource_delete',
@@ -896,7 +895,7 @@ class OAuthAuthorize(TemplateView):
                 return HttpResponse('Error: Authorization failure!')
 
             client = auth_utility.get_client()  # type: HydroShareAdapter
-            user_info = client.get_user_info()
+            user_info = client.getUserInfo()
             print('\nuser_info: %s', json.dumps(user_info, indent=3))
 
             try:
