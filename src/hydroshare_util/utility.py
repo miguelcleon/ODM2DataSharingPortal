@@ -22,6 +22,7 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
     def __init__(self, auth=None):  # type: (AuthUtil) -> None
         self.auth = auth
+        self.request_resource_types()
 
     @property
     def client(self):
@@ -65,14 +66,21 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
     def get_user_info(self):
         try:
             return self.client.getUserInfo()
-        except Exception:
-            return None
+        except Exception as e:
+            logging.error(e)
+        return None
 
-    def get_resource_types(self):
+    def request_resource_types(self):
+        from multiprocessing import Process
+        proc = Process(target=self._request_resource_types_async)
+        proc.start()
+        proc.join()
+
+    def _request_resource_types_async(self):
         try:
             Resource.RESOURCE_TYPES = [type_ for type_ in self.client.getResourceTypes()]
         except Exception as e:
-            logging.error("Failed to get resource types!\n{error}".format(error=e))
+            logging.error("Failed to get resource types.\n\t{error}".format(error=e))
 
 
 __all__ = ["HydroShareUtility"]

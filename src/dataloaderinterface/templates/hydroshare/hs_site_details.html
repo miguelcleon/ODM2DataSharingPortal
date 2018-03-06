@@ -67,7 +67,7 @@
             <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
 
             {% if resource.sync_type == 'scheduled' %}
-                <p>Next update scheduled for <strong>{{ resource.m_next_sync_date|date:date_format }}</strong></p>
+                <p>Next update scheduled for <strong>{{ resource.next_sync_date|date:date_format }}</strong></p>
             {% endif %}
 
             <p><a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">View data from this site in HydroShare</a></p>

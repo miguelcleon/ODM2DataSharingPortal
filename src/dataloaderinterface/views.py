@@ -82,9 +82,7 @@ class UserUpdateView(UpdateView):
         return hs_account
 
     def get_context_data(self, **kwargs):
-        user = self.request.user
         context = super(UserUpdateView, self).get_context_data(**kwargs)
-
         context['hs_account'] = self.get_hydroshare_account()
         context['organization_form'] = OrganizationForm()
         return context
@@ -275,7 +273,11 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        # call_command('update_hydroshare_resource_files', '--force-update')
+        """
+        # uncomment to force a hydroshare resource file update.
+        # Only do this for debugging purposes!
+        call_command('update_hydroshare_resource_files', '--force-update')
+        """
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 

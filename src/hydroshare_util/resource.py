@@ -60,6 +60,8 @@ class Resource(HydroShareUtilityBaseClass):
         for coverage in coverages:
             if isinstance(coverage, dict):
                 self.coverages.append(CoverageFactory(coverage=coverage))
+            elif isinstance(coverage, Coverage):
+                self.coverages.append(coverage)
 
         for key, value in kwargs.iteritems():
             if key == 'public':
@@ -81,7 +83,7 @@ class Resource(HydroShareUtilityBaseClass):
             file_list = [file_ for file_ in self.client.getResourceFileList(self.resource_id)]
             self.files = [os.path.basename(file_['url']) for file_ in file_list]
         except Exception as e:
-            self._r_logger("Error updating resource file list", error=e)
+            self._log("Error updating resource file list", error=e)
 
     def get_system_metadata(self, **kwargs):
         return self.client.getSystemMetadata(self.resource_id, **kwargs)
@@ -107,8 +109,8 @@ class Resource(HydroShareUtilityBaseClass):
 
             try:
                 self.client.addResourceFile(self.resource_id, file_)
-                self._r_logger("File upload successful: '{filename}'".format(filename=os.path.basename(file_)),
-                               level=logging.INFO)
+                self._log("File upload successful: '{filename}'".format(filename=os.path.basename(file_)),
+                          level=logging.INFO)
                 upload_success_count += 1
             except KeyError as e:
                 self._log_error('File upload failed; incorrectly formatted arguments given.', e)
@@ -116,8 +118,8 @@ class Resource(HydroShareUtilityBaseClass):
             except Exception as e:
                 self._log_error("File upload failed: \n\t{fname}\n".format(fname=os.path.basename(file_)), e)
                 raise e
-        self._r_logger("successfully uploaded {count} files".format(count=upload_success_count),
-                       level=logging.INFO)
+        self._log("successfully uploaded {count} files".format(count=upload_success_count),
+                  level=logging.INFO)
 
     def upload_file(self, filename, content):
         if self.resource_id is None:
@@ -159,15 +161,15 @@ class Resource(HydroShareUtilityBaseClass):
 
         for file_ in files:
             url = file_['url']
-            self._r_logger("Deleting resource file\n\tfile: {file}".format(file=os.path.basename(url)),
-                           level=logging.INFO)
+            self._log("Deleting resource file\n\tfile: {file}".format(file=os.path.basename(url)),
+                      level=logging.INFO)
             self.client.deleteResourceFile(self.resource_id, os.path.basename(url))
 
     def get_coverage_period(self):
         raise NotImplementedError("method not implemented.")
 
     def delete(self):
-        self._r_logger("Deleting resource!", level=logging.INFO)
+        self._log("Deleting resource!", level=logging.INFO)
         self.client.deleteResource(self.resource_id)
 
     def create(self):
@@ -253,9 +255,9 @@ class Resource(HydroShareUtilityBaseClass):
         }
 
     def _log_error(self, msg, error):
-        return self._r_logger(msg, error=error, level=logging.ERROR)
+        return self._log(msg, error=error, level=logging.ERROR)
 
-    def _r_logger(self, msg, error=None, level=None):
+    def _log(self, msg, error=None, level=None):
         if error:
             log = "{msg}\n\tresource_id: {id}\n\t{e}".format(msg=msg, id=self.resource_id, e=error)
         else:

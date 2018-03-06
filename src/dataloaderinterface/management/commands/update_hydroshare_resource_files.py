@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 continue
 
             # Skip resources that are not "due" for upload unless 'force_udpate' is True
-            next_sync = resource.next_sync_date()
+            next_sync = resource.get_next_sync_date()
             now = timezone.now()
             diff = (now - next_sync).total_seconds()
             if diff < 0 and force_update is False:

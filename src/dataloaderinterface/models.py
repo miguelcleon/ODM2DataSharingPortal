@@ -269,8 +269,8 @@ class HydroShareResource(models.Model):
         return 'NA'
 
     @property
-    def m_next_sync_date(self):
-        return self.next_sync_date()
+    def next_sync_date(self):
+        return self.get_next_sync_date()
 
     @property
     def sync_at_hour(self):
@@ -287,7 +287,7 @@ class HydroShareResource(models.Model):
         except Exception:
             return 0
 
-    def next_sync_date(self):
+    def get_next_sync_date(self):
         days = 0
         minutes = 0
         if self.update_freq == 'minute':

@@ -39,6 +39,10 @@ class HydroShareAdapter(HydroShare):
     def getSystemMetadata(self, pid, **kwargs):
         """
         Returns system metadata for a resource which includes the dublin core elements
+        Note: HydroShareAdapter overrides it's super class method, getSystemMetadata(), so 'timeout' can be
+        included in **kwargs. By default, the requests library does not have timeout limit for HTTP requests, and
+        some views wait for getSystemMetadata() to complete an HTTP request to hydroshare.org before the views are
+        rendered.
         """
         timeout = None
         if 'timeout' in kwargs:
@@ -55,10 +59,10 @@ class HydroShareAdapter(HydroShare):
         req = requests.get(url, headers=headers, timeout=timeout)
         if req.status_code != 200:
             if req.status_code == 403:
-                raise HydroShareNotAuthorized(('GET', url))
+                raise HydroShareNotAuthorized((req.request.method, url))
             elif req.status_code == 404:
                 raise HydroShareNotFound((pid,))
             else:
-                raise HydroShareHTTPException((url, 'GET', req.status_code))
+                raise HydroShareHTTPException((url, req.request.method, req.status_code))
 
         return req.json()
