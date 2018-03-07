@@ -25,6 +25,8 @@ from dataloaderinterface.models import SiteSensor, SiteRegistration
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import OrganizationSerializer
 
+from pytz import utc
+
 
 class ResultApi(APIView):
     authentication_classes = (SessionAuthentication,)
@@ -171,7 +173,7 @@ class TimeSeriesValuesApi(APIView):
         if not measurement_datetime:
             raise exceptions.ParseError('The timestamp value is not well formatted.')
 
-        if not measurement_datetime.utcoffset():
+        if measurement_datetime.utcoffset() is None:
             raise exceptions.ParseError('The timestamp value requires timezone information.')
 
         utc_offset = int(measurement_datetime.utcoffset().total_seconds() / timedelta(hours=1).total_seconds())
@@ -222,6 +224,9 @@ class TimeSeriesValuesApi(APIView):
             site_sensor.last_measurement_utc_offset = result_value.value_datetime_utc_offset
             site_sensor.last_measurement_utc_datetime = result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset)
 
+            if site_sensor.last_measurement_utc_datetime.tzinfo is None:
+                site_sensor.last_measurement_utc_datetime = utc.localize(result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset))
+
             if is_first_value:
                 result.valid_datetime = measurement_datetime
                 result.valid_datetime_utc_offset = utc_offset
@@ -230,6 +235,7 @@ class TimeSeriesValuesApi(APIView):
 
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
+                    site_sensor.registration.deployment_date_utc_offset = utc_offset
                     # site_sensor.registration.deployment_date_utc_offset = utc_offset
                     site_sensor.registration.save(update_fields=['deployment_date'])
 

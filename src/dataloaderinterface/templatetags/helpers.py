@@ -12,5 +12,6 @@ def timesince_filter(value):
         return ''
     try:
         return timesince(value, datetime.utcnow())
-    except (ValueError, TypeError):
+    # except (ValueError, TypeError):
+    except Exception:
         return ''

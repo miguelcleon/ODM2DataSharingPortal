@@ -211,6 +211,7 @@ function drawSparklinePlot(seriesInfo, seriesData) {
 }
 
 function getTimeSeriesData(sensorInfo) {
+    if (sensorInfo['influxUrl'] === 'None' ) { return; }
     $.ajax({
         url: sensorInfo['influxUrl']
     }).done(function(influx_data) {
@@ -235,10 +236,10 @@ function getTimeSeriesData(sensorInfo) {
              console.error('No data values were found for this site');
              console.info(series.getdatainflux);
         }
-    }).fail(function(failedData) {
+    }).fail(function() {
         console.log('data failed to load.');
 
-    })
+    });
     // Papa.parse(sensorInfo['csvPath'], {
     //     download: true,
     //     header: true,

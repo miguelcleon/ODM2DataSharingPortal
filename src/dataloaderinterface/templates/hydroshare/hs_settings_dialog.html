@@ -1,0 +1,113 @@
+{% load widget_tweaks %}
+{% load site %}
+{% load static %}
+<style>
+    #hydroshare-settings-dialog {
+        max-width: 960px;
+    }
+</style>
+
+<form method="post" id="hydroshare-settings-form">
+    {% csrf_token %}
+    <dialog class="mdl-dialog" id="hydroshare-settings-dialog">
+        {% if resource.id %}
+        <h3 class="mdl-dialog__title">HydroShare Sharing Settings</h3>
+        {% else %}
+        <h3 class="mdl-dialog__title">Create Resource</h3>
+        {% endif %}
+
+        <div class="mdl-dialog__content">
+            {{ form.site_registration.as_hidden }}
+
+            {# If resource.id is None, then this resource hasn't been created yet #}
+            {% if resource.id %}
+                <div class="row">
+                    <div class="col-12">
+                        <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.pause_sharing.id_for_label }}">
+                            {{ form.pause_sharing|add_class:"mdl-checkbox__input" }}
+                            <span class="mdl-checkbox__label">{{ form.pause_sharing.label }}</span>
+                        </label>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-12">
+                    <h4>{{ form.schedule_type.label }}</h4>
+                </div>
+                <div class="row col-12">
+                    <div class="col-lg-6 col-md-12 col-12">
+                        {{ form.schedule_type.errors }}
+                        {{ form.schedule_type }}
+                    </div>
+
+                    <div class="col-lg-6 col-md-12 col-12">
+                        <div class="form-group">
+                            <label for="{{ form.update_freq.id_for_label }}" style="width: 100%;">
+                            {{ form.update_freq|add_class:"form-control" }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Data Types - Time Series, Leaf Packet, etc. #}
+            {# Yes... #}{% if False %} {#... this "if" statement was intentional #}
+            {# Until there are multiple data types to choose from, do not render! #}
+            <div class="row">
+                <div class="col-12">
+                    <h4>{{ form.data_types.label }}</h4>
+                    <span id="id_{{ form.data_types.name }}"></span>
+                    {% for checkbox in form.data_types %}
+                    <label class="mdl-checkbox mdl-js-checkbox" for="{{ checkbox.id_for_label }}">
+                        {{ checkbox.tag|add_input_class:"mdl-checkbox__input" }}
+                        <span class="mdl-checkbox__label">{{ checkbox.choice_label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% if not resource.id %}
+
+            {# Resource Title#}
+            <div class="row">
+                <h4 class="col-12" style="margin-bottom: 0;">{{ form.title.label }}</h4>
+                <div class="col-12">
+                    <div class="mdl-textfield mdl-js-textfield" style="width: 100%;">
+                        {{ form.title|add_class:'mdl-textfield__input' }}
+                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            {# Resource Abstract#}
+            <div class="row">
+                <h4 class="col-12" style="margin-bottom: 0;">{{ form.abstract.label }}</h4>
+                <div class="col-12">
+                    <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
+                        {{ form.abstract|add_class:"mdl-textfield__input" }}
+                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <span id="hs-loading-msg" hidden>Please wait, this may take a while...</span>
+        <div class="mdl-dialog__actions">
+            <button type="submit"
+                    id="{% if resource.id %}update-resource{% else %}create-resource{% endif %}"
+                    class="mdl-button mdl-button--raised mdl-button--accent">
+            {% if resource.id %}Save{% else %}Start Sharing{% endif %}
+            </button>
+
+            <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
+
+        </div>
+    </dialog>
+</form>

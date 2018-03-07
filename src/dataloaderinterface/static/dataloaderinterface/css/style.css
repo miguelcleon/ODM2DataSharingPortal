@@ -893,6 +893,16 @@ a.orange:hover {
     font-size: 16px;
     border-top: 6px solid #90a877;
 }
+table.site-table thead {
+    border-top: 6px solid #90a877;
+}
+table.site-table thead th {
+    font-weight: 500;
+    font-size: 16px;
+}
+table.site-table i {
+    margin-right: 10px;
+}
 
 label.checkbox-label {
     color: #FFF !important;
@@ -994,4 +1004,22 @@ label.checkbox-label {
 .site-link {
     margin-top: 20px;
     display: block;
+}
+.site-update__connect-hs-card.mdl-card {
+    width: 396px;
+}
+
+.site-update__connect-hs-card > .mdl-card__title > img {
+    width: 100%;
+    height: auto;
+}
+
+.site-update__connect-hs-card > .mdl-card__menu {
+    color: #fff;
+}
+
+@media only screen and (max-width: 480px) {
+    .site-update__connect-hs-card.mdl-card {
+        width: 100%;
+    }
 }

@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import json
+import getpass
+# import logging
+
+# LOGGING_LEVEL = logging.INFO
+# logging.basicConfig(level=LOGGING_LEVEL)
+# logging.info("Starting logging, level='{0}'".format(LOGGING_LEVEL))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,7 +82,7 @@ ROOT_URLCONF = 'WebSDL.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'hydroshare')]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -137,7 +143,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-LOGIN_URL = 'login'
+LOGIN_URL = '/login/'
 
 DATABASE_ROUTERS = ['WebSDL.db_routers.WebSDLRouter']
 
@@ -168,7 +174,13 @@ EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
 
 EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
-DATETIME_FORMAT = "N j, Y, H:m"
+DATETIME_FORMAT = "N j, Y P"
+
+HYDROSHARE_UTIL_CONFIG = {
+    'CLIENT_ID': data["hydroshare_oauth"]["client_id"],
+    'CLIENT_SECRET': data["hydroshare_oauth"]["client_secret"],
+    'REDIRECT_URI': data["hydroshare_oauth"]["redirect_uri"],
+}
 
 INFLUX_URL_QUERY = data['influx_query']
 
@@ -180,3 +192,11 @@ INFLUX_UPDATE_BODY = data['influx_updater_query']['body']
 SENSOR_DATA_PERIOD = data['sensor_data_period'] if 'sensor_data_period' in data else '2'
 
 TSA_URL = data['tsa_url'] if 'tsa_url' in data else ''
+
+# crontab job settings
+CRONTAB_USER = data.get('crontab_user', getpass.getuser())
+
+CRONTAB_LOGFILE_PATH = data.get('crontab_log_file', '/var/log/odm2websdl-cron.log')
+
+CRONTAB_EXECUTE_DAILY_AT_HOUR = 5
+
