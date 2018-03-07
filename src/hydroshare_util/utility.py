@@ -10,19 +10,11 @@ import time
 
 class HydroShareUtility(HydroShareUtilityBaseClass):
     """Utility class for accessing and consuming HydroShare's REST API."""
-    RE_PERIOD = re.compile(r'(?P<tag_start>^start=)(?P<start>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_end>end=)'
-                           r'(?P<end>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_scheme>scheme=)(?P<scheme>.+$)', re.I)
-    XML_NS = {'dc': "http://purl.org/dc/elements/1.1/",
-              'dcterms': "http://purl.org/dc/terms/",
-              'hsterms': "http://hydroshare.org/terms/",
-              'rdf': "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-              'rdfs1': "http://www.w3.org/2001/01/rdf-schema#"}
     XML_COVERAGE_PROTO = "start={start}; end={end}; scheme=W3C-DTF"
-    TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
     def __init__(self, auth=None):  # type: (AuthUtil) -> None
         self.auth = auth
-        self.request_resource_types()
+        # self.request_resource_types()
 
     @property
     def client(self):

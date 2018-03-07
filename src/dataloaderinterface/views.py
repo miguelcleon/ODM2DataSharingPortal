@@ -1,4 +1,4 @@
-from datetime import datetime
+# coding=utf-8
 from datetime import datetime, timedelta
 from uuid import uuid4
 import json
@@ -37,6 +37,7 @@ from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteFo
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
+from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
@@ -990,7 +991,11 @@ def get_site_files(site_registration):
 
         status = req.status_code
         if status == 200:
-            file_name = re.findall('(?<=\")[\S\.]+\.csv(?=\")', req.headers['Content-Disposition']).pop()
+            # Search inside 'content-disposition' header for a string that looks like a file name and ends in '.csv'.
+            csv_pattern = re.compile(r'(?<=\")\w*(?=.csv)', re.IGNORECASE)
+            file_name = csv_pattern.findall(req.headers['Content-Disposition']).pop()
+            if '.csv' not in file_name:
+                file_name += '.csv'
             content = req.content
             files.append({'file_name': file_name, 'content': content})
         elif status == 404:
