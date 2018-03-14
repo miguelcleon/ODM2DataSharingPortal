@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import uuid4
 import json
 import requests
@@ -37,6 +37,7 @@ from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteFo
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
+from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
@@ -82,9 +83,7 @@ class UserUpdateView(UpdateView):
         return hs_account
 
     def get_context_data(self, **kwargs):
-        user = self.request.user
         context = super(UserUpdateView, self).get_context_data(**kwargs)
-
         context['hs_account'] = self.get_hydroshare_account()
         context['organization_form'] = OrganizationForm()
         return context
@@ -275,6 +274,11 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
+        """
+        # uncomment to force a hydroshare resource file update.
+        # Only do this for debugging purposes!
+        call_command('update_hydroshare_resource_files', '--force-update')
+        """
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
@@ -404,11 +408,10 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
         try:
             resource_md = resource_util.get_system_metadata(timeout=10.0)
             context['resource_is_published'] = resource_md.get("published", False)
-            context['resource_not_found'] = resource_md is None
         except HydroShareNotFound:
             context['resource_not_found'] = True
         except requests.exceptions.Timeout:
-            context['resource_did_not_load'] = True
+            context['request_timeout'] = True
         finally:
             if context.get('resource_not_found', None) is True:
                 context['delete_resource_url'] = reverse('hs_resource_delete',
@@ -589,7 +592,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         site_alert = self.request.user.site_alerts\
             .filter(site_registration__sampling_feature_code=sampling_feature.sampling_feature_code)\
             .first()
-        alert_data = {'notify': True, 'hours_threshold': site_alert.hours_threshold} if site_alert else {}
+        alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} if site_alert else {}
 
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
@@ -612,8 +615,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         notify_form = SiteAlertForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset,
-                           notify_form):
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
             data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
@@ -622,13 +624,13 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             site_alert = self.request.user.site_alerts.filter(site_registration=site_registration).first()
 
             if notify_form.cleaned_data['notify'] and site_alert:
-                site_alert.hours_threshold = notify_form['hours_threshold'].value()
+                site_alert.hours_threshold = timedelta(hours=int(notify_form.data['hours_threshold']))
                 site_alert.save()
 
             elif notify_form.cleaned_data['notify'] and not site_alert:
                 self.request.user.site_alerts.create(
                     site_registration=site_registration,
-                    hours_threshold=notify_form.cleaned_data['hours_threshold']
+                    hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
                 )
 
             elif not notify_form.cleaned_data['notify'] and site_alert:
@@ -804,7 +806,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             if notify_form.cleaned_data['notify']:
                 self.request.user.site_alerts.create(
                     site_registration=site_registration,
-                    hours_threshold=notify_form.cleaned_data['hours_threshold']
+                    hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
                 )
 
             for result_form in results_formset.forms:
@@ -895,7 +897,7 @@ class OAuthAuthorize(TemplateView):
                 return HttpResponse('Error: Authorization failure!')
 
             client = auth_utility.get_client()  # type: HydroShareAdapter
-            user_info = client.get_user_info()
+            user_info = client.getUserInfo()
             print('\nuser_info: %s', json.dumps(user_info, indent=3))
 
             try:
@@ -989,7 +991,11 @@ def get_site_files(site_registration):
 
         status = req.status_code
         if status == 200:
-            file_name = re.findall('(?<=\")[\S\.]+\.csv(?=\")', req.headers['Content-Disposition']).pop()
+            # Search inside 'content-disposition' header for a string that looks like a file name and ends in '.csv'.
+            csv_pattern = re.compile(r'(?<=\")\w*(?=.csv)', re.IGNORECASE)
+            file_name = csv_pattern.findall(req.headers['Content-Disposition']).pop()
+            if '.csv' not in file_name:
+                file_name += '.csv'
             content = req.content
             files.append({'file_name': file_name, 'content': content})
         elif status == 404:

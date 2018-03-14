@@ -1,3 +1,10 @@
+/*
+* hs-profile-dialog.js
+* This script is loaded into the browser at /account/.
+*
+* This script allows a user to authorize/deathorize EnviroDIY to perform actions on the users HydroShare account in
+* the users behalf.
+* */
 (function () {
     'use strict';
 

@@ -36,14 +36,13 @@ class HydroShareAdapter(HydroShare):
                                            stream=stream, verify=self.verify, timeout=timeout)
         return request
 
-    def get_resource_list(self, **kwargs):
-        return self.getResourceList(**kwargs)
-
-    def get_system_metadata(self, pid, **kwargs):
+    def getSystemMetadata(self, pid, **kwargs):
         """
         Returns system metadata for a resource which includes the dublin core elements
-        NOTE: get_system_metadata does not call getSystemMetadata() from hs_restclient so that
-        a timeout can be specified for the request.
+        Note: HydroShareAdapter overrides it's super class method, getSystemMetadata(), so 'timeout' can be
+        included in **kwargs. By default, the requests library does not have timeout limit for HTTP requests, and
+        some views wait for getSystemMetadata() to complete an HTTP request to hydroshare.org before the views are
+        rendered.
         """
         timeout = None
         if 'timeout' in kwargs:
@@ -60,69 +59,10 @@ class HydroShareAdapter(HydroShare):
         req = requests.get(url, headers=headers, timeout=timeout)
         if req.status_code != 200:
             if req.status_code == 403:
-                raise HydroShareNotAuthorized(('GET', url))
+                raise HydroShareNotAuthorized((req.request.method, url))
             elif req.status_code == 404:
                 raise HydroShareNotFound((pid,))
             else:
-                raise HydroShareHTTPException((url, 'GET', req.status_code))
+                raise HydroShareHTTPException((url, req.request.method, req.status_code))
 
         return req.json()
-
-    def get_science_metadataRDF(self, pid):
-        return self.getScienceMetadataRDF(pid)
-
-    def get_science_metadata(self, pid):
-        return self.getScienceMetadata(pid)
-
-    def update_science_metadata(self, pid, metadata):
-        return self.updateScienceMetadata(pid, metadata)
-
-    def get_resource_map(self, pid):
-        return self.getResourceMap(pid)
-
-    def get_resource(self, pid, destination=None, unzip=False, wait_for_bag_creation=True):
-        return self.getResource(pid, destination=destination, unzip=unzip, wait_for_bag_creation=wait_for_bag_creation)
-
-    def get_resource_types(self):
-        return self.getResourceTypes()
-
-    def create_resource(self, resource_type, title, resource_file=None, resource_filename=None,
-                       abstract=None, keywords=None,
-                       edit_users=None, view_users=None, edit_groups=None, view_groups=None,
-                       metadata=None, extra_metadata=None, progress_callback=None):
-        return self.createResource(resource_type, title, resource_file=resource_file,
-                                   resource_filename=resource_filename, abstract=abstract, keywords=keywords,
-                                   edit_users=edit_users, view_users=view_users, edit_groups=edit_groups,
-                                   view_groups=view_groups, metadata=metadata, extra_metadata=extra_metadata,
-                                   progress_callback=progress_callback)
-
-    def delete_resource(self, pid):
-        return self.deleteResource(pid)
-
-    def set_access_rules(self, pid, public=False):
-        return self.setAccessRules(pid, public=public)
-
-    def add_resource_file(self, pid, resource_file, resource_filename=None, progress_callback=None):
-        return self.addResourceFile(pid, resource_file, resource_filename=resource_filename,
-                                    progress_callback=progress_callback)
-
-    def get_resource_file(self, pid, filename, destination=None):
-        return self.getResourceFile(pid, filename, destination=destination)
-
-    def delete_resource_file(self, pid, filename):
-        return self.deleteResourceFile(pid, filename)
-
-    def get_resource_file_list(self, pid):
-        return self.getResourceFileList(pid)
-
-    def get_resource_folder_contents(self, pid, pathname):
-        return self.getResourceFolderContents(pid, pathname)
-
-    def create_resource_folder(self, pid, pathname):
-        return self.createResourceFolder(pid, pathname)
-
-    def delete_resource_folder(self, pid, pathname):
-        return self.deleteResourceFolder(pid, pathname)
-
-    def get_user_info(self):
-        return self.getUserInfo()

@@ -31,7 +31,8 @@
   "hydroshare_oauth": {
     "client_id": "client_id_here",
     "client_secret": "client_secret_here",
-    "redirect_uri": "http://localhost:8000/oauth/hydroshare/",
-    "response_type": "code"
-  }
+    "redirect_uri": "http://localhost:8000/hydroshare/oauth/"
+  },
+  "crontab_log_file": "/var/log/crontab.log",
+  "crontab_user": "joesmokum"
 }

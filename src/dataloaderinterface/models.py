@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 # Create your models here.
 import uuid
+from datetime import timedelta
 
 from datetime import timedelta, datetime
 
@@ -269,8 +270,8 @@ class HydroShareResource(models.Model):
         return 'NA'
 
     @property
-    def m_next_sync_date(self):
-        return self.next_sync_date()
+    def next_sync_date(self):
+        return self.get_next_sync_date()
 
     @property
     def sync_at_hour(self):
@@ -287,7 +288,7 @@ class HydroShareResource(models.Model):
         except Exception:
             return 0
 
-    def next_sync_date(self):
+    def get_next_sync_date(self):
         days = 0
         minutes = 0
         if self.update_freq == 'minute':
@@ -348,7 +349,7 @@ class SiteAlert(models.Model):
     user = models.ForeignKey(User, db_column='User', related_name='site_alerts')
     site_registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='alerts')
     last_alerted = models.DateTimeField(db_column='LastAlerted', blank=True, null=True)
-    hours_threshold = models.PositiveIntegerField(db_column='HoursThreshold', default=15)
+    hours_threshold = models.DurationField(db_column='HoursThreshold', default=timedelta(hours=1))
 
     def __str__(self):
         return '%s %s' % (self.site_registration.sampling_feature_code, self.hours_threshold)

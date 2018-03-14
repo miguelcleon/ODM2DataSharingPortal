@@ -56,7 +56,7 @@ def hydroshare_callback(request):
 #### Authorizing a user using OAuth 2.0 and their username and password:
 
 **Note:** From a security standpoint, a user should never be asked for their credentials to *hydroshare.org* from a website existing under a different domain name.
- Quoting from [RFC 6742](https://tools.ietf.org/html/rfc6749#section-1.3.3):
+ From [RFC 6742](https://tools.ietf.org/html/rfc6749#section-1.3.3):
  > [A user's] credentials should only be used when there is a high
    degree of trust between the resource owner and the client (e.g., the
    client is part of the device operating system or a highly privileged
@@ -103,7 +103,7 @@ def hydroshare(request):
 
 After a user has been authenticated, you can start using `hydroshare_util` to consume HydroShare's REST API.
 
-TO get information about the user:
+To get information about the user:
 ```python
 # example.py
 from hydroshare_util.utility import HydroShareUtility

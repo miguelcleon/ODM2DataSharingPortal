@@ -1,6 +1,6 @@
 import logging
 import os
-import json
+from django.http import Http404
 from tempfile import mkstemp
 from re import search as regex_search
 from hs_restclient import HydroShareNotFound, HydroShareNotAuthorized
@@ -60,6 +60,8 @@ class Resource(HydroShareUtilityBaseClass):
         for coverage in coverages:
             if isinstance(coverage, dict):
                 self.coverages.append(CoverageFactory(coverage=coverage))
+            elif isinstance(coverage, Coverage):
+                self.coverages.append(coverage)
 
         for key, value in kwargs.iteritems():
             if key == 'public':
@@ -78,27 +80,27 @@ class Resource(HydroShareUtilityBaseClass):
 
     def update_file_list(self):
         try:
-            file_list = [file for file in self.client.get_resource_file_list(self.resource_id)]
-            self.files = [os.path.basename(file['url']) for file in file_list]
+            file_list = [file_ for file_ in self.client.getResourceFileList(self.resource_id)]
+            self.files = [os.path.basename(file_['url']) for file_ in file_list]
         except Exception as e:
-            self._r_logger("Error updating resource file list", error=e)
+            self._log("Error updating resource file list", error=e)
 
     def get_system_metadata(self, **kwargs):
-        return self.client.get_system_metadata(self.resource_id, **kwargs)
+        return self.client.getSystemMetadata(self.resource_id, **kwargs)
 
     def get_science_metadata(self):
-        return self.client.get_science_metadata(self.resource_id)
+        return self.client.getScienceMetadata(self.resource_id)
 
     def update_metadata(self, data=None):
         if data is None:
             data = self.to_object()
-        return self.client.update_science_metadata(self.resource_id, data)
+        return self.client.updateScienceMetadata(self.resource_id, data)
 
     def upload_files(self):
         upload_success_count = 0
         for file_ in self.files:
             try:
-                self.client.delete_resource_file(self.resource_id, os.path.basename(file_))
+                self.client.deleteResourceFile(self.resource_id, os.path.basename(file_))
             except HydroShareNotFound:
                 pass
 
@@ -107,8 +109,8 @@ class Resource(HydroShareUtilityBaseClass):
 
             try:
                 self.client.addResourceFile(self.resource_id, file_)
-                self._r_logger("File upload successful: '{filename}'".format(filename=os.path.basename(file_)),
-                               level=logging.INFO)
+                self._log("File upload successful: '{filename}'".format(filename=os.path.basename(file_)),
+                          level=logging.INFO)
                 upload_success_count += 1
             except KeyError as e:
                 self._log_error('File upload failed; incorrectly formatted arguments given.', e)
@@ -116,22 +118,22 @@ class Resource(HydroShareUtilityBaseClass):
             except Exception as e:
                 self._log_error("File upload failed: \n\t{fname}\n".format(fname=os.path.basename(file_)), e)
                 raise e
-        self._r_logger("successfully uploaded {count} files".format(count=upload_success_count),
-                       level=logging.INFO)
+        self._log("successfully uploaded {count} files".format(count=upload_success_count),
+                  level=logging.INFO)
 
     def upload_file(self, filename, content):
         if self.resource_id is None:
             raise HydroShareNotFound("resource has no resource_id")
 
         try:
-            self.client.delete_resource_file(self.resource_id, filename)
+            self.client.deleteResourceFile(self.resource_id, filename)
         except HydroShareNotFound:
             # If file doesn't exist on hydroshare, it's okay, just keep breathing.
             pass
         except HydroShareNotAuthorized:
             pass
 
-        # Write file to disk... because that's how hs_restclient needs it to be done! Stupid, I know.
+        # Write file to disk... because that's how hs_restclient needs it to be done!
         suffix = '.csv' if regex_search('\.csv', filename) else ''
         fd, path = mkstemp(suffix=suffix)
 
@@ -140,7 +142,9 @@ class Resource(HydroShareUtilityBaseClass):
 
         # upload file
         try:
-            return self.client.add_resource_file(self.resource_id, path, resource_filename=filename)
+            return self.client.addResourceFile(self.resource_id, path, resource_filename=filename)
+        except HydroShareNotFound:
+            raise Http404(u"Resource '{0}' was not found".format(self.resource_id))
         except Exception as e:
             raise e
         finally:
@@ -157,16 +161,16 @@ class Resource(HydroShareUtilityBaseClass):
 
         for file_ in files:
             url = file_['url']
-            self._r_logger("Deleting resource file\n\tfile: {file}".format(file=os.path.basename(url)),
-                           level=logging.INFO)
-            self.client.delete_resource_file(self.resource_id, os.path.basename(url))
+            self._log("Deleting resource file\n\tfile: {file}".format(file=os.path.basename(url)),
+                      level=logging.INFO)
+            self.client.deleteResourceFile(self.resource_id, os.path.basename(url))
 
     def get_coverage_period(self):
         raise NotImplementedError("method not implemented.")
 
     def delete(self):
-        self._r_logger("Deleting resource!", level=logging.INFO)
-        self.client.delete_resource(self.resource_id)
+        self._log("Deleting resource!", level=logging.INFO)
+        self.client.deleteResource(self.resource_id)
 
     def create(self):
 
@@ -178,11 +182,11 @@ class Resource(HydroShareUtilityBaseClass):
 
         metadata_as_string = self._stringify_metadata(metadata)
 
-        self.resource_id = self.client.create_resource(resource_type=self.resource_type,
-                                                       title=self.title,
-                                                       metadata=metadata_as_string,
-                                                       keywords=list(self.keywords),
-                                                       abstract=self.abstract)
+        self.resource_id = self.client.createResource(resource_type=self.resource_type,
+                                                      title=self.title,
+                                                      metadata=metadata_as_string,
+                                                      keywords=list(self.keywords),
+                                                      abstract=self.abstract)
         return self.resource_id
 
     def _stringify_metadata(self, metadata):
@@ -195,12 +199,12 @@ class Resource(HydroShareUtilityBaseClass):
             metadata = self.to_object()
         elif metadata is None:
             metadata = self.to_object()
-        return self.client.update_science_metadata(self.resource_id, metadata)
+        return self.client.updateScienceMetadata(self.resource_id, metadata)
 
     def to_object(self, clean=True):
         metadata = super(Resource, self).to_object(clean=clean)
 
-        # replace keyword 'coverages' with keyword 'coverage'...
+        # replace keyword 'coverages' with 'coverage'...
         metadata['coverage'] = getattr(metadata, 'coverages', list())
         if 'coverages' in metadata:
             del metadata['coverages']
@@ -218,7 +222,7 @@ class Resource(HydroShareUtilityBaseClass):
         return metadata
 
     def make_public(self, public=True):
-        return self.client.set_access_rules(self.resource_id, public=public)
+        return self.client.setAccessRules(self.resource_id, public=public)
 
     def to_dict(self):
         return {
@@ -251,9 +255,9 @@ class Resource(HydroShareUtilityBaseClass):
         }
 
     def _log_error(self, msg, error):
-        return self._r_logger(msg, error=error, level=logging.ERROR)
+        return self._log(msg, error=error, level=logging.ERROR)
 
-    def _r_logger(self, msg, error=None, level=None):
+    def _log(self, msg, error=None, level=None):
         if error:
             log = "{msg}\n\tresource_id: {id}\n\t{e}".format(msg=msg, id=self.resource_id, e=error)
         else:

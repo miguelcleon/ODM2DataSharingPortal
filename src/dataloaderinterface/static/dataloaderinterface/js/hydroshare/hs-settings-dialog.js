@@ -1,6 +1,6 @@
 /**
 * hs-settings-dialog.js
-* @description Initializes the hydroshare settings modal for presentation on 'site_details.html'.
+* This script performs setup for the hydroshare settings modal.
 */
 
 function initializeHydroShareSettingsDialog() {
@@ -66,6 +66,7 @@ function initializeHydroShareSettingsDialog() {
         let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-progress-spinner');
 
         progressSpinner.addClass('is-active');
+        $('span#hs-loading-msg').prop('hidden', false);
 
         $.post(url, serializedForm)
             .done(data => {
@@ -100,6 +101,7 @@ function initializeHydroShareSettingsDialog() {
                 }
             }).always(() => {
                 progressSpinner.removeClass('is-active');
+                $('span#hs-loading-msg').prop('hidden', true);
                 $(dialogButtons).prop('disabled', false);
                 $(submitButton).addClass('mdl-button--accent');
             });

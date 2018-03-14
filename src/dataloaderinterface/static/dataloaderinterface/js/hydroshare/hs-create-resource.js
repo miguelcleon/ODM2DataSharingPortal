@@ -1,4 +1,11 @@
-
+/*
+* hs-create-resource.js
+* This script is loaded into the browser at /site/:sampling_feature_code/ when a user has a hydroshare account and
+* they have not started sharing data with hydroshare.org.
+*
+* The script makes an ajax request to the server to grab the page content used to start sharing site data with
+* HydroShare and loads the page content into the DOM.
+* */
 
 $(() => {
    const template_url = `${window.location.href}hsr/create/`;

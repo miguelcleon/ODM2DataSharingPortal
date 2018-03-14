@@ -7,20 +7,14 @@ import logging
 import json
 import time
 
+
 class HydroShareUtility(HydroShareUtilityBaseClass):
     """Utility class for accessing and consuming HydroShare's REST API."""
-    RE_PERIOD = re.compile(r'(?P<tag_start>^start=)(?P<start>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_end>end=)'
-                           r'(?P<end>[0-9-]{10}T[0-9:]{8}).{2}(?P<tag_scheme>scheme=)(?P<scheme>.+$)', re.I)
-    XML_NS = {'dc': "http://purl.org/dc/elements/1.1/",
-              'dcterms': "http://purl.org/dc/terms/",
-              'hsterms': "http://hydroshare.org/terms/",
-              'rdf': "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-              'rdfs1': "http://www.w3.org/2001/01/rdf-schema#"}
     XML_COVERAGE_PROTO = "start={start}; end={end}; scheme=W3C-DTF"
-    TIME_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
     def __init__(self, auth=None):  # type: (AuthUtil) -> None
         self.auth = auth
+        # self.request_resource_types()
 
     @property
     def client(self):
@@ -63,15 +57,22 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
     def get_user_info(self):
         try:
-            return self.client.get_user_info()
-        except Exception:
-            return None
-
-    def get_resource_types(self):
-        try:
-            Resource.RESOURCE_TYPES = [type_ for type_ in self.client.get_resource_types()]
+            return self.client.getUserInfo()
         except Exception as e:
-            logging.error("Failed to get resource types!\n{error}".format(error=e))
+            logging.error(e)
+        return None
+
+    def request_resource_types(self):
+        from multiprocessing import Process
+        proc = Process(target=self._request_resource_types_async)
+        proc.start()
+        proc.join()
+
+    def _request_resource_types_async(self):
+        try:
+            Resource.RESOURCE_TYPES = [type_ for type_ in self.client.getResourceTypes()]
+        except Exception as e:
+            logging.error("Failed to get resource types.\n\t{error}".format(error=e))
 
 
 __all__ = ["HydroShareUtility"]
