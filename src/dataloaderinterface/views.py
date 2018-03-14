@@ -11,6 +11,8 @@ from django.db.models.expressions import F
 from django.db.models.query import Prefetch
 from django.utils.safestring import mark_safe
 
+from dataloaderservices.views import CSVDataApi
+
 from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
@@ -316,10 +318,10 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 
     def post(self, request, *args, **kwargs):
         """
-        Creates a resource in hydroshare.org from form data.
+        Creates a resource in hydroshare.org using form data.
         """
 
-        # NOTE: Eventually EnviroDIY will support multiple data types. For now, always default to 'Time Series'
+        # NOTE: Eventually EnviroDIY will support multiple data types. For now, this defaults to 'TS' (Time Series)
         post_data = request.POST.copy()
         post_data.update({'data_types': 'TS'})
         form = HydroShareSettingsForm(post_data)
@@ -359,11 +361,14 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
             be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
             """
+
             try:
                 resource.ext_id = hs_resource.create()
             except HydroShareHTTPException as e:
                 # TODO: Return a meaningful error message to display to users
-                return JsonResponse({"error": e.message}, status=e.status_code)
+                return JsonResponse({"error": e.message,
+                                     "message": "An unknown error occured! Try refreshing your browser."},
+                                    status=e.status_code)
 
             resource.save()
 
@@ -981,25 +986,10 @@ def delete_result(result):
 
 def get_site_files(site_registration):
     site_sensors = SiteSensor.objects.filter(registration=site_registration.pk)
-    path = reverse('csv_data_service')
-
     files = []
     for site_sensor in site_sensors:
-        url = "{scheme}://{host}:{port}{path}?result_id={result_id}".format(scheme='http', host='localhost', port=8000,
-                                                                            path=path, result_id=site_sensor.result_id)
-        req = requests.get(url)
-
-        status = req.status_code
-        if status == 200:
-            # Search inside 'content-disposition' header for a string that looks like a file name and ends in '.csv'.
-            csv_pattern = re.compile(r'(?<=\")\w*(?=.csv)', re.IGNORECASE)
-            file_name = csv_pattern.findall(req.headers['Content-Disposition']).pop()
-            if '.csv' not in file_name:
-                file_name += '.csv'
-            content = req.content
-            files.append({'file_name': file_name, 'content': content})
-        elif status == 404:
-            raise Http404("file not found, sensor ID: " + str(site_sensor.pk))
+        filename, csv_file = CSVDataApi.get_csv_file(site_sensor.result_id)
+        files.append((filename, csv_file.getvalue()))
 
     return files
 
@@ -1007,6 +997,6 @@ def get_site_files(site_registration):
 def upload_hydroshare_resource_files(site, resource):  # type: (SiteRegistration, Resource) -> None
     files = get_site_files(site)
     for file_ in files:
-        file_name = file_['file_name']
-        content = file_['content']
+        file_name = file_[0]
+        content = file_[1]
         resource.upload_file(file_name, content)
