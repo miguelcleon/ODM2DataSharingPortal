@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from uuid import uuid4
 import json
@@ -285,9 +285,9 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     slug_field = 'sampling_feature_code'
     fields = '__all__'
 
-    ABSTRACT_PROTO = "The data contained in this resource were uploaded from the WikiWatershed Data Sharing Portal – " \
-        "http://data.wikiwatershed.org. They were collected at a site named {site_name}. The full URL to access this " \
-        "site in the WikiWatershed Data Sharing portal is: http://data.wikiwatershed.org/sites/{site_code}/."
+    ABSTRACT_PROTO = u"The data contained in this resource were uploaded from the WikiWatershed Data Sharing Portal " \
+        u"– http://data.wikiwatershed.org. They were collected at a site named {site_name}. The full URL to access " \
+        u"this site in the WikiWatershed Data Sharing portal is: http://data.wikiwatershed.org/sites/{site_code}/."
 
     TITLE_PROTO = "Data from {site_name} uploaded from the WikiWatershed Data Sharing Portal"
 

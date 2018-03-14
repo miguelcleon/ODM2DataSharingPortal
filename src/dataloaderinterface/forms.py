@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
     OrganizationType, ActionBy, SiteType
@@ -19,12 +20,14 @@ class SiteTypeSelect(forms.Select):
         return option
 
 
-class MDLRadioButtonRenderer(forms.RadioSelect.renderer):
-    def render(self):
+class MDLRadioButton(forms.RadioSelect):
+    def render(self, name, value, attrs=None, renderer=None):
         """Adds MDL HTML classes to label and input tags"""
-        html = mark_safe(u'\n'.join([u'{0}\n'.format(item) for item in self.__iter__()]))
+        html = super(MDLRadioButton, self).render(name, value, attrs=attrs, renderer=renderer)
+        html = re.sub(r'</?(ul|li).*?>', '', html)
         html = re.sub(r'(<label )', r'\1class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ', html)
         html = re.sub(r'(<input )', r'\1class="mdl-radio__button" ', html)
+        html = re.sub('\n', '', html)
         return html
 
 
@@ -52,7 +55,7 @@ class HydroShareSettingsForm(forms.Form):
     site_registration = forms.CharField(max_length=255)
 
     schedule_type = forms.ChoiceField(
-        widget=forms.RadioSelect(renderer=MDLRadioButtonRenderer),
+        widget=MDLRadioButton,
         choices=schedule_choices,
         initial='scheduled'
     )
