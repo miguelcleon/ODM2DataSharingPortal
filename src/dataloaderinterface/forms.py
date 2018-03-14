@@ -28,7 +28,6 @@ class MDLRadioButton(forms.RadioSelect):
         html = re.sub(r'</?(ul|li).*?>', '', html)
         html = re.sub(r'(<label )', r'\1class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ', html)
         html = re.sub(r'(<input )', r'\1class="mdl-radio__button" ', html)
-        html = re.sub('\n', '', html)
         return html
 
 
