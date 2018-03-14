@@ -12,7 +12,8 @@ function initializeHydroShareDeleteDialog() {
     const deleteForm = $('#hs-delete-form');
     const deleteFormDialog = $('#hydroshare-delete-dialog')[0];
     const showDeleteDialogBtn = $('button#show-hydroshare-delete-dialog');
-    const deleteResourceCB = $('label[for="id_delete_external_resource"]');
+    const deleteResourceCBLabel = $('label[for="id_delete_external_resource"]');
+    const deleteResourceCB = $('input#id_delete_external_resource');
 
     if (!deleteFormDialog.showModal) {
         dialogPolyfill.registerDialog(deleteFormDialog);
@@ -38,9 +39,9 @@ function initializeHydroShareDeleteDialog() {
         componentHandler.upgradeElement(spinner);
     });
 
-    deleteResourceCB.change(() => {
+    deleteResourceCBLabel.change(() => {
         let warningList = $('div#checkbox-warning-list');
-        let isChecked = $(deleteResourceCB[0]).hasClass('is-checked');
+        let isChecked = deleteResourceCB[0].checked;
         $(warningList).prop('hidden', !isChecked);
     });
 
