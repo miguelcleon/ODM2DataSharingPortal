@@ -4,6 +4,7 @@ from uuid import uuid4
 import json
 import requests
 import re
+import logging
 
 from django.conf import settings
 from django.db.models.aggregates import Max
@@ -276,11 +277,9 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        """
-        # uncomment to force a hydroshare resource file update.
-        # Only do this for debugging purposes!
-        call_command('update_hydroshare_resource_files', '--force-update')
-        """
+        # # uncomment to force a hydroshare resource file update.
+        # # Only do this for debugging purposes!
+        # call_command('update_hydroshare_resource_files', '--force-update')
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
@@ -365,15 +364,19 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             try:
                 resource.ext_id = hs_resource.create()
             except HydroShareHTTPException as e:
-                # TODO: Return a meaningful error message to display to users
                 return JsonResponse({"error": e.message,
-                                     "message": "An unknown error occured! Try refreshing your browser."},
+                                     "message": "There was a problem with hydroshare.org and your resource was not created. You might want to see if www.hydroshare.org is working and try again later."},
                                     status=e.status_code)
 
             resource.save()
 
             # Upload data files to the newly created resource
-            upload_hydroshare_resource_files(site, hs_resource)
+            try:
+                upload_hydroshare_resource_files(site, hs_resource)
+            except Exception as e:
+                # If the app fails here, the resource was created but the resource files failed to upload.
+                logging.error('Failed to upload resource files: ' + e.message)
+                pass
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
