@@ -70,6 +70,7 @@
 
 
             {% if not resource.id %}
+            {# Only show title and abstract during first time creation (e.g. if resource.id is None) #}
 
             {# Resource Title#}
             <div class="row">
@@ -94,6 +95,10 @@
             </div>
 
             {% endif %}
+
+            <div class="row" id="err-msg-container">
+                <p class="text-danger"></p>
+            </div>
 
         </div>
 

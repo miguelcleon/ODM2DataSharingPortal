@@ -17,7 +17,7 @@ $(hydroshareContainer).load(resource_template_url, () => {
     const hydroshareSettingsForm = $('#hydroshare-settings-form');
     const hydroshareError = $('p#hydroshare-error');
 
-    initializeHydroShareSettingsDialog(); // called from `hs-settings-dialog.js`
+    initializeHydroShareSettingsDialog(); // called from `settings-form-dialog.js`
     initializeHydroShareDeleteDialog(); // called from `hs-delete-resource.js`
 
     $(updateNowButton).click(() => {

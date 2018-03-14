@@ -17,9 +17,10 @@ $(() => {
            initializeHydroShareSettingsDialog(); // called from `hydroshare-resource-modal.js`
        })
        .fail(xhr => {
-           if (xhr.responseJSON)
+           if (xhr.responseJSON) {
                console.error(xhr.responseJSON);
-           else
+           } else {
                console.error(xhr.responseText);
+           }
        })
 });

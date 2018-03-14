@@ -1,5 +1,5 @@
 /**
-* hs-settings-dialog.js
+* settings-form-dialog.js
 * This script performs setup for the hydroshare settings modal.
 */
 
@@ -76,9 +76,16 @@ function initializeHydroShareSettingsDialog() {
                 else
                     dialog.close();
             }).fail((xhr) => {
-                let errors = xhr.responseJSON;
-                if (errors) {
+                if (xhr.responseJSON) {
+                    let errors = xhr.responseJSON;
+
                     console.error(xhr.responseJSON);
+
+                    if (xhr.status == 500 && errors.error) {
+                        let errorContainer = $('div#err-msg-container').find('p');
+                        $(errorContainer).html(errors.error);
+                    }
+
                     for (let [errorName, errorList] of Object.entries(errors)) {
                         if (Array.isArray(errorList)) {
                             let fieldContainer = $(`#id_${errorName}`);
