@@ -117,3 +117,5 @@ crashlytics-build.properties
 
 ## Miscellaneous
 resources.csv
+Dockerfile
+docker-start.sh
