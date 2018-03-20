@@ -536,7 +536,7 @@ footer h5 {
 }
 
 footer a {
-    color: #f9bd16;
+    color: #66cbcb;
     font-weight: 500;
 }
 
@@ -558,6 +558,10 @@ footer .license-logo {
 footer .separator {
     border-top: 1px solid #505050;
     margin: 30px 0;
+}
+
+#logo-usu {
+    width: 150px;
 }
 
 #stroud-logo {
@@ -855,12 +859,12 @@ label[for='id_hours_threshold']::after{
     padding: 15px;
 }
 
-a.orange {
-    color: #e08f26;
+a.accent {
+    color: #5aafaf;
 }
 
-a.orange:hover {
-    color: #ffa42e;
+a.accent:hover {
+    color: #7befef;
 }
 
 /*SIGNUP STYLING*/
