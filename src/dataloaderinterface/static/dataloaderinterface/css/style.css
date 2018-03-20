@@ -515,7 +515,7 @@ ul.errorlist li {
 }
 
 .navbar-nav > li > a:hover {
-    border-bottom: 3px solid #FFF;
+    border-bottom: 3px solid #66cbcb;
 }
 
 .navbar-header {
@@ -604,6 +604,27 @@ footer .separator {
     display: inline-block;
     vertical-align: middle;
     margin-bottom: 2px;
+}
+
+.menu-order li > i {
+    margin-right: 10px;
+}
+
+.menu-order li > i {
+    color: #92d050;
+}
+
+.menu-order li > i {
+    opacity: 0;
+}
+
+.menu-order li.active > i {
+    opacity: 1;
+}
+
+.menu-order li.active {
+    font-weight: bold;
+    pointer-events: none;
 }
 
 .result-uuid {
@@ -728,10 +749,6 @@ button:focus {
     margin-bottom: 50px;
 }
 
-#how-it-works .card {
-    height: 300px;
-}
-
 .card h4 {
     font-size: 18px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -762,6 +779,8 @@ button:focus {
 .site-card .mdl-card__title-text a {
     color: #FFF;
     font-weight: 300;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .site-card .mdl-card__title {
@@ -779,6 +798,7 @@ button:focus {
     text-decoration: none;
     font-weight: normal;
 }
+
 .site-card {
     margin-top: 20px;
     width: auto;
@@ -996,4 +1016,9 @@ label.checkbox-label {
 .site-link {
     margin-top: 20px;
     display: block;
+}
+
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
 }

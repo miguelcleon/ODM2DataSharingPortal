@@ -36,7 +36,7 @@
                     <div class="col-6">
                         <h4 data-toggle="collapse" href="#mySitesCollapse"
                         aria-expanded="false" aria-controls="mySitesCollapse"
-                            style="cursor: pointer;"
+                            style="cursor: pointer;  display: inline-block;"
                         >My sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
                     </div>
                     <div class="col-6 text-right">
@@ -51,14 +51,45 @@
             </div>
             {% if sites %}
                 <div class="col-12 collapse show" id="mySitesCollapse" >
-                    <div class="row">
+                    <button id="btnOrderMySites"
+                            class="mdl-button mdl-js-button">
+                        Order <i class="material-icons">arrow_drop_down</i>
+                    </button>
+
+                    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu menu-order"
+                        data-sort-target="#mySites"
+                        for="btnOrderMySites">
+                        <li class="mdl-menu__item" data-sort-by="sitecode">
+                            <i class="material-icons center-icon">sort_by_alpha</i> Alphabetically
+                        </li>
+                        <li class="mdl-menu__item" data-sort-by="registrationdate">
+                            <i class="material-icons center-icon">today</i> By Registration Date
+                        </li>
+                        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" data-sort-by="lastupdated">
+                            <i class="material-icons center-icon">query_builder</i> By Last Updated
+                        </li>
+                        <li class="mdl-menu__item" data-order="asc">
+                            <i class="material-icons center-icon">arrow_upward</i> Ascending
+                        </li>
+                        <li class="mdl-menu__item" data-order="desc">
+                            <i class="material-icons center-icon">arrow_downward</i> Descending
+                        </li>
+                    </ul>
+                    <div class="row" id="mySites">
                         {% for site in sites %}
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site" data-site="{{ site.sampling_feature_id }}">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site sortable"
+                                 data-site="{{ site.sampling_feature_id }}"
+                                 data-siteCode="{{ site.sampling_feature_code }}"
+                                 data-registrationDate="{{ site.registration_date|date:"U" }}"
+                                 data-lastUpdated="{{ site.latest_measurement|date:"U" }}">
                                 <div class="mdl-card mdl-shadow--2dp site-card">
                                     <div class="mdl-card__title">
-                                        <h2 class="mdl-card__title-text"><a
-                                                href="{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_name }}</a>
+                                        <h2 class="mdl-card__title-text" id="mySite{{ forloop.counter }}">
+                                            <a href="{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_code }}</a>
                                         </h2>
+                                        <div class="mdl-tooltip" data-mdl-for="mySite{{ forloop.counter }}">
+                                            {{ site.sampling_feature_code }}
+                                        </div>
                                     </div>
                                     <div class="mdl-card__supporting-text">
                                         <table>
@@ -133,19 +164,54 @@
             {% endif %}
 
             <div class="col-sm-12">
-                <h4 style="margin-top: 40px; cursor: pointer;" data-toggle="collapse" href="#followedSitesCollapse"
+                <h4 style="margin-top: 40px; cursor: pointer; display: inline-block;" data-toggle="collapse" href="#followedSitesCollapse"
                     aria-expanded="false" aria-controls="followedSitesCollapse"
                     >Followed Sites <span class="badge badge-secondary">{{ followed_sites|length }}</span></h4>
                 <hr>
             </div>
+
             {% if followed_sites %}
                 <div class="col-12 collapse show" id="followedSitesCollapse">
-                    <div class="row">
+                    <button id="btnOrderFollowedSites"
+                            class="mdl-button mdl-js-button">
+                        Order <i class="material-icons">arrow_drop_down</i>
+                    </button>
+
+                    <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu menu-order"
+                        data-sort-target="#followedSites"
+                        for="btnOrderFollowedSites">
+                        <li class="mdl-menu__item" data-sort-by="sitecode">
+                            <i class="material-icons center-icon">sort_by_alpha</i> Alphabetically
+                        </li>
+                        <li class="mdl-menu__item" data-sort-by="registrationdate">
+                            <i class="material-icons center-icon">today</i> By Registration Date
+                        </li>
+                        <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" data-sort-by="lastupdated">
+                            <i class="material-icons center-icon">query_builder</i> By Last Updated
+                        </li>
+                        <li class="mdl-menu__item" data-order="asc">
+                            <i class="material-icons center-icon">arrow_upward</i> Ascending
+                        </li>
+                        <li class="mdl-menu__item" data-order="desc">
+                            <i class="material-icons center-icon">arrow_downward</i> Descending
+                        </li>
+                    </ul>
+
+                    <div class="row followed-sites" id="followedSites">
                         {% for site in followed_sites %}
-                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site" data-site="{{ site.sampling_feature_id }}">
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site sortable"
+                                 data-site="{{ site.sampling_feature_id }}"
+                                 data-siteCode="{{ site.sampling_feature_code }}"
+                                 data-registrationDate="{{ site.registration_date|date:"U" }}"
+                                 data-lastUpdated="{{ site.latest_measurement|date:"U" }}">
                                 <div class="mdl-card mdl-shadow--2dp site-card">
                                     <div class="mdl-card__title">
-                                        <h2 class="mdl-card__title-text"><a href="{% autoescape on %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_name }}</a></h2>
+                                        <h2 class="mdl-card__title-text" id="followedSite{{ forloop.counter }}">
+                                            <a href="{% autoescape on %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_code }}</a>
+                                        </h2>
+                                        <div class="mdl-tooltip" data-mdl-for="followedSite{{ forloop.counter }}">
+                                            {{ site.sampling_feature_code }}
+                                        </div>
                                     </div>
                                     <div class="mdl-card__supporting-text">
                                         <table>
@@ -210,7 +276,6 @@
                         {% endfor %}
                     </div>
                 </div>
-
             {% else %}
                 <div class="col-sm-12">
                     <p>No followed sites to display</p>
