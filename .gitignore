@@ -117,5 +117,8 @@ crashlytics-build.properties
 
 ## Miscellaneous
 resources.csv
+
+# Docker
 Dockerfile
 docker-start.sh
+docker-compose.yml
