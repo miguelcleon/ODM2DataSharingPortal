@@ -5,23 +5,74 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row">
-            <div class="browse-sites-header mdl-shadow--2dp">
-                <div class="page-title">
-                    <span>Browse Data Collection Sites&nbsp;</span>
-                    <i class="material-icons" style="margin-left: 10px;"
-                       data-toggle="collapse" data-target="#browseDescription"
-                       aria-expanded="true" aria-controls="#browseDescription">info</i>
-                </div>
+            <div class="col-12" style="border: 1px solid #DDD;">
+                <h4 class="page-title" style="display: inline-block;">Browse Data Collection Sites&nbsp;</h4>
+                <span class="subtitle text-muted">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-3 mdl-shadow--2dp">
+                <h6>ORGANIZATION</h6>
+                <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
+                    <tbody>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
+                                <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">Utah State University</span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-2">
+                                <input type="checkbox" id="checkbox-2" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">Utah Water Research Laboratory</span>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-3">
+                                <input type="checkbox" id="checkbox-3" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">Stroud Water Research Center</span>
+                            </label>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-                <div class="collapse" id="browseDescription">
-                    <br>
-                    <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
+                <h6>DATA TYPE</h6>
+                <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
+                    <tbody>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-4">
+                                <input type="checkbox" id="checkbox-4" class="mdl-checkbox__input">
+                                 <span class="mdl-checkbox__label">Leaf Pack</span>
+                            </label>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-5">
+                                <input type="checkbox" id="checkbox-5" class="mdl-checkbox__input">
+                                <span class="mdl-checkbox__label">EnviroDIY</span>
+                            </label>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-sm-12 col-md-9" style="padding: 0;">
+                <div class="map-container full-screen-map-container">
+                    <div id="map"></div>
                 </div>
             </div>
 
-            <div class="map-container full-screen-map-container">
-                <div id="map"></div>
-            </div>
 
             {% autoescape off %}
             <script id="sites-data" type="application/json">

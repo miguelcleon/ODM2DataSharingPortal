@@ -1,37 +1,4 @@
-.map-container {
-    margin-top: 25px;
-    height: 700px;
-    padding: 0;
-}
-
 #map {
     height: 100%;
-}
-
-div.map-info {
-    margin: 5px;
-}
-
-span.map-tip {
-    box-shadow: rgba(0, 0, 0, 0.298039) 0 1px 4px -1px;
-    background-color: rgba(255, 255, 255, .95);
-    border-radius: 2px;
-    font-size: 13px;
-    padding: 7px 15px;
-}
-
-.browse-sites-header {
-    display: inline-block;
-    position: absolute;
-    z-index: 1;
-    background: #FFF;
-    padding: 24px;
-    margin: 15px;
-    border-radius: 2px;
-    max-width: 350px;
-}
-
-.browse-sites-header .page-title {
-    margin: 0;
-    font-size: 14px;
+    background: #e8e8e8;
 }
