@@ -1022,3 +1022,19 @@ label.checkbox-label {
     display: -webkit-box;
     display: -webkit-flex;
 }
+
+div#mySites .mdl-card__title,
+div#followedSites .mdl-card__title {
+    height: 48px !important; /* important! to override the all powerful mdl css*/
+    padding: 14px !important;
+}
+
+div#mySites .mdl-card__title > .mdl-card__title-text,
+div#followedSites .mdl-card__title > .mdl-card__title-text {
+    font-size: 18px;
+}
+
+div#mySites .mdl-card__menu,
+div#followedSites .mdl-card__menu {
+    top: 8px !important; /* centers the material design icon */
+}

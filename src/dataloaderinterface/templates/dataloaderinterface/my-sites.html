@@ -7,7 +7,7 @@
         <div class="container">
             <div class="row">
                 <section class="col-6">
-                    <div class="page-title">Registered Sites</div>
+                    <div class="page-title">My Sites</div>
                 </section>
 
                 <div class="col-6 text-right">
@@ -37,7 +37,7 @@
                         <h4 data-toggle="collapse" href="#mySitesCollapse"
                         aria-expanded="false" aria-controls="mySitesCollapse"
                             style="cursor: pointer;  display: inline-block;"
-                        >My sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
+                        >My Registered Sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
                     </div>
                     <div class="col-6 text-right">
                         <a href="{% url 'site_registration' %}" id="btn-new-site" style="margin-top:20px;"
@@ -75,6 +75,7 @@
                             <i class="material-icons center-icon">arrow_downward</i> Descending
                         </li>
                     </ul>
+
                     <div class="row" id="mySites">
                         {% for site in sites %}
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site sortable"
@@ -121,24 +122,24 @@
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <br>
-                                        {% if site.latest_measurement %}
-                                            <table>
-                                                <tbody>
-                                                <tr>
-                                                    <td><i class="material-icons site-card-icon">query_builder</i></td>
-                                                    <td>
-                                                        <span style="color:#92d050;"> Latest Measurement</span>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2">{{ site.latest_measurement }}
-                                                        ({{ site.latest_measurement_utc|utc_timesince }} ago)
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        {% endif %}
+{#                                        <br>#}
+{#                                        {% if site.latest_measurement %}#}
+{#                                            <table>#}
+{#                                                <tbody>#}
+{#                                                <tr>#}
+{#                                                    <td><i class="material-icons site-card-icon">query_builder</i></td>#}
+{#                                                    <td>#}
+{#                                                        <span style="color:#92d050;"> Latest Measurement</span>#}
+{#                                                    </td>#}
+{#                                                </tr>#}
+{#                                                <tr>#}
+{#                                                    <td colspan="2">{{ site.latest_measurement }}#}
+{#                                                        ({{ site.latest_measurement_utc|utc_timesince }} ago)#}
+{#                                                    </td>#}
+{#                                                </tr>#}
+{#                                                </tbody>#}
+{#                                            </table>#}
+{#                                        {% endif %}#}
                                     </div>
 
                                     <div class="mdl-card__menu">
@@ -242,25 +243,25 @@
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <br>
-                                        {% if site.latest_measurement %}
-                                        <table>
-                                            <tbody>
-                                            <tr>
-                                                <td><i class="material-icons site-card-icon">query_builder</i></td>
-                                                <td>
-                                                    <span style="color:#92d050;"> Latest Measurement</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td></td>
-                                                <td>{{ site.latest_measurement }}
-                                                    <br>({{ site.latest_measurement_utc|utc_timesince }} ago)
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        {% endif %}
+{#                                        <br>#}
+{#                                        {% if site.latest_measurement %}#}
+{#                                        <table>#}
+{#                                            <tbody>#}
+{#                                            <tr>#}
+{#                                                <td><i class="material-icons site-card-icon">query_builder</i></td>#}
+{#                                                <td>#}
+{#                                                    <span style="color:#92d050;"> Latest Measurement</span>#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            <tr>#}
+{#                                                <td></td>#}
+{#                                                <td>{{ site.latest_measurement }}#}
+{#                                                    <br>({{ site.latest_measurement_utc|utc_timesince }} ago)#}
+{#                                                </td>#}
+{#                                            </tr>#}
+{#                                            </tbody>#}
+{#                                        </table>#}
+{#                                        {% endif %}#}
                                     </div>
                                     <div class="mdl-card__menu">
                                         <!-- Right aligned menu below button -->
