@@ -611,7 +611,7 @@ footer .separator {
 }
 
 .menu-order li > i {
-    color: #92d050;
+    color: #66cccc;
 }
 
 .menu-order li > i {
@@ -785,7 +785,7 @@ button:focus {
 
 .site-card .mdl-card__title {
     padding-right: 60px;
-    background-color: #92d050;
+    background-color: #63c3c3;
     color: #FFF;
 }
 
@@ -822,7 +822,7 @@ button:focus {
 
 i.material-icons.site-card-icon {
     margin-right: 8px;
-    color: #92d050;
+    color: #66cccc;
     max-width: 24px;
 }
 

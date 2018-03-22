@@ -12,59 +12,66 @@
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-3 mdl-shadow--2dp">
-                <h6>ORGANIZATION</h6>
-                <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
-                    <tbody>
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
-                                <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Utah State University</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-2">
-                                <input type="checkbox" id="checkbox-2" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Utah Water Research Laboratory</span>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-3">
-                                <input type="checkbox" id="checkbox-3" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">Stroud Water Research Center</span>
-                            </label>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <a data-toggle="collapse" href="#collapseOrganization" role="button" aria-expanded="true"
+                   aria-controls="collapseOrganization" style="text-decoration: none; color: #222;"><h6>ORGANIZATION</h6></a>
 
-                <h6>DATA TYPE</h6>
-                <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
-                    <tbody>
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-4">
-                                <input type="checkbox" id="checkbox-4" class="mdl-checkbox__input">
-                                 <span class="mdl-checkbox__label">Leaf Pack</span>
-                            </label>
+                <div id="collapseOrganization" class="show">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
+                        <tbody>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-1">
+                                    <input type="checkbox" id="checkbox-1" class="mdl-checkbox__input">
+                                    <span class="mdl-checkbox__label">Utah State University</span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-2">
+                                    <input type="checkbox" id="checkbox-2" class="mdl-checkbox__input">
+                                    <span class="mdl-checkbox__label">Utah Water Research Laboratory</span>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-3">
+                                    <input type="checkbox" id="checkbox-3" class="mdl-checkbox__input">
+                                    <span class="mdl-checkbox__label">Stroud Water Research Center</span>
+                                </label>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a data-toggle="collapse" href="#collapseDataType" role="button" aria-expanded="true"
+                   aria-controls="collapseDataType" style="text-decoration: none; color: #222;"><h6>DATA TYPE</h6></a>
+                <div id="collapseDataType" class="show">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
+                        <tbody>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-4">
+                                    <input type="checkbox" id="checkbox-4" class="mdl-checkbox__input">
+                                    <span class="mdl-checkbox__label">Leaf Pack</span>
+                                </label>
 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-5">
-                                <input type="checkbox" id="checkbox-5" class="mdl-checkbox__input">
-                                <span class="mdl-checkbox__label">EnviroDIY</span>
-                            </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="checkbox-5">
+                                    <input type="checkbox" id="checkbox-5" class="mdl-checkbox__input">
+                                    <span class="mdl-checkbox__label">EnviroDIY</span>
+                                </label>
 
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br><br>
             </div>
 
             <div class="col-sm-12 col-md-9" style="padding: 0;">
@@ -72,7 +79,6 @@
                     <div id="map"></div>
                 </div>
             </div>
-
 
             {% autoescape off %}
             <script id="sites-data" type="application/json">
