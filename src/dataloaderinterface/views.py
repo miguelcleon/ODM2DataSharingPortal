@@ -421,7 +421,8 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
         except requests.exceptions.Timeout:
             context['request_timeout'] = True
         finally:
-            if context.get('resource_not_found', None) is True:
+            # if the resource was not found or the resource is published, provide the 'delete_resource_url'
+            if context.get('resource_not_found', None) is True or context.get('resource_is_published', None):
                 context['delete_resource_url'] = reverse('hs_resource_delete',
                                                          kwargs={'sampling_feature_code': site.sampling_feature_code})
 
