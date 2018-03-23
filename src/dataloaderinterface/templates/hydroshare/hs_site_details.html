@@ -59,14 +59,15 @@
         {% else %}
 
             {% if not resource.is_enabled %}
-                <p><strong>Sharing with HydroShare is currently <span class="text-warning">paused</span>.</strong></p>
-            {% endif %}
+                <p>Sharing with HydroShare is currently <strong>paused</strong>.</p>
+            {% else %}
 
+                <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
 
-            <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
+                {% if resource.sync_type == 'scheduled' %}
+                    <p>Next update scheduled for <strong>{{ resource.next_sync_date|date:date_format }}</strong></p>
+                {% endif %}
 
-            {% if resource.sync_type == 'scheduled' %}
-                <p>Next update scheduled for <strong>{{ resource.next_sync_date|date:date_format }}</strong></p>
             {% endif %}
 
             <p><a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">View data from this site in HydroShare</a></p>
