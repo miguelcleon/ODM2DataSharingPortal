@@ -1,4 +1,5 @@
 {% load static %}
+{% load helpers %}
 
 {% if resource.ext_id %}
     {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}
@@ -65,7 +66,7 @@
                 <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
 
                 {% if resource.sync_type == 'scheduled' %}
-                    <p>Next update scheduled for <strong>{{ resource.next_sync_date|date:date_format }}</strong></p>
+                    <p>Next update scheduled for <strong>{{ resource.next_sync_date|replace_hour:5|date:date_format }}</strong></p>
                 {% endif %}
 
             {% endif %}

@@ -283,6 +283,9 @@ class HydroShareResource(models.Model):
 
     @property
     def next_sync_date(self):
+        date = self.get_next_sync_date()
+        if isinstance(date, datetime):
+            return date.replace(hour=5, minute=0)
         return self.get_next_sync_date()
 
     @property
