@@ -206,12 +206,16 @@ function getTimeSeriesData(sensorInfo) {
         var resultSet = influx_data.results.shift();
         if (resultSet.series && resultSet.series.length) {
             var influxSeries = resultSet.series.shift();
-
+            var indexes = {
+                time: influxSeries.columns.indexOf("time"),
+                value: influxSeries.columns.indexOf("DataValue"),
+                offset: influxSeries.columns.indexOf("UTCOffset")
+            };
             var values = influxSeries.values.map(function(influxValue) {
                 return {
-                    DateTime: influxValue[influxSeries.columns.indexOf('time')].match(/^(\d{4}\-\d\d\-\d\d([tT][\d:]*)?)/).shift(),
-                    Value: influxValue[influxSeries.columns.indexOf('DataValue')],
-                    TimeOffset: influxValue[influxSeries.columns.indexOf("UTCOffset")]
+                    DateTime: influxValue[indexes.time].match(/^(\d{4}\-\d\d\-\d\d([tT][\d:]*)?)/).shift(),
+                    Value: influxValue[indexes.value],
+                    TimeOffset: influxValue[indexes.offset]
                 }
             });
 
