@@ -84,7 +84,7 @@ class ODM2UserAdmin(admin.ModelAdmin):
 
 @admin.register(HydroShareAccount)
 class HydroShareAccountAdmin(admin.ModelAdmin):
-    list_display = ('id', 'ext_id', 'odm2user', 'resources')
+    list_display = ('id', 'ext_id', 'username', 'resources')
     fields = ('ext_id', 'token')
 
 

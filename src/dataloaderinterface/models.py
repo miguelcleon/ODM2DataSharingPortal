@@ -209,11 +209,11 @@ class HydroShareAccount(models.Model):
                                             update_fields=update_fields)
 
     @property
-    def odm2user(self):
-        return ODM2User.objects.filter(hydroshare_account=self.pk).first()
+    def username(self):
+        return ODM2User.objects.filter(hydroshare_account=self.pk).first().user.username
 
     def resources(self):
-        return ",".join([str(r.id) for r in HydroShareResource.objects.filter(hs_account=self)])
+        return ", ".join([str(r.id) for r in HydroShareResource.objects.filter(hs_account=self)])
     resources.short_description = 'Resource IDs'
 
     def get_token(self):
