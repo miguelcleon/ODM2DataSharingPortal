@@ -61,18 +61,6 @@ function bindDeleteDialogEvents() {
     });
 }
 
-// Returns the most recent 72 hours since the last reading
-// function getRecentData(timeSeriesData) {
-//     var lastRead = Math.max.apply(Math, timeSeriesData.map(function(value){
-//         return new Date(value.DateTime);
-//     }));
-//
-//     var dataTimeOffset = new Date(lastRead - 1000 * 60 * 60 * EXTENT_HOURS);
-//     return timeSeriesData.filter(function (value) {
-//         return (new Date(value.DateTime)) >= dataTimeOffset;
-//     });
-// }
-
 function fillValueTable(table, data) {
     var rows = data.map(function (dataValue) {
         return "<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.DateTime + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.TimeOffset + "</td><td>" + dataValue.Value + "</td></tr>";
@@ -218,15 +206,19 @@ function getTimeSeriesData(sensorInfo) {
         var resultSet = influx_data.results.shift();
         if (resultSet.series && resultSet.series.length) {
             var influxSeries = resultSet.series.shift();
+            var indexes = {
+                time: influxSeries.columns.indexOf("time"),
+                value: influxSeries.columns.indexOf("DataValue"),
+                offset: influxSeries.columns.indexOf("UTCOffset")
+            };
             var values = influxSeries.values.map(function(influxValue) {
                 return {
-                    DateTime: influxValue[0].match(/^(\d{4}\-\d\d\-\d\d([tT][\d:]*)?)/).shift(),
-                    Value: influxValue[1],
-                    TimeOffset: influxValue[2]
+                    DateTime: influxValue[indexes.time].match(/^(\d{4}\-\d\d\-\d\d([tT][\d:]*)?)/).shift(),
+                    Value: influxValue[indexes.value],
+                    TimeOffset: influxValue[indexes.offset]
                 }
             });
-            //
-            // var recentValues = getRecentData(values);
+
             fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), values);
             drawSparklineOnResize(sensorInfo, values);
             drawSparklinePlot(sensorInfo, values);
@@ -240,21 +232,6 @@ function getTimeSeriesData(sensorInfo) {
         console.log('data failed to load.');
 
     });
-    // Papa.parse(sensorInfo['csvPath'], {
-    //     download: true,
-    //     header: true,
-    //     worker: true,
-    //     comments: "#",
-    //     skipEmptyLines: true,
-    //     complete: function (result) {
-    //         if (result.data) {
-    //             var recentValues = getRecentData(result.data);
-    //             fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), result.data);
-    //             drawSparklineOnResize(sensorInfo, recentValues);
-    //             drawSparklinePlot(sensorInfo, recentValues);
-    //         }
-    //     }
-    // });
 }
 
 $(document).ready(function () {
