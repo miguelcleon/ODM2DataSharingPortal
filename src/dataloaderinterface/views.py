@@ -256,6 +256,8 @@ class HydroShareResourceViewMixin:
 
 
 class HydroShareResourceUpdateCreateView(UpdateView):
+    slug_field = 'sampling_feature_code'
+
     def form_invalid(self, form):
         response = super(HydroShareResourceUpdateCreateView, self).form_invalid(form)
         if self.request.is_ajax():
@@ -264,7 +266,7 @@ class HydroShareResourceUpdateCreateView(UpdateView):
             return response
 
     def get_object(self, queryset=None):
-        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
         try:
             resource = HydroShareResource.objects.get(site_registration=site.registration_id)
         except ObjectDoesNotExist:
@@ -287,7 +289,6 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     object = None
-    slug_field = 'sampling_feature_code'
     fields = '__all__'
 
     ABSTRACT_PROTO = u"The data contained in this resource were uploaded from the WikiWatershed Data Sharing Portal " \
@@ -304,7 +305,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceCreateView, self).get_context_data(**kwargs)
-        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
         initial_datatype = HydroShareSettingsForm.data_type_choices[0][0]
 
         context['site'] = site
@@ -326,7 +327,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         form = HydroShareSettingsForm(post_data)
 
         if form.is_valid():
-            site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+            site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
 
             hs_account = self.request.user.odm2user.hydroshare_account
 
@@ -342,7 +343,6 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             client = AuthUtil.authorize(token=token_json).get_client()
             hs_resource = Resource(client)
 
-            hs_resource.resource_id = resource.ext_id
             hs_resource.owner = Resource.DEFAULT_OWNER
             hs_resource.resource_type = Resource.COMPOSITE_RESOURCE
             hs_resource.creator = '{0} {1}'.format(self.request.user.first_name, self.request.user.last_name)
@@ -356,12 +356,11 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             for sensor in sensors:
                 hs_resource.keywords.add(sensor.variable_name)
 
-            """
-            NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
-            be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
-            """
-
             try:
+                """
+                NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
+                be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
+                """
                 resource.ext_id = hs_resource.create()
             except HydroShareHTTPException as e:
                 return JsonResponse({"error": e.message,

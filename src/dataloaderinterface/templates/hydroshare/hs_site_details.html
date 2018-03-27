@@ -61,6 +61,7 @@
 
             {% if not resource.is_enabled %}
                 <p>Sharing with HydroShare is currently <strong>paused</strong>.</p>
+                <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
             {% else %}
 
                 <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
