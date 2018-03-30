@@ -180,7 +180,8 @@
 
 
                     {######    HydroShare Settings    #######}
-                {% if site.django_user_id == request.user.id and hydroshare_account %}
+                    {% if site.django_user_id == request.user.id and hydroshare_account %}
+                    <hr>
                     <div class="row hydroshare-container" id="hydroshare-settings-container">
                         <div class="col-12">
                             <div class="hs-img-container">
@@ -191,7 +192,8 @@
                             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" id="hydroshare-progress-spinner"></div>
                         </div>
                     </div>
-                {% endif %}
+                    <hr>
+                    {% endif %}
 
 
 

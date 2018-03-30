@@ -13,11 +13,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import json
 import getpass
-# import logging
+import logging
 
-# LOGGING_LEVEL = logging.INFO
-# logging.basicConfig(level=LOGGING_LEVEL)
-# logging.info("Starting logging, level='{0}'".format(LOGGING_LEVEL))
+# Set application logging level
+logging.basicConfig(level=logging.INFO)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -174,7 +173,7 @@ EMAIL_SERVER = data['email_host'] if 'email_host' in data else '',
 
 EMAIL_HOST = EMAIL_SERVER[0] if isinstance(EMAIL_SERVER, tuple) else EMAIL_SERVER
 
-DATETIME_FORMAT = "N j, Y P"
+DATETIME_FORMAT = "N j, Y g:i a"
 
 HYDROSHARE_UTIL_CONFIG = {
     'CLIENT_ID': data["hydroshare_oauth"]["client_id"],

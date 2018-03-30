@@ -63,7 +63,10 @@ function initializeHydroShareSettingsDialog() {
 
         let url = `${hydroshareSettingsForm.baseURI}hsr/${method}/`;
         let serializedForm = $(hydroshareSettingsForm).serialize();
-        let progressSpinner = $(hydroshareSettingsForm).find('#hydroshare-progress-spinner');
+        let progressSpinner = $(hydroshareSettingsForm).find('#hs-progress-spinner');
+
+        for (let spinner of progressSpinner)
+            componentHandler.upgradeElement(spinner);
 
         progressSpinner.addClass('is-active');
         $('span#hs-loading-msg').prop('hidden', false);
@@ -113,6 +116,5 @@ function initializeHydroShareSettingsDialog() {
                 $(submitButton).addClass('mdl-button--accent');
             });
 
-        componentHandler.upgradeElement(progressSpinner[0]); // upgradeElement to fix issue where spinner doesn't render
     }
 }
