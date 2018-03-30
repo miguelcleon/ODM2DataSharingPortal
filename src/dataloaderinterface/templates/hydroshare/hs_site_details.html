@@ -1,4 +1,5 @@
 {% load static %}
+{% load helpers %}
 
 {% if resource.ext_id %}
     {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}
@@ -9,7 +10,6 @@
 </div>
 
 <div class="col-lg-6 col-sm-12">
-    <hr>
     <div class="hs-img-container">
         <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
     </div>
@@ -60,14 +60,16 @@
         {% else %}
 
             {% if not resource.is_enabled %}
-                <p><strong>Sharing with HydroShare is currently <span class="text-warning">paused</span>.</strong></p>
-            {% endif %}
+                <p>Sharing with HydroShare is currently <strong>paused</strong>.</p>
+                <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
+            {% else %}
 
+                <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
 
-            <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
+                {% if resource.sync_type == 'scheduled' %}
+                    <p>Next update scheduled for <strong>{{ resource.next_sync_date|replace_hour:5|date:date_format }}</strong></p>
+                {% endif %}
 
-            {% if resource.sync_type == 'scheduled' %}
-                <p>Next update scheduled for <strong>{{ resource.next_sync_date|date:date_format }}</strong></p>
             {% endif %}
 
             <p><a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">View data from this site in HydroShare</a></p>
@@ -90,7 +92,7 @@
                     Stop Sharing
                 </button>
 
-                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hydroshare-progress-spinner"></div>
+                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hs-progress-spinner"></div>
             </div>
         {% endif %}
 
@@ -108,5 +110,4 @@
         </button>
 
     {% endif %}
-    <hr>
 </div>

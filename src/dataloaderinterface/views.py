@@ -4,6 +4,7 @@ from uuid import uuid4
 import json
 import requests
 import re
+import logging
 
 from django.conf import settings
 from django.db.models.aggregates import Max
@@ -255,6 +256,8 @@ class HydroShareResourceViewMixin:
 
 
 class HydroShareResourceUpdateCreateView(UpdateView):
+    slug_field = 'sampling_feature_code'
+
     def form_invalid(self, form):
         response = super(HydroShareResourceUpdateCreateView, self).form_invalid(form)
         if self.request.is_ajax():
@@ -263,7 +266,7 @@ class HydroShareResourceUpdateCreateView(UpdateView):
             return response
 
     def get_object(self, queryset=None):
-        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
         try:
             resource = HydroShareResource.objects.get(site_registration=site.registration_id)
         except ObjectDoesNotExist:
@@ -276,11 +279,9 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        """
-        # uncomment to force a hydroshare resource file update.
-        # Only do this for debugging purposes!
-        call_command('update_hydroshare_resource_files', '--force-update')
-        """
+        # # uncomment to force a hydroshare resource file update.
+        # # Only do this for debugging purposes!
+        # call_command('update_hydroshare_resource_files', '--force-update')
         return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
 
 
@@ -288,7 +289,6 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
     template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     object = None
-    slug_field = 'sampling_feature_code'
     fields = '__all__'
 
     ABSTRACT_PROTO = u"The data contained in this resource were uploaded from the WikiWatershed Data Sharing Portal " \
@@ -305,7 +305,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
 
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceCreateView, self).get_context_data(**kwargs)
-        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
         initial_datatype = HydroShareSettingsForm.data_type_choices[0][0]
 
         context['site'] = site
@@ -327,7 +327,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         form = HydroShareSettingsForm(post_data)
 
         if form.is_valid():
-            site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+            site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
 
             hs_account = self.request.user.odm2user.hydroshare_account
 
@@ -343,7 +343,6 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             client = AuthUtil.authorize(token=token_json).get_client()
             hs_resource = Resource(client)
 
-            hs_resource.resource_id = resource.ext_id
             hs_resource.owner = Resource.DEFAULT_OWNER
             hs_resource.resource_type = Resource.COMPOSITE_RESOURCE
             hs_resource.creator = '{0} {1}'.format(self.request.user.first_name, self.request.user.last_name)
@@ -357,23 +356,26 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             for sensor in sensors:
                 hs_resource.keywords.add(sensor.variable_name)
 
-            """
-            NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
-            be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
-            """
-
             try:
+                """
+                NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
+                be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
+                """
                 resource.ext_id = hs_resource.create()
             except HydroShareHTTPException as e:
-                # TODO: Return a meaningful error message to display to users
                 return JsonResponse({"error": e.message,
-                                     "message": "An unknown error occured! Try refreshing your browser."},
+                                     "message": "There was a problem with hydroshare.org and your resource was not created. You might want to see if www.hydroshare.org is working and try again later."},
                                     status=e.status_code)
 
             resource.save()
 
             # Upload data files to the newly created resource
-            upload_hydroshare_resource_files(site, hs_resource)
+            try:
+                upload_hydroshare_resource_files(site, hs_resource)
+            except Exception as e:
+                # If the app fails here, the resource was created but the resource files failed to upload.
+                logging.error('Failed to upload resource files: ' + e.message)
+                pass
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
@@ -418,7 +420,8 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
         except requests.exceptions.Timeout:
             context['request_timeout'] = True
         finally:
-            if context.get('resource_not_found', None) is True:
+            # if the resource was not found or the resource is published, provide the 'delete_resource_url'
+            if context.get('resource_not_found', None) is True or context.get('resource_is_published', None):
                 context['delete_resource_url'] = reverse('hs_resource_delete',
                                                          kwargs={'sampling_feature_code': site.sampling_feature_code})
 

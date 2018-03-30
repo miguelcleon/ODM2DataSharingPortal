@@ -157,6 +157,10 @@ class ODM2User(models.Model):
     def can_administer_site(self, registration):
         return self.user.is_staff or registration.user == self
 
+    class Meta:
+        verbose_name = "ODM2 User"
+        verbose_name_plural = "ODM2 Users"
+
 
 class OAuthToken(models.Model):
     access_token = models.CharField(max_length=255)
@@ -203,6 +207,14 @@ class HydroShareAccount(models.Model):
              update_fields=None):
         super(HydroShareAccount, self).save(force_insert=force_insert, force_update=force_update, using=using,
                                             update_fields=update_fields)
+
+    @property
+    def username(self):
+        return ODM2User.objects.filter(hydroshare_account=self.pk).first().user.username
+
+    def resources(self):
+        return ", ".join([str(r.id) for r in HydroShareResource.objects.filter(hs_account=self)])
+    resources.short_description = 'Resource IDs'
 
     def get_token(self):
         try:
@@ -271,6 +283,9 @@ class HydroShareResource(models.Model):
 
     @property
     def next_sync_date(self):
+        date = self.get_next_sync_date()
+        if isinstance(date, datetime):
+            return date.replace(hour=5, minute=0)
         return self.get_next_sync_date()
 
     @property

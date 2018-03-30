@@ -14,7 +14,6 @@ class HydroShareUtility(HydroShareUtilityBaseClass):
 
     def __init__(self, auth=None):  # type: (AuthUtil) -> None
         self.auth = auth
-        # self.request_resource_types()
 
     @property
     def client(self):

@@ -20,15 +20,21 @@ $(hydroshareContainer).load(resource_template_url, () => {
     initializeHydroShareSettingsDialog(); // called from `settings-form-dialog.js`
     initializeHydroShareDeleteDialog(); // called from `hs-delete-resource.js`
 
+    /*
+    * @desc - tells the server to update hydroshare resource files using latest site data
+    * */
     $(updateNowButton).click(() => {
         $(updateNowButton).prop('disabled', true);
         $('p#hydroshare-error').text('');
-        console.log(hydroshareError);
+
         const url = `${hydroshareSettingsForm[0].baseURI}hsr/update/`;
         const serializedForm = $(hydroshareSettingsForm).serialize();
+        const spinners = $('div[id=hs-progress-spinner]');
 
-        let progressSpinner = $('#hydroshare-progress-spinner');
-        progressSpinner.addClass('is-active');
+        for (let el of spinners)
+            componentHandler.upgradeElement(el); // reinitializes MDL component so it actually works.
+
+        $(spinners).addClass('is-active');
 
         // make POST request to upload site data files to hydroshare resource.
         $.post(url, `${serializedForm}&update_files=true`)
@@ -48,7 +54,7 @@ $(hydroshareContainer).load(resource_template_url, () => {
 
             })
             .always(() => {
-                progressSpinner.removeClass('is-active');
+                $(spinners).removeClass('is-active');
                 $(updateNowButton).prop('disabled', false);
             });
     });
