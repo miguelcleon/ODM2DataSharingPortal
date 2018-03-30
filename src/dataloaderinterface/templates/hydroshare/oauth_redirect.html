@@ -1,0 +1,50 @@
+{% extends 'dataloaderinterface/base.html' %}
+
+{% block content %}
+
+<style>
+    .mdl-card-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+    }
+    .mdl-card {
+        margin: 48px;
+        width: 100%;
+        max-width: 480px;
+    }
+    @media only screen and (max-width: 480px) {
+        .mdl-card {
+            margin: 48px 16px;
+        }
+    }
+</style>
+
+<div class="mdl-card-container">
+    <div id="redirect-notice" class="mdl-card">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">You are being redirected to hydroshare.org</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <p>If you haven't been redirected in 10 seconds, please click <b>Continue</b> to proceed.</p>
+        </div>
+        <div class="mdl-card__actions mdl-card--border">
+            <a href="{{ redirect_url }}" class="mdl-button mdl-button--accent">Continue</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+    $(() => {
+        setTimeout(function () {
+            {# Redirect user to hydroshare oauth url after 3 seconds #}
+            window.location.replace('{{ redirect_url  }}');
+        }, 3000);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+.hydroshare-container {
+    margin-bottom: 24px;
+}
+.hydroshare-title {
+    margin: 8px 0;
+}
+.hs-img-container {
+    max-width: 120px;
+    margin: 8px 0;
+}
+.hs-img-container > img {
+    width: 100%;
+    height: auto;
+}
+.hydroshare-actions {
+    display: flex;
+    flex-direction: row;
+}
+.hydroshare-actions > * {
+    margin: 8px 16px 8px 0;
+}
+@media only screen and (min-width: 480px) {
+    dialog.mdl-dialog {
+        min-width: 480px;
+    }
+}

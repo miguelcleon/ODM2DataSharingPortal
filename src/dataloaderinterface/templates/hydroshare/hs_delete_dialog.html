@@ -1,0 +1,51 @@
+{% load widget_tweaks %}
+{% load site %}
+{% load static %}
+
+<form method="post" action="/sites/{{ sampling_feature_code }}/hsr/delete/" id="hs-delete-form">
+    {% csrf_token %}
+    <dialog class="mdl-dialog" id="hydroshare-delete-dialog">
+
+        <h4 class="mdl-dialog__title">Stop Sharing Site Data?</h4>
+
+        <div class="mdl-dialog__content">
+
+            <strong class="text-danger">This action cannot be undone.</strong>
+            <ul>
+                <li>This will delete the connection this site has to your <a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">resource on hydroshare.org</a>.</li>
+                <li>EnviroDIY will create a new resource if you decide to start sharing site data with HydroShare again.</li>
+            </ul>
+
+
+            <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.delete_external_resource.id_for_label }}">
+                {{ form.delete_external_resource|add_class:"mdl-checkbox__input" }}
+                <span class="mdl-checkbox__label">{{ form.delete_external_resource.label }}</span>
+            </label>
+
+            <div id="checkbox-warning-list" {% if not form.delete_external_resource.value %}hidden{% endif %}>
+                <strong class="text-danger">Checking this box is a permanent action.</strong>
+                <ul>
+                    <li>This will <strong>delete</strong> the resource <strong>in HydroShare</strong>.</li>
+                    <li>EnviroDIY and HydroShare will not retain copies of any of your content files.</li>
+                    <li>
+                        It is highly recommended that you download the latest copy of your resource file(s) before deleting.
+                        You can download the resource file(s) <a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">here</a>.
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="mdl-dialog__actions">
+
+            <button type="submit" id="stop-sharing-submit"
+                   class="mdl-button mdl-button--raised mdl-js-button mdl-color--red-400 mdl-color-text--white">
+                <i class="material-icons">delete</i>
+                CONFIRM
+            </button>
+
+            <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
+
+            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner"></div>
+        </div>
+    </dialog>
+</form>

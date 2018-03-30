@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import datetime, time
 from django import template
 from django.utils.timesince import timesince
+from django.utils.formats import date_format
 
 register = template.Library()
 
@@ -12,5 +13,16 @@ def timesince_filter(value):
         return ''
     try:
         return timesince(value, datetime.utcnow())
-    except (ValueError, TypeError):
+    except (ValueError, TypeError, AttributeError):
+        return ''
+
+
+@register.filter("replace_hour")
+def replace_hour(value, argv):
+    if not value:
+        return ''
+
+    if isinstance(value, datetime):
+        return datetime.combine(value.date(), time(hour=5, minute=0))
+    else:
         return ''

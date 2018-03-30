@@ -25,6 +25,8 @@ from dataloaderinterface.models import SiteSensor, SiteRegistration
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import OrganizationSerializer
 
+from pytz import utc
+
 
 class ResultApi(APIView):
     authentication_classes = (SessionAuthentication,)
@@ -101,48 +103,59 @@ class CSVDataApi(View):
         if result_id == '':
             return Response({'error': 'Empty Result Id received.'})
 
-        time_series_result = TimeSeriesResult.objects\
-            .prefetch_related('values')\
-            .select_related('result__feature_action__sampling_feature', 'result__variable')\
-            .filter(pk=result_id)\
-            .first()
-
-        if not time_series_result:
-            return Response({'error': 'Time Series Result not found.'})
-        result = time_series_result.result
-
-        csv_file = StringIO()
-        csv_writer = UnicodeWriter(csv_file)
-        csv_file.write(self.generate_metadata(time_series_result.result))
-        csv_writer.writerow(self.csv_headers)
-        csv_writer.writerows(self.get_data_values(time_series_result))
-
-        filename = "{0}_{1}_{2}.csv".format(result.feature_action.sampling_feature.sampling_feature_code,
-                                            result.variable.variable_code, result.result_id)
+        try:
+            filename, csv_file = CSVDataApi.get_csv_file(result_id)
+        except ValueError as e:
+            return Response({'error': e.message})  # Time Series Result not found.
 
         response = HttpResponse(csv_file.getvalue(), content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="%s.csv"' % filename
         return response
 
-    def get_data_values(self, result):
+    @staticmethod
+    def get_csv_file(result_id):
+        time_series_result = TimeSeriesResult.objects \
+            .prefetch_related('values') \
+            .select_related('result__feature_action__sampling_feature', 'result__variable') \
+            .filter(pk=result_id) \
+            .first()
+
+        if not time_series_result:
+            raise ValueError('Time Series Result not found.')
+        result = time_series_result.result
+
+        csv_file = StringIO()
+        csv_writer = UnicodeWriter(csv_file)
+        csv_file.write(CSVDataApi.generate_metadata(time_series_result.result))
+        csv_writer.writerow(CSVDataApi.csv_headers)
+        csv_writer.writerows(CSVDataApi.get_data_values(time_series_result))
+
+        filename = "{0}_{1}_{2}.csv".format(result.feature_action.sampling_feature.sampling_feature_code,
+                                            result.variable.variable_code, result.result_id)
+        return filename, csv_file
+
+    @staticmethod
+    def get_data_values(result):
         data_values = result.values.all()
-        return [(data_value.value_datetime.strftime(self.date_format),
+        return [(data_value.value_datetime.strftime(CSVDataApi.date_format),
                  '{0}:00'.format(data_value.value_datetime_utc_offset),
-                 (data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset)).strftime(self.date_format),
+                 (data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset)).strftime(CSVDataApi.date_format),
                  data_value.data_value,
                  data_value.censor_code_id,
                  data_value.quality_code_id)
                 for data_value in data_values]
 
-    def get_metadata_template(self):
+    @staticmethod
+    def get_metadata_template():
         with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
             return metadata_file.read()
 
-    def generate_metadata(self, result):
+    @staticmethod
+    def generate_metadata(result):
         action = result.feature_action.action
         equipment_model = result.data_logger_file_columns.first().instrument_output_variable.model
         affiliation = action.action_by.filter(is_action_lead=True).first().affiliation
-        return self.get_metadata_template().format(
+        return CSVDataApi.get_metadata_template().format(
             sampling_feature=result.feature_action.sampling_feature,
             variable=result.variable,
             unit=result.unit,
@@ -171,7 +184,7 @@ class TimeSeriesValuesApi(APIView):
         if not measurement_datetime:
             raise exceptions.ParseError('The timestamp value is not well formatted.')
 
-        if not measurement_datetime.utcoffset():
+        if measurement_datetime.utcoffset() is None:
             raise exceptions.ParseError('The timestamp value requires timezone information.')
 
         utc_offset = int(measurement_datetime.utcoffset().total_seconds() / timedelta(hours=1).total_seconds())
@@ -222,6 +235,9 @@ class TimeSeriesValuesApi(APIView):
             site_sensor.last_measurement_utc_offset = result_value.value_datetime_utc_offset
             site_sensor.last_measurement_utc_datetime = result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset)
 
+            if site_sensor.last_measurement_utc_datetime.tzinfo is None:
+                site_sensor.last_measurement_utc_datetime = utc.localize(result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset))
+
             if is_first_value:
                 result.valid_datetime = measurement_datetime
                 result.valid_datetime_utc_offset = utc_offset
@@ -230,6 +246,7 @@ class TimeSeriesValuesApi(APIView):
 
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
+                    site_sensor.registration.deployment_date_utc_offset = utc_offset
                     # site_sensor.registration.deployment_date_utc_offset = utc_offset
                     site_sensor.registration.save(update_fields=['deployment_date'])
 
