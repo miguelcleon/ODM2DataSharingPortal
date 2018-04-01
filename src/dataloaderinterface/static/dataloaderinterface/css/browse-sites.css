@@ -4,5 +4,33 @@
 }
 
 .map-container {
-    height: 618px;
+    height: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+#filters label {
+    display: table-cell;
+    padding-right: 40px;
+}
+
+#filters .badge {
+    position: absolute;
+    right: 24px;
+    top: 16px;
+    width: 24px;
+}
+
+.filter-header td {
+    background: #f2f2f2;
+}
+
+.filter-header {
+    margin-top: 20px;
+}
+
+.filter-header h6 {
+    margin: 0;
 }

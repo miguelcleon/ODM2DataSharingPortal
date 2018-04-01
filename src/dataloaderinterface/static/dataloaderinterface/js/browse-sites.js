@@ -1,3 +1,5 @@
+var organizations = {};
+
 function initMap() {
     const DEFAULT_ZOOM = 5;
     const DEFAULT_SPECIFIC_ZOOM = 12;
@@ -37,16 +39,13 @@ function initMap() {
 
     map.addListener('zoom_changed', function(){
         var CURRENT_ZOOM = map.getZoom();
-
         sessionStorage.setItem('CURRENT_ZOOM', CURRENT_ZOOM);
     });
 
     map.addListener('center_changed', function(){
         var CURRENT_CENTER = map.getCenter();
-
         sessionStorage.setItem('CURRENT_CENTER', CURRENT_CENTER);
     });
-
 
     markerData.forEach(function(site) {
         var marker = new google.maps.Marker({
@@ -72,15 +71,40 @@ function initMap() {
 
 $(document).ready(function () {
     $('nav .menu-browse-sites').addClass('active');
-
     $("#wrapper").css("height", "calc(100% - 81px)");
     $(".map-container").css("height", $(".map-container").height());
-    $("body").css("overflow", "hidden")
+    $("body").css("overflow", "hidden");
+
+    var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
+
+    markerData.forEach(function (site) {
+        var marker = new google.maps.Marker({
+            position: {lat: site.latitude, lng: site.longitude},
+            map: map
+        });
+
+        if (organizations[site.organization])
+            organizations[site.organization] += 1;
+        else
+            organizations[site.organization] = 1;
+    });
+
+    for (var org in organizations) {
+        $("#collapseOrganization > table tbody").append(' <tr>\
+            <td class="mdl-data-table__cell--non-numeric">\
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-'+ org + '">\
+                    <input type="checkbox" id="chk-' + org + '" class="mdl-checkbox__input">\
+                    <span class="mdl-checkbox__label">' + org + '</span>\
+                </label>\
+                <span class="badge badge-primary">'+ organizations[org] +'</span>\
+            </td>\
+        </tr>');
+    }
 });
 
-$( window ).resize(function() {
-  $(".map-container").css("height", $("#wrapper").height());
-    $("body").css("overflow", "hidden")
+$(window).resize(function () {
+    $(".map-container").css("height", $("#wrapper").height());
+    $("body").css("overflow", "hidden");
 });
 
 function getLatLngFromString(location) {
