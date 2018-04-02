@@ -75,63 +75,80 @@ $(document).ready(function () {
 
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
 
-    var organizations = {};
-    var siteTypes = {};
+    var filters = {
+        organizations: {
+            key: 'organization',
+            label: 'Organizations',
+            icon: 'business',   // From https://material.io/icons/
+            values: {},
+            values_sortable: []
+        },
+        siteTypes: {
+            key: 'type',
+            icon:'layers',
+            label: 'Site Types',
+            values: {},
+            values_sortable: []
+        }
+    };
 
     markerData.forEach(function (site) {
-        if (organizations[site.organization])
-            organizations[site.organization] += 1;
-        else
-            organizations[site.organization] = 1;
-
-        if (siteTypes[site.type])
-            siteTypes[site.type] += 1;
-        else
-            siteTypes[site.type] = 1;
+        for (var f in filters) {
+            if (filters[f].values[site[filters[f].key]])
+                filters[f].values[site[filters[f].key]] += 1;
+            else
+                filters[f].values[site[filters[f].key]] = 1;
+        }
     });
 
     // Move the items to an array so we can sort them
-    var sortableOrganizations = [];
-    var sortableSiteTypes = [];
-
-    for (var org in organizations) {
-        sortableOrganizations.push([org, organizations[org]]);
+    for (var f in filters) {
+        for (var val in filters[f].values) {
+            filters[f].values_sortable.push([val, filters[f].values[val]]);
+        }
     }
 
-    for (var siteType in siteTypes) {
-        sortableSiteTypes.push([siteType, siteTypes[siteType]]);
+    // Sort the arrays
+    for (var f in filters) {
+        filters[f].values_sortable.sort(function (a, b) {
+            return b[1] - a[1];
+        });
     }
 
-    sortableOrganizations.sort(function (a, b) {
-        return b[1] - a[1];
-    });
+    // Append the filters
+    for (var f in filters) {
+        $("#filters").append('<div class="filter-header">\
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
+                        <td class="mdl-data-table__cell--non-numeric">\
+                            <a data-toggle="collapse" href="#collapse' + filters[f].key + '" role="button" aria-expanded="true"\
+                               aria-controls="collapse' + f.key + '" style="text-decoration: none; color: #222;">\
+                                <h6><i class="material-icons">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
+                            </a>\
+                        </td>\
+                    </table>\
+                </div>\
+                <div id="collapse' + filters[f].key + '" class="show">\
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
+                        <tbody>\
+                            <td class="mdl-data-table__cell--non-numeric">\
+                                <input type="text" class="form-control" placeholder="Filter ' + filters[f].label + '...">\
+                            </td>\
+                        </tbody>\
+                    </table>\
+                </div>'
+        );
 
-    sortableSiteTypes.sort(function (a, b) {
-        return b[1] - a[1];
-    });
-
-    for (var org = 0; org < sortableOrganizations.length; org++) {
-        $("#collapseOrganization > table tbody").append(' <tr>\
+        for (var item = 0; item < filters[f].values_sortable.length; item++) {
+            $("#collapse" + filters[f].key + " > table tbody").append(' <tr>\
             <td class="mdl-data-table__cell--non-numeric">\
-                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-org-'+ sortableOrganizations[org][1] + '">\
-                    <input type="checkbox" id="chk-org-' + sortableOrganizations[org][1] + '" class="mdl-checkbox__input">\
-                    <span class="mdl-checkbox__label">' + sortableOrganizations[org][0] + '</span>\
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '">\
+                    <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" class="mdl-checkbox__input">\
+                    <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
                 </label>\
-                <span class="badge badge-primary">'+ sortableOrganizations[org][1] +'</span>\
+                <span class="badge badge-secondary">' + filters[f].values_sortable[item][1] + '</span>\
             </td>\
         </tr>');
-    }
-
-    for (var type = 0; type < sortableSiteTypes.length; type++) {
-        $("#collapseSiteType > table tbody").append(' <tr>\
-            <td class="mdl-data-table__cell--non-numeric">\
-                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-type-' + sortableSiteTypes[type][1] + '">\
-                    <input type="checkbox" id="chk-type-' + sortableSiteTypes[type][1] + '" class="mdl-checkbox__input">\
-                    <span class="mdl-checkbox__label">' + sortableSiteTypes[type][0] + '</span>\
-                </label>\
-                <span class="badge badge-primary">' + sortableSiteTypes[type][1] + '</span>\
-            </td>\
-        </tr>');
+        }
     }
 });
 

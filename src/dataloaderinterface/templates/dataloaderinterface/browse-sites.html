@@ -14,47 +14,7 @@
         </div>
         <div class="row full-height">
             <div id="filters" class="col-sm-12 col-md-3 mdl-shadow--2dp full-height">
-                <div class="filter-header">
-                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <a data-toggle="collapse" href="#collapseOrganization" role="button" aria-expanded="true"
-                               aria-controls="collapseOrganization" style="text-decoration: none; color: #222;">
-                                <h6>ORGANIZATION<i class="material-icons pull-right">keyboard_arrow_down</i></h6>
-                            </a>
-                        </td>
-                    </table>
-                </div>
 
-                <div id="collapseOrganization" class="show">
-                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
-                        <tbody>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <input type="text" class="form-control" placeholder="Filter organizations...">
-                            </td>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="filter-header">
-                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
-                        <td class="mdl-data-table__cell--non-numeric">
-                            <a data-toggle="collapse" href="#collapseSiteType" role="button" aria-expanded="true"
-                               aria-controls="collapseSiteType" style="text-decoration: none; color: #222;">
-                                <h6>Site Type<i class="material-icons pull-right">keyboard_arrow_down</i></h6>
-                            </a>
-                        </td>
-                    </table>
-                </div>
-
-                <div id="collapseSiteType" class="show">
-                    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">
-                        <tbody>
-                            <td class="mdl-data-table__cell--non-numeric">
-                                <input type="text" class="form-control" placeholder="Filter site types...">
-                            </td>
-                        </tbody>
-                    </table>
-                </div>
             </div>
 
             <div class="col-sm-12 col-md-9" style="padding: 0;">
@@ -88,11 +48,11 @@
                 <div>
                     <div id="marker-content">
                         <table class="marker-info">
-                            <tr class="site-field" data-field="organization">
+                            <tr class="site-field hidden" data-field="organization">
                                 <th class="site-label">Organization</th>
                                 <td class="site-data"></td>
                             </tr>
-                            <tr class="site-field" data-field="type">
+                            <tr class="site-field hidden" data-field="type">
                                 <th class="site-label">Site Type</th>
                                 <td class="site-data"></td>
                             </tr>

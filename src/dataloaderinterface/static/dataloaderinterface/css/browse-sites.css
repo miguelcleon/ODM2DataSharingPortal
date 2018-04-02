@@ -39,7 +39,11 @@
     margin: 0;
 }
 
-a[data-toggle='collapse'][aria-expanded='false'] i {
+#filters .filter-header h6 > i.material-icons {
+    vertical-align: middle;
+}
+
+a[data-toggle='collapse'][aria-expanded='false'] i:last-child {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
     -o-transform: rotate(-90deg);
