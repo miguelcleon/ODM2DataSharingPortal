@@ -1,3 +1,21 @@
+var markers = [];
+var filters = {
+    organizations: {
+        key: 'organization',
+        label: 'Organizations',
+        icon: 'business',   // From https://material.io/icons/
+        values: {},
+        values_sortable: []
+    },
+    siteTypes: {
+        key: 'type',
+        icon: 'layers',
+        label: 'Site Types',
+        values: {},
+        values_sortable: []
+    }
+};
+
 function initMap() {
     const DEFAULT_ZOOM = 5;
     const DEFAULT_SPECIFIC_ZOOM = 12;
@@ -48,8 +66,12 @@ function initMap() {
     markerData.forEach(function(site) {
         var marker = new google.maps.Marker({
             position: { lat: site.latitude, lng: site.longitude },
-            map: map
+            map: map,
         });
+
+        for (var f in filters) {
+            marker[filters[f].key] = site[filters[f].key];
+        }
 
         marker.addListener('click', function() {
             var contentElement = $('<div></div>').append($('#site-marker-content').html());
@@ -64,6 +86,8 @@ function initMap() {
             infoWindow.setContent(infoContent);
             infoWindow.open(marker.get('map'), marker);
         });
+
+        markers.push(marker);
     });
 }
 
@@ -74,23 +98,6 @@ $(document).ready(function () {
     $("body").css("overflow", "hidden");
 
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
-
-    var filters = {
-        organizations: {
-            key: 'organization',
-            label: 'Organizations',
-            icon: 'business',   // From https://material.io/icons/
-            values: {},
-            values_sortable: []
-        },
-        siteTypes: {
-            key: 'type',
-            icon:'layers',
-            label: 'Site Types',
-            values: {},
-            values_sortable: []
-        }
-    };
 
     markerData.forEach(function (site) {
         for (var f in filters) {
@@ -115,7 +122,7 @@ $(document).ready(function () {
         });
     }
 
-    // Append the filters
+    // Append filter headers
     for (var f in filters) {
         $("#filters").append('<div class="filter-header">\
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
@@ -142,11 +149,13 @@ $(document).ready(function () {
                 </div>'
         );
 
+        // Append filter items
         for (var item = 0; item < filters[f].values_sortable.length; item++) {
             $("#collapse" + filters[f].key + " > table tbody").append(' <tr>\
                 <td class="mdl-data-table__cell--non-numeric">\
                     <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '">\
-                        <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" class="mdl-checkbox__input">\
+                        <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" \
+                        class="mdl-checkbox__input chk-filter">\
                         <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
                     </label>\
                     <span class="badge badge-secondary">' + filters[f].values_sortable[item][1] + '</span>\
@@ -173,7 +182,17 @@ $(document).ready(function () {
             items.show();
         }
     });
+
+    $(".chk-filter").change(function() {
+        $(this).prop("checked")
+
+    });
 });
+
+function getCurrentFilters() {
+    var properties = [];
+
+}
 
 $(window).resize(function () {
     $(".map-container").css("height", $("#wrapper").height());
