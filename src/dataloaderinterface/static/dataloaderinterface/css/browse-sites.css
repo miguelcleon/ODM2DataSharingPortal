@@ -13,6 +13,7 @@
 
 #filters {
     overflow-y: scroll;
+    background: #e8e8e8;
 }
 
 #filters label {
@@ -25,10 +26,6 @@
     right: 24px;
     top: 16px;
     width: 24px;
-}
-
-.filter-header td {
-    background: #f2f2f2;
 }
 
 .filter-header {
