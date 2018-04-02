@@ -119,20 +119,24 @@ $(document).ready(function () {
     for (var f in filters) {
         $("#filters").append('<div class="filter-header">\
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
-                        <td class="mdl-data-table__cell--non-numeric">\
-                            <a data-toggle="collapse" href="#collapse' + filters[f].key + '" role="button" aria-expanded="true"\
-                               aria-controls="collapse' + f.key + '" style="text-decoration: none; color: #222;">\
-                                <h6><i class="material-icons">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
-                            </a>\
-                        </td>\
+                        <tr>\
+                            <td class="mdl-data-table__cell--non-numeric">\
+                                <a data-toggle="collapse" href="#collapse' + filters[f].key + '" role="button" aria-expanded="true"\
+                                   aria-controls="collapse' + f.key + '" style="text-decoration: none; color: #222;">\
+                                    <h6><i class="material-icons">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
+                                </a>\
+                            </td>\
+                        </tr>\
                     </table>\
                 </div>\
                 <div id="collapse' + filters[f].key + '" class="show">\
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
                         <tbody>\
-                            <td class="mdl-data-table__cell--non-numeric">\
-                                <input type="text" class="form-control" placeholder="Filter ' + filters[f].label + '...">\
-                            </td>\
+                            <tr class="td-filter">\
+                                <td class="mdl-data-table__cell--non-numeric">\
+                                    <input type="text" class="form-control input-filter" placeholder="Filter ' + filters[f].label + '...">\
+                                </td>\
+                            </tr>\
                         </tbody>\
                     </table>\
                 </div>'
@@ -140,16 +144,35 @@ $(document).ready(function () {
 
         for (var item = 0; item < filters[f].values_sortable.length; item++) {
             $("#collapse" + filters[f].key + " > table tbody").append(' <tr>\
-            <td class="mdl-data-table__cell--non-numeric">\
-                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '">\
-                    <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" class="mdl-checkbox__input">\
-                    <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
-                </label>\
-                <span class="badge badge-secondary">' + filters[f].values_sortable[item][1] + '</span>\
-            </td>\
-        </tr>');
+                <td class="mdl-data-table__cell--non-numeric">\
+                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '">\
+                        <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" class="mdl-checkbox__input">\
+                        <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
+                    </label>\
+                    <span class="badge badge-secondary">' + filters[f].values_sortable[item][1] + '</span>\
+                </td>\
+            </tr>');
         }
     }
+
+    // Bind search events
+    $(".input-filter").keyup(function() {
+        var items = $(this).closest("tbody").find("tr:not(.td-filter)");
+        var searchStr = $(this).val().trim().toUpperCase();
+
+        if (searchStr.length > 0) {
+            items.hide();
+
+            var results = items.filter(function () {
+                return $(this).find('label').text().trim().toUpperCase().indexOf(searchStr) >= 0;
+            });
+
+            results.show();
+        }
+        else {
+            items.show();
+        }
+    });
 });
 
 $(window).resize(function () {
