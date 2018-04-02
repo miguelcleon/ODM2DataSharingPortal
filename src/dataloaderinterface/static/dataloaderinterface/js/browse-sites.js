@@ -1,5 +1,3 @@
-var organizations = {};
-
 function initMap() {
     const DEFAULT_ZOOM = 5;
     const DEFAULT_SPECIFIC_ZOOM = 12;
@@ -77,26 +75,61 @@ $(document).ready(function () {
 
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
 
-    markerData.forEach(function (site) {
-        var marker = new google.maps.Marker({
-            position: {lat: site.latitude, lng: site.longitude},
-            map: map
-        });
+    var organizations = {};
+    var siteTypes = {};
 
+    markerData.forEach(function (site) {
         if (organizations[site.organization])
             organizations[site.organization] += 1;
         else
             organizations[site.organization] = 1;
+
+        if (siteTypes[site.type])
+            siteTypes[site.type] += 1;
+        else
+            siteTypes[site.type] = 1;
     });
 
+    // Move the items to an array so we can sort them
+    var sortableOrganizations = [];
+    var sortableSiteTypes = [];
+
     for (var org in organizations) {
+        sortableOrganizations.push([org, organizations[org]]);
+    }
+
+    for (var siteType in siteTypes) {
+        sortableSiteTypes.push([siteType, siteTypes[siteType]]);
+    }
+
+    sortableOrganizations.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+
+    sortableSiteTypes.sort(function (a, b) {
+        return b[1] - a[1];
+    });
+
+    for (var org = 0; org < sortableOrganizations.length; org++) {
         $("#collapseOrganization > table tbody").append(' <tr>\
             <td class="mdl-data-table__cell--non-numeric">\
-                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-'+ org + '">\
-                    <input type="checkbox" id="chk-' + org + '" class="mdl-checkbox__input">\
-                    <span class="mdl-checkbox__label">' + org + '</span>\
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-org-'+ sortableOrganizations[org][1] + '">\
+                    <input type="checkbox" id="chk-org-' + sortableOrganizations[org][1] + '" class="mdl-checkbox__input">\
+                    <span class="mdl-checkbox__label">' + sortableOrganizations[org][0] + '</span>\
                 </label>\
-                <span class="badge badge-primary">'+ organizations[org] +'</span>\
+                <span class="badge badge-primary">'+ sortableOrganizations[org][1] +'</span>\
+            </td>\
+        </tr>');
+    }
+
+    for (var type = 0; type < sortableSiteTypes.length; type++) {
+        $("#collapseSiteType > table tbody").append(' <tr>\
+            <td class="mdl-data-table__cell--non-numeric">\
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-type-' + sortableSiteTypes[type][1] + '">\
+                    <input type="checkbox" id="chk-type-' + sortableSiteTypes[type][1] + '" class="mdl-checkbox__input">\
+                    <span class="mdl-checkbox__label">' + sortableSiteTypes[type][0] + '</span>\
+                </label>\
+                <span class="badge badge-primary">' + sortableSiteTypes[type][1] + '</span>\
             </td>\
         </tr>');
     }

@@ -11,6 +11,10 @@
     height: 100%;
 }
 
+#filters {
+    overflow-y: scroll;
+}
+
 #filters label {
     display: table-cell;
     padding-right: 40px;
@@ -33,4 +37,22 @@
 
 .filter-header h6 {
     margin: 0;
+}
+
+a[data-toggle='collapse'][aria-expanded='false'] i {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    transition: all 0.4s;
+}
+
+a[data-toggle='collapse']:not([aria-expanded='false']) i:last-child {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+    transition: all 0.4s;
 }
