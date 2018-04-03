@@ -14,6 +14,7 @@
 #filters {
     overflow-y: scroll;
     background: #e8e8e8;
+    padding-bottom: 20px;
 }
 
 #filters label {
@@ -32,12 +33,25 @@
     margin-top: 20px;
 }
 
+.filter-header table {
+    background-color: #66cbcb;
+}
+
+.filter-header table tr:hover {
+    background-color: #94eaea;
+}
+
 .filter-header h6 {
     margin: 0;
 }
 
-#filters .filter-header h6 > i.material-icons {
+#filters .filter-header h6 > i.material-icons:first-child {
     vertical-align: middle;
+    background: #005050;
+    color: #fff;
+    border-radius: 50%;
+    padding: 0px;
+    border: 2px solid #048a8a;
 }
 
 a[data-toggle='collapse'][aria-expanded='false'] i:last-child {

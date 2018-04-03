@@ -93,9 +93,7 @@ function initMap() {
 
 $(document).ready(function () {
     $('nav .menu-browse-sites').addClass('active');
-    $("#wrapper").css("height", "calc(100% - 81px)");
-    $(".map-container").css("height", $(".map-container").height());
-    $("body").css("overflow", "hidden");
+    resizeContent();
 
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
 
@@ -130,7 +128,7 @@ $(document).ready(function () {
                             <td class="mdl-data-table__cell--non-numeric">\
                                 <a data-toggle="collapse" href="#collapse' + filters[f].key + '" role="button" aria-expanded="true"\
                                    aria-controls="collapse' + f.key + '" style="text-decoration: none; color: #222;">\
-                                    <h6><i class="material-icons">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
+                                    <h6><i class="material-icons mdl-shadow--2dp">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
                                 </a>\
                             </td>\
                         </tr>\
@@ -141,7 +139,10 @@ $(document).ready(function () {
                         <tbody>\
                             <tr class="td-filter">\
                                 <td class="mdl-data-table__cell--non-numeric">\
-                                    <input type="text" class="form-control input-filter" placeholder="Filter ' + filters[f].label + '...">\
+                                    <div class="input-group">\
+                                        <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>\
+                                        <input type="text" class="form-control input-filter" placeholder="Search ' + filters[f].label + '...">\
+                                    </div>\
                                 </td>\
                             </tr>\
                         </tbody>\
@@ -158,7 +159,7 @@ $(document).ready(function () {
                         class="mdl-checkbox__input chk-filter">\
                         <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
                     </label>\
-                    <span class="badge badge-secondary">' + filters[f].values_sortable[item][1] + '</span>\
+                    <span class="badge badge-info">' + filters[f].values_sortable[item][1] + '</span>\
                 </td>\
             </tr>');
         }
@@ -194,10 +195,13 @@ function getCurrentFilters() {
 
 }
 
-$(window).resize(function () {
-    $(".map-container").css("height", $("#wrapper").height());
-    $("body").css("overflow", "hidden");
-});
+$(window).resize(resizeContent);
+
+function resizeContent() {
+    $("#wrapper").css("height", "calc(100% - 81px)");
+    $(".map-container").css("height", $("#wrapper").height() - $("#title-row").height());
+    $("#filters-row").css("height", $("#wrapper").height() - $("#title-row").height());
+}
 
 function getLatLngFromString(location) {
     var latlang = location.replace(/[()]/g,'');
