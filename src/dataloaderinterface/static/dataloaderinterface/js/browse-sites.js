@@ -184,29 +184,41 @@ $(document).ready(function () {
         }
     });
 
-    $(".chk-filter").change(function() {
-        $(this).prop("checked");
-        var checkedItems = getCurrentFilters();
-        // If nothing selected, display all
-        if (!checkedItems.length) {
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].setVisible(true);
-            }
+    $("#btnClearFilters").click(function() {
+        // document.querySelector('.chk-filter').parentElement.MaterialCheckbox.uncheck();
+        var items = $(".chk-filter");
+        for (var i = 0; i < items.length; i++) {
+            $(items[i]).parent()[0].MaterialCheckbox.uncheck();
         }
-        else {
-            for (var i = 0; i < markers.length; i++) {
-                var visible = false;    // Starts as false by default
-                for (var j = 0; j < checkedItems.length; j++) {
-                    if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) >= 0) {
-                        visible = true; // Display if included in some filter
-                        continue;
-                    }
-                }
-                markers[i].setVisible(visible);
-            }
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setVisible(true);
         }
     });
+
+    $(".chk-filter").change(onFilterChange);
 });
+
+function onFilterChange() {
+    var checkedItems = getCurrentFilters();
+    // If nothing selected, display all
+    if (!checkedItems.length) {
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setVisible(true);
+        }
+    }
+    else {
+        for (var i = 0; i < markers.length; i++) {
+            var visible = false;    // Starts as false by default
+            for (var j = 0; j < checkedItems.length; j++) {
+                if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) >= 0) {
+                    visible = true; // Display if included in some filter
+                    continue;
+                }
+            }
+            markers[i].setVisible(visible);
+        }
+    }
+}
 
 // Returns an object listing currently checked filter items
 function getCurrentFilters() {
