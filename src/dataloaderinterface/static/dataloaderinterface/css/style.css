@@ -1015,3 +1015,21 @@ label.checkbox-label {
     display: -webkit-box;
     display: -webkit-flex;
 }
+
+[data-toggle='collapse'][aria-expanded='false'] i.icon-arrow {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    transition: all 0.3s;
+}
+
+[data-toggle='collapse']:not([aria-expanded='false']) i.icon-arrow {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+    transition: all 0.3s;
+}

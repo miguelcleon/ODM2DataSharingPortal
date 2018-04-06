@@ -62,24 +62,6 @@ body {
     border: 2px solid #048a8a;
 }
 
-a[data-toggle='collapse'][aria-expanded='false'] i:last-child {
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-    transition: all 0.3s;
-}
-
-a[data-toggle='collapse']:not([aria-expanded='false']) i:last-child {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    transform: rotate(0deg);
-    transition: all 0.3s;
-}
-
 .page-title {
     margin: 12px 0;
     display: inline-block;

@@ -128,7 +128,7 @@ $(document).ready(function () {
                             <td class="mdl-data-table__cell--non-numeric">\
                                 <a data-toggle="collapse" href="#collapse-' + filters[f].key + '" role="button" aria-expanded="true"\
                                    aria-controls="collapse-' + f.key + '" style="text-decoration: none; color: #222;">\
-                                    <h6><i class="material-icons mdl-shadow--2dp">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
+                                    <h6><i class="material-icons mdl-shadow--2dp">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons icon-arrow pull-right">keyboard_arrow_down</i></h6>\
                                 </a>\
                             </td>\
                         </tr>\
