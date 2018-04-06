@@ -126,15 +126,15 @@ $(document).ready(function () {
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
                         <tr>\
                             <td class="mdl-data-table__cell--non-numeric">\
-                                <a data-toggle="collapse" href="#collapse' + filters[f].key + '" role="button" aria-expanded="true"\
-                                   aria-controls="collapse' + f.key + '" style="text-decoration: none; color: #222;">\
+                                <a data-toggle="collapse" href="#collapse-' + filters[f].key + '" role="button" aria-expanded="true"\
+                                   aria-controls="collapse-' + f.key + '" style="text-decoration: none; color: #222;">\
                                     <h6><i class="material-icons mdl-shadow--2dp">' + filters[f].icon + '</i> ' + filters[f].label + '<i class="material-icons pull-right">keyboard_arrow_down</i></h6>\
                                 </a>\
                             </td>\
                         </tr>\
                     </table>\
                 </div>\
-                <div id="collapse' + filters[f].key + '" class="show">\
+                <div id="collapse-' + filters[f].key + '" class="show filter-body" data-facet="' + filters[f].key + '">\
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
                         <tbody>\
                             <tr class="td-filter">\
@@ -152,11 +152,11 @@ $(document).ready(function () {
 
         // Append filter items
         for (var item = 0; item < filters[f].values_sortable.length; item++) {
-            $("#collapse" + filters[f].key + " > table tbody").append(' <tr>\
+            $("#collapse-" + filters[f].key + " > table tbody").append(' <tr>\
                 <td class="mdl-data-table__cell--non-numeric">\
                     <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '">\
                         <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" \
-                        class="mdl-checkbox__input chk-filter">\
+                        class="mdl-checkbox__input chk-filter" data-value="'+ filters[f].values_sortable[item][0] + '">\
                         <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
                     </label>\
                     <span class="badge badge-info">' + filters[f].values_sortable[item][1] + '</span>\
@@ -185,14 +185,49 @@ $(document).ready(function () {
     });
 
     $(".chk-filter").change(function() {
-        $(this).prop("checked")
-
+        $(this).prop("checked");
+        var checkedItems = getCurrentFilters();
+        // If nothing selected, display all
+        if (!checkedItems.length) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setVisible(true);
+            }
+        }
+        else {
+            for (var i = 0; i < markers.length; i++) {
+                var visible = false;    // Starts as false by default
+                for (var j = 0; j < checkedItems.length; j++) {
+                    if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) >= 0) {
+                        visible = true; // Display if included in some filter
+                        continue;
+                    }
+                }
+                markers[i].setVisible(visible);
+            }
+        }
     });
 });
 
+// Returns an object listing currently checked filter items
 function getCurrentFilters() {
-    var properties = [];
+    var filters = $(".filter-body");
+    var results = [];
 
+    for (var i = 0; i < filters.length; i++) {
+        var items = [];
+        var checked = $(filters[i]).find(".chk-filter:checked");
+
+        for (var j = 0; j < checked.length; j++) {
+            items.push($(checked[j]).attr("data-value"));
+        }
+
+        if (items && items.length > 0) {
+            var facet = $(filters[i]).attr("data-facet");
+            results.push([facet, items]);
+        }
+    }
+
+    return results;
 }
 
 $(window).resize(resizeContent);
