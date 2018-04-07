@@ -1,0 +1,113 @@
+{% load static %}
+{% load helpers %}
+
+{% if resource.ext_id %}
+    {% include 'hydroshare/hs_delete_dialog.html' with form=delete_form sampling_feature_code=site.sampling_feature_code %}
+{% endif %}
+
+<div id="hs-target">
+    {% include 'hydroshare/hs_settings_form_dialog.html' with resource=resource form=form site=site %}
+</div>
+
+<div class="col-lg-6 col-sm-12">
+    <div class="hs-img-container">
+        <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
+    </div>
+
+    {% if resource %}
+
+        {# Message if the resource did not load due to a request timeout #}
+        {% if request_timeout %}
+
+            <p><span class="text-danger">Error:</span>
+                Failed to connect to <a href="https://www.hydroshare.org">hydroshare.org</a>. Updating site data information might not work.
+            </p>
+
+        {% endif %}
+
+        {# Actions if the resource was not found #}
+        {% if resource_not_found %}
+
+            <p class="text-danger"> <strong>HydroShare Resource not found. </strong></p>
+
+            <p>
+                This site was previously connected to a resource on <a href="https://www.hydroshare.org">hydroshare.org</a>,
+                but it appears the resource does not exist anymore. Click the stop-sharing button to disconnect this site from HydroShare.
+            </p>
+
+            <form method="post" action="{{ delete_resource_url }}">
+                {% csrf_token %}
+                <input type="submit" value="STOP SHARING" class="mdl-button mdl-button--raised mdl-color--red mdl-color-text--white">
+            </form>
+
+        {# Actions if the resource has been published #}
+        {% elif resource_is_published %}
+
+            <p class="text-info lead"><strong>The data from this site are no longer being copied to hydroshare.</strong></p>
+            <p class="lead">The hydroshare resource this site is connected to has been formally published. Once a resource has been published, you cannot change the resource’s content.</p>
+            <p class="lead">If you would like to continue sharing data from this site to HydroShare:</p>
+            <ol>
+                <li class="lead">Click <span class="text-primary">Disconnect Resource</span>.</li>
+                <li class="lead">Click on <span class="text-primary">Start Sharing</span> after the page reloads to start sharing with a new, unpublished resource.</li>
+            </ol>
+
+            <form method="post" action="{{ delete_resource_url }}">
+                {% csrf_token %}
+                <input type="submit" value="DISCONNECT RESOURCE" class="mdl-button mdl-button--raised mdl-button--primary">
+            </form>
+
+        {# All other messages and actions #}
+        {% else %}
+
+            {% if not resource.is_enabled %}
+                <p>Sharing with HydroShare is currently <strong>paused</strong>.</p>
+                <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
+            {% else %}
+
+                <p>Last updated on <strong>{{ resource.last_sync_date|date:date_format }}</strong></p>
+
+                {% if resource.sync_type == 'scheduled' %}
+                    <p>Next update scheduled for <strong>{{ resource.next_sync_date|replace_hour:5|date:date_format }}</strong></p>
+                {% endif %}
+
+            {% endif %}
+
+            <p><a href="https://www.hydroshare.org/resource/{{ resource.ext_id }}/" target="_blank">View data from this site in HydroShare</a></p>
+
+            <p class="text-danger" id="hydroshare-error"></p>
+
+            <div class="hydroshare-actions">
+                <button id="update-now-button"
+                        class="mdl-button mdl-button--raised mdl-button--accent"
+                        {% if not resource.is_enabled or resource_not_found %}disabled{% endif %}>Update Now</button>
+
+                <button id="show-hydroshare-settings-dialog"
+                        class="mdl-button mdl-button--raised mdl-button--accent">
+                    <i class="fa fa-cog fa-lg"></i>
+                    <span>Settings</span>
+                </button>
+
+                <button class="mdl-button mdl-button--raised mdl-color--grey-200 mdl-color-text--red-400"
+                    id="show-hydroshare-delete-dialog">
+                    Stop Sharing
+                </button>
+
+                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hs-progress-spinner"></div>
+            </div>
+        {% endif %}
+
+    {# The action if the user is not sharing data with HydroShare #}
+    {% else %}
+
+        <h5 class="hydroshare-title"><strong>Share Data On HydroShare</strong></h5>
+
+        <p class="lead">
+            Share your data on <em>hydroshare.org</em>.
+            <a href="https://help.hydroshare.org/introduction-to-hydroshare/" id="display-hydroshare-info">Click here</a> to learn more.
+        </p>
+        <button id="show-hydroshare-settings-dialog"
+                class="mdl-button mdl-button--raised mdl-button--accent">Turn On Sharing
+        </button>
+
+    {% endif %}
+</div>

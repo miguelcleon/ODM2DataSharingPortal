@@ -18,7 +18,7 @@
                     </header>
 
                     <div class="section-body">
-                        <form method="post" enctype="multipart/form-data" role="form">
+                        <form method="post" enctype="multipart/form-data" role="form" id="site-registration-form">
                             {% csrf_token %}
                             <input name="user_first_name" type="hidden" value="{{ user.first_name }}">
                             <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
@@ -125,8 +125,6 @@
                                     <div class="clearfix"></div>
                                 </div>
                             </fieldset>
-
-                            <br>
 
                             <fieldset class="form-fieldset">
                                 <div class="row">
@@ -261,8 +259,12 @@
 
                                 <button id="btnRegisterSite" type="submit"
                                         class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                    {{ help }}{% if request.resolver_match.view_name == "site_update" %}Save
-                                        Edits{% else %}Register Site{% endif %}
+                                    {{ help }}
+                                    {% if request.resolver_match.view_name == "site_update" %}
+                                        Save Edits
+                                    {% else %}
+                                        Register Site
+                                    {% endif %}
                                 </button>
                             </div>
                         </form>

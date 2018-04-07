@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import authentication
 from rest_framework import exceptions
 
-from dataloaderinterface.models import SiteRegistration
+from dataloaderinterface.models import SiteRegistration#, DeviceRegistration
 
 
 class UUIDAuthentication(authentication.BaseAuthentication):

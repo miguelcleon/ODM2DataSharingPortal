@@ -27,6 +27,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+#resources.csv
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -54,6 +55,7 @@ coverage.xml
 
 # Django stuff:
 *.log
+migrations/
 
 # Sphinx documentation
 docs/_build/
@@ -110,5 +112,13 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
+## Visual Studio Code
+.vscode/
 
+## Miscellaneous
+resources.csv
 
+# Docker
+Dockerfile
+docker-start.sh
+docker-compose.yml

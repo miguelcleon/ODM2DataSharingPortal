@@ -1,5 +1,6 @@
 /**
- * https://github.com/GoogleChrome/dialog-polyfill
+ * Polyfill for using dialogs in browsers that do not support the dialog element.
+ * @see https://github.com/GoogleChrome/dialog-polyfill
  */
 
 (function() {
@@ -693,13 +694,13 @@
      * submit event and give us a chance to respond.
      */
     var nativeFormSubmit = HTMLFormElement.prototype.submit;
-    var replacementFormSubmit = function () {
+    function replacementFormSubmit() {
       if (!isFormMethodDialog(this)) {
         return nativeFormSubmit.call(this);
       }
       var dialog = findNearestDialog(this);
       dialog && dialog.close();
-    };
+    }
     HTMLFormElement.prototype.submit = replacementFormSubmit;
 
     /**
