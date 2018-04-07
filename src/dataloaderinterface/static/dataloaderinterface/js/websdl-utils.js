@@ -82,4 +82,14 @@ $(document).ready(function () {
             $(target).addClass("sorted");
         }
     }
+
+    // Populate footer's release version
+    $.ajax({
+        url: "https://api.github.com/repos/ODM2/ODM2DataSharingPortal/releases"
+    }).done(function (response) {
+        var tagName = response[0].tag_name;
+        var URL = response[0].html_url;
+        $("#txtRelease").attr("href", URL);
+        $("#txtRelease").text(tagName);
+    });
 });
