@@ -1026,6 +1026,7 @@ label.checkbox-label {
     display: -webkit-flex;
 }
 
+/*Collapse indicator*/
 [data-toggle='collapse'][aria-expanded='false'] i.icon-arrow {
     -webkit-transform: rotate(-90deg);
     -moz-transform: rotate(-90deg);
