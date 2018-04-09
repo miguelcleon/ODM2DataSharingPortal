@@ -1080,3 +1080,10 @@ div#mySites .mdl-card__menu,
 div#followedSites .mdl-card__menu {
     top: 8px !important; /* centers the material design icon */
 }
+
+.login-page-headline {
+    background-color: rgba(0, 0, 0, 0.54);
+}
+ .login-page-headline p {
+     margin-bottom: 32px;
+ }
