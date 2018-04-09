@@ -1073,6 +1073,7 @@ div#followedSites .mdl-card__title {
 div#mySites .mdl-card__title > .mdl-card__title-text,
 div#followedSites .mdl-card__title > .mdl-card__title-text {
     font-size: 18px;
+    width: calc(100% - 32px);
 }
 
 div#mySites .mdl-card__menu,

@@ -78,19 +78,17 @@
                             <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-sign-out"
-                                                                             aria-hidden="true"></i>
-                                Logout</a>
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}"><i class="fa fa-sign-in"
-                                                                            aria-hidden="true"></i> Log In</a>
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_registration' %}"><i class="fa fa-sign-up"
-                                                                                        aria-hidden="true"></i>
-                                Sign Up</a>
+                            <a class="nav-link" href="{% url 'user_registration' %}">
+                                <i class="fa fa-sign-up" aria-hidden="true"></i> Sign Up</a>
                         </li>
                     {% endif %}
                 </ul>
