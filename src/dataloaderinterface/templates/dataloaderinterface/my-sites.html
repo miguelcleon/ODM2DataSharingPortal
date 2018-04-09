@@ -7,7 +7,7 @@
         <div class="container">
             <div class="row">
                 <section class="col-6">
-                    <div class="page-title">Registered Sites</div>
+                    <div class="page-title">My Sites</div>
                 </section>
 
                 <div class="col-6 text-right">
@@ -37,7 +37,7 @@
                         <h4 data-toggle="collapse" href="#mySitesCollapse"
                         aria-expanded="true" aria-controls="mySitesCollapse"
                             style="cursor: pointer;  display: inline-block;"
-                        ><i class="material-icons icon-arrow">keyboard_arrow_down</i> My sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
+                        ><i class="material-icons icon-arrow">keyboard_arrow_down</i> My Registered Sites <span class="badge badge-secondary">{{ sites|length }}</span></h4>
                     </div>
                     <div class="col-6 text-right">
                         <a href="{% url 'site_registration' %}" id="btn-new-site" style="margin-top:20px;"
@@ -75,6 +75,7 @@
                             <i class="material-icons center-icon">arrow_downward</i> Descending
                         </li>
                     </ul>
+
                     <div class="row" id="mySites">
                         {% for site in sites %}
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 site sortable"
