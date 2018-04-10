@@ -1,37 +1,85 @@
-.map-container {
-    margin-top: 25px;
-    height: 700px;
-    padding: 0;
+body {
+    overflow: hidden;
 }
 
 #map {
     height: 100%;
+    background: #e8e8e8;
 }
 
-div.map-info {
-    margin: 5px;
+.map-container {
+    height: 100%;
 }
 
-span.map-tip {
-    box-shadow: rgba(0, 0, 0, 0.298039) 0 1px 4px -1px;
-    background-color: rgba(255, 255, 255, .95);
-    border-radius: 2px;
-    font-size: 13px;
-    padding: 7px 15px;
+.full-height {
+    height: 100%;
 }
 
-.browse-sites-header {
-    display: inline-block;
+#filters {
+    overflow-y: scroll;
+    background: #e8e8e8;
+    height: 100%;
+}
+
+#filters label {
+    display: table-cell;
+    padding-right: 40px;
+}
+
+#filters .badge {
     position: absolute;
-    z-index: 1;
-    background: #FFF;
-    padding: 24px;
-    margin: 15px;
-    border-radius: 2px;
-    max-width: 350px;
+    right: 24px;
+    top: 16px;
+    width: 24px;
 }
 
-.browse-sites-header .page-title {
+.filter-container {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+
+.filter-body {
+    overflow: auto;
+}
+
+.filter-header table {
+    background-color: #66cbcb;
+}
+
+.filter-header table tr:hover {
+    background-color: #94eaea;
+}
+
+.filter-header h6 {
     margin: 0;
-    font-size: 14px;
+}
+
+#filters .filter-header h6 > i.material-icons:first-child {
+    vertical-align: middle;
+    background: #005050;
+    color: #fff;
+    border-radius: 50%;
+    padding: 0px;
+    border: 2px solid #048a8a;
+}
+
+.page-title {
+    margin: 12px 0;
+    display: inline-block;
+}
+
+.subtitle {
+    vertical-align: middle;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.page-title, .subtitle {
+    text-shadow: 0 1px 0 #000;
+    color: #FFF;
+}
+
+#map {
+    border: 0;
 }

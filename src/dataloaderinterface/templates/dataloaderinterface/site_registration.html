@@ -118,6 +118,9 @@
                                     <div class="form-group col-sm-12 col-md-8 map-container">
                                         <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
                                         <div id="map"></div>
+                                        <small class="text-muted">
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            Click on the map to update coordinates and elevation data.</small>
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
@@ -145,7 +148,7 @@
                                         {{ results_formset.management_form }}
 
                                         <div style="overflow: auto;">
-                                            <table class="mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
+                                            <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
                                                 <thead>
                                                 <tr class="full-width">
                                                     <th class="mdl-data-table__cell--non-numeric">Equipment Model
@@ -306,7 +309,7 @@
                                                aria-label="Administrator's email">
 
                                         <div class="input-group-append">
-                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="btn-copy clipboard-copy mdl-button mdl-js-button mdl-js-ripple-effect"
+                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="clipboard-copy mdl-button mdl-js-button mdl-js-ripple-effect"
                                                     data-target="adminEmail">
                                                 Copy to clipboard
                                             </button>

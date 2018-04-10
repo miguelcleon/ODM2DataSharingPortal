@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="register-title text-shadow">
-                            <h2 class="text-center">The Portal for Citizen Collected Water Quality Data</h2>
+                            <h2 class="text-center">Water Quality Data Portal</h2>
                             <h4 class="text-center">Share your data and view data contributed by others.</h4>
                             <br>
                         </div>
@@ -33,7 +33,7 @@
                     <div class="col-sm-12 col-md-6 offset-md-3">
                         <div class="panel panel-default panel-login shadow">
                             <div class="panel-heading">
-                                <h5 class="panel-title">Sign Up</h5>
+                                <h5 class="panel-title text-center">Sign Up</h5>
                             </div>
                             <div class="panel-body">
                                 <form method="post" enctype="multipart/form-data" role="form">
@@ -41,7 +41,7 @@
                                     <fieldset class="form-fieldset">
                                         <div class="form-group user-fields">
                                             <div class="row">
-                                                <div class="col-sm-12 col-sm-6">
+                                                <div class="col-sm-6">
                                                     <div class="form-field required-field {% if form.first_name.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_first_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a first name</label>
                                                         {{ form.first_name|add_class:"form-control input-sm"|attr:"placeholder: First Name"|attr:"autofocus" }}
@@ -49,7 +49,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-sm-12 col-sm-6">
+                                                <div class="col-sm-6">
                                                     <div class="form-field required-field {% if form.last_name.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_last_name"><i class="fa fa-user" aria-hidden="true"></i> Enter a last name</label>
                                                         {{ form.last_name|add_class:"form-control input-sm"|attr:"placeholder: Last Name" }}
@@ -126,7 +126,7 @@
                                     <div class="text-center">
                                         <button type="submit" id="btn-login" value="Register User"
                                                 class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                            Register User
+                                            Register
                                         </button>
                                     </div>
                                 </form>
@@ -134,7 +134,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <div id="organization-dialog" class="modal fade" role="dialog" aria-hidden="true">
                     <div class="vertical-alignment-helper">

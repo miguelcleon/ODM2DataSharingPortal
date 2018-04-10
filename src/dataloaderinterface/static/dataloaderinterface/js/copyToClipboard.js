@@ -5,21 +5,23 @@
 $(document).ready(function () {
     var snackbarContainer = document.querySelector('#clipboard-snackbar');
 
-    $(".btn-copy").click(function () {
-        var data = {
-            message: 'Copied to clipboard.',
-            timeout: 3000
-        };
-        snackbarContainer.MaterialSnackbar.showSnackbar(data);
-    });
-
     $(".click-select-all").click(function () {
         $(this).select();
     });
 
     $(".clipboard-copy").click(function (e) {
         var copyTarget = $(this).attr("data-target");
-        copyToClipboard(document.getElementById(copyTarget), e);
+        var copied = copyToClipboard(document.getElementById(copyTarget), e);
+
+        var data = {
+            message: 'Copied to clipboard.',
+            timeout: 3000
+        };
+        if (!copied) {
+           data.message = "This text could not be copied."
+        }
+
+        snackbarContainer.MaterialSnackbar.showSnackbar(data);
     });
 });
 

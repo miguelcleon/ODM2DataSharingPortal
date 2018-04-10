@@ -5,6 +5,7 @@ html {
 html > body {
     height: calc(100% - 141px);
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    background: #e8e8e8;
 }
 
 @font-face {
@@ -223,7 +224,14 @@ div.registration-field span.control-label {
     width: 100%;
     margin-bottom: 30px;
     border-radius: 2px;
-    min-height: 180px;
+}
+
+.plot_box .mdl-card__title-text {
+    font-weight: 400;
+}
+
+.plot_box .mdl-card__supporting-text {
+    color: rgba(0, 0, 0, 0.8);
 }
 
 svg.stale {
@@ -241,7 +249,7 @@ svg.not-stale {
 
 .plot_box .mdl-card__actions {
     border-top: 0;
-    background: #f6f6f6;
+    background: #63c3c3;
 }
 
 .white-shadow {
@@ -291,10 +299,6 @@ table.sensors td:not([data-behaviour]) {
     white-space: normal;
 }
 
-.variable-description {
-    width: 120px;
-}
-
 .variable-name {
     font-size: 0.8em;
 }
@@ -321,20 +325,9 @@ table.sensors td:not([data-behaviour]) {
     margin-bottom: 3px;
 }
 
-.latest-value {
-    font-weight: bold;
-    font-size: 1.5em;
-    margin: 5px 0;
-}
-
-.unit {
-    font-size: 0.8em;
-}
-
 .graph-container {
     border: 1px solid #DDD;
-    height: 80px;
-    margin: 10px;
+    height: 120px;
     margin-bottom: 5px;
 }
 
@@ -352,7 +345,6 @@ table.sensors td:not([data-behaviour]) {
 .plot_box a {
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
-    color: #444;
 }
 
 .axis path,
@@ -374,6 +366,16 @@ table.sensors td:not([data-behaviour]) {
 table.data-values {
     display: none;
     margin-top: 0 !important;
+}
+
+table.no-hover tr:hover {
+  background-color: initial !important;
+}
+
+.btn-copy-uuid {
+    position: absolute;
+    right: 6px;
+    top: 6px;
 }
 
 span.map-help {
@@ -515,7 +517,7 @@ ul.errorlist li {
 }
 
 .navbar-nav > li > a:hover {
-    border-bottom: 3px solid #FFF;
+    border-bottom: 3px solid #66cbcb;
 }
 
 .navbar-header {
@@ -536,12 +538,11 @@ footer h5 {
 }
 
 footer a {
-    color: #f9bd16;
+    color: #66cbcb;
     font-weight: 500;
 }
 
-footer a:hover {
-    color: #b1b1b1;
+footer a:hover, #banner a:hover {
     text-decoration: none;
 }
 
@@ -560,18 +561,12 @@ footer .separator {
     margin: 30px 0;
 }
 
-#stroud-logo {
-    margin-bottom: 20px;
-}
 
 /*GENERAL STYLING*/
 
 .follow-checkbox {
-    float: right;
     display: block;
     width: auto;
-    margin-top: -17px;
-    margin-bottom: 20px;
 }
 
 .follow-checkbox .mdl-checkbox__box-outline {
@@ -581,6 +576,7 @@ footer .separator {
 .page-header {
     border-bottom: 1px solid #DDD;
     padding: 20px;
+    background: #FFF;
 }
 
 .page-header .page-title {
@@ -600,6 +596,27 @@ footer .separator {
     display: inline-block;
     vertical-align: middle;
     margin-bottom: 2px;
+}
+
+.menu-order li > i {
+    margin-right: 10px;
+}
+
+.menu-order li > i {
+    color: #66cccc;
+}
+
+.menu-order li > i {
+    opacity: 0;
+}
+
+.menu-order li.active > i {
+    opacity: 1;
+}
+
+.menu-order li.active {
+    font-weight: bold;
+    pointer-events: none;
 }
 
 .result-uuid {
@@ -648,7 +665,7 @@ dialog#data-table-dialog .mdl-dialog__content {
     background: rgba(255, 255, 255, 0.2);
 }
 
-button:focus {
+button:focus, span.table-trigger, span.tsa-trigger, span.download-trigger {
     outline: none;
 }
 
@@ -711,7 +728,7 @@ button:focus {
 }
 
 .text-shadow {
-    text-shadow: 1px 1px #4E4E4E;
+    text-shadow: 1px 1px #00000069;
 }
 
 .btn.sharp {
@@ -722,10 +739,6 @@ button:focus {
     border-radius: 2px;
     box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .2), 0 1px 8px 0 rgba(0, 0, 0, .12);
     margin-bottom: 50px;
-}
-
-#how-it-works .card {
-    height: 300px;
 }
 
 .card h4 {
@@ -764,7 +777,7 @@ button:focus {
 
 .site-card .mdl-card__title {
     padding-right: 60px;
-    background-color: #92d050;
+    background-color: #63c3c3;
     color: #FFF;
 }
 
@@ -777,6 +790,7 @@ button:focus {
     text-decoration: none;
     font-weight: normal;
 }
+
 .site-card {
     margin-top: 20px;
     width: auto;
@@ -800,7 +814,7 @@ button:focus {
 
 i.material-icons.site-card-icon {
     margin-right: 8px;
-    color: #92d050;
+    color: #66cccc;
     max-width: 24px;
 }
 
@@ -857,12 +871,12 @@ label[for='id_hours_threshold']::after{
     padding: 15px;
 }
 
-a.orange {
-    color: #e08f26;
+a.accent {
+    color: #5aafaf;
 }
 
-a.orange:hover {
-    color: #ffa42e;
+a.accent:hover {
+    color: #7befef;
 }
 
 /*SIGNUP STYLING*/
@@ -1005,6 +1019,31 @@ label.checkbox-label {
     margin-top: 20px;
     display: block;
 }
+
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+}
+
+/*Collapse indicator*/
+[data-toggle='collapse'][aria-expanded='false'] i.icon-arrow {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    transition: all 0.3s;
+}
+
+[data-toggle='collapse']:not([aria-expanded='false']) i.icon-arrow {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+    transition: all 0.3s;
+}
+
 .site-update__connect-hs-card.mdl-card {
     width: 396px;
 }
@@ -1023,3 +1062,27 @@ label.checkbox-label {
         width: 100%;
     }
 }
+
+div#mySites .mdl-card__title,
+div#followedSites .mdl-card__title {
+    height: 48px !important; /* important! to override the all powerful mdl css*/
+    padding: 14px !important;
+}
+
+div#mySites .mdl-card__title > .mdl-card__title-text,
+div#followedSites .mdl-card__title > .mdl-card__title-text {
+    font-size: 18px;
+    width: calc(100% - 32px);
+}
+
+div#mySites .mdl-card__menu,
+div#followedSites .mdl-card__menu {
+    top: 8px !important; /* centers the material design icon */
+}
+
+.login-page-headline {
+    background-color: rgba(0, 0, 0, 0.54);
+}
+ .login-page-headline p {
+     margin-bottom: 32px;
+ }
