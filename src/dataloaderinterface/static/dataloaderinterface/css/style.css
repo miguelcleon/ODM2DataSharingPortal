@@ -5,6 +5,7 @@ html {
 html > body {
     height: calc(100% - 141px);
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    background: #e8e8e8;
 }
 
 @font-face {
@@ -568,11 +569,8 @@ footer .separator {
 /*GENERAL STYLING*/
 
 .follow-checkbox {
-    float: right;
     display: block;
     width: auto;
-    margin-top: -17px;
-    margin-bottom: 20px;
 }
 
 .follow-checkbox .mdl-checkbox__box-outline {
@@ -582,6 +580,7 @@ footer .separator {
 .page-header {
     border-bottom: 1px solid #DDD;
     padding: 20px;
+    background: #FFF;
 }
 
 .page-header .page-title {
