@@ -10,6 +10,16 @@
     <div id="banner">
         <div class="parallax-window" data-parallax="scroll" data-image-src="{% static "dataloaderinterface/images/background-leafpack-2.jpg" %}" id="banner-image-container">
             <div class="legend-container">
+                <div class="row logos-row">
+                    <div class="col-6 col-sm-3 offset-sm-3">
+                        <img class="img-fluid" src="{% static "dataloaderinterface/images/site_logo.png" %}" alt="">
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <img class="img-fluid"
+                             src="{% static "dataloaderinterface/images/Leaf-Pack-Network-logo_horiz.png" %}"
+                             alt="">
+                    </div>
+                </div>
                 <div class="banner-legend text-center">
                     <h2 class="text-center">Water Quality Data Portal </h2>
                     <h4 class="text-center">Data Sharing for the Citizen Science Community</h4>
@@ -17,7 +27,7 @@
                     {% if not user.is_authenticated %}
                         <h4 class="text-center">Ready to start sharing your data?</h4>
                         <h4 class="text-center">
-                            <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
+                            <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect"
                                href="{% url 'user_registration' %}">SIGN UP</a>
                         </h4>
                     {% endif %}
@@ -196,7 +206,8 @@
                 <section class="col-sm-12 text-center">
                     <h3>Ready to join?</h3>
                     <h5>Create an account for free.</h5>
-                    <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" href="{% url 'user_registration' %}">SIGN UP</a>
+                    <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect"
+                       href="{% url 'user_registration' %}">SIGN UP</a>
                 </section>
             </div>
         </div>

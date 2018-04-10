@@ -540,8 +540,7 @@ footer a {
     font-weight: 500;
 }
 
-footer a:hover {
-    color: #95feff;
+footer a:hover, #banner a:hover {
     text-decoration: none;
 }
 

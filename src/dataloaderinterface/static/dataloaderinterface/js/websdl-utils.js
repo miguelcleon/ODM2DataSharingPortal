@@ -87,7 +87,7 @@ $(document).ready(function () {
     $.ajax({
         url: "https://api.github.com/repos/ODM2/ODM2DataSharingPortal/releases"
     }).done(function (response) {
-        var tagName = response[0].tag_name;
+        var tagName = response[0].tag_name.replace("v", "Version ");
         var URL = response[0].html_url;
         $("#txtRelease").attr("href", URL);
         $("#txtRelease").text(tagName);
