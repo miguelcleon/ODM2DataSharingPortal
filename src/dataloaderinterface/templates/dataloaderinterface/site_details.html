@@ -167,19 +167,25 @@
 
                     <div class="row">
                         <div class="col-sm-12">
-                            <table>
-                                <tr>
-                                    <td><i class="material-icons text-muted">query_builder</i></td>
-                                    <td><h5 class="section-title">Sensor Observations at this Site</h5></td>
-                                </tr>
-                            </table>
+
+                            <h5 class="section-title"><i class="material-icons text-muted center-icon">query_builder</i> Sensor Observations at this Site</h5>
                         </div>
 
                         <div class="sparkline-plots col-sm-12">
-                            <div class="alert alert-info" role="alert">Only the most recent 72 hours of available data
-                                are shown on the sparkline plots. The plots are broken when there are gaps in the data
-                                longer than 6 hours. Plots shaded in green have recent data. Plots shaded in red have
-                                not reported data in the last 72 hours.
+                            <div class="alert alert-info" role="alert">
+                                <table>
+                                    <tr>
+                                        <td style="padding-right: 20px; vertical-align: top;"><i class="material-icons center-icon">info</i></td>
+                                        <td>
+                                            Only the most recent 72 hours of available data
+                                            are shown on the sparkline plots. The plots are broken when there are gaps
+                                            in the data
+                                            longer than 6 hours. Plots shaded in green have recent data. Plots shaded in
+                                            red have
+                                            not reported data in the last 72 hours.
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                             <hr>
                             <div class="row">
@@ -246,7 +252,7 @@
                                                              class="graph-container">
                                                         </div>
                                                         <small style="margin-left:9px; display:block;"
-                                                               class="text-muted last-obs-container text-center">
+                                                               class="last-obs-container text-center">
                                                             Date of last observation
                                                             <span class="last-observation text-center">{{ sensor.last_measurement_datetime|default:"-" }}</span>
                                                         </small>
@@ -269,7 +275,7 @@
                                                     <td>GUID:</td>
                                                     <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
                                                         <span id="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
-                                                        <button class="mdl-button mdl-js-button mdl-button--primary btn-copy-uuid clipboard-copy"
+                                                        <button class="mdl-button mdl-js-button mdl-button--accent btn-copy-uuid clipboard-copy"
                                                         data-target="uuid-{{ sensor.result_id }}">
                                                             Copy
                                                         </button>

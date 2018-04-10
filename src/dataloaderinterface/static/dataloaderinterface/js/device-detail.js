@@ -222,15 +222,12 @@ function getTimeSeriesData(sensorInfo) {
             fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), values);
             drawSparklineOnResize(sensorInfo, values);
             drawSparklinePlot(sensorInfo, values);
-
-
         } else {
              console.error('No data values were found for this site');
              console.info(series.getdatainflux);
         }
     }).fail(function() {
         console.log('data failed to load.');
-
     });
 }
 

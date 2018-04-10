@@ -225,6 +225,14 @@ div.registration-field span.control-label {
     border-radius: 2px;
 }
 
+.plot_box .mdl-card__title-text {
+    font-weight: 400;
+}
+
+.plot_box .mdl-card__supporting-text {
+    color: rgba(0, 0, 0, 0.8);
+}
+
 svg.stale {
     background-color: #ffefef;
 }
@@ -369,8 +377,8 @@ table.no-hover tr:hover {
 
 .btn-copy-uuid {
     position: absolute;
-    right: 4px;
-    top: 4px;
+    right: 6px;
+    top: 6px;
 }
 
 span.map-help {
@@ -662,7 +670,7 @@ dialog#data-table-dialog .mdl-dialog__content {
     background: rgba(255, 255, 255, 0.2);
 }
 
-button:focus {
+button:focus, span.table-trigger, span.tsa-trigger, span.download-trigger {
     outline: none;
 }
 
