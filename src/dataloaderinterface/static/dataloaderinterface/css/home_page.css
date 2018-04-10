@@ -28,13 +28,7 @@ body {
 }
 
 #banner a {
-    color: #FFF;
-    text-decoration: none;
     transition: all 0.2s ease;
-}
-
-#banner a:hover {
-    color: #7ef1f1;
 }
 
 .step-number {
@@ -115,10 +109,6 @@ div.image-container {
     width: 100%;
     background-size: cover !important;
     background-repeat: no-repeat !important;
-}
-
-.visit-link a {
-    color: #66cbcb;
 }
 
 .visit-link {
