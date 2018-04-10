@@ -247,27 +247,22 @@
                                         </div>
 
                                         <div class="mdl-card__supporting-text mdl-card--border full-width">
-                                            <table class="full-width">
-                                                <tr>
-                                                    <td class="variable-description">
-                                                        <div class="variable-data text-center">
-                                                            <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:"-" }}</h3>
-                                                            <h6 style="margin-top: 0;" class="unit">({{ sensor.unit_abbreviation }})</h6>
-
-                                                        </div>
-                                                    </td>
-                                                    <td class="variable-sparkline">
-                                                        <div id="graph{{ forloop.counter0 }}"
-                                                             class="graph-container">
-                                                        </div>
-                                                        <small style="margin-left:9px; display:block;"
-                                                               class="last-obs-container text-center">
-                                                            Date of last observation
-                                                            <span class="last-observation text-center">{{ sensor.last_measurement_datetime|default:"-" }}</span>
-                                                        </small>
-                                                    </td>
-                                                </tr>
-                                            </table>
+                                             <div id="graph{{ forloop.counter0 }}"
+                                                 class="graph-container">
+                                            </div>
+                                            <div class="variable-data">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <span>Last observation</span><span
+                                                            class="last-observation">{{ sensor.last_measurement_datetime|default:"-" }}</span>
+                                                    </div>
+                                                    <div class="col-6 text-right">
+                                                        <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:"-" }}</h3>
+                                                        <h6 style="margin-top: 0;" class="unit">
+                                                            ({{ sensor.unit_abbreviation }})</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="full-width mdl-card__supporting-text">

@@ -299,10 +299,6 @@ table.sensors td:not([data-behaviour]) {
     white-space: normal;
 }
 
-td.variable-description {
-    width: 120px;
-}
-
 .variable-name {
     font-size: 0.8em;
 }
@@ -373,7 +369,7 @@ table.data-values {
 }
 
 table.no-hover tr:hover {
-  background-color: #FFFFFF !important;
+  background-color: initial !important;
 }
 
 .btn-copy-uuid {
