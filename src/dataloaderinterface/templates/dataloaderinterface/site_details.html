@@ -190,29 +190,16 @@
                                          data-variable-code="{{ sensor.variable_code }}"
                                          data-influx-url="{{ sensor.influx_url }}">
 
-                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text mdl-color--cyan-300 text-white">
                                             <div class="row">
-                                                <div class="col-sm-12 col-md-7 white-shadow variable-info">
-                                                    <table>
-                                                        <tr>
-                                                            <td>Variable:</td>
-                                                            <th>{{ sensor.variable_name }} </th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Medium:</td>
-                                                            <th>{{ sensor.sampled_medium }}</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Sensor:</td>
-                                                            <th>{{ sensor.make_model }}</th>
-                                                        </tr>
-                                                    </table>
+                                                <div class="col-sm-12 col-md-7">
+                                                    <h2 class="mdl-card__title-text text-shadow">{{ sensor.variable_name }}</h2>
                                                 </div>
 
                                                 <div class="col-sm-12 col-md-5">
                                                     {#  View data table button  #}
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table table-trigger pull-right white-shadow"
+                                                          class="fa fa-table table-trigger pull-right text-shadow"
                                                           aria-hidden="true"></span>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
@@ -222,7 +209,7 @@
                                                     {#  Download data button  #}
                                                     <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
                                                             <span id="download-trigger-{{ forloop.counter0 }}"
-                                                                  class="fa fa-cloud-download download-trigger pull-right white-shadow"></span>
+                                                                  class="fa fa-cloud-download download-trigger pull-right text-white text-shadow"></span>
                                                     </a>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="download-trigger-{{ forloop.counter0 }}">
@@ -233,7 +220,7 @@
                                                     <a target="_blank"
                                                        href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
                                                             <span id="tsa-trigger-{{ forloop.counter0 }}"
-                                                                  class="fa fa-external-link tsa-trigger pull-right white-shadow"
+                                                                  class="fa fa-external-link tsa-trigger pull-right text-white text-shadow"
                                                                   aria-hidden="true"></span>
                                                     </a>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
@@ -244,26 +231,52 @@
                                             </div>
                                         </div>
 
-                                        <table class="full-width">
-                                            <tr>
-                                                <td class="variable-description">
-                                                    <div class="variable-data text-center">
-                                                        <div class="variable-name">{{ sensor.variable_name }}</div>
-                                                                <div class="latest-value">{{ sensor.last_measurement_value|roundfloat:4|default:"-" }}</div>
-                                                        <div class="unit">({{ sensor.unit_abbreviation }})</div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div id="graph{{ forloop.counter0 }}"
-                                                         class="graph-container">
-                                                    </div>
-                                                    <small style="margin-left:9px; display:block;" class="text-muted last-obs-container text-center">
-                                                        Date of last observation
-                                                        <span class="last-observation text-center">{{ sensor.last_measurement_datetime|default:"-" }}</span>
-                                                    </small>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                        <div class="mdl-card__supporting-text mdl-card--border full-width">
+                                            <table class="full-width">
+                                                <tr>
+                                                    <td class="variable-description">
+                                                        <div class="variable-data text-center">
+                                                            <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:"-" }}</h3>
+                                                            <h6 style="margin-top: 0;" class="unit">({{ sensor.unit_abbreviation }})</h6>
+
+                                                        </div>
+                                                    </td>
+                                                    <td class="variable-sparkline">
+                                                        <div id="graph{{ forloop.counter0 }}"
+                                                             class="graph-container">
+                                                        </div>
+                                                        <small style="margin-left:9px; display:block;"
+                                                               class="text-muted last-obs-container text-center">
+                                                            Date of last observation
+                                                            <span class="last-observation text-center">{{ sensor.last_measurement_datetime|default:"-" }}</span>
+                                                        </small>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+
+                                        <div class="full-width mdl-card__supporting-text">
+                                            <table class="mdl-data-table mdl-js-data-table full-width no-hover">
+                                                <tr>
+                                                    <td>Medium:</td>
+                                                    <td class="mdl-data-table__cell--non-numeric">{{ sensor.sampled_medium }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sensor:</td>
+                                                    <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>GUID:</td>
+                                                    <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
+                                                        <span id="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
+                                                        <button class="mdl-button mdl-js-button mdl-button--primary btn-copy-uuid clipboard-copy"
+                                                        data-target="uuid-{{ sensor.result_id }}">
+                                                            Copy
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -356,7 +369,7 @@ const char *UUIDs[] =                                                      // UU
                             Close
                         </button>
                         <button
-                                class="clipboard-copy btn-copy mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                                class="clipboard-copy mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
                                 data-target="code-output">
                             <i class="material-icons">content_copy</i> Copy
                         </button>

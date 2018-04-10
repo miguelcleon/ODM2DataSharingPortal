@@ -223,7 +223,6 @@ div.registration-field span.control-label {
     width: 100%;
     margin-bottom: 30px;
     border-radius: 2px;
-    min-height: 180px;
 }
 
 svg.stale {
@@ -291,7 +290,7 @@ table.sensors td:not([data-behaviour]) {
     white-space: normal;
 }
 
-.variable-description {
+td.variable-description {
     width: 120px;
 }
 
@@ -321,20 +320,9 @@ table.sensors td:not([data-behaviour]) {
     margin-bottom: 3px;
 }
 
-.latest-value {
-    font-weight: bold;
-    font-size: 1.5em;
-    margin: 5px 0;
-}
-
-.unit {
-    font-size: 0.8em;
-}
-
 .graph-container {
     border: 1px solid #DDD;
-    height: 80px;
-    margin: 10px;
+    height: 120px;
     margin-bottom: 5px;
 }
 
@@ -352,7 +340,6 @@ table.sensors td:not([data-behaviour]) {
 .plot_box a {
     font-family: Arial, Helvetica, sans-serif;
     text-decoration: none;
-    color: #444;
 }
 
 .axis path,
@@ -374,6 +361,16 @@ table.sensors td:not([data-behaviour]) {
 table.data-values {
     display: none;
     margin-top: 0 !important;
+}
+
+table.no-hover tr:hover {
+  background-color: #FFFFFF !important;
+}
+
+.btn-copy-uuid {
+    position: absolute;
+    right: 4px;
+    top: 4px;
 }
 
 span.map-help {
@@ -728,7 +725,7 @@ button:focus {
 }
 
 .text-shadow {
-    text-shadow: 1px 1px #4E4E4E;
+    text-shadow: 1px 1px #00000069;
 }
 
 .btn.sharp {

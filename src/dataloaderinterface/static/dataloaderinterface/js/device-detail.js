@@ -298,13 +298,13 @@ $(document).ready(function () {
     bindDeleteDialogEvents();
 
     // Executes when page loads
-    fixViewPort();
+    // fixViewPort();
 
     // Executes each time window size changes
     $(window).resize(
         ResponsiveBootstrapToolkit.changed(function () {
             $('.plot_box').height("initial");   // Reset height
-            fixViewPort();
+            // fixViewPort();
         }));
 });
 
