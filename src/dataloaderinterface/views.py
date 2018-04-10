@@ -36,7 +36,7 @@ from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
     OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm, \
-    HydroShareResourceDeleteForm
+    HydroShareResourceDeleteForm, SampledMediumField
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
@@ -568,8 +568,10 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
     def get_formset_initial_data(self, *args):
+        # this shouldn't be here.
         if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
             raise Http404
+
         registration = self.get_object()
         result_form_data = [
             {

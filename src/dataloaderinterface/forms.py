@@ -21,6 +21,19 @@ class SiteTypeSelect(forms.Select):
         return option
 
 
+class SampledMediumField(forms.ModelChoiceField):
+    custom_labels = {
+        'Liquid aqueous': 'Water - Liquid Aqueous'
+    }
+
+    @staticmethod
+    def get_custom_label(medium):
+        return SampledMediumField.custom_labels[medium] if medium in SampledMediumField.custom_labels else medium
+
+    def label_from_instance(self, obj):
+        return SampledMediumField.get_custom_label(obj.name)
+
+
 class MDLRadioButton(forms.RadioSelect):
     def render(self, name, value, attrs=None, renderer=None):
         """Adds MDL HTML classes to label and input tags"""
@@ -265,13 +278,10 @@ class ResultForm(forms.ModelForm):
         self.empty_permitted = False
 
     equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.for_display(), help_text='Choose the model of your sensor')
-    sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(
-        Q(pk='Air') |
-        Q(pk='Soil') |
-        Q(pk='Liquid aqueous') |
-        Q(pk='Equipment') |
-        Q(pk='Not applicable')
-    ), help_text='Choose the sampled medium')
+    sampled_medium = SampledMediumField(queryset=Medium.objects.filter(pk__in=[
+        'Air', 'Soil', 'Sediment', 'Liquid aqueous',
+        'Equipment', 'Not applicable', 'Other'
+    ]), help_text='Choose the sampled medium')
 
     class Meta:
         model = Result
