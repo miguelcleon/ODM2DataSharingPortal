@@ -122,7 +122,7 @@ $(document).ready(function () {
 
     // Append filter headers
     for (var f in filters) {
-        $("#filters").append('<div class="filter-header">\
+        $("#filters").append('<div class="filter-container"><div class="filter-header">\
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
                         <tr>\
                             <td class="mdl-data-table__cell--non-numeric">\
@@ -147,7 +147,7 @@ $(document).ready(function () {
                             </tr>\
                         </tbody>\
                     </table>\
-                </div>'
+                </div></div>'
         );
 
         // Append filter items

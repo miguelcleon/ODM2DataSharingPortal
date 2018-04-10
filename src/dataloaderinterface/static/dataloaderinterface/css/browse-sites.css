@@ -18,7 +18,7 @@ body {
 #filters {
     overflow-y: scroll;
     background: #e8e8e8;
-    padding-bottom: 20px;
+    height: 100%;
 }
 
 #filters label {
@@ -33,9 +33,11 @@ body {
     width: 24px;
 }
 
-.filter-header {
+.filter-container {
     margin-top: 20px;
+    margin-bottom: 40px;
 }
+
 
 .filter-body {
     overflow: auto;
