@@ -4,6 +4,7 @@ import fnmatch
 from crontab import CronTab
 import re
 from django.utils.termcolors import colorize
+import logging
 
 from WebSDL.settings.base import CRONTAB_LOGFILE_PATH as LOGFILE
 from WebSDL.settings.base import CRONTAB_EXECUTE_DAILY_AT_HOUR as AT_HOUR
@@ -32,15 +33,13 @@ def start_jobs(user=True):
         import getpass
 
         curr_user = getpass.getuser()
-        msg = "\nWARNING: user '{0}' does not have the write permission to {1}. crontab jobs might not run correctly"\
-            .format(curr_user, LOGFILE)
-        print(colorize(msg, fg='red'))
+        logging.warning("'{0}' does not have write permissions to {1}. Crontab jobs will not run.".format(curr_user, LOGFILE))
 
     else:
 
         manage_path = locate_file('manage.py')  # get the file path of 'manage.py'
         if manage_path is None:
-            raise Exception('the file "manage.py" was not found')
+            raise Exception('"manage.py" not found')
 
         output = subprocess.check_output(['which', 'python'])  # get the python path used by the current process
         python_path = re.sub(r"(?<=[a-z])\r?\n", "", output)  # remove newlines from output...
@@ -75,21 +74,21 @@ def start_jobs(user=True):
         """
 
         # print jobs created
-        print(colorize("\nStarted crontab jobs: ", fg='blue'))
+        logging.info(colorize("Started crontab jobs: ", fg='blue'))
         for job in cron:
-            print(colorize('\t' + str(job), fg='green'))
+            logging.info(colorize('\t' + str(job), fg='green'))
 
 
 def stop_jobs(cron=None, user=None):
     """ Stops crontab jobs containing JOB_COMMENT_PREPENDER in the job's comment """
-    print(colorize("\nStopping crontab jobs: ", fg='blue'))
+    logging.info(colorize("Stopping crontab jobs: ", fg='blue'))
     if cron is None and user:
         cron = CronTab(user=user)
 
     for job in cron:
         if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):
             job_name = re.sub(re.escape(JOB_COMMENT_PREPENDER), r'', job.comment)
-            print("\t" + colorize(str(job_name), fg='green'))
+            logging.info("\t" + colorize(str(job_name), fg='green'))
             cron.remove(job)
             cron.write()
 
