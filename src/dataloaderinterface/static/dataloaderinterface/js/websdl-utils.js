@@ -23,10 +23,10 @@ $(document).on('click', ".menu-order li", function () {
 
     $(target + ' .sortable').sort(function (a, b) {
         if (order == "asc") {
-            return (a.dataset[sortBy] > b.dataset[sortBy]);
+            return (a.dataset[sortBy].toUpperCase() > b.dataset[sortBy].toUpperCase());
         }
 
-        return (a.dataset[sortBy] < b.dataset[sortBy]);
+        return (a.dataset[sortBy].toUpperCase() < b.dataset[sortBy].toUpperCase());
     }).appendTo(target);
 
     var UISortState = JSON.parse(localStorage.getItem("UISortState")) || {};

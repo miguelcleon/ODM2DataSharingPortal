@@ -134,17 +134,20 @@
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.site_type|default:"-" }}</td>
                                 </tr>
 
-                                <tr>
-                                    <td class="mdl-data-table__cell--non-numeric">
-                                        <i class="material-icons center-icon">vpn_key</i> Registration Token</td>
-                                    <td class="mdl-data-table__cell--non-numeric"  style="padding-right: 80px;">
-                                        <span id="reg-token">{{ site.registration_token }}</span>
-                                        <button class="mdl-button mdl-js-button mdl-button--accent btn-copy-uuid clipboard-copy"
-                                                data-target="reg-token">
-                                            Copy
-                                        </button>
-                                    </td>
-                                </tr>
+                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <i class="material-icons center-icon">vpn_key</i> Registration Token
+                                        </td>
+                                        <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
+                                            <span id="reg-token">{{ site.registration_token }}</span>
+                                            <button class="mdl-button mdl-js-button mdl-button--accent btn-copy-uuid clipboard-copy"
+                                                    data-target="reg-token">
+                                                Copy
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             </table>
                         </div>
 
@@ -202,7 +205,7 @@
                                          data-variable-code="{{ sensor.variable_code }}"
                                          data-influx-url="{{ sensor.influx_url }}">
 
-                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text mdl-color--cyan-300 text-white">
+                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text text-white">
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-7">
                                                     <h2 class="mdl-card__title-text text-shadow">{{ sensor.variable_name }}</h2>
