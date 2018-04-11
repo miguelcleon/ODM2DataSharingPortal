@@ -285,7 +285,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 id="result-dialog-title">Add Sensor</h4>
-                        <span id="result-dialog-uuid"></span>
+                        <span class="text-muted result-d-container" >GUID: <small data-copy-target="result-dialog-uuid"
+                               id="result-dialog-uuid"></small></span>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -315,8 +316,8 @@
                                                aria-label="Administrator's email">
 
                                         <div class="input-group-append">
-                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="clipboard-copy mdl-button mdl-js-button mdl-js-ripple-effect"
-                                                    data-target="adminEmail">
+                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="mdl-button mdl-js-button mdl-js-ripple-effect"
+                                                    data-copy-target="adminEmail">
                                                 Copy to clipboard
                                             </button>
                                         </div>

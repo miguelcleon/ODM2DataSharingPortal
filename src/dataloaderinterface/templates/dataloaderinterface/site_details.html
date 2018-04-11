@@ -141,8 +141,8 @@
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
                                             <span id="reg-token">{{ site.registration_token }}</span>
-                                            <button class="mdl-button mdl-js-button btn-copy-uuid clipboard-copy"
-                                                    data-target="reg-token">Copy
+                                            <button class="mdl-button mdl-js-button btn-copy-uuid"
+                                                    data-copy-target="reg-token">Copy
                                             </button>
                                         </td>
                                     </tr>
@@ -155,8 +155,8 @@
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
                                             <span id="samp-token">{{ site.sampling_feature.sampling_feature_uuid }}</span>
-                                            <button class="mdl-button mdl-js-button btn-copy-uuid clipboard-copy"
-                                                    data-target="samp-token">
+                                            <button class="mdl-button mdl-js-button btn-copy-uuid"
+                                                    data-copy-target="samp-token">
                                                 Copy
                                             </button>
                                         </td>
@@ -294,8 +294,8 @@
                                                     <td>GUID:</td>
                                                     <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
                                                         <span id="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
-                                                        <button class="mdl-button mdl-js-button btn-copy-uuid clipboard-copy"
-                                                        data-target="uuid-{{ sensor.result_id }}">
+                                                        <button class="mdl-button mdl-js-button btn-copy-uuid"
+                                                        data-copy-target="uuid-{{ sensor.result_id }}">
                                                             Copy
                                                         </button>
                                                     </td>

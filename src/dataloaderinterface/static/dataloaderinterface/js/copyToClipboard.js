@@ -9,8 +9,8 @@ $(document).ready(function () {
         $(this).select();
     });
 
-    $(".clipboard-copy").click(function (e) {
-        var copyTarget = $(this).attr("data-target");
+    $("[data-copy-target]").click(function (e) {
+        var copyTarget = $(this).attr("data-copy-target");
         var copied = copyToClipboard(document.getElementById(copyTarget), e);
 
         var data = {

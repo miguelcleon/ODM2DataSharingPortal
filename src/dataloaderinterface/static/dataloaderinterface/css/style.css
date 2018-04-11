@@ -140,6 +140,10 @@ div.separator {
     max-width: 600px;
 }
 
+.result-d-container {
+    margin-top: 8px;
+}
+
 .modal-header h4 {
     margin: 0;
 }
