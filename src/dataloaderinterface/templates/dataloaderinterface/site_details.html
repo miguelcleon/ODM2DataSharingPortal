@@ -139,11 +139,8 @@
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Registration Token
                                         </td>
-                                        <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
-                                            <span id="reg-token">{{ site.registration_token }}</span>
-                                            <button class="mdl-button mdl-js-button btn-copy-uuid"
-                                                    data-copy-target="reg-token">Copy
-                                            </button>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <span id="reg-token" data-copy-target="reg-token">{{ site.registration_token }}</span>
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -153,12 +150,8 @@
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Sampling Feature UUID
                                         </td>
-                                        <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
-                                            <span id="samp-token">{{ site.sampling_feature.sampling_feature_uuid }}</span>
-                                            <button class="mdl-button mdl-js-button btn-copy-uuid"
-                                                    data-copy-target="samp-token">
-                                                Copy
-                                            </button>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <span id="samp-token" data-copy-target="samp-token">{{ site.sampling_feature.sampling_feature_uuid }}</span>
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -290,16 +283,15 @@
                                                     <td>Sensor:</td>
                                                     <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
                                                 </tr>
+                                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                                 <tr>
                                                     <td>GUID:</td>
-                                                    <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
-                                                        <span id="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
-                                                        <button class="mdl-button mdl-js-button btn-copy-uuid"
-                                                        data-copy-target="uuid-{{ sensor.result_id }}">
-                                                            Copy
-                                                        </button>
+                                                    <td class="mdl-data-table__cell--non-numeric">
+                                                        <span id="uuid-{{ sensor.result_id }}"
+                                                              data-copy-target="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
                                                     </td>
                                                 </tr>
+                                                {% endif %}
                                             </table>
                                         </div>
                                     </div>
