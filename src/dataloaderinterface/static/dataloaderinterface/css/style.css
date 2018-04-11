@@ -248,8 +248,8 @@ svg.not-stale {
 }
 
 .plot_box .mdl-card__actions {
-    border-top: 0;
     background: #66cbcb;
+    border: 1px solid #3bb7b7;
 }
 
 .white-shadow {
@@ -571,16 +571,6 @@ footer .separator {
     width: auto;
 }
 
-.follow-checkbox .mdl-checkbox__box-outline {
-    top: 4px;
-}
-
-.page-header {
-    border-bottom: 1px solid #DDD;
-    padding: 20px;
-    background: #FFF;
-}
-
 .page-header .page-title {
     margin-top: 10px;
 }
@@ -773,14 +763,14 @@ span.table-trigger, span.tsa-trigger, span.download-trigger {
 
 .site-card .mdl-card__title-text a {
     color: #FFF;
-    font-weight: 300;
+    font-weight: 400;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
 .site-card .mdl-card__title {
     padding-right: 60px;
-    background-color: #63c3c3;
+    background-color: #66cbcb;
     color: #FFF;
 }
 
