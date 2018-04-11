@@ -577,6 +577,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         result_form_data = [
             {
                 'result_id': sensor.result_id,
+                'result_uuid': sensor.result_uuid,
                 'equipment_model': sensor.equipment_model,
                 'variable': sensor.variable,
                 'unit': sensor.unit,

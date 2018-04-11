@@ -323,8 +323,12 @@ function updateRowData(row) {
 
 function bindResultEditEvent(row) {
     row.find('td[data-behaviour="edit"] button').on('click', function(event) {
-        fillFormData($(this).parents('tr'));
+        var rowElement = $(this).parents('tr');
+        var result_uuid = rowElement.find('input[name$="result_uuid"]').val();
+
+        fillFormData(rowElement);
         $('#result-dialog-title').text("Update Sensor");
+        $('#result-dialog-uuid').text(result_uuid);
         $('#result-dialog').modal('toggle');
     });
 }

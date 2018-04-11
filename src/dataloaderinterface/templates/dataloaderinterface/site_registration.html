@@ -173,6 +173,10 @@
                                                                    name="{{ result_form.prefix }}-result_id"
                                                                    class="field-value"
                                                                    value="{{ result_form.initial.result_id }}"/>
+                                                            <input type="hidden"
+                                                                   name="{{ result_form.prefix }}-result_uuid"
+                                                                   class="field-value"
+                                                                   value="{{ result_form.initial.result_uuid }}"/>
                                                             {% for field in result_form %}
                                                                 {% if field.name != "DELETE" %}
                                                                     <td data-field="{{ field.name }}"
@@ -281,6 +285,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 id="result-dialog-title">Add Sensor</h4>
+                        <span id="result-dialog-uuid"></span>
                     </div>
                     <div class="modal-body">
                         <div class="row">
