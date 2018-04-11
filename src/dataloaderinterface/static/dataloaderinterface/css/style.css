@@ -60,7 +60,7 @@ html > body {
 }
 
 .detail-map-container {
-    height: 350px;
+    height: 440px;
 }
 
 #map {
@@ -518,6 +518,14 @@ ul.errorlist li {
     border-bottom: 3px solid transparent;
     -webkit-transition: all 0.2s; /* Safari */
     transition: all 0.2s;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .navbar-nav > li > a {
+        line-height: 35px !important;
+        height: initial;
+    }
 }
 
 .navbar-nav > li > a.user-info {
