@@ -177,7 +177,8 @@ class StatusListView(ListView):
                 'EnviroDIY_Mayfly_Batt',
                 'EnviroDIY_Mayfly_Temp'
             ]), to_attr='status_sensors')) \
-            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))
+            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))\
+            .order_by('sampling_feature_code')
 
     # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
@@ -187,7 +188,8 @@ class StatusListView(ListView):
                 'EnviroDIY_Mayfly_Batt',
                 'EnviroDIY_Mayfly_Temp'
             ]), to_attr='status_sensors')) \
-            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))
+            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))\
+            .order_by('sampling_feature_code')
         return context
 
 
