@@ -249,11 +249,15 @@ svg.not-stale {
 
 .plot_box .mdl-card__actions {
     border-top: 0;
-    background: #63c3c3;
+    background: #66cbcb;
 }
 
 .white-shadow {
     text-shadow: 0 1px 0 #fff;
+}
+
+.text-black {
+    color: rgb(34, 34, 34);
 }
 
 .help-icon {
@@ -318,8 +322,6 @@ table.sensors td:not([data-behaviour]) {
 }
 
 .plot_box .variable-data span {
-    float: left;
-    text-align: center;
     line-height: 16px;
     padding: 0;
     margin-bottom: 3px;
@@ -631,11 +633,6 @@ footer .separator {
     margin-bottom: 20px;
 }
 
-.plot_box .fa {
-    margin-left: 13px;
-    margin-top: 10px;
-}
-
 dialog#data-table-dialog {
     width: 480px;
 }
@@ -667,6 +664,12 @@ dialog#data-table-dialog .mdl-dialog__content {
 
 button:focus, span.table-trigger, span.tsa-trigger, span.download-trigger {
     outline: none;
+}
+
+span.table-trigger, span.tsa-trigger, span.download-trigger {
+    margin-left: 20px !important;
+    margin-top: 6px;
+    font-size: 18px;
 }
 
 .listing-table tr td {

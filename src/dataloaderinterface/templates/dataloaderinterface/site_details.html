@@ -148,6 +148,21 @@
                                         </td>
                                     </tr>
                                 {% endif %}
+
+                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric">
+                                            <i class="material-icons center-icon">vpn_key</i> Sampling Feature UUID
+                                        </td>
+                                        <td class="mdl-data-table__cell--non-numeric" style="padding-right: 80px;">
+                                            <span id="samp-token">{{ site.sampling_feature.sampling_feature_uuid }}</span>
+                                            <button class="mdl-button mdl-js-button mdl-button--accent btn-copy-uuid clipboard-copy"
+                                                    data-target="samp-token">
+                                                Copy
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             </table>
                         </div>
 
@@ -205,16 +220,16 @@
                                          data-variable-code="{{ sensor.variable_code }}"
                                          data-influx-url="{{ sensor.influx_url }}">
 
-                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text text-white">
+                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
-                                                <div class="col-sm-12 col-md-7">
-                                                    <h2 class="mdl-card__title-text text-shadow">{{ sensor.variable_name }}</h2>
+                                                <div class="col-sm-12 col-md-6">
+                                                    <h6 style="margin: 0;">{{ sensor.variable_name }}</h6>
                                                 </div>
 
-                                                <div class="col-sm-12 col-md-5">
+                                                <div class="col-sm-12 col-md-6">
                                                     {#  View data table button  #}
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table table-trigger pull-right text-shadow"
+                                                          class="fa fa-table table-trigger pull-right"
                                                           aria-hidden="true"></span>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
@@ -224,7 +239,7 @@
                                                     {#  Download data button  #}
                                                     <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
                                                             <span id="download-trigger-{{ forloop.counter0 }}"
-                                                                  class="fa fa-cloud-download download-trigger pull-right text-white text-shadow"></span>
+                                                                  class="fa fa-cloud-download download-trigger pull-right text-black"></span>
                                                     </a>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="download-trigger-{{ forloop.counter0 }}">
@@ -235,7 +250,7 @@
                                                     <a target="_blank"
                                                        href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
                                                             <span id="tsa-trigger-{{ forloop.counter0 }}"
-                                                                  class="fa fa-external-link tsa-trigger pull-right text-white text-shadow"
+                                                                  class="fa fa-external-link tsa-trigger pull-right text-black"
                                                                   aria-hidden="true"></span>
                                                     </a>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
@@ -253,11 +268,11 @@
                                             <div class="variable-data">
                                                 <div class="row">
                                                     <div class="col-6">
-                                                        <span>Last observation</span><span
-                                                            class="last-observation">{{ sensor.last_measurement_datetime|default:"-" }}</span>
+                                                        <span>Last observation </span><br>
+                                                        <span class="last-observation">{{ sensor.last_measurement_datetime|default:"-" }}</span>
                                                     </div>
                                                     <div class="col-6 text-right">
-                                                        <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:"-" }}</h3>
+                                                        <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:" - " }}</h3>
                                                         <h6 style="margin-top: 0;" class="unit">
                                                             ({{ sensor.unit_abbreviation }})</h6>
                                                     </div>
