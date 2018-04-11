@@ -167,18 +167,27 @@
 
                     {######    HydroShare Settings    #######}
                     {% if site.django_user_id == request.user.id and hydroshare_account %}
-                    <hr>
-                    <div class="row hydroshare-container" id="hydroshare-settings-container">
-                        <div class="col-12">
-                            <div class="hs-img-container">
-                                <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
+                    <style>
+                    #hydroshare-settings-container {
+                        border: 1px solid #ddd;
+                        {#padding: 15px;#}
+                    }
+                    </style>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mdl-card full-width hydroshare-container" id="hydroshare-settings-container">
+                                <div class="mdl-card__title">
+                                    <div class="hs-img-container">
+                                        <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
+                                    </div>
+                                </div>
+                                <div class="mdl-card__supporting-text">
+                                    <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" id="hydroshare-progress-spinner"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-12">
-                            <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" id="hydroshare-progress-spinner"></div>
-                        </div>
                     </div>
-                    <hr>
+
                     {% endif %}
 
                     <div class="row">
