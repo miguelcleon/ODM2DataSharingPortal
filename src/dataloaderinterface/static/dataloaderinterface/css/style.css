@@ -521,7 +521,7 @@ ul.errorlist li {
 }
 
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 992px) {
     .navbar-nav > li > a {
         line-height: 35px !important;
         height: initial;
