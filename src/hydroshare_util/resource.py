@@ -187,11 +187,18 @@ class Resource(HydroShareUtilityBaseClass):
                                                       metadata=metadata_as_string,
                                                       keywords=list(self.keywords),
                                                       abstract=self.abstract)
+
+        # Set access level after the resource is created since you can't seem to set the access rule at creation.
+        if self.public:
+            self.client.setAccessRules(self.resource_id, self.public)
+
         return self.resource_id
 
     def _stringify_metadata(self, metadata):
-        string = str(metadata)
-        string = string.replace("'", '"')
+        import json
+        string = json.dumps(metadata, encoding='ascii')
+        # string = str(metadata)
+        # string = string.replace("'", '"')
         return string
 
     def update(self, metadata=None):

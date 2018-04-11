@@ -349,6 +349,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             hs_resource.creator = '{0} {1}'.format(self.request.user.first_name, self.request.user.last_name)
             hs_resource.abstract = form.cleaned_data['abstract']
             hs_resource.title = form.cleaned_data['title']
+            hs_resource.public = True
 
             coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
             hs_resource.add_coverage(coverage)
