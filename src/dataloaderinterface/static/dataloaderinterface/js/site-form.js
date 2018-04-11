@@ -210,6 +210,7 @@ function initializeResultsForm() {
         if (event.relatedTarget && event.relatedTarget.id === 'new-result-button') {
             $(this).find('#add-sensor-button').show();
             $(this).find('#edit-sensor-button').hide();
+            $(this).find('#result-dialog-title').text("Add Sensor");
             var fields = form.find('select');
             var fieldsParents = fields.parents('div.form-field');
             clearSelectFilter(fields);
@@ -323,6 +324,7 @@ function updateRowData(row) {
 function bindResultEditEvent(row) {
     row.find('td[data-behaviour="edit"] button').on('click', function(event) {
         fillFormData($(this).parents('tr'));
+        $('#result-dialog-title').text("Update Sensor");
         $('#result-dialog').modal('toggle');
     });
 }
