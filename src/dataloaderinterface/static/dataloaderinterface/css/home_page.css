@@ -118,6 +118,10 @@ div.image-container {
     bottom: 0;
 }
 
+.visit-link a {
+    color: #336666;
+}
+
 .card-header-image {
     width: 100%;
 }
