@@ -230,8 +230,10 @@ div.registration-field span.control-label {
     border-radius: 2px;
 }
 
-.plot_box .mdl-card__title-text {
-    font-weight: 400;
+.plot_box .variable-title {
+    font-weight: 500;
+    margin: 0;
+    margin-left: 6px;
 }
 
 .plot_box .mdl-card__supporting-text {

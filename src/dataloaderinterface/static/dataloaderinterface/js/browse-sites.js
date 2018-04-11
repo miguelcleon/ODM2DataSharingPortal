@@ -45,7 +45,7 @@ function initMap() {
         zoomControlOptions: {
             position: google.maps.ControlPosition.LEFT_BOTTOM
         },
-        mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
         scaleControl: true
     });
 
