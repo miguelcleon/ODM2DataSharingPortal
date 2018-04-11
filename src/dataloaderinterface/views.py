@@ -175,8 +175,7 @@ class StatusListView(ListView):
             .filter(django_user_id=self.request.user.id)\
             .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
                 'EnviroDIY_Mayfly_Volt',
-                'EnviroDIY_Mayfly_Temp',
-                'EnviroDIY_Mayfly_FreeSRAM'
+                'EnviroDIY_Mayfly_Temp'
             ]), to_attr='status_sensors')) \
             .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
 
@@ -186,8 +185,7 @@ class StatusListView(ListView):
         context['followed_sites'] = self.request.user.followed_sites \
             .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
                 'EnviroDIY_Mayfly_Volt',
-                'EnviroDIY_Mayfly_Temp',
-                'EnviroDIY_Mayfly_FreeSRAM'
+                'EnviroDIY_Mayfly_Temp'
             ]), to_attr='status_sensors'))
         return context
 
