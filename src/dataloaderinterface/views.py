@@ -354,9 +354,20 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
             hs_resource.add_coverage(coverage)
 
+            # Add 'WikiWatershed' keyword to all resources
+            hs_resource.keywords.add('WikiWatershed')
+
             sensors = SiteSensor.objects.filter(registration=site)
-            for sensor in sensors:
-                hs_resource.keywords.add(sensor.variable_name)
+            if len(sensors):
+                # If this site has sensors, add 'EnviroDIY' keyword.
+                hs_resource.keywords.add('EnviroDIY')
+                # Add sensor variable names as keywords
+                for sensor in sensors:
+                    hs_resource.keywords.add(sensor.variable_name)
+
+            # TODO: Clearly, this will need to change once Leaf Packet datasets are actually integrated into the project
+            if getattr(resource, 'look_at_me_I_have_leaf_packet_datasets_yay', None):
+                hs_resource.keywords.add('Leaf Pack')
 
             try:
                 """

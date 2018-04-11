@@ -50,6 +50,7 @@ class Resource(HydroShareUtilityBaseClass):
         self.science_metadata_url = science_metadata_url
         self.shareable = shareable
         self.subjects = subjects
+        self.rights = 'http://creativecommons.org/licenses/by-sa/4.0/'  # Creative Commons Attribution-ShareAlike CC BY-SA
 
         if isinstance(public, str):
             self.public = True if public.lower() == 'true' else False
@@ -201,12 +202,10 @@ class Resource(HydroShareUtilityBaseClass):
         # string = string.replace("'", '"')
         return string
 
-    def update(self, metadata=None):
-        if metadata is True:
-            metadata = self.to_object()
-        elif metadata is None:
-            metadata = self.to_object()
-        return self.client.updateScienceMetadata(self.resource_id, metadata)
+    def update(self, data=None):
+        if data is None:
+            data = self.to_object()
+        return self.client.updateScienceMetadata(self.resource_id, data)
 
     def to_object(self, clean=True):
         metadata = super(Resource, self).to_object(clean=clean)
