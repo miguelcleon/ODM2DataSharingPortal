@@ -160,7 +160,7 @@ class SitesListView(LoginRequiredMixin, ListView):
         context = super(SitesListView, self).get_context_data()
         context['followed_sites'] = self.request.user.followed_sites\
             .prefetch_related('sensors')\
-            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'), latest_measurement_utc=Max('sensors__last_measurement_utc_datetime'))\
+            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'), latest_measurement_utc=Max('sensors__last_measurement_utc_datetime'))\
             .all()
         return context
 
@@ -174,19 +174,20 @@ class StatusListView(ListView):
         return super(StatusListView, self).get_queryset()\
             .filter(django_user_id=self.request.user.id)\
             .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
-                'EnviroDIY_Mayfly_Volt',
+                'EnviroDIY_Mayfly_Batt',
                 'EnviroDIY_Mayfly_Temp'
             ]), to_attr='status_sensors')) \
-            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
+            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))
 
     # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
         context['followed_sites'] = self.request.user.followed_sites \
             .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
-                'EnviroDIY_Mayfly_Volt',
+                'EnviroDIY_Mayfly_Batt',
                 'EnviroDIY_Mayfly_Temp'
-            ]), to_attr='status_sensors'))
+            ]), to_attr='status_sensors')) \
+            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))
         return context
 
 
