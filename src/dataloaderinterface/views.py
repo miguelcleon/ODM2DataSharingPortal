@@ -35,8 +35,8 @@ from django.views.generic.list import ListView
 from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSiteForm, HydroShareSettingsForm, SiteAlertForm, \
-    HydroShareResourceDeleteForm, SampledMediumField
+    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
+    HydroShareResourceDeleteForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
@@ -225,7 +225,8 @@ class SiteDetailView(DetailView):
 
         try:
             resources = HydroShareResource.objects.filter(site_registration=context['site'].pk)
-            context['resource_is_connected'] = len(resources) > 0
+            visible_resources = [res for res in resources if res.visible]
+            context['resource_is_connected'] = len(visible_resources) > 0
         except ObjectDoesNotExist:
             pass
 
@@ -256,26 +257,29 @@ class HydroShareResourceViewMixin:
         return hs_resource
 
 
-class HydroShareResourceUpdateCreateView(UpdateView):
+class HydroShareResourceBaseView(UpdateView):
     slug_field = 'sampling_feature_code'
 
     def form_invalid(self, form):
-        response = super(HydroShareResourceUpdateCreateView, self).form_invalid(form)
+        response = super(HydroShareResourceBaseView, self).form_invalid(form)
         if self.request.is_ajax():
             return JsonResponse(form.errors, status=400)
         else:
             return response
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset=None, **kwargs):
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
+        resource = None
+
         try:
-            resource = HydroShareResource.objects.get(site_registration=site.registration_id)
+            # Filter through resources that are visible; there should only be one, so pick the first
+            resource = HydroShareResource.objects.filter(site_registration=site.registration_id, visible=True).first()
         except ObjectDoesNotExist:
-            resource = None
+            pass
         return resource
 
     def get_context_data(self, **kwargs):
-        context = super(HydroShareResourceUpdateCreateView, self).get_context_data(**kwargs)
+        context = super(HydroShareResourceBaseView, self).get_context_data(**kwargs)
         context['date_format'] = settings.DATETIME_FORMAT
         return context
 
@@ -283,10 +287,10 @@ class HydroShareResourceUpdateCreateView(UpdateView):
         # # uncomment to force a hydroshare resource file update.
         # # Only do this for debugging purposes!
         # call_command('update_hydroshare_resource_files', '--force-update')
-        return super(HydroShareResourceUpdateCreateView, self).get(request, args, kwargs)
+        return super(HydroShareResourceBaseView, self).get(request, args, kwargs)
 
 
-class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
+class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourceViewMixin):
     template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     object = None
@@ -309,6 +313,16 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
         initial_datatype = HydroShareSettingsForm.data_type_choices[0][0]
 
+        # Cycle through resources to make sure they still exist on hydroshare.org
+        resources = HydroShareResource.objects.filter(site_registration=site.pk, visible=False)
+        for resource in resources:
+            hs_resource = self.get_hs_resource(resource)
+            try:
+                # Basically, just make request to see if the resource still exists. This request can be anything
+                hs_resource.get_access_level()
+            except HydroShareNotFound:
+                resource.delete()
+
         context['site'] = site
         context['form'] = HydroShareSettingsForm(initial={'site_registration': site.pk,
                                                           'data_types': [initial_datatype],
@@ -316,6 +330,62 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
                                                           'title': self.generate_title(site),
                                                           'abstract': self.generate_abstract(site)})
         return context
+
+    def create_resource(self, site, form):
+        hs_account = self.request.user.odm2user.hydroshare_account
+
+        resource = HydroShareResource(site_registration=site,
+                                      hs_account=hs_account,
+                                      data_types=",".join(form.cleaned_data['data_types']),
+                                      update_freq=form.cleaned_data['update_freq'],
+                                      sync_type=form.cleaned_data['schedule_type'],
+                                      is_enabled=True,
+                                      title=form.cleaned_data['title'],
+                                      last_sync_date=timezone.now())
+
+        token_json = hs_account.get_token()
+        client = AuthUtil.authorize(token=token_json).get_client()
+        hs_resource = Resource(client)
+
+        hs_resource.owner = Resource.DEFAULT_OWNER
+        hs_resource.resource_type = Resource.COMPOSITE_RESOURCE
+        hs_resource.creator = '{0} {1}'.format(self.request.user.first_name, self.request.user.last_name)
+        hs_resource.abstract = form.cleaned_data['abstract']
+        hs_resource.title = form.cleaned_data['title']
+        hs_resource.public = True
+
+        coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
+        hs_resource.add_coverage(coverage)
+
+        # Add 'WikiWatershed' keyword to all resources
+        hs_resource.keywords.add('WikiWatershed')
+
+        sensors = SiteSensor.objects.filter(registration=site)
+        if len(sensors):
+            # If this site has sensors, add 'EnviroDIY' keyword.
+            hs_resource.keywords.add('EnviroDIY')
+            # Add sensor variable names as keywords
+            for sensor in sensors:
+                hs_resource.keywords.add(sensor.variable_name)
+
+        # TODO: Clearly, this will need to change once Leaf Packet datasets are actually integrated into the project
+        if getattr(resource, 'look_at_me_I_have_leaf_packet_datasets_yay', None):
+            hs_resource.keywords.add('Leaf Pack')
+
+        try:
+            """
+            NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
+            be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
+            """
+            resource.ext_id = hs_resource.create()
+            resource.title = hs_resource.title
+        except HydroShareHTTPException as e:
+            return JsonResponse({"error": e.message,
+                                 "message": "There was a problem with hydroshare.org and your resource was not created. You might want to see if www.hydroshare.org is working and try again later."},
+                                status=e.status_code)
+
+        resource.save()
+        return hs_resource
 
     def post(self, request, *args, **kwargs):
         """
@@ -330,57 +400,21 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
         if form.is_valid():
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
 
-            hs_account = self.request.user.odm2user.hydroshare_account
-
-            resource = HydroShareResource(site_registration=site,
-                                          hs_account=hs_account,
-                                          data_types=",".join(form.cleaned_data['data_types']),
-                                          update_freq=form.cleaned_data['update_freq'],
-                                          sync_type=form.cleaned_data['schedule_type'],
-                                          is_enabled=True,
-                                          last_sync_date=timezone.now())
-
-            token_json = hs_account.get_token()
-            client = AuthUtil.authorize(token=token_json).get_client()
-            hs_resource = Resource(client)
-
-            hs_resource.owner = Resource.DEFAULT_OWNER
-            hs_resource.resource_type = Resource.COMPOSITE_RESOURCE
-            hs_resource.creator = '{0} {1}'.format(self.request.user.first_name, self.request.user.last_name)
-            hs_resource.abstract = form.cleaned_data['abstract']
-            hs_resource.title = form.cleaned_data['title']
-            hs_resource.public = True
-
-            coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
-            hs_resource.add_coverage(coverage)
-
-            # Add 'WikiWatershed' keyword to all resources
-            hs_resource.keywords.add('WikiWatershed')
-
-            sensors = SiteSensor.objects.filter(registration=site)
-            if len(sensors):
-                # If this site has sensors, add 'EnviroDIY' keyword.
-                hs_resource.keywords.add('EnviroDIY')
-                # Add sensor variable names as keywords
-                for sensor in sensors:
-                    hs_resource.keywords.add(sensor.variable_name)
-
-            # TODO: Clearly, this will need to change once Leaf Packet datasets are actually integrated into the project
-            if getattr(resource, 'look_at_me_I_have_leaf_packet_datasets_yay', None):
-                hs_resource.keywords.add('Leaf Pack')
-
-            try:
-                """
-                NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
-                be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
-                """
-                resource.ext_id = hs_resource.create()
-            except HydroShareHTTPException as e:
-                return JsonResponse({"error": e.message,
-                                     "message": "There was a problem with hydroshare.org and your resource was not created. You might want to see if www.hydroshare.org is working and try again later."},
-                                    status=e.status_code)
-
-            resource.save()
+            if form.cleaned_data['resources']:
+                resource = form.cleaned_data['resources']
+                resource.visible = True
+                resource.data_types = ",".join(form.cleaned_data['data_types'])
+                resource.update_freq = form.cleaned_data['update_freq']
+                resource.sync_type = form.cleaned_data['schedule_type']
+                resource.is_enabled = True
+                resource.last_sync_date = timezone.now()
+                resource.title = form.cleaned_data['title']
+                resource.save()
+                hs_resource = self.get_hs_resource(resource)
+                hs_resource.update({'title': form.cleaned_data['title'],
+                                    'description': form.cleaned_data['abstract']})
+            else:
+                hs_resource = self.create_resource(site, form)
 
             # Upload data files to the newly created resource
             try:
@@ -388,7 +422,6 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             except Exception as e:
                 # If the app fails here, the resource was created but the resource files failed to upload.
                 logging.error('Failed to upload resource files: ' + e.message)
-                pass
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
@@ -400,7 +433,7 @@ class HydroShareResourceCreateView(HydroShareResourceUpdateCreateView):
             return self.form_invalid(form)
 
 
-class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResourceUpdateCreateView):
+class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResourceBaseView):
     template_name = 'hydroshare/hs_site_details.html'
     model = HydroShareResource
     slug_field = 'sampling_feature_code'
@@ -411,23 +444,29 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
     def get_context_data(self, **kwargs):
         context = super(HydroShareResourceUpdateView, self).get_context_data(**kwargs)
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
-        hs_resource = self.get_object()
+        resource = self.get_object()
         context['site'] = site
-        context['resource'] = hs_resource
+        context['resource'] = resource
         context['form'] = HydroShareSettingsForm(initial={
             'site_registration': site.pk,
-            'update_freq': hs_resource.update_freq,
-            'schedule_type': hs_resource.sync_type,
-            'pause_sharing': not hs_resource.is_enabled,
-            'data_types': hs_resource.data_types.split(",")
+            'update_freq': resource.update_freq,
+            'schedule_type': resource.sync_type,
+            'pause_sharing': not resource.is_enabled,
+            'data_types': resource.data_types.split(",")
         })
 
         context['delete_form'] = HydroShareResourceDeleteForm()
 
-        resource_util = self.get_hs_resource(hs_resource)
+        hs_resource = self.get_hs_resource(resource)
         try:
-            resource_md = resource_util.get_system_metadata(timeout=10.0)
-            context['resource_is_published'] = resource_md.get("published", False)
+            metadata = hs_resource.get_system_metadata(timeout=10.0)
+            context['resource_is_published'] = metadata.get("published", False)
+
+            # Update the title in case the owner changed it
+            if 'resource_title' in metadata:
+                resource.title = metadata['resource_title']
+                resource.save()
+
         except HydroShareNotFound:
             context['resource_not_found'] = True
         except requests.exceptions.Timeout:
@@ -445,12 +484,12 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
 
         if form.is_valid():
             site = SiteRegistration.objects.get(pk=form.cleaned_data['site_registration'])
-            resource_data = self.get_object()
+            resource = self.get_object()
 
-            if 'update_files' in request.POST and resource_data.is_enabled:
+            if 'update_files' in request.POST and resource.is_enabled:
                 # get hydroshare resource info using hydroshare_util; this will get authentication info needed to
                 # upload files to the resource.
-                hs_resource = self.get_hs_resource(resource_data)
+                hs_resource = self.get_hs_resource(resource)
 
                 # Upload the most recent resource files
                 try:
@@ -458,15 +497,15 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
                 except Exception as e:
                     return JsonResponse({'error': e.message}, status=500)
 
-                # update last sync date on resource_data
-                resource_data.last_sync_date = timezone.now()
+                # update last sync date on resource
+                resource.last_sync_date = timezone.now()
             else:
-                resource_data.data_types = ",".join(form.cleaned_data['data_types'])
-                resource_data.update_freq = form.cleaned_data['update_freq']
-                resource_data.sync_type = form.cleaned_data['schedule_type']
-                resource_data.is_enabled = not form.cleaned_data["pause_sharing"]
+                resource.data_types = ",".join(form.cleaned_data['data_types'])
+                resource.update_freq = form.cleaned_data['update_freq']
+                resource.sync_type = form.cleaned_data['schedule_type']
+                resource.is_enabled = not form.cleaned_data["pause_sharing"]
 
-            resource_data.save()
+            resource.save()
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
             if self.request.is_ajax():
@@ -491,35 +530,41 @@ class HydroShareResourceDeleteView(LoginRequiredMixin, HydroShareResourceViewMix
             return None
         return site
 
-    def get_object(self, queryset=None):
-        site = self.get_site_registration()
+    def get_object(self, queryset=None, **kwargs):
+        site = kwargs['site']
+        resource = None
         try:
-            resource = HydroShareResource.objects.get(site_registration=site.registration_id)
+            # Find the resource that is currently visible; there should only be one.
+            resource = HydroShareResource.objects.filter(site_registration=site.registration_id, visible=True).first()
         except ObjectDoesNotExist:
-            resource = None
-        return site, resource
+            pass
+        return resource
 
     def get(self, request, *arg, **kwargs):
         site = self.get_site_registration()
         return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
 
     def post(self, request, *args, **kwargs):
-        site, resource = self.get_object()
+        site = self.get_site_registration()
+        resource = self.get_object(site=site)
 
         form = HydroShareResourceDeleteForm(request.POST)
         if form.is_valid():
             delete_external_resource = form.cleaned_data.get('delete_external_resource')
 
-            # delete resource in hydroshare.org if delete_external_resource is True
             if delete_external_resource is True:
+                # delete resource in hydroshare.org if delete_external_resource is True
                 hs_resource = self.get_hs_resource(resource)
                 try:
                     hs_resource.delete()
                 except Exception as error:
                     print(error)
-
-            # always delete the resource data stored on our server
-            resource.delete()
+                resource.delete()
+            else:
+                # Don't delete the resource, but instead turn visibility off. This is so the user can reconnect the
+                # resource after disconnecting it.
+                resource.visible = False
+                resource.save()
 
         return redirect(reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code}))
 

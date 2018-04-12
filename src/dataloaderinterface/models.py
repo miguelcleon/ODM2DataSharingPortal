@@ -262,13 +262,14 @@ class HydroShareResource(models.Model):
     hs_account = models.ForeignKey(HydroShareAccount, db_column='hs_account_id', on_delete=models.CASCADE, null=True,
                                    blank=True)
     ext_id = models.CharField(max_length=255, blank=True, null=True, unique=True)  # external hydroshare resource id
-    title = models.CharField(max_length=255, blank=True, null=True)
-    site_registration = models.OneToOneField(SiteRegistration, unique=True)
+    site_registration = models.OneToOneField(SiteRegistration, related_name='hydroshare_resource')
     sync_type = models.CharField(max_length=255, default='manual', choices=HYDROSHARE_SYNC_TYPES)
     update_freq = models.CharField(max_length=32, verbose_name='Update Frequency', default='daily')
     is_enabled = models.BooleanField(default=True)
     last_sync_date = models.DateTimeField(auto_created=True)
     data_types = models.CharField(max_length=255, blank=True, default='')
+    visible = models.BooleanField(default=True)
+    title = models.CharField(default='', blank=True, null=True, max_length=255)
 
     @property
     def sync_type_verbose(self):
@@ -336,6 +337,12 @@ class HydroShareResource(models.Model):
 
     # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
     #     return super(HydroShareResource, self).save(force_insert, force_update, using, update_fields)
+
+    def __str__(self):
+        return '<HydroShareResource: {}>'.format(self.pk)
+
+    def __unicode__(self):
+        return self.title if self.title is not None else self.ext_id
 
     class Meta:
         db_table = 'hydroshare_resource'
