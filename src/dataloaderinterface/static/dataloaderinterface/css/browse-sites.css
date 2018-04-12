@@ -28,6 +28,13 @@ body {
     border-bottom: 1px solid #DDD;
 }
 
+@media only screen and (max-width: 720px) {
+    #filters {
+        overflow-y: initial;
+        height: initial;
+    }
+}
+
 #filters label {
     display: table-cell;
     padding-right: 40px;
