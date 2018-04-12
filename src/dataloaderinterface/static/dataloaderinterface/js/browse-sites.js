@@ -243,7 +243,6 @@ function getCurrentFilters() {
 $(window).resize(resizeContent);
 
 function resizeContent() {
-    $("#wrapper").css("height", "calc(100% - 81px)");
     $(".map-container").css("height", $("#wrapper").height() - $("#title-row").height());
     $("#filters-row").css("height", $("#wrapper").height() - $("#title-row").height());
 }

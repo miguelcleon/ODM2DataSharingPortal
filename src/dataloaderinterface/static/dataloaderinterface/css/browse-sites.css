@@ -1,5 +1,11 @@
 body {
-    overflow: hidden;
+    /*overflow: hidden;*/
+}
+
+#wrapper {
+    height: 100%;
+    padding-top: 81px;
+    margin-top: 0;
 }
 
 #map {
@@ -19,6 +25,7 @@ body {
     overflow-y: scroll;
     background: #e8e8e8;
     height: 100%;
+    border-bottom: 1px solid #DDD;
 }
 
 #filters label {
