@@ -279,6 +279,7 @@ class DirectiveType(ControlledVocabulary):
 class ElevationDatum(ControlledVocabulary):
     class Meta:
         db_table = 'cv_elevationdatum'
+        ordering = ['name']
 
 
 class EquipmentType(ControlledVocabulary):
@@ -289,6 +290,7 @@ class EquipmentType(ControlledVocabulary):
 class Medium(ControlledVocabulary):
     class Meta:
         db_table = 'cv_medium'
+        ordering = ['name']
 
 
 class MethodType(ControlledVocabulary):
@@ -412,6 +414,7 @@ class People(ODM2Model):
 
     class Meta:
         db_table = 'people'
+        ordering = ['person_first_name', 'person_last_name']
 
 
 @python_2_unicode_compatible
@@ -469,6 +472,7 @@ class Affiliation(ODM2Model):
 
     class Meta:
         db_table = 'affiliations'
+        ordering = ['person__person_first_name', 'person__person_last_name']
 
 
 @python_2_unicode_compatible
@@ -717,7 +721,7 @@ class Unit(models.Model):
 
     class Meta:
         db_table = 'units'
-        ordering = ['unit_abbreviation']
+        ordering = ['unit_type_id', 'unit_name']
 
 
 @python_2_unicode_compatible

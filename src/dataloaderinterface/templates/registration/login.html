@@ -1,8 +1,15 @@
 {% extends "dataloaderinterface/base.html" %}
 {% load widget_tweaks staticfiles %}
 
-
 {% block content %}
+    <div class="container-fluid login-page-headline">
+        <div class="row">
+            <div class="col">
+                <h1 class="mdl-typography--display-1 text-white text-center text-shadow">Water Quality Data Portal</h1>
+                <p class="mdl-typography--title text-white text-center text-shadow">Share your data and view data contributed by others.</p>
+            </div>
+        </div>
+    </div>
     <div class="container-fluid">
         <div class="container main-content">
             <div class="row">
@@ -49,7 +56,7 @@
                                         <div class="text-center">
                                             <button type="submit" id="btn-login" value="Log in"
                                                     class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                                Login
+                                                Log In
                                             </button>
                                         </div>
 
@@ -60,11 +67,11 @@
 
                                         <div class="text-center">
                                             <span class="form-message">Don't have an account?</span>
-                                            <div><a class="orange" href="{% url 'user_registration' %}">Sign Up</a></div>
+                                            <div><a class="mdl-color-text--cyan-200" href="{% url 'user_registration' %}">Sign Up</a></div>
                                         </div>
                                         <br>
                                         <div class="text-center">
-                                            <div><a class="orange" href="{% url 'password_reset' %}">Forgot Password?</a></div>
+                                            <div><a class="mdl-color-text--cyan-200" href="{% url 'password_reset' %}">Forgot Password?</a></div>
                                         </div>
                                     </form>
                                 </div>

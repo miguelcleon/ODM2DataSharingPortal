@@ -19,8 +19,26 @@
         <div class="mdl-dialog__content">
             {{ form.site_registration.as_hidden }}
 
+            {% if not resource.id and form.resources.field.choices.queryset.all|length %}
+
+                <div class="row">
+                    <div class="col-12">
+                        <p>Connect to previous resource?</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="{{ form.resources.id_for_label }}">
+                                {{ form.resources|add_class:"form-control" }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            {% endif %}
+
             {# If resource.id is None, then this resource hasn't been created yet #}
             {% if resource.id %}
+
                 <div class="row">
                     <div class="col-12">
                         <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.pause_sharing.id_for_label }}">

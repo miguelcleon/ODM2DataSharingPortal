@@ -66,3 +66,20 @@ class HydroShareAdapter(HydroShare):
                 raise HydroShareHTTPException((url, req.request.method, req.status_code))
 
         return req.json()
+
+    def getAccessRules(self, pid):
+        """
+        Get access rule for a resource.
+        """
+        url = "{url_base}/resource/{pid}/access/".format(url_base=self.url_base, pid=pid)
+
+        r = self._request('GET', url)
+        if r.status_code != 200:
+            if r.status_code == 403:
+                raise HydroShareNotAuthorized(('GET', url))
+            elif r.status_code == 404:
+                raise HydroShareNotFound((pid,))
+            else:
+                raise HydroShareHTTPException((url, 'GET', r.status_code))
+
+        return r.json()

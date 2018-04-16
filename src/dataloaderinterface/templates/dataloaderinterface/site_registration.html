@@ -118,9 +118,13 @@
                                     <div class="form-group col-sm-12 col-md-8 map-container">
                                         <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
                                         <div id="map"></div>
+                                        <small class="text-muted">
+                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                            Click on the map to update coordinates and elevation data.</small>
                                     </div>
                                     <div class="clearfix"></div>
                                 </div>
+                                <br>
                             </fieldset>
 
                             <fieldset class="form-fieldset">
@@ -145,7 +149,7 @@
                                         {{ results_formset.management_form }}
 
                                         <div style="overflow: auto;">
-                                            <table class="mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
+                                            <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
                                                 <thead>
                                                 <tr class="full-width">
                                                     <th class="mdl-data-table__cell--non-numeric">Equipment Model
@@ -169,6 +173,10 @@
                                                                    name="{{ result_form.prefix }}-result_id"
                                                                    class="field-value"
                                                                    value="{{ result_form.initial.result_id }}"/>
+                                                            <input type="hidden"
+                                                                   name="{{ result_form.prefix }}-result_uuid"
+                                                                   class="field-value"
+                                                                   value="{{ result_form.initial.result_uuid }}"/>
                                                             {% for field in result_form %}
                                                                 {% if field.name != "DELETE" %}
                                                                     <td data-field="{{ field.name }}"
@@ -276,7 +284,9 @@
             <div class="modal-dialog vertical-align-center">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4>Add Sensor</h4>
+                        <h4 id="result-dialog-title">Add Sensor</h4>
+                        <span class="text-muted result-d-container" >UUID: <small data-copy-target="result-dialog-uuid"
+                               id="result-dialog-uuid"></small></span>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -306,8 +316,8 @@
                                                aria-label="Administrator's email">
 
                                         <div class="input-group-append">
-                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="btn-copy clipboard-copy mdl-button mdl-js-button mdl-js-ripple-effect"
-                                                    data-target="adminEmail">
+                                            <button style="border: 1px solid #DDD; margin-left: -1px;" class="mdl-button mdl-js-button mdl-js-ripple-effect"
+                                                    data-copy-target="adminEmail">
                                                 Copy to clipboard
                                             </button>
                                         </div>

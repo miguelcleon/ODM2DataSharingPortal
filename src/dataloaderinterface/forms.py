@@ -21,6 +21,24 @@ class SiteTypeSelect(forms.Select):
         return option
 
 
+class SampledMediumField(forms.ModelChoiceField):
+    custom_labels = {
+        'Liquid aqueous': 'Water - Liquid Aqueous'
+    }
+
+    @staticmethod
+    def get_custom_label(medium):
+        return SampledMediumField.custom_labels[medium] if medium in SampledMediumField.custom_labels else medium
+
+    def label_from_instance(self, obj):
+        return SampledMediumField.get_custom_label(obj.name)
+
+
+class UserOrganizationField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        return obj.organization_name
+
+
 class MDLRadioButton(forms.RadioSelect):
     def render(self, name, value, attrs=None, renderer=None):
         """Adds MDL HTML classes to label and input tags"""
@@ -88,28 +106,19 @@ class HydroShareSettingsForm(forms.Form):
         label='Resource Title',
     )
 
+    resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.all(), required=False)
+
+    # TODO: Make this a model form
     # class Meta:
     #     model = HydroShareResource
     #     fields = ['hs_account', 'ext_id', 'site_registration', 'sync_type', 'update_freq', 'is_enabled', 'data_types']
 
 
-class HydroShareSiteForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(HydroShareSiteForm, self).__init__(*args, **kwargs)
-        freq_choice_index = self.instance.get_udpate_freq_index()
-        self.initial['update_freq'] = HydroShareResource.FREQUENCY_CHOICES[freq_choice_index][0]
-
-    class Meta:
-        model = HydroShareResource
-        fields = ['is_enabled', 'sync_type', 'update_freq', 'hs_account', 'site_registration']
-        widgets = {'update_freq': forms.Select(choices=HydroShareResource.FREQUENCY_CHOICES)}
-
-
 class HydroShareResourceDeleteForm(forms.Form):
-
-    delete_external_resource = forms.BooleanField(initial=False,
-                                                  label="Delete connected resource in HydroShare.",
-                                                  required=False)
+    delete_external_resource = forms.BooleanField(
+        initial=False,
+        label="Delete connected resource in HydroShare.",
+        required=False)
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -118,8 +127,8 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(
-        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
+    organization = UserOrganizationField(
+        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']).order_by('organization_name'), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
     agreement = forms.BooleanField(required=True)
 
     def save(self, commit=True):
@@ -265,13 +274,10 @@ class ResultForm(forms.ModelForm):
         self.empty_permitted = False
 
     equipment_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.for_display(), help_text='Choose the model of your sensor')
-    sampled_medium = forms.ModelChoiceField(queryset=Medium.objects.filter(
-        Q(pk='Air') |
-        Q(pk='Soil') |
-        Q(pk='Liquid aqueous') |
-        Q(pk='Equipment') |
-        Q(pk='Not applicable')
-    ), help_text='Choose the sampled medium')
+    sampled_medium = SampledMediumField(queryset=Medium.objects.filter(pk__in=[
+        'Air', 'Soil', 'Sediment', 'Liquid aqueous',
+        'Equipment', 'Not applicable', 'Other'
+    ]), help_text='Choose the sampled medium')
 
     class Meta:
         model = Result

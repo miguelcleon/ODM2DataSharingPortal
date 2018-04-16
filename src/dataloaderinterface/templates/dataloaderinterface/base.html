@@ -10,12 +10,12 @@
     <meta name="description" content="Web Streaming Data Loader">
 
     {% block page_title %}
-        <title>EnviroDIY Water Quality Data Portal </title>
+        <title>Water Quality Data Portal </title>
     {% endblock %}
 
     <link rel="icon"
           type="image/png"
-          href="{% static 'dataloaderinterface/images/favicon.png' %}">
+          href="{% static 'dataloaderinterface/images/cropped-favicon-32x32.png' %}">
 
     {% block styles %}
         <link rel="stylesheet"
@@ -44,9 +44,9 @@
 <body>
 <div id="wrapper">
     <header>
-        <nav class="navbar navbar-dark navbar-expand-md fixed-top">
+        <nav class="navbar navbar-dark navbar-expand-lg fixed-top">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'dataloaderinterface/images/site_logo.png' %}" alt="WebSDL"
+                <img src="{% static 'dataloaderinterface/images/WikiWatershed_logo.png' %}" alt="WebSDL"
                      width="264" height="55">
             </a>
 
@@ -71,26 +71,29 @@
 
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_account' %}">
-                                <i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}</a></li>
                         {% if user.is_staff %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
                         {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}"><i class="fa fa-sign-out"
-                                                                             aria-hidden="true"></i>
-                                Logout</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-user" aria-hidden="true"></i> Logged in as {{ user }}
+                            </a>
+                            <div class="dropdown-menu navbar-dark" aria-labelledby="navbarDropdown">
+                                <a class="nav-link" href="{% url 'user_account' %}">
+                                    <i class="fa fa-user" aria-hidden="true"></i> My Account</a>
+                                <a class="nav-link" href="{% url 'logout' %}">
+                                    <i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+                            </div>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}"><i class="fa fa-sign-in"
-                                                                            aria-hidden="true"></i> Log In</a>
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_registration' %}"><i class="fa fa-sign-up"
-                                                                                        aria-hidden="true"></i>
-                                Sign Up</a>
+                            <a class="nav-link" href="{% url 'user_registration' %}">
+                                <i class="fa fa-sign-up" aria-hidden="true"></i> Sign Up</a>
                         </li>
                     {% endif %}
                 </ul>

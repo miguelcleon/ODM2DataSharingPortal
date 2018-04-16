@@ -1,5 +1,6 @@
 .hydroshare-container {
     margin-bottom: 24px;
+    border: 1px solid #ddd;
 }
 .hydroshare-title {
     margin: 8px 0;

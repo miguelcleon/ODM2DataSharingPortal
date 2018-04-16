@@ -12,7 +12,7 @@ function initMap() {
         center: sitePosition,
         gestureHandling: 'greedy',
         zoom: defaultZoomLevel,
-        mapTypeId: google.maps.MapTypeId.SATELLITE
+        mapTypeId: google.maps.MapTypeId.HYBRID,
     });
 
     var marker = new google.maps.Marker({
@@ -222,15 +222,12 @@ function getTimeSeriesData(sensorInfo) {
             fillValueTable($('table.data-values[data-result-id=' + sensorInfo['resultId'] + ']'), values);
             drawSparklineOnResize(sensorInfo, values);
             drawSparklinePlot(sensorInfo, values);
-
-
         } else {
              console.error('No data values were found for this site');
              console.info(series.getdatainflux);
         }
     }).fail(function() {
         console.log('data failed to load.');
-
     });
 }
 
@@ -298,13 +295,13 @@ $(document).ready(function () {
     bindDeleteDialogEvents();
 
     // Executes when page loads
-    fixViewPort();
+    // fixViewPort();
 
     // Executes each time window size changes
     $(window).resize(
         ResponsiveBootstrapToolkit.changed(function () {
             $('.plot_box').height("initial");   // Reset height
-            fixViewPort();
+            // fixViewPort();
         }));
 });
 

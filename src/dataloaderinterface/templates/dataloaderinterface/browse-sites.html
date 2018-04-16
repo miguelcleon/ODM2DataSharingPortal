@@ -3,24 +3,26 @@
 {% load site %}
 
 {% block content %}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="browse-sites-header mdl-shadow--2dp">
-                <div class="page-title">
-                    <span>Browse Data Collection Sites&nbsp;</span>
-                    <i class="material-icons" style="margin-left: 10px;"
-                       data-toggle="collapse" data-target="#browseDescription"
-                       aria-expanded="true" aria-controls="#browseDescription">info</i>
-                </div>
-
-                <div class="collapse" id="browseDescription">
-                    <br>
-                    <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows it's details and provides a link to view the data collected at that site.</span>
-                </div>
+    <div class="container-fluid full-height">
+        <div class="row" id="title-row">
+            <div class="col-sm-12 col-md-4 col-lg-3" style="background-color: #005252;">
+                <span class="page-title">Browse Data Collection Sites&nbsp;</span>
+            </div>
+            <div class="col-sm-12 col-md-8 col-lg-9" style="background-color: #048a8a; border-bottom: 1px solid #005252;">
+                <span class="subtitle">Browse all sites that have been registered in the database by all users. Clicking on a site shows its details and provides a link to view the data collected at that site.</span>
+            </div>
+        </div>
+        <div class="row" id="filters-row">
+            <div id="filters" class="col-sm-12 col-md-4 col-lg-3 mdl-shadow--2dp">
+                <button id="btnClearFilters" class="mdl-button mdl-js-button pull-right" style="margin: 10px 0;">
+                  <i class="material-icons">filter_list</i> Clear All Filters
+                </button>
             </div>
 
-            <div class="map-container full-screen-map-container">
-                <div id="map"></div>
+            <div class="col-sm-12 col-md-8 col-lg-9" style="padding: 0;">
+                <div class="map-container full-screen-map-container">
+                    <div id="map"></div>
+                </div>
             </div>
 
             {% autoescape off %}
@@ -30,6 +32,8 @@
                     {
                     "id": "{{ site.sampling_feature_id }}",
                     "code": "{{ site.sampling_feature_code }}",
+                    "organization": "{{ site.organization }}",
+                    "type": "{{ site.site_type }}",
                     "name": "{{ site.sampling_feature_name }}",
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
@@ -46,6 +50,14 @@
                 <div>
                     <div id="marker-content">
                         <table class="marker-info">
+                            <tr class="site-field hidden" data-field="organization">
+                                <th class="site-label">Organization</th>
+                                <td class="site-data"></td>
+                            </tr>
+                            <tr class="site-field hidden" data-field="type">
+                                <th class="site-label">Site Type</th>
+                                <td class="site-data"></td>
+                            </tr>
                             <tr class="site-field" data-field="code">
                                 <th class="site-label">Site Code</th>
                                 <td class="site-data"></td>
@@ -95,5 +107,5 @@
 {% block scripts %}
     {{ block.super }}
     <script src="{% static 'dataloaderinterface/js/browse-sites.js' %}"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}
