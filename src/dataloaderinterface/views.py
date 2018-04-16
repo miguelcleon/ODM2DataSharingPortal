@@ -324,11 +324,13 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
                 resource.delete()
 
         context['site'] = site
-        context['form'] = HydroShareSettingsForm(initial={'site_registration': site.pk,
+        form = HydroShareSettingsForm(initial={'site_registration': site.pk,
                                                           'data_types': [initial_datatype],
                                                           'pause_sharing': False,
                                                           'title': self.generate_title(site),
                                                           'abstract': self.generate_abstract(site)})
+        form.fields['resources'].queryset = HydroShareResource.objects.filter(site_registration=site.pk, visible=False)
+        context['form'] = form
         return context
 
     def create_resource(self, site, form):
@@ -992,8 +994,9 @@ class OAuthAuthorize(TemplateView):
             if old_token:
                 old_token.delete()
 
-            request.user.odm2user.hydroshare_account = account
-            request.user.odm2user.save()
+            odm2user = ODM2User.objects.get(user=request.user.pk)
+            odm2user.hydroshare_account = account
+            odm2user.save()
 
             return redirect('user_account')
         elif 'error' in request.GET:

@@ -52,12 +52,12 @@ class MDLRadioButton(forms.RadioSelect):
 class HydroShareSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(HydroShareSettingsForm, self).__init__(*args, **kwargs)
-        if 'site_registration' in self.initial:
-            site = self.initial['site_registration']
-        elif len(args) > 0:
-            site = args[0]['site_registration']
-        self.resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.filter(site_registration=site),
-                                                required=False)
+        # if 'site_registration' in self.initial:
+        #     site = self.initial['site_registration']
+        # elif len(args) > 0:
+        #     site = args[0]['site_registration']
+        # self.resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.filter(site_registration=site),
+        #                                         required=False)
 
     schedule_choices = (
         ('scheduled', 'Scheduled'),
@@ -112,7 +112,7 @@ class HydroShareSettingsForm(forms.Form):
         label='Resource Title',
     )
 
-    resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.filter(site_registration=3), required=False)
+    resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.all(), required=False)
 
     # TODO: Make this a model form
     # class Meta:

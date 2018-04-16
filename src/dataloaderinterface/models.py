@@ -146,9 +146,7 @@ class SiteSensor(models.Model):
 class ODM2User(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
-    hydroshare_account = models.OneToOneField('HydroShareAccount',
-                                              db_column='hs_account_id',
-                                              null=True)
+    hydroshare_account = models.OneToOneField('HydroShareAccount', db_column='hs_account_id', null=True, blank=True)
 
     @property
     def affiliation(self):
@@ -201,7 +199,7 @@ class OAuthToken(models.Model):
 class HydroShareAccount(models.Model):
     is_enabled = models.BooleanField(default=False)
     ext_id = models.IntegerField(unique=True)  # external hydroshare account id
-    token = models.ForeignKey(OAuthToken, db_column='token_id', null=True)
+    token = models.ForeignKey(OAuthToken, db_column='token_id', null=True, on_delete=models.CASCADE)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
