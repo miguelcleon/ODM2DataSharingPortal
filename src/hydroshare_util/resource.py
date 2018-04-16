@@ -125,7 +125,7 @@ class Resource(HydroShareUtilityBaseClass):
 
     def upload_file(self, filename, content):
         if self.resource_id is None:
-            raise HydroShareNotFound("resource has no resource_id")
+            raise HydroShareNotFound((self.resource_id, "resource has no resource_id"))
 
         try:
             self.client.deleteResourceFile(self.resource_id, filename)
