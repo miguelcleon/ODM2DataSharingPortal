@@ -24,7 +24,6 @@ function initializeHydroShareSettingsDialog() {
     }
 
     showDialogButton.addEventListener('click', () => {
-        // document.body.appendChild(dialog);
         dialog.showModal();
         $('label[for="id_pause_sharing"]').removeClass('is-focused');
         toggleUpdateFreqSelect(!!$(manualCB).attr('checked'))
