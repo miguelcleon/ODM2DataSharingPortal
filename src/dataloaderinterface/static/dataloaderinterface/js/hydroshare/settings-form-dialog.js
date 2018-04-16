@@ -4,10 +4,10 @@
 */
 
 function initializeHydroShareSettingsDialog() {
-
+    const hydroshareSettingsForm = $('#hydroshare-settings-form')[0];
+    document.body.appendChild(hydroshareSettingsForm);
     const dialog = $('dialog#hydroshare-settings-dialog')[0];
     const showDialogButton = $('#show-hydroshare-settings-dialog')[0];
-    const hydroshareSettingsForm = $('#hydroshare-settings-form')[0];
     const scheduledCB = $('input#id_schedule_type_0')[0];
     const manualCB = $('input#id_schedule_type_1')[0];
     const updateFreqSelect = $('select#id_update_freq')[0];

@@ -1,7 +1,8 @@
 # adapter.py
 import requests
 from hs_restclient import HydroShare, DEFAULT_HOSTNAME, HydroShareNotAuthorized, HydroShareNotFound, \
-    HydroShareHTTPException
+    HydroShareHTTPException, default_progress_callback
+from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 
 
 class HydroShareAdapter(HydroShare):
@@ -66,6 +67,39 @@ class HydroShareAdapter(HydroShare):
                 raise HydroShareHTTPException((url, req.request.method, req.status_code))
 
         return req.json()
+
+    def addResourceFile(self, pid, resource_file, resource_filename=None, progress_callback=None):
+        url = "{url_base}/resource/{pid}/files/".format(url_base=self.url_base,
+                                                        pid=pid)
+
+        params = {}
+        close_fd = self._prepareFileForUpload(params, resource_file, resource_filename)
+
+        encoder = MultipartEncoder(params)
+        if progress_callback is None:
+            progress_callback = default_progress_callback
+        monitor = MultipartEncoderMonitor(encoder, progress_callback)
+
+        r = self._request('POST', url, data=monitor, headers={'Content-Type': monitor.content_type,
+                                                              'Connection': 'keep-alive',
+                                                              'Keep-Alive': 'timeout=10, max=1000'})
+
+        if close_fd:
+            fd = params['file'][1]
+            fd.close()
+
+        if r.status_code != 201:
+            if r.status_code == 403:
+                raise HydroShareNotAuthorized(('POST', url))
+            elif r.status_code == 404:
+                raise HydroShareNotFound((pid,))
+            else:
+                raise HydroShareHTTPException((url, 'POST', r.status_code))
+
+        response = r.json()
+        assert (response['resource_id'] == pid)
+
+        return response['resource_id']
 
     def getAccessRules(self, pid):
         """
