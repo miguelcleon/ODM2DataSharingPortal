@@ -146,4 +146,8 @@ h4 {
         border-radius: 0;
         border-left: 1px solid #DDD;
     }
+
+    .card-border-left p {
+        margin-bottom: 0;
+    }
 }
