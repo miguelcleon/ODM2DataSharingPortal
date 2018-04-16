@@ -10,18 +10,20 @@
 
 function initializeHydroShareDeleteDialog() {
     const deleteForm = $('#hs-delete-form');
+    document.body.appendChild(deleteForm[0]);
     const deleteFormDialog = $('#hydroshare-delete-dialog')[0];
     const showDeleteDialogBtn = $('button#show-hydroshare-delete-dialog');
     const deleteResourceCBLabel = $('label[for="id_delete_external_resource"]');
     const deleteResourceCB = $('input#id_delete_external_resource');
 
     if (!deleteFormDialog.showModal) {
+        // document.body.appendChild(deleteFormDialog); // need to dialog a child of body or it doesn't show up on !chrome
         dialogPolyfill.registerDialog(deleteFormDialog);
     }
 
     $(showDeleteDialogBtn).click(() => {
-       deleteFormDialog.showModal();
-       $('label[for="id_delete_external_resource"]').removeClass('is-focused');
+        deleteFormDialog.showModal();
+        $('label[for="id_delete_external_resource"]').removeClass('is-focused');
     });
 
     deleteFormDialog.querySelector('.close').addEventListener('click', () => {
