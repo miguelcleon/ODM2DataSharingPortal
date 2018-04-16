@@ -126,10 +126,6 @@ div.image-container {
     width: 100%;
 }
 
-.home-how-it-works-img {
-    width: 200px;
-}
-
 .row-eq-height {
     display: flex;
 }
@@ -143,4 +139,15 @@ h4 {
     font-size: 18px;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 300;
+}
+
+@media only screen and (min-width: 768px) {
+    .card-border-left {
+        border-radius: 0;
+        border-left: 1px solid #DDD;
+    }
+
+    .card-border-left p {
+        margin-bottom: 0;
+    }
 }
