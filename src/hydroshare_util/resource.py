@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 from django.http import Http404
 from tempfile import mkstemp
 from re import search as regex_search
@@ -174,18 +175,14 @@ class Resource(HydroShareUtilityBaseClass):
         self.client.deleteResource(self.resource_id)
 
     def create(self):
-
         metadata = []
-
         for coverage in self.coverages:
             coverage_dict = {"coverage": coverage.to_dict()}
             metadata.append(coverage_dict)
 
-        metadata_as_string = self._stringify_metadata(metadata)
-
         self.resource_id = self.client.createResource(resource_type=self.resource_type,
                                                       title=self.title,
-                                                      metadata=metadata_as_string,
+                                                      metadata=json.dumps(metadata, encoding='ascii'),
                                                       keywords=list(self.keywords),
                                                       abstract=self.abstract)
 
@@ -194,13 +191,6 @@ class Resource(HydroShareUtilityBaseClass):
             self.client.setAccessRules(self.resource_id, self.public)
 
         return self.resource_id
-
-    def _stringify_metadata(self, metadata):
-        import json
-        string = json.dumps(metadata, encoding='ascii')
-        # string = str(metadata)
-        # string = string.replace("'", '"')
-        return string
 
     def update(self, data=None):
         if data is None:
@@ -229,6 +219,12 @@ class Resource(HydroShareUtilityBaseClass):
 
     def make_public(self, public=True):
         return self.client.setAccessRules(self.resource_id, public=public)
+
+    def get_access_level(self):
+        """
+        Returns the access level of the resource (public or private)
+        """
+        return self.client.getAccessRules(self.resource_id)
 
     def to_dict(self):
         return {

@@ -52,6 +52,12 @@ class MDLRadioButton(forms.RadioSelect):
 class HydroShareSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(HydroShareSettingsForm, self).__init__(*args, **kwargs)
+        # if 'site_registration' in self.initial:
+        #     site = self.initial['site_registration']
+        # elif len(args) > 0:
+        #     site = args[0]['site_registration']
+        # self.resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.filter(site_registration=site),
+        #                                         required=False)
 
     schedule_choices = (
         ('scheduled', 'Scheduled'),
@@ -106,21 +112,12 @@ class HydroShareSettingsForm(forms.Form):
         label='Resource Title',
     )
 
+    resources = forms.ModelChoiceField(queryset=HydroShareResource.objects.all(), required=False)
+
+    # TODO: Make this a model form
     # class Meta:
     #     model = HydroShareResource
     #     fields = ['hs_account', 'ext_id', 'site_registration', 'sync_type', 'update_freq', 'is_enabled', 'data_types']
-
-
-class HydroShareSiteForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(HydroShareSiteForm, self).__init__(*args, **kwargs)
-        freq_choice_index = self.instance.get_udpate_freq_index()
-        self.initial['update_freq'] = HydroShareResource.FREQUENCY_CHOICES[freq_choice_index][0]
-
-    class Meta:
-        model = HydroShareResource
-        fields = ['is_enabled', 'sync_type', 'update_freq', 'hs_account', 'site_registration']
-        widgets = {'update_freq': forms.Select(choices=HydroShareResource.FREQUENCY_CHOICES)}
 
 
 class HydroShareResourceDeleteForm(forms.Form):
