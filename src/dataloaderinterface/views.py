@@ -325,10 +325,10 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
 
         context['site'] = site
         form = HydroShareSettingsForm(initial={'site_registration': site.pk,
-                                                          'data_types': [initial_datatype],
-                                                          'pause_sharing': False,
-                                                          'title': self.generate_title(site),
-                                                          'abstract': self.generate_abstract(site)})
+                                               'data_types': [initial_datatype],
+                                               'pause_sharing': False,
+                                               'title': self.generate_title(site),
+                                               'abstract': self.generate_abstract(site)})
         form.fields['resources'].queryset = HydroShareResource.objects.filter(site_registration=site.pk, visible=False)
         context['form'] = form
         return context
