@@ -108,14 +108,54 @@
 {#            </div>#}
         </div>
         <div class="row">
-            {% for field in bug_count_form %}
-            <div class="col-6">
-                <div class="form-field">
-                    <label for="{{ field.bug_count.id_for_label }}">{{ field.bug_count.label }}</label>
-                    {{ field.bug_count|add_class:"form-control" }}
+            <style>
+                form.bug-count-form input {
+                    margin: 0 8px;
+                    width: 48px !important;
+                }
+                div.is-bug-family {
+                    padding-left: 48px;
+                }
+            </style>
+            <form class="form-inline bug-count-form">
+                <div class="row">
+                {% for bug_forms in bug_count_form_list %}
+
+                    {% with parent_form=bug_forms.0 %}
+
+                    <div class="col-12">
+
+                        <div class="form-field form-inline {% if form.is_family %}is-bug-family{% endif %}">
+                            {{ parent_form.bug_count|add_class:"form-control" }}
+                            <label class="" for="{{ parent_form.bug_count.id_for_label }}">
+
+                                {{ parent_form.bug_count.label }}
+
+                                {% if parent_form.has_children %}
+                                    ({{ parent_form.instance.common_name }} &#45; including Families below)
+                                {% else %}
+                                    ({{ parent_form.instance.common_name }})&#42;
+                                {% endif %}
+
+                            </label>
+                        </div>
+
+                        {% for family_form in bug_forms.1 %}
+                        <div class="form-field form-inline is-bug-family">
+
+                            {{ family_form.bug_count|add_class:"form-control" }}
+
+                            <label class="" for="{{ family_form.bug_count.id_for_label }}">
+                                {{ family_form.bug_count.label }} ({{ family_form.instance.common_name }})
+                            </label>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+                    {% endwith %}
+                {% endfor %}
                 </div>
-            </div>
-            {% endfor %}
+            </form>
         </div>
 
     </div>

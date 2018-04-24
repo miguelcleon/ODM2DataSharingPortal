@@ -18,13 +18,13 @@ class Macroinvertebrate(models.Model):
         db_table = 'macroinvertebrate'
 
     uuid = models.UUIDField(default=uuid.uuid4())
-    scientific_name = models.CharField(max_length=255, unique=True)  # i.e.
-    common_name = models.CharField(max_length=255, unique=True)  #
+    scientific_name = models.CharField(max_length=255, unique=True)
+    common_name = models.CharField(max_length=255, unique=True)
     family_of = models.ForeignKey('Macroinvertebrate',
                                   on_delete=models.CASCADE,
                                   null=True,
                                   blank=True,
-                                  related_name='child')
+                                  related_name='families')
 
     def __str__(self):
         return self.scientific_name
