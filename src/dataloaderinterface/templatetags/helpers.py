@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from django import template
 from django.utils.timesince import timesince
 from django.utils.formats import date_format
@@ -25,4 +25,15 @@ def replace_hour(value, argv):
     if isinstance(value, datetime):
         return datetime.combine(value.date(), time(hour=5, minute=0))
     else:
+        return ''
+
+
+@register.filter("is_stale")
+def is_stale(value):
+    if not value:
+        return ''
+
+    try:
+        return (datetime.utcnow() - value) > timedelta(hours=72)
+    except AttributeError:
         return ''
