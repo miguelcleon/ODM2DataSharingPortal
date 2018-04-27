@@ -53,14 +53,14 @@ class LeafPack(models.Model):
     storm_count = models.IntegerField(default=0)
     storm_precipiation = models.FloatField(default=0)
     types = models.ManyToManyField('LeafPackType')
-    bugs = models.ManyToManyField(Macroinvertebrate, through='LeafPackBug')
+    # bugs = models.ManyToManyField(Macroinvertebrate, through='LeafPackBug')
 
 
 class LeafPackBug(models.Model):
     """
     This model defines the many-to-many relationship between LeafPack and Macroinvertebrate models
-    :var: leaf_pack: A LeafPack
-    :var: bug: A Macroinvertebrate... 'bug' is easier to spell :)
+    :var: leaf_pack: An instance of LeafPack
+    :var: bug: An instance of Macroinvertebrate... 'bug' is easier to spell...
     :var: bug_count: The number of associated macroinvertebrate counted in the associated leaf pack
     """
     class Meta:

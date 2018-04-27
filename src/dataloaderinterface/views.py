@@ -18,6 +18,7 @@ from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeries
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
     InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
+from leafpack.models import LeafPack
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -217,6 +218,8 @@ class SiteDetailView(DetailView):
         context = super(SiteDetailView, self).get_context_data(**kwargs)
         context['tsa_url'] = settings.TSA_URL
         context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
+
+        context['leafpacks'] = LeafPack.objects.filter(site_registration=context['site'].pk)
 
         try:
             context["hydroshare_account"] = self.request.user.odm2user.hydroshare_account
