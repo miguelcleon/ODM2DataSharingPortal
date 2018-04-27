@@ -53,7 +53,6 @@ class LeafPack(models.Model):
     storm_count = models.IntegerField(default=0)
     storm_precipiation = models.FloatField(default=0)
     types = models.ManyToManyField('LeafPackType')
-    # bugs = models.ManyToManyField(Macroinvertebrate, through='LeafPackBug')
 
 
 class LeafPackBug(models.Model):

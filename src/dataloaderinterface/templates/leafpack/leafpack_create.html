@@ -135,12 +135,12 @@
 
                             <label class="" for="{{ parent_form.bug_count.id_for_label }}">
 
-                                {{ parent_form.bug_count.label }}
+                                {{ parent_form.bug_count.label|capfirst }}
 
                                 {% if parent_form.has_children %}
-                                    ({{ parent_form.instance.bug.common_name }} &#45; including Families below)
+                                    ({{ parent_form.instance.bug.scientific_name }}) (total, including Families below)
                                 {% else %}
-                                    ({{ parent_form.instance.bug.common_name }})&#42;
+                                    ({{ parent_form.instance.bug.scientific_name }})
                                 {% endif %}
 
                             </label>
@@ -152,7 +152,7 @@
                             {{ family_form.bug_count|add_class:"form-control" }}
 
                             <label class="" for="{{ family_form.bug_count.id_for_label }}">
-                                {{ family_form.bug_count.label }} ({{ family_form.instance.bug.common_name }})
+                                {{ family_form.bug_count.label|capfirst }} ({{ family_form.instance.bug.scientific_name }})
                             </label>
                         </div>
                         {% endfor %}

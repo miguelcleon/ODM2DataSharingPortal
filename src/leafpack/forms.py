@@ -40,7 +40,7 @@ class LeafPackBugForm(forms.ModelForm):
             # Does the model instance have children?
             self.has_children = len(self.instance.bug.families.all()) > 0
 
-            self.fields['bug_count'].label = self.instance.bug.__str__()
+            self.fields['bug_count'].label = self.instance.bug.common_name
 
 
 class LeafPackBugFormFactory(forms.BaseFormSet):

@@ -104,9 +104,7 @@ class LeafPackCreateView(CreateView):
         return bug_forms
 
     def post(self, request, *args, **kwargs):
-
         leafpack_form = self.get_form()
-
         bug_forms = self.get_bug_count_forms()
 
         if self.forms_valid([leafpack_form] + bug_forms):
@@ -116,6 +114,7 @@ class LeafPackCreateView(CreateView):
                 LeafPackBug.objects.create(bug=bug_form.instance.bug, leaf_pack=leafpack_form.instance,
                                            bug_count=bug_form.cleaned_data['bug_count'])
 
-            return redirect(reverse('site_detail', kwargs={'sampling_feature_code': self.kwargs['sampling_feature_code']}))
+            return redirect(reverse('site_detail', kwargs={'sampling_feature_code':
+                                                               self.kwargs['sampling_feature_code']}))
 
         return self.form_invalid(leafpack_form)
