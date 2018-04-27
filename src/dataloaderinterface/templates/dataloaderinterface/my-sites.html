@@ -127,7 +127,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">{{ site.latest_measurement }}
-                                                            (<span {% if site.latest_measurement_utc|is_stale %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
+                                                            (<span {% if site.latest_measurement_utc|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -249,7 +249,7 @@
                                                 <tr>
                                                     <td></td>
                                                     <td>{{ site.latest_measurement }}
-                                                        <br>(<span {% if site.latest_measurement_utc|is_stale %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
+                                                        <br>(<span {% if site.latest_measurement_utc|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
                                                     </td>
                                                 </tr>
                                                 </tbody>
