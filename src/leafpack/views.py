@@ -19,6 +19,26 @@ import re
 from datetime import date, timedelta
 
 
+class LeafPackFormMixin(object):
+    def get_bug_count_forms(self):
+        re_bug_name = re.compile(r'^(?P<bug_name>.*)-bug_count')
+        form_data = list()
+        for key, value in self.request.POST.iteritems():
+            if 'bug_count' in key:
+                form_data.append((re_bug_name.findall(key)[0], value))
+
+        bug_forms = list()
+        for data in form_data:
+            bug = Macroinvertebrate.objects.get(scientific_name=data[0])
+            count = data[1]
+
+            form = LeafPackBugForm(data={'bug_count'.format(bug.scientific_name): count})
+            form.instance.bug = bug
+            bug_forms.append(form)
+
+        return bug_forms
+
+
 class LeafPackDetailView(DetailView):
     template_name = 'leafpack/leafpack_detail.html'
     slug_field = 'sampling_feature_code'
@@ -34,7 +54,7 @@ class LeafPackDetailView(DetailView):
         return context
 
 
-class LeafPackCreateView(CreateView):
+class LeafPackCreateView(LeafPackFormMixin, CreateView):
     form_class = LeafPackForm
     template_name = 'leafpack/leafpack_create.html'
     slug_field = 'sampling_feature_code'
@@ -85,24 +105,6 @@ class LeafPackCreateView(CreateView):
                 is_valid = False
         return is_valid
 
-    def get_bug_count_forms(self):
-        re_bug_name = re.compile(r'^(?P<bug_name>.*)-bug_count')
-        form_data = list()
-        for key, value in self.request.POST.iteritems():
-            if 'bug_count' in key:
-                form_data.append((re_bug_name.findall(key)[0], value))
-
-        bug_forms = list()
-        for data in form_data:
-            bug = Macroinvertebrate.objects.get(scientific_name=data[0])
-            count = data[1]
-
-            form = LeafPackBugForm(data={'bug_count'.format(bug.scientific_name): count})
-            form.instance.bug = bug
-            bug_forms.append(form)
-
-        return bug_forms
-
     def post(self, request, *args, **kwargs):
         leafpack_form = self.get_form()
         bug_forms = self.get_bug_count_forms()
@@ -115,6 +117,17 @@ class LeafPackCreateView(CreateView):
                                            bug_count=bug_form.cleaned_data['bug_count'])
 
             return redirect(reverse('site_detail', kwargs={'sampling_feature_code':
-                                                               self.kwargs['sampling_feature_code']}))
+                                                           self.kwargs['sampling_feature_code']}))
 
         return self.form_invalid(leafpack_form)
+
+
+class LeafPackUpdateView(CreateView):
+    form_class = LeafPackBug
+    template_name = 'leafpack/leafpack_update.html'
+    slug_field = 'sampling_feature_code'
+
+    def get_context_data(self, **kwargs):
+        return super(LeafPackUpdateView, self).get_context_data(**kwargs)
+
+
