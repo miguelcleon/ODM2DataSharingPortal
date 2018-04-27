@@ -29,11 +29,13 @@ def replace_hour(value, argv):
 
 
 @register.filter("is_stale")
-def is_stale(value):
+def is_stale(value, default):
     if not value:
         return ''
 
     try:
+        if default > 0:
+            return (datetime.utcnow() - value) > timedelta(hours=default.hours_threshold.seconds/3600)
         return (datetime.utcnow() - value) > timedelta(hours=72)
     except AttributeError:
         return ''
