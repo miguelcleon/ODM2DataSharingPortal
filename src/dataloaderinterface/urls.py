@@ -19,7 +19,7 @@ from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistr
     HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceUpdateView, \
     HydroShareResourceCreateView, HydroShareResourceDeleteView, OAuthAuthorize, OAuthRedirect
 
-from leafpack.views import LeafPackCreateView
+from leafpack.views import LeafPackCreateView, LeafPackDetailView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/update/$', HydroShareResourceUpdateView.as_view(), name='hs_resource_update'),
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/delete/$', HydroShareResourceDeleteView.as_view(), name='hs_resource_delete'),
     url(r'^sites/(?P<sampling_feature_code>.*)/leafpack/create/$', LeafPackCreateView.as_view(), name='create_leafpack'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/leafpack/(?P<uuid>.*)/$', LeafPackDetailView.as_view(), name='leafpack_detail'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
     url(r'hydroshare/oauth/$', OAuthAuthorize.as_view(), name='hydroshare_oauth'),
     url(r'hydroshare/oauth/redirect/$', OAuthRedirect.as_view(), name='hydroshare_oauth_redirect'),

@@ -321,6 +321,31 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="mdl-data-table full-width">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th class="mdl-data-table__cell--non-numeric">UUID</th>
+                                        <th class="mdl-data-table__cell--non-numeric">link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for leafpack in leafpacks %}
+                                        <tr>
+                                            <td>{{ leafpack.id }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.uuid }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">
+                                                <a href="{% url 'leafpack_detail' site.sampling_feature.sampling_feature_code leafpack.uuid %}">Detail</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </section>
             </div>
         </div>
