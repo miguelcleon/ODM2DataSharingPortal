@@ -136,6 +136,4 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         leafpack = self.get_object()
         leafpack.delete()
-        return redirect(reverse('site_detail', kwargs={'sampling_feature_code':
-                                                           self.kwargs['sampling_feature_code']}))
-
+        return redirect(reverse('site_detail', kwargs={'sampling_feature_code': self.kwargs['sampling_feature_code']}))
