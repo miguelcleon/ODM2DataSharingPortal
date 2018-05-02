@@ -21,7 +21,7 @@ from dataloaderinterface.views import LoginRequiredMixin
 
 
 class LeafPackFormMixin(object):
-    def get_bug_count_forms(self):
+    def get_bug_count_forms(self, leafpack=None):
         re_bug_name = re.compile(r'^(?P<bug_name>.*)-bug_count')
         form_data = list()
         for key, value in self.request.POST.iteritems():
@@ -34,13 +34,29 @@ class LeafPackFormMixin(object):
             count = data[1]
 
             form = LeafPackBugForm(data={'bug_count'.format(bug.scientific_name): count})
-            form.instance.bug = bug
+            if leafpack is not None:
+                form.instance = LeafPackBug.objects.get(leaf_pack=leafpack, bug=bug)
+            else:
+                form.instance.bug = bug
+
             bug_forms.append(form)
 
         return bug_forms
 
 
+class LeafPackUpdateCreateMixin(LeafPackFormMixin):
+    def forms_valid(self, forms):
+        is_valid = True
+        for form in forms:
+            if not form.is_valid():
+                is_valid = False
+        return is_valid
+
+
 class LeafPackDetailView(DetailView):
+    """
+    Detail View
+    """
     template_name = 'leafpack/leafpack_detail.html'
     slug_field = 'sampling_feature_code'
     model = LeafPack
@@ -48,9 +64,25 @@ class LeafPackDetailView(DetailView):
     def get_object(self, queryset=None):
         return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
 
+    def get_bugs(self):
+        lpbugs = []
+        leafpack = self.get_object()
+        bugs = Macroinvertebrate.objects.filter(family_of=None).order_by('common_name')
+
+        for order_bug in bugs:
+            lp_parent_bug = LeafPackBug.objects.get(leaf_pack=leafpack, bug=order_bug)
+            lp_child_bugs = []
+            for family_bug in order_bug.families.all():
+                lp_child_bugs.append(LeafPackBug.objects.get(leaf_pack=leafpack, bug=family_bug))
+            lpbugs.append((lp_parent_bug, lp_child_bugs))
+
+        return lpbugs
+
     def get_context_data(self, **kwargs):
         context = super(LeafPackDetailView, self).get_context_data(**kwargs)
         context['leafpack'] = self.get_object()
+        context['leafpack_bugs'] = self.get_bugs()
+        context['sampling_feature_code'] = self.get_object().site_registration.sampling_feature_code
 
         return context
 
@@ -58,7 +90,10 @@ class LeafPackDetailView(DetailView):
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
-class LeafPackCreateView(LeafPackFormMixin, CreateView):
+class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
+    """
+    Create View
+    """
     form_class = LeafPackForm
     template_name = 'leafpack/leafpack_create.html'
     slug_field = 'sampling_feature_code'
@@ -102,13 +137,6 @@ class LeafPackCreateView(LeafPackFormMixin, CreateView):
 
         return context
 
-    def forms_valid(self, forms):
-        is_valid = True
-        for form in forms:
-            if not form.is_valid():
-                is_valid = False
-        return is_valid
-
     def post(self, request, *args, **kwargs):
         leafpack_form = self.get_form()
         bug_forms = self.get_bug_count_forms()
@@ -126,13 +154,40 @@ class LeafPackCreateView(LeafPackFormMixin, CreateView):
         return self.form_invalid(leafpack_form)
 
 
-class LeafPackUpdateView(CreateView):
-    form_class = LeafPackBug
+class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
+    """
+    Update view
+    """
+    form_class = LeafPackForm
     template_name = 'leafpack/leafpack_update.html'
     slug_field = 'sampling_feature_code'
 
     def get_context_data(self, **kwargs):
-        return super(LeafPackUpdateView, self).get_context_data(**kwargs)
+        context = super(LeafPackUpdateView, self).get_context_data(**kwargs)
+        leafpack = self.get_object()
+        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(leafpack)
+        context['sampling_feature_code'] = leafpack.site_registration.sampling_feature_code
+        return context
+
+    def get_object(self, queryset=None):
+        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+
+    def post(self, request, *args, **kwargs):
+        leafpack_form = LeafPackForm(request.POST, instance=self.get_object())
+        bug_forms = self.get_bug_count_forms()
+
+        if self.forms_valid([leafpack_form] + bug_forms):
+            leafpack_form.save()
+
+            for bug_form in bug_forms:
+                bug = LeafPackBug.objects.get(bug=bug_form.instance.bug, leaf_pack=leafpack_form.instance)
+                bug.bug_count = bug_form.cleaned_data['bug_count']
+                bug.save()
+
+            return redirect(reverse('leafpack:view', kwargs={self.slug_field: self.kwargs[self.slug_field],
+                                                             'uuid': self.get_object().uuid}))
+
+        return self.form_invalid(leafpack_form)
 
 
 class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
@@ -147,4 +202,4 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         leafpack = self.get_object()
         leafpack.delete()
-        return redirect(reverse('site_detail', kwargs={'sampling_feature_code': self.kwargs['sampling_feature_code']}))
+        return redirect(reverse('site_detail', kwargs={self.slug_field: self.kwargs[self.slug_field]}))

@@ -15,7 +15,7 @@
     </style>
 
     <div class="container">
-        <form method="POST" action="{% url 'create_leafpack' sampling_feature_code %}">
+        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">
             {% csrf_token %}
             {% with leafpack_form as form %}
             <div class="row">
@@ -110,7 +110,7 @@
             </div>
             {% endwith %}
 {#        </form>#}
-{#        <form method="POST" action="{% url 'create_leafpack' sampling_feature_code %}">#}
+{#        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">#}
 {#        {% csrf_token %}#}
             <div class="row">
                 <div class="col">

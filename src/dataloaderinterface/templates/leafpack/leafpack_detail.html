@@ -5,16 +5,24 @@
 
 {% block content %}
 <div class="container">
+    <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>
     <div class="row">
-        <div class="col-12">
-            <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>
-            <form method="post"
-                  action="{% url 'leafpack:delete_leafpack' leafpack.site_registration.sampling_feature_code leafpack.uuid %}">
-                {% csrf_token %}
-                <button type="submit">Delete</button>
+        <div class="col-6">
 
-            </form>
-            {{ leafpack.uuid }}
+                <form class="inline" method="post" action="{% url 'leafpack:delete' sampling_feature_code leafpack.uuid %}">
+                    {% csrf_token %}
+                    <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
+                </form>
+
+                <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
+                   class="mdl-button mdl-button--raised mdl-button--accent">Update</a>
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <code>{{ leafpack.uuid }}</code>
             <table class="mdl-data-table leafpack-data-table">
                 <tbody>
                     <tr>
@@ -77,6 +85,32 @@
                         <td>types</td>
                         <td>{{ leafpack.types.all|join:", " }}</td>
                     </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <table class="mdl-data-table">
+            <thead>
+            <tr>
+                <th>Macroinvertebrate Name</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+                <tbody>
+                    {% for bug_data in leafpack_bugs %}
+                        <tr>
+                            <td>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})</td>
+                            <td>{{ bug_data.0.bug_count }}</td>
+                        </tr>
+
+                        {% for child_bug in bug_data.1 %}
+                        <tr>
+                            <td>{{ child_bug.bug.common_name|capfirst }} ({{ child_bug.bug.scientific_name }})</td>
+                            <td>{{ child_bug.bug_count }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

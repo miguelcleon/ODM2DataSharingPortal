@@ -63,14 +63,18 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
         return kwargs
 
     @staticmethod
-    def formset_factory():
-        form_list = list()
+    def formset_factory(leafpack=None):
+        form_list = []
 
-        # 'Order', as in the biological classification
-        order_bugs = [bug for bug in Macroinvertebrate.objects.filter(family_of=None).order_by('scientific_name')]
+        order_bugs = [bug for bug in Macroinvertebrate.objects.filter(family_of=None).order_by('common_name')]
 
         for order_bug in order_bugs:
-            order_bug_form = LeafPackBugForm(instance=LeafPackBug(bug=order_bug))
+            if leafpack is not None:
+                lpg = LeafPackBug.objects.get(bug=order_bug.id, leaf_pack=leafpack.id)
+            else:
+                lpg = LeafPackBug(bug=order_bug)
+
+            order_bug_form = LeafPackBugForm(instance=lpg)
 
             families = order_bug.families.all().order_by('scientific_name')
             family_bug_forms = list()
