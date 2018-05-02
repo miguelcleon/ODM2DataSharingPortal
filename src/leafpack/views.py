@@ -17,6 +17,7 @@ from django.core.management import call_command
 from uuid import UUID
 import re
 from datetime import date, timedelta
+from dataloaderinterface.views import LoginRequiredMixin
 
 
 class LeafPackFormMixin(object):
@@ -52,6 +53,9 @@ class LeafPackDetailView(DetailView):
         context['leafpack'] = self.get_object()
 
         return context
+
+    def get(self, request, *args, **kwargs):
+        return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
 class LeafPackCreateView(LeafPackFormMixin, CreateView):
@@ -131,3 +135,16 @@ class LeafPackUpdateView(CreateView):
         return super(LeafPackUpdateView, self).get_context_data(**kwargs)
 
 
+class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Delete view
+    """
+    slug_field = 'sampling_feature_code'
+
+    def get_object(self, queryset=None):
+        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+
+    def post(self, request, *args, **kwargs):
+        leafpack = self.get_object()
+        leafpack.delete()
+        return redirect(reverse('site_detail', kwargs={'sampling_feature_code': self.kwargs['sampling_feature_code']}))

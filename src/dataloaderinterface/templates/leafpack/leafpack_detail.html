@@ -8,6 +8,13 @@
     <div class="row">
         <div class="col-12">
             <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>
+            <form method="post"
+                  action="{% url 'leafpack:delete_leafpack' leafpack.site_registration.sampling_feature_code leafpack.uuid %}">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+
+            </form>
+            {{ leafpack.uuid }}
             <table class="mdl-data-table leafpack-data-table">
                 <tbody>
                     <tr>
