@@ -316,7 +316,7 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <a href="{% url 'create_leafpack' site.sampling_feature.sampling_feature_code %}"
+                            <a href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
                             class="mdl-button mdl-button--raised mdl-button--accent">Add Leaf Pack</a>
                         </div>
                     </div>
@@ -337,7 +337,7 @@
                                             <td>{{ leafpack.id }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.uuid }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">
-                                                <a href="{% url 'leafpack_detail' site.sampling_feature.sampling_feature_code leafpack.uuid %}">Detail</a>
+                                                <a href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.uuid %}">Detail</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
