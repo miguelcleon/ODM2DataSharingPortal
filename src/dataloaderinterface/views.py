@@ -194,12 +194,12 @@ class SiteDetailView(DetailView):
     template_name = 'dataloaderinterface/site_details.html'
 
     def get_queryset(self):
-        return super(SiteDetailView, self).get_queryset().prefetch_related('sensors')
+        return super(SiteDetailView, self).get_queryset().with_sensors()
 
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data(**kwargs)
+        context['is_followed'] = self.object.followed_by.filter(id=self.request.user.id).exists()
         context['tsa_url'] = settings.TSA_URL
-        context['is_followed'] = self.request.user.is_authenticated and self.request.user.followed_sites.filter(sampling_feature_code=self.object.sampling_feature_code).exists()
 
         try:
             context["hydroshare_account"] = self.request.user.odm2user.hydroshare_account
