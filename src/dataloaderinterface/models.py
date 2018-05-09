@@ -15,6 +15,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 
+from dataloaderinterface.querysets import SiteRegistrationQuerySet
+
 HYDROSHARE_SYNC_TYPES = (('M', 'Manual'), ('S', 'Scheduled'))
 
 
@@ -25,7 +27,7 @@ class SiteRegistration(models.Model):
     registration_date = models.DateTimeField(db_column='RegistrationDate')
     deployment_date = models.DateTimeField(db_column='DeploymentDate', blank=True, null=True)
 
-    django_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='registrations')
+    django_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='deployed_sites')
     affiliation_id = models.IntegerField(db_column='AffiliationID')
 
     person = models.CharField(max_length=765, db_column='Person')  # DEPRECATED
@@ -51,6 +53,8 @@ class SiteRegistration(models.Model):
 
     followed_by = models.ManyToManyField(User, related_name='followed_sites')
     alert_listeners = models.ManyToManyField(User, related_name='+', through='SiteAlert')
+
+    objects = SiteRegistrationQuerySet.as_manager()
 
     @property
     def sampling_feature(self):

@@ -56,15 +56,6 @@ class LoginRequiredMixin(object):
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/home.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(HomeView, self).get_context_data()
-    #     context['device_results'] = []
-    #     for device in DeviceRegistration.objects.get_queryset().filter(user=self.request.user.id):
-    #         sampling_feature = SamplingFeature.objects.get(sampling_feature_uuid__exact=device.deployment_sampling_feature_uuid)
-    #         feature_actions = sampling_feature.feature_actions.prefetch_related('results__timeseriesresult__values', 'results__variable').all()
-    #         context['device_results'].append({'device': device, 'feature_actions': feature_actions})
-    #     return context
-
 
 class UserUpdateView(UpdateView):
     form_class = UserUpdateForm
@@ -97,7 +88,6 @@ class UserUpdateView(UpdateView):
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-
         if request.POST.get('disconnect-hydroshare-account'):
             odm2user = request.user.odm2user
             hs_acct_id = odm2user.hydroshare_account.pk
@@ -152,16 +142,16 @@ class SitesListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return super(SitesListView, self).get_queryset()\
-            .filter(django_user_id=self.request.user.id)\
-            .prefetch_related('sensors')\
-            .annotate(latest_measurement=Max('sensors__last_measurement_datetime'), latest_measurement_utc=Max('sensors__last_measurement_utc_datetime'))
+            .with_sensors()\
+            .with_latest_measurement()\
+            .deployed_by(user_id=self.request.user.id)
 
     def get_context_data(self, **kwargs):
         context = super(SitesListView, self).get_context_data()
-        context['followed_sites'] = self.request.user.followed_sites\
-            .prefetch_related('sensors')\
-            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'), latest_measurement_utc=Max('sensors__last_measurement_utc_datetime'))\
-            .all()
+        context['followed_sites'] = super(SitesListView, self).get_queryset()\
+            .with_sensors()\
+            .with_latest_measurement()\
+            .followed_by(user_id=self.request.user.id)
         return context
 
 
@@ -180,7 +170,6 @@ class StatusListView(ListView):
             .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))\
             .order_by('sampling_feature_code')
 
-    # noinspection PyArgumentList
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
         context['followed_sites'] = self.request.user.followed_sites \
