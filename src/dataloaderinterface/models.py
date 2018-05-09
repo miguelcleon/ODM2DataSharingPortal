@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 # Create your models here.
 import uuid
-from datetime import timedelta
 
 from datetime import timedelta, datetime
 
@@ -28,8 +27,18 @@ class SiteRegistration(models.Model):
 
     django_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='registrations')
     affiliation_id = models.IntegerField(db_column='AffiliationID')
-    person = models.CharField(max_length=765, db_column='Person')
+
+    person = models.CharField(max_length=765, db_column='Person')  # DEPRECATED
+
+    person_id = models.IntegerField(db_column='PersonID', null=True)  # NEW: TEMPORARILY NULLABLE
+    person_first_name = models.CharField(max_length=255, db_column='PersonFirstName', blank=True, null=True)  # NEW: TEMPORARILY NULLABLE
+    person_last_name = models.CharField(max_length=255, db_column='PersonLastName', blank=True, null=True)  # NEW
+
     organization = models.CharField(max_length=255, db_column='Organization', blank=True, null=True)
+
+    organization_id = models.IntegerField(db_column='OrganizationID', null=True)  # NEW
+    organization_code = models.CharField(db_column='OrganizationCode', max_length=50, blank=True, null=True)  # NEW
+    organization_name = models.CharField(max_length=255, db_column='OrganizationName', blank=True, null=True)  # NEW
 
     sampling_feature_id = models.IntegerField(db_column='SamplingFeatureID')
     sampling_feature_code = models.CharField(max_length=50, unique=True, db_column='SamplingFeatureCode')
@@ -51,7 +60,6 @@ class SiteRegistration(models.Model):
     def odm2_affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
 
-
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
 
@@ -61,29 +69,76 @@ class SiteRegistration(models.Model):
         )
 
 
+class SensorMeasurement(models.Model):
+    sensor = models.OneToOneField('SiteSensor', related_name='last_measurement', primary_key=True)
+    value_datetime = models.DateTimeField()
+    value_datetime_utc_offset = models.DurationField()
+    data_value = models.FloatField()
+    # measurement_local_datetime = models.DateTimeField(db_column='MeasurementUtcDatetime')
+
+    @property
+    def measurement_local_datetime(self):
+        return
+
+    def __str__(self):
+        return '%s: %s' % (self.value_datetime, self.data_value)
+
+    def __repr__(self):
+        return "<SensorMeasurement('%s', %s, '%s', '%s')>" % (
+            self.sensor, self.value_datetime, self.value_datetime_utc_offset, self.data_value
+        )
+
+
+class SensorOutput(models.Model):
+    instrument_output_variable_id = models.IntegerField(db_index=True)
+
+    model_id = models.IntegerField()
+    model_name = models.CharField(max_length=255)
+    model_manufacturer = models.CharField(max_length=255)
+
+    variable_id = models.IntegerField()
+    variable_name = models.CharField(max_length=255)
+    variable_code = models.CharField(max_length=50)
+
+    unit_id = models.IntegerField()
+    unit_name = models.CharField(max_length=255)
+    unit_abbreviation = models.CharField(max_length=255)
+
+    sampled_medium = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return '%s %s %s %s %s' % (self.model_manufacturer, self.model_name, self.variable_code, self.unit_name, self.sampled_medium)
+
+    def __repr__(self):
+        return "<SensorOutput('%s', [%s], ['%s'], ['%s'], ['%s'])>" % (
+            self.pk, self.model_name, self.variable_code, self.unit_name, self.sampled_medium
+        )
+
+
 class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
 
     result_id = models.IntegerField(db_column='ResultID', unique=True)
     result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
 
-    # instrument_output_variable_id = models.IntegerField(db_column='InstrumentOutputVariableID', null=True)
-    model_name = models.CharField(db_column='ModelName', max_length=255)
-    model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255)
+    sensor_output = models.ForeignKey('SensorOutput', related_name='sensor_instances', null=True)  # NEW: TEMPORARILY NULLABLE
 
-    variable_name = models.CharField(max_length=255, db_column='VariableName')
-    variable_code = models.CharField(max_length=50, db_column='VariableCode')
+    model_name = models.CharField(db_column='ModelName', max_length=255)  # DEPRECATED
+    model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255)  # DEPRECATED
 
-    unit_name = models.CharField(max_length=255, db_column='UnitsName')
-    unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')
+    variable_name = models.CharField(max_length=255, db_column='VariableName')  # DEPRECATED
+    variable_code = models.CharField(max_length=50, db_column='VariableCode')  # DEPRECATED
 
-    sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)
+    unit_name = models.CharField(max_length=255, db_column='UnitsName')  # DEPRECATED
+    unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')  # DEPRECATED
 
-    last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)
-    last_measurement_value = models.FloatField(db_column='LastMeasurementValue', blank=True, null=True)
-    last_measurement_datetime = models.DateTimeField(db_column='LastMeasurementDatetime', blank=True, null=True)
-    last_measurement_utc_offset = models.IntegerField(db_column='LastMeasurementUtcOffset', blank=True, null=True)
-    last_measurement_utc_datetime = models.DateTimeField(db_column='LastMeasurementUtcDatetime', blank=True, null=True)
+    sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)  # DEPRECATED
+
+    last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)  # DEPRECATED
+    last_measurement_value = models.FloatField(db_column='LastMeasurementValue', blank=True, null=True)  # DEPRECATED
+    last_measurement_datetime = models.DateTimeField(db_column='LastMeasurementDatetime', blank=True, null=True)  # DEPRECATED
+    last_measurement_utc_offset = models.IntegerField(db_column='LastMeasurementUtcOffset', blank=True, null=True)  # DEPRECATED
+    last_measurement_utc_datetime = models.DateTimeField(db_column='LastMeasurementUtcDatetime', blank=True, null=True)  # DEPRECATED
 
     activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
     activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
