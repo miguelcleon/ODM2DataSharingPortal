@@ -183,8 +183,7 @@ class BrowseSitesListView(ListView):
     template_name = 'dataloaderinterface/browse-sites.html'
 
     def get_queryset(self):
-        return super(BrowseSitesListView, self).get_queryset()\
-            .prefetch_related('sensors').annotate(latest_measurement=Max('sensors__last_measurement_datetime'))
+        return super(BrowseSitesListView, self).get_queryset().with_sensors().with_latest_measurement()
 
 
 class SiteDetailView(DetailView):
