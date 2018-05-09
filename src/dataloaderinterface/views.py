@@ -162,22 +162,17 @@ class StatusListView(ListView):
 
     def get_queryset(self):
         return super(StatusListView, self).get_queryset()\
-            .filter(django_user_id=self.request.user.id)\
-            .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
-                'EnviroDIY_Mayfly_Batt',
-                'EnviroDIY_Mayfly_Temp'
-            ]), to_attr='status_sensors')) \
-            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))\
+            .with_status_sensors()\
+            .with_latest_measurement()\
+            .deployed_by(self.request.user.id)\
             .order_by('sampling_feature_code')
 
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
-        context['followed_sites'] = self.request.user.followed_sites \
-            .prefetch_related(Prefetch('sensors', queryset=SiteSensor.objects.filter(variable_code__in=[
-                'EnviroDIY_Mayfly_Batt',
-                'EnviroDIY_Mayfly_Temp'
-            ]), to_attr='status_sensors')) \
-            .annotate(latest_measurement=Max('sensors__last_measurement_utc_datetime'))\
+        context['followed_sites'] = super(StatusListView, self).get_queryset()\
+            .with_status_sensors()\
+            .with_latest_measurement()\
+            .followed_by(user_id=self.request.user.id)\
             .order_by('sampling_feature_code')
         return context
 
