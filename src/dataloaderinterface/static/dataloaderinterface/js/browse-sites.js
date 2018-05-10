@@ -205,11 +205,10 @@ $(document).ready(function () {
         }
         else {
             for (var i = 0; i < markers.length; i++) {
-                var visible = false;    // Starts as false by default
+                var visible = true;    // Starts as true by default
                 for (var j = 0; j < checkedItems.length; j++) {
-                    if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) >= 0) {
-                        visible = true; // Display if included in some filter
-                        continue;
+                    if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) < 0) {
+                        visible = false; // Hide if not included in some filter
                     }
                 }
                 markers[i].setVisible(visible);
