@@ -2,22 +2,28 @@
 from __future__ import unicode_literals
 
 import random
+import csv
+import io
+import re
+from tempfile import mkstemp
+from uuid import UUID
+from datetime import date, timedelta
+from operator import __or__ as OR
+from functools import reduce
 
-# from django.shortcuts import render
 from dataloaderinterface.models import SiteRegistration
 from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView, BaseDetailView
 from django.views.generic.detail import DetailView
 from django.shortcuts import reverse, redirect
 from django.db.models import Q
-from operator import __or__ as OR
-from functools import reduce
+from django.http import HttpResponse
+from django.core.management import call_command
+
 from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
-from django.core.management import call_command
-from uuid import UUID
-import re
-from datetime import date, timedelta
 from dataloaderinterface.views import LoginRequiredMixin
+
+from csv_parser import LeafPackCSVWRiter
 
 
 class LeafPackFormMixin(object):
@@ -87,6 +93,9 @@ class LeafPackDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
+        # import csv_parser
+        # csv_parser.parse()
+        # call_command('set_leafpackdb_defaults')
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
@@ -203,3 +212,26 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
         leafpack = self.get_object()
         leafpack.delete()
         return redirect(reverse('site_detail', kwargs={self.slug_field: self.kwargs[self.slug_field]}))
+
+
+def download_leafpack_csv(request, sampling_feature_code, uuid):
+    leafpack = LeafPack.objects.get(uuid=UUID(uuid))
+    site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
+
+    writer = LeafPackCSVWRiter(leafpack, site)
+    writer.write()
+    output = writer.read()
+
+    res = HttpResponse(output, content_type='application/csv')
+    res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
+
+    # fd, path = mkstemp(suffix='.csv')
+    # with open(path, 'w') as fout:
+    #     writer = csv.writer(fout)
+    #     csv_parser.parse(writer, leafpack, site)
+    #
+    # with open(path, 'rb') as fout:
+    #     res = HttpResponse(fout.read(), content_type='application/csv')
+    #     res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
+
+    return res

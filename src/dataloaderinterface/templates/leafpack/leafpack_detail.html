@@ -17,6 +17,9 @@
                 <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
                    class="mdl-button mdl-button--raised mdl-button--accent">Update</a>
 
+                <a href="{% url 'leafpack:csv_download' sampling_feature_code leafpack.uuid %}"
+                target="_self">Download csv</a>
+
         </div>
 
     </div>
@@ -78,12 +81,34 @@
                         <td>{{ leafpack.storm_count }}</td>
                     </tr>
                     <tr>
-                        <td>storm_precipiation</td>
-                        <td>{{ leafpack.storm_precipiation }}</td>
+                        <td>storm_precipitation</td>
+                        <td>{{ leafpack.storm_precipitation }}</td>
                     </tr>
                     <tr>
                         <td>types</td>
                         <td>{{ leafpack.types.all|join:", " }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Water Quality Index Values</h4>
+            <table class="mdl-data-table">
+                <tbody>
+                    <tr>
+                        <th>Total Number of Individuals Found</th>
+                        <td>{{ leafpack.total_bug_count }}</td>
+                    </tr>
+                    <tr>
+                        <th>Biotic Index</th>
+                        <td>{{ leafpack.biotic_index|floatformat:2 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Water Quality Category</th>
+                        <td>{{ leafpack.water_quality }}</td>
+                    </tr>
+                    <tr>
+                        <th>Percent EPT</th>
+                        <td>{{ leafpack.percent_EPT|floatformat:2 }}</td>
                     </tr>
                 </tbody>
             </table>
