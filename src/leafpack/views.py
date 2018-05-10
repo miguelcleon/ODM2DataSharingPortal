@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import random
 import csv
-import csv_parser
 import io
 import re
 from tempfile import mkstemp
@@ -23,6 +22,8 @@ from django.core.management import call_command
 from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
 from dataloaderinterface.views import LoginRequiredMixin
+
+from csv_parser import LeafPackCSVWRiter
 
 
 class LeafPackFormMixin(object):
@@ -215,14 +216,22 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
 
 def download_leafpack_csv(request, sampling_feature_code, uuid):
     leafpack = LeafPack.objects.get(uuid=UUID(uuid))
+    site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
 
-    fd, path = mkstemp(suffix='.csv')
-    with open(path, 'w') as fout:
-        writer = csv.writer(fout)
-        csv_parser.parse(writer, leafpack)
+    writer = LeafPackCSVWRiter(leafpack, site)
+    writer.write()
+    output = writer.read()
 
-    with open(path, 'rb') as fout:
-        res = HttpResponse(fout.read(), content_type='application/csv')
-        res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
+    res = HttpResponse(output, content_type='application/csv')
+    res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
+
+    # fd, path = mkstemp(suffix='.csv')
+    # with open(path, 'w') as fout:
+    #     writer = csv.writer(fout)
+    #     csv_parser.parse(writer, leafpack, site)
+    #
+    # with open(path, 'rb') as fout:
+    #     res = HttpResponse(fout.read(), content_type='application/csv')
+    #     res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
 
     return res
