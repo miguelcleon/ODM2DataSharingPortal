@@ -153,7 +153,7 @@ class ODM2User(models.Model):
         return Affiliation.objects.get(pk=self.affiliation_id)
 
     def can_administer_site(self, registration):
-        return self.user.is_staff or registration.user == self
+        return self.settings.AUTH_USER_MODEL.is_staff or registration.user == self
 
     class Meta:
         verbose_name = "ODM2 User"

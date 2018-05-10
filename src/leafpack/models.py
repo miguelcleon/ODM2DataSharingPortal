@@ -25,6 +25,7 @@ class Macroinvertebrate(models.Model):
                                   null=True,
                                   blank=True,
                                   related_name='families')
+    pollution_tolerance = models.FloatField()
 
     def __str__(self):
         return self.scientific_name
@@ -51,8 +52,87 @@ class LeafPack(models.Model):
     had_flood = models.BooleanField(default=False)
     had_drought = models.BooleanField(default=False)
     storm_count = models.IntegerField(default=0)
-    storm_precipiation = models.FloatField(default=0)
+    storm_precipitation = models.FloatField(default=0)
     types = models.ManyToManyField('LeafPackType')
+
+    def total_bug_count(self):
+        total = 0
+        lpgs = LeafPackBug.objects.filter(leaf_pack=self, bug_count__gt=0)
+        for lpg in lpgs:
+            families = lpg.bug.families.all()
+            sub_bug_count = 0
+            if len(families):
+                for family in families:
+                    for lpg_ in lpgs:
+                        if family == lpg_.bug:
+                            sub_bug_count += lpg_.bug_count
+                            break
+            total += lpg.bug_count - sub_bug_count
+        return total
+
+    def percent_EPT(self):
+        """
+        :return: The sum of the percentages of Ephemeroptera, Placoptera, and Tricoptera
+        """
+        total = self.total_bug_count()
+
+        ephemeroptera = Macroinvertebrate.objects.get(scientific_name='Ephemeroptera')
+        placoptera = Macroinvertebrate.objects.get(scientific_name='Plecoptera')
+        tricoptera = Macroinvertebrate.objects.get(scientific_name='Tricoptera')
+
+        ephemeroptera_count = LeafPackBug.objects.get(leaf_pack=self, bug=ephemeroptera).bug_count
+        placoptera_count = LeafPackBug.objects.get(leaf_pack=self, bug=placoptera).bug_count
+        tricoptera_count = LeafPackBug.objects.get(leaf_pack=self, bug=tricoptera).bug_count
+
+        if total == 0:
+            return 0
+
+        return (float(ephemeroptera_count + placoptera_count + tricoptera_count) / float(total)) * 100.0
+
+    def biotic_index(self):
+        leafpack_count = self.leafpack_retrieval_count
+
+        if leafpack_count == 0:
+            return 0
+
+        count_avg_total = tolerance_avg_total = 0
+
+        lpgs = LeafPackBug.objects.filter(leaf_pack=self, bug_count__gt=0)
+
+        for lpg in lpgs:
+            sub_bug_count = 0
+            families = lpg.bug.families.all()
+            if len(families):
+                for family in families:
+                    for lpg_ in lpgs:
+                        if family == lpg_.bug:
+                            sub_bug_count += lpg_.bug_count
+                            break
+
+            if sub_bug_count > 0:
+                pass
+
+            count_avg = float(lpg.bug_count - sub_bug_count) / float(leafpack_count)
+            count_avg_total += count_avg
+            tolerance_avg_total += (count_avg * lpg.bug.pollution_tolerance)
+
+        if count_avg_total == 0:
+            return 0
+
+        return float(tolerance_avg_total) / float(count_avg_total)
+
+    def water_quality(self, biotic_index=None):
+        if not biotic_index:
+            biotic_index = self.biotic_index()
+
+        if biotic_index < 3.75:
+            return 'Excellent - Organic pollution unlikely'
+        elif 3.75 <= biotic_index < 5.0:
+            return 'Good - Some organic pollution'
+        elif 5.0 <= biotic_index < 6.5:
+            return 'Fair - Substantial pollution likely'
+        else:
+            return 'Poor - Severe pollution likely'
 
 
 class LeafPackBug(models.Model):
