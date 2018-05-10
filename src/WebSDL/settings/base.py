@@ -44,6 +44,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'rest_framework',
+    'accounts',
     'dataloader',
     'dataloaderservices',
     'dataloaderinterface',
@@ -200,3 +201,5 @@ CRONTAB_LOGFILE_PATH = data.get('crontab_log_file', '/var/log/odm2websdl-cron.lo
 
 CRONTAB_EXECUTE_DAILY_AT_HOUR = 5
 
+
+AUTH_USER_MODEL = 'accounts.User'
