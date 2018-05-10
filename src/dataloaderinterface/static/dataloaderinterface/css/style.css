@@ -1099,6 +1099,10 @@ div#followedSites .mdl-card__menu {
     margin-bottom: 32px;
 }
 
-/*.datepicker-days {*/
-    /*display: block !important;*/
-/*}*/
+.form-leafpack input[type="number"] {
+    width: 100px;
+}
+
+.form-leafpack .mdl-card__supporting-text.default-font {
+    color: initial;
+}

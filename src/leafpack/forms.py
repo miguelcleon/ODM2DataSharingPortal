@@ -13,12 +13,63 @@ class LeafPackForm(forms.ModelForm):
     types = forms.ModelMultipleChoiceField(
         widget=forms.CheckboxSelectMultiple,
         queryset=LeafPackType.objects.all(),
-        label='Leaf Pack Type and Composition'
     )
 
     placement_date = forms.DateField(
         label='Placement Date'
     )
+
+    leafpack_placement_count = forms.IntegerField(
+        label='Number of Packs Placed',
+        min_value=0
+    )
+
+    placement_air_temp = forms.FloatField(
+        label='Placement Air Temperature (Celcius)'
+    )
+
+    placement_water_temp = forms.FloatField(
+        label='Placement Water Temperature (Celcius)'
+    )
+
+    retrieval_date = forms.DateField(
+        label='Retrieval Date'
+    )
+
+    leafpack_retrieval_count = forms.IntegerField(
+        label='Number of Packs Retrieved'
+    )
+
+    retrieval_air_temp = forms.FloatField(
+        label='Retrieval Air Temperature (Celcius)'
+    )
+
+    retrieval_water_temp = forms.FloatField(
+        label='Retrieval Water Temperature (Celcius)'
+    )
+
+    had_storm = forms.BooleanField(
+        label='Did storms occur while your leaf packs were in the stream?'
+    )
+
+    storm_count = forms.IntegerField(
+        label='Number of storms that occured',
+        min_value=0
+    )
+
+    storm_precipiation = forms.FloatField(
+        label='Total precipitation depth (cm) that occurred',
+        min_value=0
+    )
+
+    had_flood = forms.BooleanField(
+        label='Did flooding occur?'
+    )
+
+    had_drought = forms.BooleanField(
+        label='Was this site experiencing a drought during your experiment?',
+    )
+
 
     class Meta:
         model = LeafPack

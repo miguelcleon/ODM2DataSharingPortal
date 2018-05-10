@@ -15,160 +15,186 @@
                     </div>
                 </div>
             </div>
-            <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">
+            <form class="form-leafpack" method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">
                 {% csrf_token %}
                 {% with leafpack_form as form %}
-                <div class="row">
-                    {{ form.site_registration }}
-                    <div class="col-12">
-                        <h4>Step 1 ­ Enter your leaf pack placement information</h4>
+                    <div class="row">
+                        {{ form.site_registration }}
+                        <div class="col-12">
+                            <h5 class="headline">Step 1 ­ Enter your leaf pack placement information</h5>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6">
+                            <div class="mdl-card mdl-shadow--2dp full-width">
+                                <div class="mdl-card__title mdl-card--border">
+                                    Leaf Pack Placement Data
+                                </div>
+                                <div class="mdl-card__supporting-text default-font">
+                                    <div class="form-field">
+                                        <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
+                                        {{ form.placement_date|add_class:"form-control datepicker" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.leafpack_placement_count.id_for_label }}">{{ form.leafpack_placement_count.label }}</label>
+                                        {{ form.leafpack_placement_count|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
+                                        {{ form.placement_air_temp|add_class:"form-control" }}
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
+                                        {{ form.placement_water_temp|add_class:"form-control" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6">
+                            <div class="mdl-card mdl-shadow--2dp full-width">
+                                <div class="mdl-card__title mdl-card--border">
+                                    Leaf Pack Type and Composition
+                                </div>
+
+                                <div class="mdl-card__supporting-text default-font">
+                                    <div class="form-field">
+                                        {{ form.types }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-field">
-                            <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
-                            {{ form.placement_date|add_class:"form-control datepicker" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.leafpack_placement_count.id_for_label }}">{{ form.leafpack_placement_count.label }}</label>
-                            {{ form.leafpack_placement_count|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
-                            {{ form.placement_air_temp|add_class:"form-control" }}
-                        </div>
-                        <div class="form-field">
-                            <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
-                            {{ form.placement_water_temp|add_class:"form-control" }}
-                        </div>
-
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-field">
-                            <label for="{{ form.types.id_for_label }}">{{ form.types.label }}</label>
-                            {{ form.types|add_class:"form-control" }}
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-sm-6">
-
-                        <div class="form-field">
-                            <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
-                            {{ form.retrieval_date|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
-                            {{ form.leafpack_retrieval_count|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
-                            {{ form.retrieval_air_temp|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
-                            {{ form.retrieval_water_temp|add_class:"form-control" }}
-                        </div>
-
-                    </div>
-
-                    <div class="col-sm-6">
-                        <div class="form-field">
-                            <label for="{{ form.had_storm.id_for_label }}">{{ form.had_storm.label }}</label>
-                            {{ form.had_storm|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.storm_count.id_for_label }}">{{ form.storm_count.label }}</label>
-                            {{ form.storm_count|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.storm_precipiation.id_for_label }}">{{ form.storm_precipiation.label }}</label>
-                            {{ form.storm_precipiation|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.had_flood.id_for_label }}">{{ form.had_flood.label }}</label>
-                            {{ form.had_flood|add_class:"form-control" }}
-                        </div>
-
-                        <div class="form-field">
-                            <label for="{{ form.had_drought.id_for_label }}">{{ form.had_drought.label }}</label>
-                            {{ form.had_drought|add_class:"form-control" }}
-                        </div>
-
-                    </div>
-
-                </div>
-                {% endwith %}
-    {#        </form>#}
-    {#        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">#}
-    {#        {% csrf_token %}#}
-                <div class="row">
-                    <div class="col">
-                        <h2>Macroinvertebrate Counts</h2>
-                        <p>Enter the numbers you recorded in the "TOTAL" column in the Project Summary Data Sheet:</p>
-                        <p>Enter 0 for taxa not found in your leaf packs!</p>
-                    </div>
-
-                </div>
-                <div class="row">
 
                     <div class="row">
-                    {% for bug_forms in bug_count_form_list %}
-
-                        {% with parent_form=bug_forms.0 %}
-
                         <div class="col-12">
-
-                            <div class="form-field form-inline {% if form.is_family %}is-bug-family{% endif %}">
-
-                                {{ parent_form.bug_count|add_class:"form-control" }}
-
-                                <label class="" for="{{ parent_form.bug_count.id_for_label }}">
-
-                                    {{ parent_form.bug_count.label|capfirst }}
-
-                                    {% if parent_form.has_children %}
-                                        ({{ parent_form.instance.bug.scientific_name }}) (total, including Families below)
-                                    {% else %}
-                                        ({{ parent_form.instance.bug.scientific_name }})
-                                    {% endif %}
-
-                                </label>
-                            </div>
-
-                            {% for family_form in bug_forms.1 %}
-                            <div class="form-field form-inline is-bug-family">
-
-                                {{ family_form.bug_count|add_class:"form-control" }}
-
-                                <label class="" for="{{ family_form.bug_count.id_for_label }}">
-                                    {{ family_form.bug_count.label|capfirst }} ({{ family_form.instance.bug.scientific_name }})
-                                </label>
-                            </div>
-                            {% endfor %}
-
+                            <h5 class="headline">Step 2 ­ Enter your leafpack data</h5>
                         </div>
-                        {% endwith %}
-                    {% endfor %}
+                        <div class="col-sm-12 col-md-6">
+                            <div class="mdl-card mdl-shadow--2dp full-width">
+                                <div class="mdl-card__title mdl-card--border">
+                                    Leaf Pack Retrieval Data
+                                </div>
+                                <div class="mdl-card__supporting-text default-font">
+                                    <div class="form-field">
+                                        <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
+                                        {{ form.retrieval_date|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
+                                        {{ form.leafpack_retrieval_count|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
+                                        {{ form.retrieval_air_temp|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
+                                        {{ form.retrieval_water_temp|add_class:"form-control" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6">
+                            <div class="mdl-card mdl-shadow--2dp full-width">
+                                <div class="mdl-card__title mdl-card--border">
+                                    Storm and Non-Storm Events
+                                </div>
+                                <div class="mdl-card__supporting-text default-font">
+                                    <div class="form-field">
+                                        <label for="{{ form.had_storm.id_for_label }}">{{ form.had_storm.label }}</label>
+                                        {{ form.had_storm }}
+                                    </div>
+
+                                    <label>If storms occured, please provide some additional information:</label>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.storm_count.id_for_label }}">{{ form.storm_count.label }}</label>
+                                        {{ form.storm_count|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.storm_precipiation.id_for_label }}">{{ form.storm_precipiation.label }}</label>
+                                        {{ form.storm_precipiation|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.had_flood.id_for_label }}">{{ form.had_flood.label }}</label>
+                                        {{ form.had_flood }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.had_drought.id_for_label }}">{{ form.had_drought.label }}</label>
+                                        {{ form.had_drought }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+                {#        </form>#}
+                {#        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">#}
+                {#        {% csrf_token %}#}
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <div class="mdl-card mdl-shadow--2dp full-width">
+                            <div class="mdl-card__title mdl-card--border">
+                                Macroinvertebrate Counts
+                            </div>
+                            <div class="mdl-card__supporting-text mdl-card--border full-width">
+                                <p>Enter the numbers you recorded in the "TOTAL" column in the Project Summary Data
+                                    Sheet:</p>
+                                <p>Enter 0 for taxa not found in your leaf packs!</p>
+                            </div>
+                            <div class="mdl-card__supporting-text mdl-card--border default-font">
+                                {% for bug_forms in bug_count_form_list %}
+                                    {% with parent_form=bug_forms.0 %}
+                                        <div class="col-12">
+                                            <div class="form-field form-inline {% if form.is_family %}is-bug-family{% endif %}">
+                                                {{ parent_form.bug_count|add_class:"form-control" }}
+                                                <label style="margin-left: 20px;" for="{{ parent_form.bug_count.id_for_label }}">
+                                                    {{ parent_form.bug_count.label|capfirst }}
+                                                    {% if parent_form.has_children %}
+                                                        ({{ parent_form.instance.bug.scientific_name }}) (total,
+                                                        including Families below)
+                                                    {% else %}
+                                                        ({{ parent_form.instance.bug.scientific_name }})
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+
+                                            {% for family_form in bug_forms.1 %}
+                                                <div class="form-field form-inline is-bug-family" style="margin-left: 40px;">
+                                                    {{ family_form.bug_count|add_class:"form-control" }}
+
+                                                    <label style="margin-left: 20px;" for="{{ family_form.bug_count.id_for_label }}">
+                                                        {{ family_form.bug_count.label|capfirst }}
+                                                        ({{ family_form.instance.bug.scientific_name }})
+                                                    </label>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endwith %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Create</button>
-
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Submit
+                        </button>
+                    </div>
+                </div>
             </form>
-
         </div>
     </div>
 {% endblock %}
