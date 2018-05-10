@@ -16,7 +16,9 @@ class LeafPackForm(forms.ModelForm):
         label='Leaf Pack Type and Composition'
     )
 
-    placement_date = forms.DateField()
+    placement_date = forms.DateField(
+        label='Placement Date'
+    )
 
     class Meta:
         model = LeafPack

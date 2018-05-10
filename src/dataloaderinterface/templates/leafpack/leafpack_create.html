@@ -8,15 +8,26 @@
 
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title">
+                        Create a Leaf Pack Experiment
+                    </div>
+                </div>
+            </div>
             <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">
                 {% csrf_token %}
                 {% with leafpack_form as form %}
                 <div class="row">
                     {{ form.site_registration }}
+                    <div class="col-12">
+                        <h4>Step 1 ­ Enter your leaf pack placement information</h4>
+                    </div>
+
                     <div class="col-sm-6">
                         <div class="form-field">
                             <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
-                            {{ form.placement_date|add_class:"form-control" }}
+                            {{ form.placement_date|add_class:"form-control datepicker" }}
                         </div>
 
                         <div class="form-field">
@@ -157,6 +168,12 @@
                 <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Create</button>
 
             </form>
+
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'dataloaderinterface/js/leafpack-create.js' %}"></script>
 {% endblock %}

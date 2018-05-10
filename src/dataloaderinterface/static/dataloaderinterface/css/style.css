@@ -1094,6 +1094,11 @@ div#followedSites .mdl-card__menu {
 .login-page-headline {
     background-color: rgba(0, 0, 0, 0.54);
 }
- .login-page-headline p {
-     margin-bottom: 32px;
- }
+
+.login-page-headline p {
+    margin-bottom: 32px;
+}
+
+/*.datepicker-days {*/
+    /*display: block !important;*/
+/*}*/
