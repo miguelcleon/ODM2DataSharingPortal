@@ -51,7 +51,7 @@ class LeafPack(models.Model):
     had_flood = models.BooleanField(default=False)
     had_drought = models.BooleanField(default=False)
     storm_count = models.IntegerField(default=0)
-    storm_precipiation = models.FloatField(default=0)
+    storm_precipitation = models.FloatField(default=0)
     types = models.ManyToManyField('LeafPackType')
 
 
