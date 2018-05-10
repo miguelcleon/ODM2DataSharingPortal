@@ -27,7 +27,7 @@ class SiteRegistration(models.Model):
     registration_date = models.DateTimeField(db_column='RegistrationDate')
     deployment_date = models.DateTimeField(db_column='DeploymentDate', blank=True, null=True)
 
-    django_user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='User', related_name='registrations')
+    django_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='User', related_name='deployed_sites')
     affiliation_id = models.IntegerField(db_column='AffiliationID')
     person = models.CharField(max_length=765, db_column='Person')
     organization = models.CharField(max_length=255, db_column='Organization', blank=True, null=True)
@@ -41,8 +41,8 @@ class SiteRegistration(models.Model):
     longitude = models.FloatField(db_column='Longitude')
     site_type = models.CharField(max_length=765, db_column='SiteType')
 
-    followed_by = models.ManyToManyField(User, related_name='followed_sites')
-    alert_listeners = models.ManyToManyField(User, related_name='+', through='SiteAlert')
+    followed_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followed_sites')
+    alert_listeners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='+', through='SiteAlert')
 
     @property
     def sampling_feature(self):
@@ -144,7 +144,7 @@ class SiteSensor(models.Model):
 
 
 class ODM2User(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
     hydroshare_account = models.OneToOneField('HydroShareAccount', db_column='hs_account_id', null=True, blank=True)
 
@@ -366,7 +366,7 @@ class HydroShareSyncLog(models.Model):
 
 
 class SiteAlert(models.Model):
-    user = models.ForeignKey(User, db_column='User', related_name='site_alerts')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, db_column='User', related_name='site_alerts')
     site_registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='alerts')
     last_alerted = models.DateTimeField(db_column='LastAlerted', blank=True, null=True)
     hours_threshold = models.DurationField(db_column='HoursThreshold', default=timedelta(hours=1))
