@@ -21,6 +21,11 @@ class AffiliationQuerySet(ODM2QuerySet):
         return self.select_related('person').prefetch_related('organization')
 
 
+class OrganizationQuerySet(ODM2QuerySet):
+    def exclude_vendors(self):
+        return self.exclude(organization_type__in=['Vendor', 'Manufacturer'])
+
+
 class MethodQuerySet(ODM2QuerySet):
     def instrument_deployment_methods(self):
         return self.filter(method_type='Instrument deployment')

@@ -134,7 +134,13 @@ class UserRegistrationForm(UserCreationForm):
     last_name = forms.CharField(required=True, max_length=50)
     email = forms.EmailField(required=True, max_length=254)
     organization = UserOrganizationField(
-        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']).order_by('organization_name'), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
+        queryset=Organization.objects.exclude_vendors().order_by('organization_name'),
+        required=False,
+        #  TODO: set help text in configuration file so it's customizable.
+        help_text='Begin to enter the common name of your organization to choose from the list. '
+                  'If "No results found", then clear your entry, click on the drop-down-list to select '
+                  '"Add New Organization".'
+    )
     agreement = forms.BooleanField(required=True)
 
     def save(self, commit=True):
