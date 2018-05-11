@@ -9,23 +9,24 @@
     <div class="row">
         <div class="col-6">
 
-                <form class="inline" method="post" action="{% url 'leafpack:delete' sampling_feature_code leafpack.uuid %}">
+                <form class="inline" method="post" action="{% url 'leafpack:delete' sampling_feature_code leafpack.id %}">
                     {% csrf_token %}
                     <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
                 </form>
 
-                <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
+                <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
                    class="mdl-button mdl-button--raised mdl-button--accent">Update</a>
 
-                <a href="{% url 'leafpack:csv_download' sampling_feature_code leafpack.uuid %}"
+                <a href="{% url 'leafpack:csv_download' sampling_feature_code leafpack.id %}"
                 target="_self">Download csv</a>
 
         </div>
 
     </div>
     <div class="row">
+
         <div class="col-6">
-            <code>{{ leafpack.uuid }}</code>
+
             <table class="mdl-data-table leafpack-data-table">
                 <tbody>
                     <tr>
@@ -37,8 +38,8 @@
                         <td>{{ leafpack.retrieval_date }}</td>
                     </tr>
                     <tr>
-                        <td>uuid</td>
-                        <td>{{ leafpack.uuid }}</td>
+                        <td>id</td>
+                        <td>{{ leafpack.id }}</td>
                     </tr>
                     <tr>
                         <td>leafpack_placement_count</td>

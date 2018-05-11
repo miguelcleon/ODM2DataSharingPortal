@@ -9,8 +9,9 @@ from uuid import UUID
 
 
 class LeafPackCSVWRiter(object):
+    CSV_DIALECT = csv.excel
     DEFAULT_DASH_LENGTH = 20
-    DEFAULT_CSV_DIALECT = csv.excel
+    HYPERLINK_BASE_URL = 'http://data.wikiwatershed.org'
 
     def __init__(self, leafpack, site):  # type: (LeafPack, SiteRegistration) -> None
         self.leafpack = leafpack
@@ -25,27 +26,29 @@ class LeafPackCSVWRiter(object):
         site_registration = self.site
 
         with open(self.path, 'w') as fout:
-            self.writer = csv.writer(fout, dialect=self.DEFAULT_CSV_DIALECT)
+            self.writer = csv.writer(fout, dialect=self.CSV_DIALECT)
 
             data = self.get_data()
 
             # Write file header
-            self.make_header(['Leaf Pack Experiment Details',
-                              'These data were copied to HydroShare from the WikiWatershed Data Sharing Portal.'])
+            self.writerow(['Leaf Pack Experiment Details'])
+            self.make_header(['These data were copied to HydroShare from the WikiWatershed Data Sharing Portal.'])
 
             self.blank_line()
 
             # write site registration information
-            self.make_header(['Site Information',
-                              'http://data.wikiwatershed.org/sites/SITE_CODE/{0}'.format(leafpack.uuid)])
-            self.writer.writerow(['Site Code', site_registration.sampling_feature_code])
-            self.writer.writerow(['Site Name', site_registration.sampling_feature_name])
-            self.writer.writerow(['Site Description', site_registration.sampling_feature.sampling_feature_description])
-            self.writer.writerow(['Latitude', site_registration.latitude])
-            self.writer.writerow(['Longitude', site_registration.longitude])
-            self.writer.writerow(['Elevation (m)', site_registration.elevation_m])
-            self.writer.writerow(['Vertical Datum', site_registration.sampling_feature.elevation_datum])
-            self.writer.writerow(['Site Type', site_registration.site_type])
+            self.make_header(['Site Information'])
+
+            self.writerow(['Site Code', site_registration.sampling_feature_code])
+            self.writerow(['Site Name', site_registration.sampling_feature_name])
+            self.writerow(['Site Description', site_registration.sampling_feature.sampling_feature_description])
+            self.writerow(['Latitude', site_registration.latitude])
+            self.writerow(['Longitude', site_registration.longitude])
+            self.writerow(['Elevation (m)', site_registration.elevation_m])
+            self.writerow(['Vertical Datum', site_registration.sampling_feature.elevation_datum])
+            self.writerow(['Site Type', site_registration.site_type])
+            self.writerow(['URL', '{0}/sites/{1}/'.format(self.HYPERLINK_BASE_URL,
+                                                          site_registration.sampling_feature_code)])
 
             self.blank_line()
 
@@ -53,6 +56,9 @@ class LeafPackCSVWRiter(object):
             self.make_header(['Leaf Pack Details'])
             for key, value in data.iteritems():
                 self.writer.writerow([key.title(), value])
+            self.writerow(['URL', '{0}/sites/{1}/{2}'.format(self.HYPERLINK_BASE_URL,
+                                                             site_registration.sampling_feature_code,
+                                                             leafpack.id)])
 
             self.blank_line()
 
@@ -60,23 +66,25 @@ class LeafPackCSVWRiter(object):
             self.make_header(['Macroinvertebrate Counts'])
 
             for lpg in LeafPackBug.objects.filter(leaf_pack=leafpack):
-                if lpg.bug_count:
-                    self.writer.writerow([lpg.bug.common_name.title(), lpg.bug_count])
+                self.writer.writerow([lpg.bug.common_name.title(), lpg.bug_count])
 
             self.blank_line()
 
             # write water quality index values
             self.make_header(['Water Quality Index Values'])
-            self.writer.writerow(['Total number of individuals found', str(leafpack.total_bug_count())])
+            self.writerow(['Total number of individuals found', str(leafpack.total_bug_count())])
             biotic_index = leafpack.biotic_index()
-            self.writer.writerow(['Biotic Index', round(biotic_index, 2)])
-            self.writer.writerow(['Water Quality Category', leafpack.water_quality(biotic_index=biotic_index)])
-            self.writer.writerow(['Percent EPT', round(leafpack.percent_EPT(), 2)])
+            self.writerow(['Biotic Index', round(biotic_index, 2)])
+            self.writerow(['Water Quality Category', leafpack.water_quality(biotic_index=biotic_index)])
+            self.writerow(['Percent EPT', round(leafpack.percent_EPT(), 2)])
 
     def read(self):
         with open(self.path, 'rb') as fout:
             data = fout.read()
         return data
+
+    def writerow(self, *args):
+        self.writer.writerow(*args)
 
     def get_data(self):
         data = dict()
@@ -114,16 +122,16 @@ class LeafPackCSVWRiter(object):
         return data
 
     def make_header(self, rows):
-        self.writer.writerow(rows)
+        self.writerow(rows)
         self.dash_line(len(rows[0]))
 
     def dash_line(self, dash_count=None):
         if dash_count is None:
             dash_count = self.DEFAULT_DASH_LENGTH
-        self.writer.writerow(['-' * dash_count])
+        self.writerow(['-' * dash_count])
 
     def blank_line(self):
-        self.writer.writerow([])
+        self.writerow([])
 
 
 

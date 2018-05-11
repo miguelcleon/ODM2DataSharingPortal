@@ -6,7 +6,6 @@ import csv
 import io
 import re
 from tempfile import mkstemp
-from uuid import UUID
 from datetime import date, timedelta
 from operator import __or__ as OR
 from functools import reduce
@@ -23,7 +22,7 @@ from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
 from dataloaderinterface.views import LoginRequiredMixin
 
-from csv_parser import LeafPackCSVWRiter
+from csv_writer import LeafPackCSVWRiter
 
 
 class LeafPackFormMixin(object):
@@ -68,7 +67,7 @@ class LeafPackDetailView(DetailView):
     model = LeafPack
 
     def get_object(self, queryset=None):
-        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def get_bugs(self):
         lpbugs = []
@@ -179,7 +178,7 @@ class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
         return context
 
     def get_object(self, queryset=None):
-        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def post(self, request, *args, **kwargs):
         leafpack_form = LeafPackForm(request.POST, instance=self.get_object())
@@ -194,7 +193,7 @@ class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
                 bug.save()
 
             return redirect(reverse('leafpack:view', kwargs={self.slug_field: self.kwargs[self.slug_field],
-                                                             'uuid': self.get_object().uuid}))
+                                                             'pk': self.get_object().id}))
 
         return self.form_invalid(leafpack_form)
 
@@ -206,7 +205,7 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
     slug_field = 'sampling_feature_code'
 
     def get_object(self, queryset=None):
-        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def post(self, request, *args, **kwargs):
         leafpack = self.get_object()
@@ -214,8 +213,8 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
         return redirect(reverse('site_detail', kwargs={self.slug_field: self.kwargs[self.slug_field]}))
 
 
-def download_leafpack_csv(request, sampling_feature_code, uuid):
-    leafpack = LeafPack.objects.get(uuid=UUID(uuid))
+def download_leafpack_csv(request, sampling_feature_code, pk):
+    leafpack = LeafPack.objects.get(id=pk)
     site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
 
     writer = LeafPackCSVWRiter(leafpack, site)
@@ -224,14 +223,5 @@ def download_leafpack_csv(request, sampling_feature_code, uuid):
 
     res = HttpResponse(output, content_type='application/csv')
     res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
-
-    # fd, path = mkstemp(suffix='.csv')
-    # with open(path, 'w') as fout:
-    #     writer = csv.writer(fout)
-    #     csv_parser.parse(writer, leafpack, site)
-    #
-    # with open(path, 'rb') as fout:
-    #     res = HttpResponse(fout.read(), content_type='application/csv')
-    #     res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
 
     return res

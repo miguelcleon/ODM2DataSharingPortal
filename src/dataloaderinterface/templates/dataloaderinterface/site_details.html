@@ -327,7 +327,6 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th class="mdl-data-table__cell--non-numeric">UUID</th>
                                         <th class="mdl-data-table__cell--non-numeric">link</th>
                                     </tr>
                                 </thead>
@@ -335,9 +334,8 @@
                                     {% for leafpack in leafpacks %}
                                         <tr>
                                             <td>{{ leafpack.id }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.uuid }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">
-                                                <a href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.uuid %}">Detail</a>
+                                                <a href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.id %}">Detail</a>
                                             </td>
                                         </tr>
                                     {% endfor %}

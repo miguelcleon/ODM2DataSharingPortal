@@ -39,7 +39,7 @@ class LeafPack(models.Model):
         db_table = 'leafpack'
 
     site_registration = models.ForeignKey(SiteRegistration, on_delete=models.CASCADE)
-    uuid = models.UUIDField(default=uuid.uuid4())
+    # uuid = models.UUIDField(default=uuid.uuid4())
     placement_date = models.DateField()
     retrieval_date = models.DateField()
     leafpack_placement_count = models.IntegerField()
