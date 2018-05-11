@@ -1,11 +1,8 @@
 import csv
-import os
+import io
 import re
-from tempfile import mkstemp
-from tempfile import mkstemp
 from leafpack.models import LeafPack, LeafPackBug, LeafPackType, Macroinvertebrate
 from dataloaderinterface.models import SiteRegistration
-from uuid import UUID
 
 
 class LeafPackCSVWRiter(object):
@@ -17,71 +14,65 @@ class LeafPackCSVWRiter(object):
         self.leafpack = leafpack
         self.site = site
 
-        _, path = mkstemp(suffix='.csv')
-        self.path = path
-        self.writer = None
+        self.output = io.BytesIO()
+        self.writer = csv.writer(self.output, dialect=self.CSV_DIALECT)
 
     def write(self):  # type: (csv.writer, LeafPack, SiteRegistration) -> None
         leafpack = self.leafpack
         site_registration = self.site
 
-        with open(self.path, 'w') as fout:
-            self.writer = csv.writer(fout, dialect=self.CSV_DIALECT)
+        data = self.get_data()
 
-            data = self.get_data()
+        # Write file header
+        self.writerow(['Leaf Pack Experiment Details'])
+        self.make_header(['These data were copied to HydroShare from the WikiWatershed Data Sharing Portal.'])
 
-            # Write file header
-            self.writerow(['Leaf Pack Experiment Details'])
-            self.make_header(['These data were copied to HydroShare from the WikiWatershed Data Sharing Portal.'])
+        self.blank_line()
 
-            self.blank_line()
+        # write site registration information
+        self.make_header(['Site Information'])
 
-            # write site registration information
-            self.make_header(['Site Information'])
+        self.writerow(['Site Code', site_registration.sampling_feature_code])
+        self.writerow(['Site Name', site_registration.sampling_feature_name])
+        self.writerow(['Site Description', site_registration.sampling_feature.sampling_feature_description])
+        self.writerow(['Latitude', site_registration.latitude])
+        self.writerow(['Longitude', site_registration.longitude])
+        self.writerow(['Elevation (m)', site_registration.elevation_m])
+        self.writerow(['Vertical Datum', site_registration.sampling_feature.elevation_datum])
+        self.writerow(['Site Type', site_registration.site_type])
+        self.writerow(['URL', '{0}/sites/{1}/'.format(self.HYPERLINK_BASE_URL,
+                                                      site_registration.sampling_feature_code)])
 
-            self.writerow(['Site Code', site_registration.sampling_feature_code])
-            self.writerow(['Site Name', site_registration.sampling_feature_name])
-            self.writerow(['Site Description', site_registration.sampling_feature.sampling_feature_description])
-            self.writerow(['Latitude', site_registration.latitude])
-            self.writerow(['Longitude', site_registration.longitude])
-            self.writerow(['Elevation (m)', site_registration.elevation_m])
-            self.writerow(['Vertical Datum', site_registration.sampling_feature.elevation_datum])
-            self.writerow(['Site Type', site_registration.site_type])
-            self.writerow(['URL', '{0}/sites/{1}/'.format(self.HYPERLINK_BASE_URL,
-                                                          site_registration.sampling_feature_code)])
+        self.blank_line()
 
-            self.blank_line()
+        # write leafpack data
+        self.make_header(['Leaf Pack Details'])
+        for key, value in data.iteritems():
+            self.writer.writerow([key.title(), value])
+        self.writerow(['URL', '{0}/sites/{1}/{2}'.format(self.HYPERLINK_BASE_URL,
+                                                         site_registration.sampling_feature_code,
+                                                         leafpack.id)])
 
-            # write leafpack data
-            self.make_header(['Leaf Pack Details'])
-            for key, value in data.iteritems():
-                self.writer.writerow([key.title(), value])
-            self.writerow(['URL', '{0}/sites/{1}/{2}'.format(self.HYPERLINK_BASE_URL,
-                                                             site_registration.sampling_feature_code,
-                                                             leafpack.id)])
+        self.blank_line()
 
-            self.blank_line()
+        # write taxon names and corresponding count
+        self.make_header(['Macroinvertebrate Counts'])
 
-            # write taxon names and corresponding count
-            self.make_header(['Macroinvertebrate Counts'])
+        for lpg in LeafPackBug.objects.filter(leaf_pack=leafpack):
+            self.writer.writerow([lpg.bug.common_name.title(), lpg.bug_count])
 
-            for lpg in LeafPackBug.objects.filter(leaf_pack=leafpack):
-                self.writer.writerow([lpg.bug.common_name.title(), lpg.bug_count])
+        self.blank_line()
 
-            self.blank_line()
-
-            # write water quality index values
-            self.make_header(['Water Quality Index Values'])
-            self.writerow(['Total number of individuals found', str(leafpack.total_bug_count())])
-            biotic_index = leafpack.biotic_index()
-            self.writerow(['Biotic Index', round(biotic_index, 2)])
-            self.writerow(['Water Quality Category', leafpack.water_quality(biotic_index=biotic_index)])
-            self.writerow(['Percent EPT', round(leafpack.percent_EPT(), 2)])
+        # write water quality index values
+        self.make_header(['Water Quality Index Values'])
+        self.writerow(['Total number of individuals found', str(leafpack.total_bug_count())])
+        biotic_index = leafpack.biotic_index()
+        self.writerow(['Biotic Index', round(biotic_index, 2)])
+        self.writerow(['Water Quality Category', leafpack.water_quality(biotic_index=biotic_index)])
+        self.writerow(['Percent EPT', round(leafpack.percent_EPT(), 2)])
 
     def read(self):
-        with open(self.path, 'rb') as fout:
-            data = fout.read()
-        return data
+        return self.output.getvalue()
 
     def writerow(self, *args):
         self.writer.writerow(*args)

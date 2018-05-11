@@ -85,6 +85,3 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
 
         return form_list
 
-
-
-
