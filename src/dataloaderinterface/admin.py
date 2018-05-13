@@ -4,7 +4,7 @@ from dataloader.models import *
 
 
 # Register your models here.
-from dataloaderinterface.models import SiteRegistration, SiteSensor, HydroShareResource, HydroShareAccount, ODM2User
+from dataloaderinterface.models import SiteRegistration, SiteSensor, HydroShareResource, HydroShareAccount
 
 
 def update_sensor_data(obj, form, sensor_fields):
@@ -67,19 +67,8 @@ class InstrumentOutputVariableAdmin(admin.ModelAdmin):
     pass
 
 
-class ODM2UserInline(admin.TabularInline):
-    model = ODM2User
-    fields = ('id', 'user', 'hydroshare_account')
-    readonly_fields = ('id', 'user')
-
-
 class HydroShareResourceInline(admin.TabularInline):
     model = HydroShareResource
-
-
-@admin.register(ODM2User)
-class ODM2UserAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(HydroShareAccount)

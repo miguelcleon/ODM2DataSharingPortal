@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse_lazy
 
-from dataloaderinterface.views import UserRegistrationView, UserUpdateView
+from accounts.views import UserRegistrationView, UserUpdateView
 
 
 BASE_URL = settings.SITE_URL[1:]

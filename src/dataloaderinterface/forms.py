@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
-from django.forms import NumberInput, TimeInput
-from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
+
+from django.forms import NumberInput
+from dataloader.models import SamplingFeature, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
     OrganizationType, ActionBy, SiteType
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.contrib.auth.models import User
-from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
-from django.utils.safestring import mark_safe
 import re
 
-from dataloaderinterface.models import ODM2User, HydroShareResource, SiteRegistration, SiteAlert
+from dataloaderinterface.models import HydroShareResource, SiteRegistration, SiteAlert
 
 
 class SiteTypeSelect(forms.Select):
@@ -32,11 +28,6 @@ class SampledMediumField(forms.ModelChoiceField):
 
     def label_from_instance(self, obj):
         return SampledMediumField.get_custom_label(obj.name)
-
-
-class UserOrganizationField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.organization_name
 
 
 class MDLRadioButton(forms.RadioSelect):
@@ -125,78 +116,6 @@ class HydroShareResourceDeleteForm(forms.Form):
         initial=False,
         label="Delete connected resource in HydroShare.",
         required=False)
-
-
-class UserRegistrationForm(UserCreationForm):
-    use_required_attribute = False
-
-    first_name = forms.CharField(required=True, max_length=50)
-    last_name = forms.CharField(required=True, max_length=50)
-    email = forms.EmailField(required=True, max_length=254)
-    organization = UserOrganizationField(
-        queryset=Organization.objects.exclude_vendors().order_by('organization_name'),
-        required=False,
-        #  TODO: set help text in configuration file so it's customizable.
-        help_text='Begin to enter the common name of your organization to choose from the list. '
-                  'If "No results found", then clear your entry, click on the drop-down-list to select '
-                  '"Add New Organization".'
-    )
-    agreement = forms.BooleanField(required=True)
-
-    def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit=False)
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        user.email = self.cleaned_data['email']
-        user.agreement = self.cleaned_data['agreement']
-        organization = self.cleaned_data['organization']
-
-        if commit:
-            user.save()
-            person = People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
-            affiliation = Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now(), primary_email=user.email)
-            ODM2User.objects.create(user=user, affiliation_id=affiliation.affiliation_id)
-
-        return user
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'organization']
-
-
-class UserUpdateForm(UserChangeForm):
-    use_required_attribute = False
-
-    first_name = forms.CharField(required=True, max_length=50)
-    last_name = forms.CharField(required=True, max_length=50)
-    email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(
-        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']),
-        required=False,
-        help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
-
-    def save(self, commit=True):
-        user = super(UserUpdateForm, self).save(commit=False)
-        organization = self.cleaned_data['organization']
-
-        if commit:
-            affiliation = user.odm2user.affiliation
-            person = affiliation.person
-
-            person.person_first_name = user.first_name
-            person.person_last_name = user.last_name
-            affiliation.primary_email = user.email
-            affiliation.organization = organization
-
-            user.save()
-            person.save()
-            affiliation.save()
-
-        return user
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'password', 'username', 'organization']
 
 
 # ODM2

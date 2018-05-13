@@ -34,8 +34,8 @@ from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormVi
 from django.views.generic.list import ListView
 from django.core.management import call_command
 
-from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, UserRegistrationForm, \
-    OrganizationForm, UserUpdateForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
+from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, \
+    OrganizationForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
     HydroShareResourceDeleteForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
@@ -55,84 +55,6 @@ class LoginRequiredMixin(object):
 
 class HomeView(TemplateView):
     template_name = 'dataloaderinterface/home.html'
-
-
-class UserUpdateView(UpdateView):
-    form_class = UserUpdateForm
-    template_name = 'registration/account.html'
-
-    def get_object(self, queryset=None):
-        return self.request.user
-
-    def get_form(self, form_class=None):
-        user = self.get_object()
-        organization = user.odm2user.affiliation.organization
-        form = UserUpdateForm(instance=user, initial={'organization': organization})
-        return form
-
-    def get_hydroshare_account(self):
-        hs_account = None
-        if self.request.user.odm2user is not None:
-            hs_account = self.request.user.odm2user.hydroshare_account
-        return hs_account
-
-    def get_context_data(self, **kwargs):
-        context = super(UserUpdateView, self).get_context_data(**kwargs)
-        context['hs_account'] = self.get_hydroshare_account()
-        context['organization_form'] = OrganizationForm()
-        return context
-
-    @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        return super(UserUpdateView, self).get(request, *args, **kwargs)
-
-    @method_decorator(login_required)
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('disconnect-hydroshare-account'):
-            odm2user = request.user.odm2user
-            hs_acct_id = odm2user.hydroshare_account.pk
-            odm2user.hydroshare_account = None
-            HydroShareAccount.objects.get(pk=hs_acct_id).delete()
-            odm2user.save()
-
-            form = UserUpdateForm(instance=request.user, initial={'organization': request.user.odm2user.affiliation.organization})
-            context = {
-                'form': form,
-                'organization_form': OrganizationForm(),
-                'hs_accounts': None
-            }
-            return render(request, self.template_name, context=context)
-        else:
-            user = User.objects.get(pk=request.user.pk)
-            form = UserUpdateForm(request.POST, instance=user,
-                                  initial={'organization': user.odm2user.affiliation.organization})
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Your information has been updated successfully.')
-                return HttpResponseRedirect(reverse('user_account'))
-            else:
-                messages.error(request, 'There were some errors in the form.')
-                return render(request, self.template_name, {'form': form, 'organization_form': OrganizationForm()})
-
-
-class UserRegistrationView(CreateView):
-    template_name = 'registration/register.html'
-    form_class = UserRegistrationForm
-    success_url = reverse_lazy('home')
-
-    def get_context_data(self, **kwargs):
-        context = super(UserRegistrationView, self).get_context_data(**kwargs)
-        context['organization_form'] = OrganizationForm()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        response = super(UserRegistrationView, self).post(request, *args, **kwargs)
-        form = self.get_form()
-
-        if form.instance.id:
-            login(request, form.instance)
-
-        return response
 
 
 class SitesListView(LoginRequiredMixin, ListView):
@@ -202,7 +124,7 @@ class SiteDetailView(DetailView):
         context['tsa_url'] = settings.TSA_URL
 
         try:
-            context["hydroshare_account"] = self.request.user.odm2user.hydroshare_account
+            context["hydroshare_account"] = self.request.user.hydroshare_account
         except AttributeError:
             pass
 
@@ -222,7 +144,7 @@ class HydroShareResourceViewMixin:
 
     def get_hs_resource(self, resource):  # type: (HydroShareResource) -> Resource
         """ Creates a 'hydroshare_util.Resource' object """
-        account = self.request.user.odm2user.hydroshare_account
+        account = self.request.user.hydroshare_account
         token_json = account.get_token()
         auth_util = AuthUtil.authorize(token=token_json)
 
@@ -317,7 +239,7 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
         return context
 
     def create_resource(self, site, form):
-        hs_account = self.request.user.odm2user.hydroshare_account
+        hs_account = self.request.user.hydroshare_account
 
         resource = HydroShareResource(site_registration=site,
                                       hs_account=hs_account,
@@ -670,7 +592,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         registration_form = self.get_form()
 
         if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
-            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
+            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.affiliation
             data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
             data_logger_program = data_logger_file.program
 
@@ -812,7 +734,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         registration_form = self.get_form()
 
         if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
-            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
+            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.affiliation
 
             # Create sampling feature
             sampling_feature = sampling_feature_form.instance
@@ -977,9 +899,12 @@ class OAuthAuthorize(TemplateView):
             if old_token:
                 old_token.delete()
 
-            odm2user = ODM2User.objects.get(user=request.user.pk)
-            odm2user.hydroshare_account = account
-            odm2user.save()
+            user = request.user
+            user.hydroshare_account = account
+            user.save()
+            # odm2user = ODM2User.objects.get(user=request.user.pk)
+            # odm2user.hydroshare_account = account
+            # odm2user.save()
 
             return redirect('user_account')
         elif 'error' in request.GET:

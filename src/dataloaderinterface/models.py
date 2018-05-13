@@ -11,7 +11,6 @@ from django.db.models.aggregates import Min, Max
 
 from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesResultValue, EquipmentModel, Variable, \
     Unit, Medium
-from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 
@@ -260,14 +259,14 @@ class HydroShareAccount(models.Model):
     ext_id = models.IntegerField(unique=True)  # external hydroshare account id
     token = models.ForeignKey(OAuthToken, db_column='token_id', null=True, on_delete=models.CASCADE)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        super(HydroShareAccount, self).save(force_insert=force_insert, force_update=force_update, using=using,
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        return super(HydroShareAccount, self).save(force_insert=force_insert, force_update=force_update, using=using,
                                             update_fields=update_fields)
 
     @property
     def username(self):
-        return ODM2User.objects.filter(hydroshare_account=self.pk).first().user.username
+        return self.user.username
+        # return ODM2User.objects.filter(hydroshare_account=self.pk).first().user.username
 
     def resources(self):
         return ", ".join([str(r.id) for r in HydroShareResource.objects.filter(hs_account=self)])
