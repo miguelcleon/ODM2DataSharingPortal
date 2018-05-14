@@ -5,7 +5,7 @@ from leafpack.models import LeafPack, LeafPackBug, LeafPackType, Macroinvertebra
 from dataloaderinterface.models import SiteRegistration
 
 
-class LeafPackCSVWRiter(object):
+class LeafPackCSVWriter(object):
     CSV_DIALECT = csv.excel
     DEFAULT_DASH_LENGTH = 20
     HYPERLINK_BASE_URL = 'http://data.wikiwatershed.org'

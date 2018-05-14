@@ -39,7 +39,6 @@ class LeafPack(models.Model):
         db_table = 'leafpack'
 
     site_registration = models.ForeignKey(SiteRegistration, on_delete=models.CASCADE)
-    # uuid = models.UUIDField(default=uuid.uuid4())
     placement_date = models.DateField()
     retrieval_date = models.DateField()
     leafpack_placement_count = models.IntegerField()
@@ -56,18 +55,27 @@ class LeafPack(models.Model):
     types = models.ManyToManyField('LeafPackType')
 
     def total_bug_count(self):
+        """
+        Gets the total count of taxon for the entire leafpack experiement.
+        The forumla is: Summation, from 1 to n taxon, of nth taxon count minus the summation of sub-category taxon count
+
+        :var total: The total taxon count
+        :var lpgs: LeafPackBugs associated with this LeafPack whose count is greater than zero
+        :return: total taxon count.
+        """
         total = 0
         lpgs = LeafPackBug.objects.filter(leaf_pack=self, bug_count__gt=0)
+
         for lpg in lpgs:
-            families = lpg.bug.families.all()
-            sub_bug_count = 0
-            if len(families):
-                for family in families:
-                    for lpg_ in lpgs:
-                        if family == lpg_.bug:
-                            sub_bug_count += lpg_.bug_count
-                            break
-            total += lpg.bug_count - sub_bug_count
+            sub_taxons = lpg.bug.families.all()
+            sub_taxon_count = 0
+
+            for taxon in sub_taxons:
+                lpg_taxon = LeafPackBug.objects.get(leaf_pack=self, bug=taxon)
+                sub_taxon_count += lpg_taxon.bug_count
+
+            total += lpg.bug_count - sub_taxon_count
+
         return total
 
     def percent_EPT(self):
@@ -97,22 +105,17 @@ class LeafPack(models.Model):
 
         count_avg_total = tolerance_avg_total = 0
 
-        lpgs = LeafPackBug.objects.filter(leaf_pack=self, bug_count__gt=0)
+        lpgs = LeafPackBug.objects.filter(leaf_pack=self)
 
         for lpg in lpgs:
-            sub_bug_count = 0
-            families = lpg.bug.families.all()
-            if len(families):
-                for family in families:
-                    for lpg_ in lpgs:
-                        if family == lpg_.bug:
-                            sub_bug_count += lpg_.bug_count
-                            break
+            sub_taxon_count = 0
+            sub_taxons = lpg.bug.families.all()
 
-            if sub_bug_count > 0:
-                pass
+            for sub_taxon in sub_taxons:
+                sub_lpg = LeafPackBug.objects.get(leaf_pack=self, bug=sub_taxon)
+                sub_taxon_count += sub_lpg.bug_count
 
-            count_avg = float(lpg.bug_count - sub_bug_count) / float(leafpack_count)
+            count_avg = float(lpg.bug_count - sub_taxon_count) / float(leafpack_count)
             count_avg_total += count_avg
             tolerance_avg_total += (count_avg * lpg.bug.pollution_tolerance)
 

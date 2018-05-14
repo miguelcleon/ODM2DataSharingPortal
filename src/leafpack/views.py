@@ -7,14 +7,14 @@ import io
 import re
 from tempfile import mkstemp
 from datetime import date, timedelta
-from operator import __or__ as OR
 from functools import reduce
+from operator import __or__ as OR
 
+from django.db.models import Q
 from dataloaderinterface.models import SiteRegistration
 from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView, BaseDetailView
 from django.views.generic.detail import DetailView
 from django.shortcuts import reverse, redirect
-from django.db.models import Q
 from django.http import HttpResponse
 from django.core.management import call_command
 
@@ -22,7 +22,7 @@ from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
 from dataloaderinterface.views import LoginRequiredMixin
 
-from csv_writer import LeafPackCSVWRiter
+from csv_writer import LeafPackCSVWriter
 
 
 class LeafPackFormMixin(object):
@@ -214,14 +214,22 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def download_leafpack_csv(request, sampling_feature_code, pk):
+    """
+    Download handler that uses csv_writer.py to parse out a leaf pack expirement into a csv file.
+    :param request: the request object
+    :param sampling_feature_code: the first URL parameter
+    :param pk: the second URL parameter and id of the leafpack experiement to download 
+    """
     leafpack = LeafPack.objects.get(id=pk)
     site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
 
-    writer = LeafPackCSVWRiter(leafpack, site)
+    writer = LeafPackCSVWriter(leafpack, site)
     writer.write()
-    output = writer.read()
 
-    res = HttpResponse(output, content_type='application/csv')
-    res['Content-Disposition'] = 'inline; filename={0}_leafpack_details.csv'.format(sampling_feature_code)
+    # filename format: {Sampling Feature Code}_{Placement date}_{zero padded leafpack id}.csv
+    filename = '{}_{}_{:03d}.csv'.format(sampling_feature_code, leafpack.placement_date, int(pk))
 
-    return res
+    response = HttpResponse(writer.read(), content_type='application/csv')
+    response['Content-Disposition'] = 'inline; filename={0}'.format(filename)
+
+    return response
