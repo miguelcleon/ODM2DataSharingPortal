@@ -19,11 +19,14 @@
                 {% csrf_token %}
                 {% with leafpack_form as form %}
                     <div class="row">
-                        {{ form.site_registration }}
                         <div class="col-12">
-                            <h5 class="headline">Step 1 ­ Enter your leaf pack placement information</h5>
+                            <span class="step-number center-icon">1</span>
+                            <h5 class="headline d-inline-block">Enter your leaf pack placement information</h5>
                         </div>
+                    </div>
 
+                    <div class="row step-row">
+                        {{ form.site_registration }}
                         <div class="col-sm-12 col-md-6">
                             <div class="mdl-card mdl-shadow--2dp full-width">
                                 <div class="mdl-card__title mdl-card--border">
@@ -76,8 +79,12 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <h5 class="headline">Step 2 ­ Enter your Leaf Pack data</h5>
+                            <span class="step-number center-icon">2</span>
+                            <h5 class="headline d-inline-block">Describe your Leaf Pack data</h5>
                         </div>
+                    </div>
+
+                    <div class="row step-row">
                         <div class="col-sm-12 col-md-6">
                             <div class="mdl-card mdl-shadow--2dp full-width">
                                 <div class="mdl-card__title mdl-card--border">
@@ -155,68 +162,78 @@
                             </div>
                         </div>
                     </div>
-                {% endwith %}
-                {#        </form>#}
-                {#        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">#}
-                {#        {% csrf_token %}#}
-                <br><br>
-                <div class="row">
-                    <div class="col">
-                        <div class="mdl-card mdl-shadow--2dp full-width">
-                            <div class="mdl-card__title mdl-card--border">
-                                Macroinvertebrate Counts
-                            </div>
-                            <div class="mdl-card__supporting-text mdl-card--border full-width">
-                                <p>Enter the numbers you recorded in the "TOTAL" column in the Project Summary Data
-                                    Sheet:</p>
-                                <p>Enter 0 for taxa not found in your leaf packs!</p>
-                            </div>
-                            <div class="mdl-card__supporting-text mdl-card--border default-font">
-                                <div class="row">
-                                {% for bug_forms in bug_count_form_list %}
-                                    {% with parent_form=bug_forms.0 %}
-                                        <div class="col-sm-12 col-md-8 col-lg-7">
-                                            <div class="mdl-card mdl-shadow--2dp full-width macroinvertebrate-card">
-                                                {% if bug_forms.1 %}
-                                                    <div class="mdl-card__title mdl-card--border full-width">
-                                                        <table class="full-width">
-                                                            <tr>
-                                                                <td class="text-muted" colspan="2">{{ parent_form.bug_count.label|capfirst }}:<br><br></td>
-                                                            </tr>
-                                                            {% for family_form in bug_forms.1 %}
+
+                    <div class="row">
+                        <div class="col-12">
+                            <span class="step-number center-icon">3</span>
+                            <h5 class="headline d-inline-block">Enter your Leaf Pack data</h5>
+                        </div>
+                    </div>
+
+                    <div class="row step-row">
+                        <div class="col-12">
+                            <div class="mdl-card mdl-shadow--2dp full-width">
+                                <div class="mdl-card__title mdl-card--border">
+                                    Macroinvertebrate Counts
+                                </div>
+                                <div class="mdl-card__supporting-text mdl-card--border full-width">
+                                    <p>Enter the numbers you recorded in the "TOTAL" column in the Project Summary Data
+                                        Sheet:</p>
+                                    <p>Enter 0 for taxa not found in your leaf packs!</p>
+                                </div>
+                                <div class="mdl-card__supporting-text mdl-card--border default-font">
+                                    <div class="row">
+                                        {% for bug_forms in bug_count_form_list %}
+                                            {% with parent_form=bug_forms.0 %}
+                                                <div class="col-sm-12 col-md-8 col-lg-7">
+                                                    <div class="mdl-card mdl-shadow--2dp full-width macroinvertebrate-card">
+                                                        {% if bug_forms.1 %}
+                                                            <div class="mdl-card__title mdl-card--border full-width">
+                                                                <table class="full-width">
+                                                                    <tr>
+                                                                        <td class="text-muted"
+                                                                            colspan="2">{{ parent_form.bug_count.label|capfirst }}:<br><br>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% for family_form in bug_forms.1 %}
+                                                                        <tr>
+                                                                            <td><label
+                                                                                    for="{{ family_form.bug_count.id_for_label }}">
+                                                                                {{ family_form.bug_count.label|capfirst }}
+                                                                                ({{ family_form.instance.bug.scientific_name }})
+                                                                            </label></td>
+                                                                            <td class="text-right">{{ family_form.bug_count|add_class:"form-control bug-count" }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div class="mdl-card__title full-width form-field{% if form.is_family %} is-bug-family{% endif %}">
+                                                            <table class="full-width">
                                                                 <tr>
-                                                                    <td><label for="{{ family_form.bug_count.id_for_label }}">
-                                                                        {{ family_form.bug_count.label|capfirst }}
-                                                                        ({{ family_form.instance.bug.scientific_name }})
-                                                                    </label></td>
-                                                                    <td class="text-right">{{ family_form.bug_count|add_class:"form-control bug-count" }}</td>
+                                                                    <td>
+                                                                        <label for="{{ parent_form.bug_count.id_for_label }}">
+                                                                            <strong>{{ parent_form.instance.bug.scientific_name }}</strong>
+                                                                        </label>
+                                                                    </td>
+                                                                    <td style="text-align:right;">{{ parent_form.bug_count|add_class:"form-control bug-total-count" }}</td>
                                                                 </tr>
-                                                            {% endfor %}
-                                                        </table>
+                                                            </table>
+                                                        </div>
                                                     </div>
-                                                {% endif %}
-                                                <div class="mdl-card__title full-width form-field{% if form.is_family %} is-bug-family{% endif %}">
-                                                    <table class="full-width">
-                                                        <tr>
-                                                            <td>
-                                                                <label for="{{ parent_form.bug_count.id_for_label }}">
-                                                                    <strong>{{ parent_form.instance.bug.scientific_name }}</strong>
-                                                                </label>
-                                                            </td>
-                                                            <td style="text-align:right;">{{ parent_form.bug_count|add_class:"form-control bug-total-count" }}</td>
-                                                        </tr>
-                                                    </table>
+                                                    <br><br>
                                                 </div>
-                                            </div>
-                                            <br><br>
-                                        </div>
-                                    {% endwith %}
-                                {% endfor %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endwith %}
+                {#        </form>#}
+                {#        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">#}
+                {#        {% csrf_token %}#}
 
                 <br><br>
                 <div class="row">

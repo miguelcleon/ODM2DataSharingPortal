@@ -20,12 +20,19 @@ $(document).ready(function () {
     $(".bug-count").change(function() {
         var items = $(this).closest(".mdl-card").find(".bug-count");
         var count = 0;
-        for (var i = 0; i < items.length; i++) {
-            var val = $(items[i]).val();
+        // for (var i = 0; i < items.length; i++) {
+        //     var val = $(items[i]).val();
+        //     if (val) {
+        //         count += parseInt(val);
+        //     }
+        // }
+
+        items.each(function () {
+            var val = $(this).val();
             if (val) {
                 count += parseInt(val);
             }
-        }
+        });
 
         var total = parseInt($(this).closest(".mdl-card").find(".bug-total-count").val(count));
     });

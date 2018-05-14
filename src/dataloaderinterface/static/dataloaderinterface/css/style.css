@@ -1114,6 +1114,17 @@ div#followedSites .mdl-card__menu {
     color: initial;
 }
 
+.form-leafpack .step-row {
+    border-left: 3px solid #87c7c7;
+    margin-left: 20px;
+    padding-left: 20px;
+}
+
+.form-leafpack .step-icon {
+    font-size: 48px;
+    color: #048a8a;
+}
+
 .list-leafpack-types {
     columns: 2;
     -webkit-columns: 2;
@@ -1134,4 +1145,18 @@ div#followedSites .mdl-card__menu {
 
 .indent-left {
     margin-left: 20px;
+}
+
+.form-leafpack .step-number {
+    display: inline-block;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: #048a8a;
+    color: #FFF;
+    text-align: center;
+    font-size: 28px;
+    padding: 10px 2px 0 2px;
+    margin-right: 13px;
+    margin-bottom: 10px;
 }
