@@ -426,7 +426,6 @@ div.form-group.sampling-feature-fields {
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-
     -webkit-box-orient: vertical;
     -moz-box-orient: vertical;
     -webkit-flex-direction: column;
@@ -1105,4 +1104,14 @@ div#followedSites .mdl-card__menu {
 
 .form-leafpack .mdl-card__supporting-text.default-font {
     color: initial;
+}
+
+.list-leafpack-types {
+    columns: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
+}
+
+.list-leafpack-types li {
+    display: list-item;
 }

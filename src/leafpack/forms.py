@@ -4,10 +4,9 @@ from dataloaderinterface.models import SiteRegistration
 from django.utils.safestring import mark_safe
 
 
-class MDLUnorganizedList(forms.CheckboxSelectMultiple):
+class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     def render(self, name, value, attrs=None, renderer=None):
-        # html = super(MDLUnorganizedList, self).render(name, value, attrs=attrs, renderer=renderer)
-        html = '<ul id="id_' + name + '" class="mdl-list">'
+        html = '<ul id="id_' + name + '" class="mdl-list list-leafpack-types">'
         for choice in self.choices:
             field_id = "id_" + name + "_" + str(choice[0])
             field_value = str(choice[0])
@@ -15,14 +14,13 @@ class MDLUnorganizedList(forms.CheckboxSelectMultiple):
             label = str(choice[1])
             html += '<li class="mdl-list__item">' \
                     '<span class="mdl-list__item-primary-content">' \
-                    '<i class="material-icons  mdl-list__item-avatar">person</i>' \
-                    + label + \
                     '</span>' \
                     '<span class="mdl-list__item-secondary-action">' \
-                    '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="' + field_id + '">' \
-                    '<input type="checkbox" id="' + field_id + '"' \
+                    '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect vertical-align-center" for="' + field_id + '">' \
+                    '<input type="checkbox" id="' + field_id + '" name="' + name + '"' \
                     ' class="mdl-checkbox__input" ' + is_checked + ' value="' \
                     '' + field_value + ' " />' \
+                    + label + \
                     '</label>' \
                     '</span>' \
                     '</li>'
@@ -38,7 +36,7 @@ class LeafPackForm(forms.ModelForm):
     )
 
     types = forms.ModelMultipleChoiceField(
-        widget=MDLUnorganizedList,
+        widget=MDLCheckboxSelectMultiple,
         queryset=LeafPackType.objects.all(),
     )
 
