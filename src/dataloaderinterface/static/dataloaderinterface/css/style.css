@@ -1102,6 +1102,10 @@ div#followedSites .mdl-card__menu {
     width: 100px;
 }
 
+.form-leafpack .fa {
+    margin-right: 4px;
+}
+
 .form-leafpack .mdl-card__supporting-text.default-font {
     color: initial;
 }
@@ -1114,4 +1118,12 @@ div#followedSites .mdl-card__menu {
 
 .list-leafpack-types li {
     display: list-item;
+}
+
+.macroinvertebrate-card {
+    min-height: initial;
+}
+
+.macroinvertebrate-card input[type="number"] {
+    display: inline-block;
 }

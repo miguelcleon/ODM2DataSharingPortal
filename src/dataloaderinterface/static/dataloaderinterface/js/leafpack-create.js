@@ -6,7 +6,7 @@ $(document).ready(function () {
     // $.fn.bootstrapDP = datepicker;                 // give $().bootstrapDP the bootstrap-datepicker functionality
     // $.fn.bootstrapDP.defaults.format = "mm/dd/yyyy";
     $('.datepicker').datepicker({
-        format: 'mm/dd/yyyy',
+        format: 'yyyy-mm-dd',
         startDate: '0d'
     });
 });

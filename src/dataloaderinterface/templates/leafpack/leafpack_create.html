@@ -31,22 +31,28 @@
                                 </div>
                                 <div class="mdl-card__supporting-text default-font">
                                     <div class="form-field">
+                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                                         <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
                                         {{ form.placement_date|add_class:"form-control datepicker" }}
                                     </div>
 
                                     <div class="form-field">
+                                        <i class="fa fa-leaf" aria-hidden="true"></i>
                                         <label for="{{ form.leafpack_placement_count.id_for_label }}">{{ form.leafpack_placement_count.label }}</label>
                                         {{ form.leafpack_placement_count|add_class:"form-control" }}
                                     </div>
 
                                     <div class="form-field">
+                                        <i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i>
                                         <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
                                         {{ form.placement_air_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
                                     </div>
                                     <div class="form-field">
+                                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
                                         <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
                                         {{ form.placement_water_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +76,7 @@
 
                     <div class="row">
                         <div class="col-12">
-                            <h5 class="headline">Step 2 ­ Enter your leafpack data</h5>
+                            <h5 class="headline">Step 2 ­ Enter your Leaf Pack data</h5>
                         </div>
                         <div class="col-sm-12 col-md-6">
                             <div class="mdl-card mdl-shadow--2dp full-width">
@@ -79,23 +85,29 @@
                                 </div>
                                 <div class="mdl-card__supporting-text default-font">
                                     <div class="form-field">
+                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
                                         <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
-                                        {{ form.retrieval_date|add_class:"form-control" }}
+                                        {{ form.retrieval_date|add_class:"form-control"|add_class:"form-control datepicker" }}
                                     </div>
 
                                     <div class="form-field">
+                                        <i class="fa fa-leaf" aria-hidden="true"></i>
                                         <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
                                         {{ form.leafpack_retrieval_count|add_class:"form-control" }}
                                     </div>
 
                                     <div class="form-field">
+                                        <i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i>
                                         <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
                                         {{ form.retrieval_air_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
                                     </div>
 
                                     <div class="form-field">
+                                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
                                         <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
                                         {{ form.retrieval_water_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
                                     </div>
                                 </div>
                             </div>
@@ -107,13 +119,13 @@
                                 <div class="mdl-card__title mdl-card--border">
                                     Storm and Non-Storm Events
                                 </div>
-                                <div class="mdl-card__supporting-text default-font">
+                                <div class="mdl-card__supporting-text default-font form-group">
                                     <div class="form-field">
                                         <label for="{{ form.had_storm.id_for_label }}">{{ form.had_storm.label }}</label>
-                                        {{ form.had_storm }}
+                                        {{ form.had_storm|add_class:"form-control" }}
                                     </div>
 
-                                    <label>If storms occured, please provide some additional information:</label>
+                                    <small class="text-muted">If storms occured, please provide some additional information:</small>
 
                                     <div class="form-field">
                                         <label for="{{ form.storm_count.id_for_label }}">{{ form.storm_count.label }}</label>
@@ -123,16 +135,17 @@
                                     <div class="form-field">
                                         <label for="{{ form.storm_precipiation.id_for_label }}">{{ form.storm_precipiation.label }}</label>
                                         {{ form.storm_precipiation|add_class:"form-control" }}
+                                        <small class="text-muted">depth (cm)</small>
                                     </div>
 
                                     <div class="form-field">
                                         <label for="{{ form.had_flood.id_for_label }}">{{ form.had_flood.label }}</label>
-                                        {{ form.had_flood }}
+                                        {{ form.had_flood|add_class:"form-control" }}
                                     </div>
 
                                     <div class="form-field">
                                         <label for="{{ form.had_drought.id_for_label }}">{{ form.had_drought.label }}</label>
-                                        {{ form.had_drought }}
+                                        {{ form.had_drought|add_class:"form-control" }}
                                     </div>
                                 </div>
                             </div>
@@ -155,35 +168,48 @@
                                 <p>Enter 0 for taxa not found in your leaf packs!</p>
                             </div>
                             <div class="mdl-card__supporting-text mdl-card--border default-font">
+                                <div class="row">
                                 {% for bug_forms in bug_count_form_list %}
                                     {% with parent_form=bug_forms.0 %}
-                                        <div class="col-12">
-                                            <div class="form-field form-inline {% if form.is_family %}is-bug-family{% endif %}">
-                                                {{ parent_form.bug_count|add_class:"form-control" }}
-                                                <label style="margin-left: 20px;" for="{{ parent_form.bug_count.id_for_label }}">
-                                                    {{ parent_form.bug_count.label|capfirst }}
-                                                    {% if parent_form.has_children %}
-                                                        ({{ parent_form.instance.bug.scientific_name }}) (total,
-                                                        including Families below)
-                                                    {% else %}
-                                                        ({{ parent_form.instance.bug.scientific_name }})
-                                                    {% endif %}
-                                                </label>
-                                            </div>
-
-                                            {% for family_form in bug_forms.1 %}
-                                                <div class="form-field form-inline is-bug-family" style="margin-left: 40px;">
-                                                    {{ family_form.bug_count|add_class:"form-control" }}
-
-                                                    <label style="margin-left: 20px;" for="{{ family_form.bug_count.id_for_label }}">
-                                                        {{ family_form.bug_count.label|capfirst }}
-                                                        ({{ family_form.instance.bug.scientific_name }})
-                                                    </label>
+                                        <div class="col-sm-12 col-md-8 col-lg-7">
+                                            <div class="mdl-card mdl-shadow--2dp full-width macroinvertebrate-card">
+                                                {% if bug_forms.1 %}
+                                                    <div class="mdl-card__title mdl-card--border full-width">
+                                                        <table class="full-width">
+                                                            <tr>
+                                                                <td class="text-muted" colspan="2">{{ parent_form.bug_count.label|capfirst }}:</td>
+                                                            </tr>
+                                                            {% for family_form in bug_forms.1 %}
+                                                                <tr>
+                                                                    <td><label
+                                                                            for="{{ family_form.bug_count.id_for_label }}">
+                                                                        {{ family_form.bug_count.label|capfirst }}
+                                                                        ({{ family_form.instance.bug.scientific_name }})
+                                                                    </label></td>
+                                                                    <td class="text-right">{{ family_form.bug_count|add_class:"form-control" }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="mdl-card__title full-width form-field{% if form.is_family %} is-bug-family{% endif %}">
+                                                    <table class="full-width">
+                                                        <tr>
+                                                            <td>
+                                                                <label for="{{ parent_form.bug_count.id_for_label }}">
+                                                                    <strong>{{ parent_form.instance.bug.scientific_name }}</strong>
+                                                                </label>
+                                                            </td>
+                                                            <td style="text-align:right;">{{ parent_form.bug_count|add_class:"form-control" }}</td>
+                                                        </tr>
+                                                    </table>
                                                 </div>
-                                            {% endfor %}
+                                            </div>
+                                            <br><br>
                                         </div>
                                     {% endwith %}
                                 {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -201,7 +227,16 @@
     </div>
 {% endblock %}
 
+{% block styles %}
+    {{ block.super }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet"/>
+{% endblock %}
+
 {% block scripts %}
     {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/leafpack-create.js' %}"></script>
 {% endblock %}

@@ -50,11 +50,11 @@ class LeafPackForm(forms.ModelForm):
     )
 
     placement_air_temp = forms.FloatField(
-        label='Placement Air Temperature (Celcius)'
+        label='Placement Air Temperature'
     )
 
     placement_water_temp = forms.FloatField(
-        label='Placement Water Temperature (Celcius)'
+        label='Placement Water Temperature'
     )
 
     retrieval_date = forms.DateField(
@@ -66,14 +66,15 @@ class LeafPackForm(forms.ModelForm):
     )
 
     retrieval_air_temp = forms.FloatField(
-        label='Retrieval Air Temperature (Celcius)'
+        label='Retrieval Air Temperature'
     )
 
     retrieval_water_temp = forms.FloatField(
-        label='Retrieval Water Temperature (Celcius)'
+        label='Retrieval Water Temperature'
     )
 
     had_storm = forms.BooleanField(
+        widget=forms.NullBooleanSelect,
         label='Did storms occur while your leaf packs were in the stream?'
     )
 
@@ -83,18 +84,19 @@ class LeafPackForm(forms.ModelForm):
     )
 
     storm_precipiation = forms.FloatField(
-        label='Total precipitation depth (cm) that occurred',
+        label='Total precipitation that occurred',
         min_value=0
     )
 
     had_flood = forms.BooleanField(
+        widget=forms.NullBooleanSelect,
         label='Did flooding occur?'
     )
 
     had_drought = forms.BooleanField(
+        widget=forms.NullBooleanSelect,
         label='Was this site experiencing a drought during your experiment?',
     )
-
 
     class Meta:
         model = LeafPack
