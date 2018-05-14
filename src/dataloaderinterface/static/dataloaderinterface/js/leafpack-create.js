@@ -2,11 +2,36 @@
  * Created by Mauriel on 5/10/2018.
  */
 $(document).ready(function () {
-    // var datepicker = $.fn.datepicker.noConflict(); // return $.fn.datepicker to previously assigned value
-    // $.fn.bootstrapDP = datepicker;                 // give $().bootstrapDP the bootstrap-datepicker functionality
-    // $.fn.bootstrapDP.defaults.format = "mm/dd/yyyy";
     $('.datepicker').datepicker({
         format: 'yyyy-mm-dd',
         startDate: '0d'
+    });
+
+    $("#id_had_storm").change(function() {
+        var val = parseInt($(this).val());
+        if (val == 2) {
+            $("#storm-additional").collapse('show');
+        }
+        else {
+            $("#storm-additional").collapse('hide');
+        }
+    });
+
+    $(".bug-count").change(function() {
+        var items = $(this).closest(".mdl-card").find(".bug-count");
+        var count = 0;
+        for (var i = 0; i < items.length; i++) {
+            var val = $(items[i]).val();
+            if (val) {
+                count += parseInt(val);
+            }
+        }
+
+        var total = parseInt($(this).closest(".mdl-card").find(".bug-total-count").val(count));
+    });
+
+    $(".bug-total-count").change(function() {
+        var items = $(this).closest(".mdl-card").find(".bug-count");
+        $(items).val("");
     });
 });

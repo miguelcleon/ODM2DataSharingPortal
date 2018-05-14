@@ -79,7 +79,7 @@ class LeafPackForm(forms.ModelForm):
     )
 
     storm_count = forms.IntegerField(
-        label='Number of storms that occured',
+        label='Number of storms that occurred',
         min_value=0
     )
 

@@ -719,6 +719,10 @@ span.table-trigger, span.tsa-trigger, span.download-trigger {
     background-color: #494949;
 }
 
+.ribbon-lightblue {
+    background-color: #048a8a;
+}
+
 .ribbon-content {
     margin-top: -35vh;
     -webkit-flex-shrink: 0;
@@ -1126,4 +1130,8 @@ div#followedSites .mdl-card__menu {
 
 .macroinvertebrate-card input[type="number"] {
     display: inline-block;
+}
+
+.indent-left {
+    margin-left: 20px;
 }

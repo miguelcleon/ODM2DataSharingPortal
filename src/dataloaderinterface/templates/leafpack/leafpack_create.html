@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-    <div class="ribbon ribbon-dark"></div>
+    <div class="ribbon ribbon-lightblue"></div>
 
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
@@ -125,17 +125,21 @@
                                         {{ form.had_storm|add_class:"form-control" }}
                                     </div>
 
-                                    <small class="text-muted">If storms occured, please provide some additional information:</small>
+                                    <div id="storm-additional" class="indent-left collapse">
+                                        <p class="text-muted">If storms occured, please provide some additional
+                                            information:
+                                        </p>
 
-                                    <div class="form-field">
-                                        <label for="{{ form.storm_count.id_for_label }}">{{ form.storm_count.label }}</label>
-                                        {{ form.storm_count|add_class:"form-control" }}
-                                    </div>
+                                        <div class="form-field">
+                                            <label for="{{ form.storm_count.id_for_label }}">{{ form.storm_count.label }}</label>
+                                            {{ form.storm_count|add_class:"form-control" }}
+                                        </div>
 
-                                    <div class="form-field">
-                                        <label for="{{ form.storm_precipiation.id_for_label }}">{{ form.storm_precipiation.label }}</label>
-                                        {{ form.storm_precipiation|add_class:"form-control" }}
-                                        <small class="text-muted">depth (cm)</small>
+                                        <div class="form-field">
+                                            <label for="{{ form.storm_precipiation.id_for_label }}">{{ form.storm_precipiation.label }}</label>
+                                            {{ form.storm_precipiation|add_class:"form-control" }}
+                                            <small class="text-muted">depth (cm)</small>
+                                        </div>
                                     </div>
 
                                     <div class="form-field">
@@ -177,16 +181,15 @@
                                                     <div class="mdl-card__title mdl-card--border full-width">
                                                         <table class="full-width">
                                                             <tr>
-                                                                <td class="text-muted" colspan="2">{{ parent_form.bug_count.label|capfirst }}:</td>
+                                                                <td class="text-muted" colspan="2">{{ parent_form.bug_count.label|capfirst }}:<br><br></td>
                                                             </tr>
                                                             {% for family_form in bug_forms.1 %}
                                                                 <tr>
-                                                                    <td><label
-                                                                            for="{{ family_form.bug_count.id_for_label }}">
+                                                                    <td><label for="{{ family_form.bug_count.id_for_label }}">
                                                                         {{ family_form.bug_count.label|capfirst }}
                                                                         ({{ family_form.instance.bug.scientific_name }})
                                                                     </label></td>
-                                                                    <td class="text-right">{{ family_form.bug_count|add_class:"form-control" }}</td>
+                                                                    <td class="text-right">{{ family_form.bug_count|add_class:"form-control bug-count" }}</td>
                                                                 </tr>
                                                             {% endfor %}
                                                         </table>
@@ -200,7 +203,7 @@
                                                                     <strong>{{ parent_form.instance.bug.scientific_name }}</strong>
                                                                 </label>
                                                             </td>
-                                                            <td style="text-align:right;">{{ parent_form.bug_count|add_class:"form-control" }}</td>
+                                                            <td style="text-align:right;">{{ parent_form.bug_count|add_class:"form-control bug-total-count" }}</td>
                                                         </tr>
                                                     </table>
                                                 </div>
