@@ -6,13 +6,13 @@ from django.utils.safestring import mark_safe
 
 class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
     def render(self, name, value, attrs=None, renderer=None):
-        html = '<ul id="id_' + name + '" class="mdl-list list-leafpack-types">'
+        html = '<ul id="id_' + name + '" class="mdl-list list-leafpack-types row">'
         for choice in self.choices:
             field_id = "id_" + name + "_" + str(choice[0])
             field_value = str(choice[0])
             is_checked = "checked" if choice[0] in value else ""
             label = str(choice[1])
-            html += '<li class="mdl-list__item">' \
+            html += '<li class="mdl-list__item col-6">' \
                     '<span class="mdl-list__item-primary-content">' \
                     '</span>' \
                     '<span class="mdl-list__item-secondary-action">' \

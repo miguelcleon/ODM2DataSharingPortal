@@ -979,10 +979,6 @@ label.checkbox-label {
     padding-right: 24px;
 }
 
-.d-block {
-    display: block;
-}
-
 .alert-error {
     color: #a94442;
     background-color: #f2dede;
@@ -1126,13 +1122,11 @@ div#followedSites .mdl-card__menu {
 }
 
 .list-leafpack-types {
-    columns: 2;
-    -webkit-columns: 2;
-    -moz-columns: 2;
+
 }
 
 .list-leafpack-types li {
-    display: list-item;
+    display: inline-block;
 }
 
 .macroinvertebrate-card {
