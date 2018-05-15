@@ -62,7 +62,8 @@ class LeafPackForm(forms.ModelForm):
     )
 
     leafpack_retrieval_count = forms.IntegerField(
-        label='Number of Packs Retrieved'
+        label='Number of Packs Retrieved',
+        min_value=0
     )
 
     retrieval_air_temp = forms.FloatField(
