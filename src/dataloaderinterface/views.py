@@ -47,6 +47,8 @@ from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
 from hydroshare_util.coverage import PointCoverage, BoxCoverage, PeriodCoverage, Coverage
 
+from leafpack.views import get_leafpack_csv
+
 
 class LoginRequiredMixin(object):
     @classmethod
@@ -1060,6 +1062,11 @@ def get_site_files(site_registration):
     for site_sensor in site_sensors:
         filename, csv_file = CSVDataApi.get_csv_file(site_sensor.result_id)
         files.append((filename, csv_file.getvalue()))
+
+    leafpacks = LeafPack.objects.filter(site_registration=site_registration.pk)
+    for leafpack in leafpacks:
+        filename, csv_file = get_leafpack_csv(site_registration.sampling_feature_code, leafpack.id)
+        files.append((filename, csv_file))
 
     return files
 
