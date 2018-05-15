@@ -20,7 +20,6 @@
             {{ form.site_registration.as_hidden }}
 
             {% if not resource.id and form.resources.field.choices.queryset.all|length %}
-
                 <div class="row">
                     <div class="col-12">
                         <p>Connect to previous resource?</p>
@@ -33,12 +32,10 @@
                         </div>
                     </div>
                 </div>
-
             {% endif %}
 
             {# If resource.id is None, then this resource hasn't been created yet #}
             {% if resource.id %}
-
                 <div class="row">
                     <div class="col-12">
                         <label class="mdl-checkbox mdl-js-checkbox" for="{{ form.pause_sharing.id_for_label }}">
@@ -86,7 +83,6 @@
             </div>
             {% endif %}
 
-
             {% if not resource.id %}
             {# Only show title and abstract during first time creation (e.g. if resource.id is None) #}
 
@@ -96,7 +92,7 @@
                 <div class="col-12">
                     <div class="mdl-textfield mdl-js-textfield" style="width: 100%;">
                         {{ form.title|add_class:'mdl-textfield__input' }}
-                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+{#                        <label class="mdl-textfield__label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>#}
                     </div>
                 </div>
             </div>
@@ -107,7 +103,7 @@
                 <div class="col-12">
                     <div class="mdl-textfield mdl-js-textfield" style="width:100%;">
                         {{ form.abstract|add_class:"mdl-textfield__input" }}
-                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>
+{#                    <label class="mdl-textfield__label" for="{{ form.abstract.id_for_label }}">{{ form.abstract.label }}</label>#}
                     </div>
                 </div>
             </div>
@@ -130,7 +126,6 @@
 
             <button type="button" class="mdl-button mdl-button--raised close">Cancel</button>
             <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner" id="hs-progress-spinner"></div>
-
         </div>
     </dialog>
 </form>
