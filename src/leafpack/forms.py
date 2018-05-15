@@ -12,7 +12,7 @@ class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
             field_value = str(choice[0])
             is_checked = "checked" if choice[0] in value else ""
             label = str(choice[1])
-            html += '<li class="mdl-list__item col-6">' \
+            html += '<li class="mdl-list__item col-sm-6 col-lg-4">' \
                     '<span class="mdl-list__item-primary-content">' \
                     '</span>' \
                     '<span class="mdl-list__item-secondary-action">' \

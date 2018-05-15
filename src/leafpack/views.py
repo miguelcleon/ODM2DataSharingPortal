@@ -139,6 +139,7 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
         leafpack_form = self.get_form()
         bug_forms = self.get_bug_count_forms()
 

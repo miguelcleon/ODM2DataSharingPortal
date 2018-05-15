@@ -1121,6 +1121,16 @@ div#followedSites .mdl-card__menu {
     color: #048a8a;
 }
 
+.form-leafpack #id_types {
+    margin: 0;
+    padding: 0;
+}
+
+.form-leafpack #id_types .mdl-list__item {
+    padding: 10px;
+    min-height: initial;
+}
+
 .list-leafpack-types li {
     display: inline-block;
 }
@@ -1168,4 +1178,8 @@ div#followedSites .mdl-card__menu {
 
 .small, small {
     font-size: 85%;
+}
+
+.mdl-card.full-width .mdl-card__supporting-text, .mdl-card.full-width .mdl-card__title {
+    width: 100%;
 }

@@ -33,29 +33,28 @@
                                     Leaf Pack Placement Data
                                 </div>
                                 <div class="mdl-card__supporting-text default-font">
-                                    <div class="form-field">
-                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                        <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
-                                        {{ form.placement_date|add_class:"form-control datepicker" }}
-                                    </div>
+                                    <div class="row">
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
+                                            {{ form.placement_date|add_class:"form-control datepicker" }}
+                                        </div>
 
-                                    <div class="form-field">
-                                        <i class="fa fa-leaf" aria-hidden="true"></i>
-                                        <label for="{{ form.leafpack_placement_count.id_for_label }}">{{ form.leafpack_placement_count.label }}</label>
-                                        {{ form.leafpack_placement_count|add_class:"form-control" }}
-                                    </div>
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.leafpack_placement_count.id_for_label }}">{{ form.leafpack_placement_count.label }}</label>
+                                            {{ form.leafpack_placement_count|add_class:"form-control" }}
+                                        </div>
 
-                                    <div class="form-field">
-                                        <i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i>
-                                        <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
-                                        {{ form.placement_air_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
-                                    </div>
-                                    <div class="form-field">
-                                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
-                                        <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
-                                        {{ form.placement_water_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
+                                            {{ form.placement_air_temp|add_class:"form-control" }}
+                                            <small class="text-muted">Degrees Celcius</small>
+                                        </div>
+
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
+                                            {{ form.placement_water_temp|add_class:"form-control" }}
+                                            <small class="text-muted">Degrees Celcius</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -91,30 +90,28 @@
                                     Leaf Pack Retrieval Data
                                 </div>
                                 <div class="mdl-card__supporting-text default-font">
-                                    <div class="form-field">
-                                        <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
-                                        <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
-                                        {{ form.retrieval_date|add_class:"form-control"|add_class:"form-control datepicker" }}
-                                    </div>
+                                    <div class="row">
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
+                                            {{ form.retrieval_date|add_class:"form-control"|add_class:"form-control datepicker" }}
+                                        </div>
 
-                                    <div class="form-field">
-                                        <i class="fa fa-leaf" aria-hidden="true"></i>
-                                        <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
-                                        {{ form.leafpack_retrieval_count|add_class:"form-control" }}
-                                    </div>
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
+                                            {{ form.leafpack_retrieval_count|add_class:"form-control" }}
+                                        </div>
 
-                                    <div class="form-field">
-                                        <i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i>
-                                        <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
-                                        {{ form.retrieval_air_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
-                                    </div>
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
+                                            {{ form.retrieval_air_temp|add_class:"form-control" }}
+                                            <small class="text-muted">Degrees Celcius</small>
+                                        </div>
 
-                                    <div class="form-field">
-                                        <i class="fa fa-thermometer-quarter" aria-hidden="true"></i>
-                                        <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
-                                        {{ form.retrieval_water_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
+                                            {{ form.retrieval_water_temp|add_class:"form-control" }}
+                                            <small class="text-muted">Degrees Celcius</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -179,10 +176,10 @@
                                         the "TOTAL" column in the Project Summary Data Sheet:
                                     </small>
                                 </div>
-                                <div class="mdl-card__supporting-text mdl-card--border full-width">
+                                <div class="mdl-card__supporting-text mdl-card--border">
                                     <span>Enter 0 for taxa not found in your leaf packs!</span>
                                 </div>
-                                <div class="mdl-card__supporting-text mdl-card--border default-font full-width">
+                                <div class="mdl-card__supporting-text mdl-card--border default-font">
                                     <div class="row">
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
