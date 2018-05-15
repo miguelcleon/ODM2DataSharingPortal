@@ -4,118 +4,146 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container">
-    <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>
-    <div class="row">
-        <div class="col-6">
+    <div class="ribbon ribbon-lightblue"></div>
 
-                <form class="inline" method="post" action="{% url 'leafpack:delete' sampling_feature_code leafpack.uuid %}">
-                    {% csrf_token %}
-                    <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
-                </form>
+    <div class="ribbon-container">
+        <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title">
+                        Leaf Experiment Details at {{ leafpack.site_registration.sampling_feature_name }}
+                    </div>
+                </div>
+            </div>
 
-                <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
-                   class="mdl-button mdl-button--raised mdl-button--accent">Update</a>
+            <div class="row">
+                <div class="col-6">
+                    <form class="inline" method="post"
+                          action="{% url 'leafpack:delete' sampling_feature_code leafpack.uuid %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
+                    </form>
 
-        </div>
+                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
+                       class="mdl-button mdl-button--raised mdl-button--accent">Update</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="headline">Leaf Pack Details</h5>
+                </div>
+                <div class="col-6">
+                    <code>{{ leafpack.uuid }}</code>
 
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <code>{{ leafpack.uuid }}</code>
-            <table class="mdl-data-table leafpack-data-table">
-                <tbody>
-                    <tr>
-                        <td>placement_date</td>
-                        <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
-                    </tr>
-                    <tr>
-                        <td>retrieval_date</td>
-                        <td>{{ leafpack.retrieval_date }}</td>
-                    </tr>
-                    <tr>
-                        <td>uuid</td>
-                        <td>{{ leafpack.uuid }}</td>
-                    </tr>
-                    <tr>
-                        <td>leafpack_placement_count</td>
-                        <td>{{ leafpack.leafpack_placement_count }}</td>
-                    </tr>
-                    <tr>
-                        <td>leafpack_retrieval_count</td>
-                        <td>{{ leafpack.leafpack_retrieval_count }}</td>
-                    </tr>
-                    <tr>
-                        <td>placement_air_temp</td>
-                        <td>{{ leafpack.placement_air_temp }}</td>
-                    </tr>
-                    <tr>
-                        <td>placement_water_temp</td>
-                        <td>{{ leafpack.placement_water_temp }}</td>
-                    </tr>
-                    <tr>
-                        <td>retrieval_air_temp</td>
-                        <td>{{ leafpack.retrieval_air_temp }}</td>
-                    </tr>
-                    <tr>
-                        <td>retrieval_water_temp</td>
-                        <td>{{ leafpack.retrieval_water_temp }}</td>
-                    </tr>
-                    <tr>
-                        <td>had_storm</td>
-                        <td>{{ leafpack.had_storm }}</td>
-                    </tr>
-                    <tr>
-                        <td>had_flood</td>
-                        <td>{{ leafpack.had_flood }}</td>
-                    </tr>
-                    <tr>
-                        <td>had_drought</td>
-                        <td>{{ leafpack.had_drought }}</td>
-                    </tr>
-                    <tr>
-                        <td>storm_count</td>
-                        <td>{{ leafpack.storm_count }}</td>
-                    </tr>
-                    <tr>
-                        <td>storm_precipiation</td>
-                        <td>{{ leafpack.storm_precipiation }}</td>
-                    </tr>
-                    <tr>
-                        <td>types</td>
-                        <td>{{ leafpack.types.all|join:", " }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-6">
-            <table class="mdl-data-table">
-            <thead>
-            <tr>
-                <th>Macroinvertebrate Name</th>
-                <th>Count</th>
-            </tr>
-            </thead>
-                <tbody>
-                    {% for bug_data in leafpack_bugs %}
+                    <div class="mdl-card mdl-shadow--2dp full-width">
+                        <div class="mdl-card__title full-width">
+                            Placement Information
+                        </div>
+                        <div class="mdl-card__supporting-text full-width">
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Placement Date</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Number of Packs Placed</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_placement_count }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Placement Air Temperature</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_air_temp }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Placement Water Temperature</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_water_temp }}
+                                    <small class="text-muted">Degrees Celcius</small></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <table class="mdl-data-table leafpack-data-table">
+                        <tbody>
                         <tr>
-                            <td>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})</td>
-                            <td>{{ bug_data.0.bug_count }}</td>
+                            <td>retrieval_date</td>
+                            <td>{{ leafpack.retrieval_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>uuid</td>
+                            <td>{{ leafpack.uuid }}</td>
+                        </tr>
+                        <tr>
+                            <td>leafpack_retrieval_count</td>
+                            <td>{{ leafpack.leafpack_retrieval_count }}</td>
                         </tr>
 
-                        {% for child_bug in bug_data.1 %}
                         <tr>
-                            <td>{{ child_bug.bug.common_name|capfirst }} ({{ child_bug.bug.scientific_name }})</td>
-                            <td>{{ child_bug.bug_count }}</td>
+                            <td>retrieval_air_temp</td>
+                            <td>{{ leafpack.retrieval_air_temp }}</td>
                         </tr>
+                        <tr>
+                            <td>retrieval_water_temp</td>
+                            <td>{{ leafpack.retrieval_water_temp }}</td>
+                        </tr>
+                        <tr>
+                            <td>had_storm</td>
+                            <td>{{ leafpack.had_storm }}</td>
+                        </tr>
+                        <tr>
+                            <td>had_flood</td>
+                            <td>{{ leafpack.had_flood }}</td>
+                        </tr>
+                        <tr>
+                            <td>had_drought</td>
+                            <td>{{ leafpack.had_drought }}</td>
+                        </tr>
+                        <tr>
+                            <td>storm_count</td>
+                            <td>{{ leafpack.storm_count }}</td>
+                        </tr>
+                        <tr>
+                            <td>storm_precipiation</td>
+                            <td>{{ leafpack.storm_precipiation }}</td>
+                        </tr>
+                        <tr>
+                            <td>types</td>
+                            <td>{{ leafpack.types.all|join:", " }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <table class="mdl-data-table">
+                        <thead>
+                        <tr>
+                            <th>Macroinvertebrate Name</th>
+                            <th>Count</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for bug_data in leafpack_bugs %}
+                            <tr>
+                                <td>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
+                                </td>
+                                <td>{{ bug_data.0.bug_count }}</td>
+                            </tr>
+
+                            {% for child_bug in bug_data.1 %}
+                                <tr>
+                                    <td>{{ child_bug.bug.common_name|capfirst }} ({{ child_bug.bug.scientific_name }})
+                                    </td>
+                                    <td>{{ child_bug.bug_count }}</td>
+                                </tr>
+                            {% endfor %}
+
                         {% endfor %}
-
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block scripts %}
