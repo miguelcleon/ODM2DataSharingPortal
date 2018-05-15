@@ -1,0 +1,33 @@
+{% load widget_tweaks %}
+<div class="mdl-card mdl-shadow--2dp full-width macroinvertebrate-card">
+    <div class="mdl-card__title mdl-card--border">
+        <table class="full-width">
+            <tr>
+                <td>{{ parent_form.bug_count.label|capfirst }}
+                    (<label for="{{ parent_form.bug_count.id_for_label }}">
+                        {{ parent_form.instance.bug.scientific_name }}
+                    </label>)
+                </td>
+                <td class="text-right">{{ parent_form.bug_count|add_class:"form-control bug-total-count" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    {% if bug_forms.1 %}
+    <div class="mdl-card__title full-width">
+        <table class="full-width">
+            {% for family_form in bug_forms.1 %}
+                <tr>
+                    <td ><small><label
+                            for="{{ family_form.bug_count.id_for_label }}">
+                        {{ family_form.bug_count.label|capfirst }}
+                        ({{ family_form.instance.bug.scientific_name }})
+                    </label></small></td>
+                    <td class="text-right">{{ family_form.bug_count|add_class:"form-control bug-count" }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+</div>
+<br>

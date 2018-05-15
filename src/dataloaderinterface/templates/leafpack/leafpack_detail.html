@@ -33,7 +33,7 @@
                     <h5 class="headline">Leaf Pack Details</h5>
                 </div>
                 <div class="col-6">
-                    <code>{{ leafpack.uuid }}</code>
+{#                    <code>{{ leafpack.uuid }}</code>#}
 
                     <div class="mdl-card mdl-shadow--2dp full-width">
                         <div class="mdl-card__title full-width">
@@ -58,7 +58,8 @@
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">Placement Water Temperature</td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_water_temp }}
-                                    <small class="text-muted">Degrees Celcius</small></td>
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -66,25 +67,8 @@
                     <table class="mdl-data-table leafpack-data-table">
                         <tbody>
                         <tr>
-                            <td>retrieval_date</td>
-                            <td>{{ leafpack.retrieval_date }}</td>
-                        </tr>
-                        <tr>
                             <td>uuid</td>
                             <td>{{ leafpack.uuid }}</td>
-                        </tr>
-                        <tr>
-                            <td>leafpack_retrieval_count</td>
-                            <td>{{ leafpack.leafpack_retrieval_count }}</td>
-                        </tr>
-
-                        <tr>
-                            <td>retrieval_air_temp</td>
-                            <td>{{ leafpack.retrieval_air_temp }}</td>
-                        </tr>
-                        <tr>
-                            <td>retrieval_water_temp</td>
-                            <td>{{ leafpack.retrieval_water_temp }}</td>
                         </tr>
                         <tr>
                             <td>had_storm</td>
@@ -112,6 +96,38 @@
                         </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="mdl-card mdl-shadow--2dp full-width">
+                        <div class="mdl-card__title full-width">
+                            Retrieval Information
+                        </div>
+                        <div class="mdl-card__supporting-text full-width">
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Retrieval Date</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Number of Packs Retrieved</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_retrieval_count }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Retrieval Air Temperature</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_air_temp }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">Retrieval Water Temperature</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_water_temp }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-6">
                     <table class="mdl-data-table">

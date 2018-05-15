@@ -1099,7 +1099,7 @@ div#followedSites .mdl-card__menu {
 }
 
 .form-leafpack input[type="number"] {
-    width: 100px;
+    width: 70px;
 }
 
 .form-leafpack .fa {
@@ -1121,16 +1121,16 @@ div#followedSites .mdl-card__menu {
     color: #048a8a;
 }
 
-.list-leafpack-types {
-
-}
-
 .list-leafpack-types li {
     display: inline-block;
 }
 
 .macroinvertebrate-card {
     min-height: initial;
+}
+
+.macroinvertebrate-card .mdl-card__title {
+    padding: 8px;
 }
 
 .macroinvertebrate-card input[type="number"] {
