@@ -18,8 +18,7 @@ class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
                     '<span class="mdl-list__item-secondary-action">' \
                     '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect vertical-align-center" for="' + field_id + '">' \
                     '<input type="checkbox" id="' + field_id + '" name="' + name + '"' \
-                    ' class="mdl-checkbox__input" ' + is_checked + ' value="' \
-                    '' + field_value + ' " />' \
+                    ' class="mdl-checkbox__input" ' + is_checked + ' value="' + field_value + '" />' \
                     + label + \
                     '</label>' \
                     '</span>' \
@@ -76,7 +75,8 @@ class LeafPackForm(forms.ModelForm):
 
     had_storm = forms.BooleanField(
         widget=forms.NullBooleanSelect,
-        label='Did storms occur while your leaf packs were in the stream?'
+        label='Did storms occur while your leaf packs were in the stream?',
+        required=False
     )
 
     storm_count = forms.IntegerField(
@@ -91,12 +91,14 @@ class LeafPackForm(forms.ModelForm):
 
     had_flood = forms.BooleanField(
         widget=forms.NullBooleanSelect,
-        label='Did flooding occur?'
+        label='Did flooding occur?',
+        required=False
     )
 
     had_drought = forms.BooleanField(
         widget=forms.NullBooleanSelect,
         label='Was this site experiencing a drought during your experiment?',
+        required=False
     )
 
     class Meta:
