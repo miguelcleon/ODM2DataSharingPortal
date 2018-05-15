@@ -1160,3 +1160,12 @@ div#followedSites .mdl-card__menu {
     color: #DDD;
     margin-right: 24px;
 }
+
+/*Intentionally overriding bootstrap's*/
+.text-muted {
+    color: rgba(0, 0, 0, .54) !important;
+}
+
+.small, small {
+    font-size: 85%;
+}
