@@ -14,6 +14,7 @@ $(document).ready(function () {
             var items = collapse.find("[data-name]");
             items.each(function () {
                 $(this).attr("name", $(this).attr("data-name"));
+                $(this).prop('required', true);
                 $(this).removeAttr("data-name");
             });
             $("#storm-additional").collapse('show');
@@ -23,10 +24,13 @@ $(document).ready(function () {
             items.each(function () {
                 $(this).attr("data-name", $(this).attr("name"));
                 $(this).removeAttr("name");
+                $(this).prop('required', false);
             });
             $("#storm-additional").collapse('hide');
         }
     });
+
+    $("#id_had_storm").trigger("change");
 
     $(".bug-count").change(function() {
         var items = $(this).closest(".mdl-card").find(".bug-count");

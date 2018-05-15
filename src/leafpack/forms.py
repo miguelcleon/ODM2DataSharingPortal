@@ -81,12 +81,14 @@ class LeafPackForm(forms.ModelForm):
 
     storm_count = forms.IntegerField(
         label='Number of storms that occurred',
-        min_value=0
+        min_value=0,
+        required=False
     )
 
     storm_precipiation = forms.FloatField(
         label='Total precipitation that occurred',
-        min_value=0
+        min_value=0,
+        required=False
     )
 
     had_flood = forms.BooleanField(
