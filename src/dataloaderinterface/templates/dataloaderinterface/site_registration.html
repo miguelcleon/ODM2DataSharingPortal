@@ -251,6 +251,13 @@
 
                             <br>
 
+                            <div class="row">
+                                <div class="col-12">
+                                    <a href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
+                                       class="mdl-button mdl-button--raised mdl-button--accent">Add Leaf Pack</a>
+                                </div>
+                            </div>
+
                             <div style="margin-top: 20px;">
                                 <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                         {% if request.resolver_match.view_name == "site_update" %}

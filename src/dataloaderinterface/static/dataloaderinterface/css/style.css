@@ -1154,3 +1154,9 @@ div#followedSites .mdl-card__menu {
     margin-right: 13px;
     margin-bottom: 10px;
 }
+
+.no-data-icon {
+    font-size: 72px;
+    color: #DDD;
+    margin-right: 24px;
+}

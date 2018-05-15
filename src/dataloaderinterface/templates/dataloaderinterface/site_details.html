@@ -307,7 +307,10 @@
                                 {% endfor %}
                                 {% if not site.sensors.all %}
                                     <div class="col-12">
-                                        <p>No sensors have been added to this site.</p>
+                                        <i class="material-icons no-data-icon center-icon">
+                                            cloud_off
+                                        </i>
+                                        <span>No sensors have been added to this site.</span>
                                     </div>
                                 {% endif %}
                             </div>
@@ -315,14 +318,14 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-12">
-                            <a href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
-                            class="mdl-button mdl-button--raised mdl-button--accent">Add Leaf Pack</a>
+                         <div class="col-sm-12">
+                            <h5 class="section-title"><i class="material-icons text-muted center-icon">query_builder</i>
+                                Macroinvertebrate Data at this Site</h5>
+                            <hr>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-12">
+                        {% if leafpacks %}
                             <table class="mdl-data-table full-width">
                                 <thead>
                                     <tr>
@@ -343,6 +346,12 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+                        {% else %}
+                            <i class="material-icons no-data-icon center-icon">
+                                cloud_off
+                            </i>
+                            <span>No Macroinvertebrate Data have been added to this site.</span>
+                        {% endif %}
                         </div>
                     </div>
 

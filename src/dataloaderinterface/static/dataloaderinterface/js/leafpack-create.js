@@ -23,7 +23,6 @@ $(document).ready(function () {
             items.each(function () {
                 $(this).attr("data-name", $(this).attr("name"));
                 $(this).removeAttr("name");
-
             });
             $("#storm-additional").collapse('hide');
         }
@@ -32,12 +31,7 @@ $(document).ready(function () {
     $(".bug-count").change(function() {
         var items = $(this).closest(".mdl-card").find(".bug-count");
         var count = 0;
-        // for (var i = 0; i < items.length; i++) {
-        //     var val = $(items[i]).val();
-        //     if (val) {
-        //         count += parseInt(val);
-        //     }
-        // }
+        var total = $(this).closest(".mdl-card").find(".bug-total-count");
 
         items.each(function () {
             var val = $(this).val();
@@ -46,11 +40,23 @@ $(document).ready(function () {
             }
         });
 
-        var total = parseInt($(this).closest(".mdl-card").find(".bug-total-count").val(count));
+        total.val(Math.max(total.val(), count));
     });
 
     $(".bug-total-count").change(function() {
         var items = $(this).closest(".mdl-card").find(".bug-count");
-        $(items).val("");
+        var count = 0;
+        var total = $(this).closest(".mdl-card").find(".bug-total-count");
+
+        items.each(function () {
+            var val = $(this).val();
+            if (val) {
+                count += parseInt(val);
+            }
+        });
+
+        if (count > total.val()) {
+            $(items).val("");
+        }
     });
 });
