@@ -7,12 +7,24 @@ $(document).ready(function () {
         startDate: '0d'
     });
 
-    $("#id_had_storm").change(function() {
+    $("#id_had_storm").change(function () {
         var val = parseInt($(this).val());
+        var collapse = $("#storm-additional");
         if (val == 2) {
+            var items = collapse.find("[data-name]");
+            items.each(function () {
+                $(this).attr("name", $(this).attr("data-name"));
+                $(this).removeAttr("data-name");
+            });
             $("#storm-additional").collapse('show');
         }
         else {
+            var items = collapse.find("[name]");
+            items.each(function () {
+                $(this).attr("data-name", $(this).attr("name"));
+                $(this).removeAttr("name");
+
+            });
             $("#storm-additional").collapse('hide');
         }
     });
