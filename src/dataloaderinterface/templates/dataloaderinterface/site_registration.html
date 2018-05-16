@@ -140,7 +140,7 @@
                                             <span id="new-result-button" data-toggle="modal"
                                                   data-target="#result-dialog"
                                                   class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
-                                            <i class="material-icons">add</i>
+                                                <i class="material-icons">add</i>
                                             </span>
 
                                             <div class="mdl-tooltip" data-mdl-for="new-result-button">
@@ -255,8 +255,17 @@
                                 <br>
                                 <div class="row">
                                     <div class="col-12">
-                                        <a href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
-                                           class="mdl-button mdl-button--raised mdl-button--accent">Add Leaf Pack</a>
+                                        <br><br>
+                                        <div class="section-title inline">Macroinvertebrate Data</div>
+
+                                        <a id="new-leaf-pack-btn" href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
+                                           class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
+                                            <i class="material-icons">add</i>
+                                        </a>
+
+                                        <div class="mdl-tooltip" data-mdl-for="new-leaf-pack-btn">
+                                            Add Leaf Pack Experiment
+                                        </div>
                                     </div>
                                 </div>
                             {% endif %}

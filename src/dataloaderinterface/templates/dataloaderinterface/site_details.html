@@ -191,7 +191,7 @@
 
                     <div class="row">
                         <div class="col-sm-12">
-                            <h5 class="section-title"><i class="material-icons text-muted center-icon">query_builder</i>
+                            <h5 class="section-title">
                                 Sensor Observations at this Site</h5>
                             <hr>
                         </div>
@@ -319,28 +319,36 @@
 
                     <div class="row">
                          <div class="col-sm-12">
-                            <h5 class="section-title"><i class="material-icons text-muted center-icon">query_builder</i>
+                            <h5 class="section-title">
                                 Macroinvertebrate Data at this Site</h5>
                             <hr>
                         </div>
 
                         <div class="col-12">
                         {% if leafpacks %}
-                            <table class="mdl-data-table full-width">
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th class="mdl-data-table__cell--non-numeric">UUID</th>
-                                        <th class="mdl-data-table__cell--non-numeric">link</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Experiment ID</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Content</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
+                                        <th class="mdl-data-table__cell--non-numeric"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for leafpack in leafpacks %}
                                         <tr>
-                                            <td>{{ leafpack.id }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.uuid }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">Experiment Type</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">Leaves</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">
-                                                <a href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.uuid %}">Detail</a>
+                                                <a class="mdl-button mdl-js-button button-link mdl-button--primary"
+                                                   href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.uuid %}">View
+                                                    Details</a>
                                             </td>
                                         </tr>
                                     {% endfor %}
