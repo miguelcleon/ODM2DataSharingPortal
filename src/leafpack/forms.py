@@ -85,7 +85,7 @@ class LeafPackForm(forms.ModelForm):
         required=False
     )
 
-    storm_precipiation = forms.FloatField(
+    storm_precipitation = forms.FloatField(
         label='Total precipitation that occurred',
         min_value=0,
         required=False
