@@ -3,7 +3,7 @@
  */
 var c20 = d3.scale.category20();
 
-var margin = {top: 40, right: 20, bottom: 60, left: 40},
+var margin = {top: 40, right: 20, bottom: 60, left: 60},
     width = $(".svg-container").width() - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -51,7 +51,7 @@ $(".taxon").each(function () {
     total += count;
 });
 
-var legendContainer = $("#legend-container ul");
+var legendContainer = $("#legend-container table");
 
 // Compute percentages
 for (var i = 0; i < data.length; i++) {
@@ -59,12 +59,13 @@ for (var i = 0; i < data.length; i++) {
 
     // Populate legend container
     legendContainer.append(
-        '<li class="mdl-list__item">' +
-            '<span class="mdl-list__item-primary-content">' +
-                '<i style="color: ' + c20(i) + '" class="fa fa-square mdl-list__item-icon" aria-hidden="true"></i>' +
+        '<tr class="small">' +
+            '<td><i style="color: ' + c20(i) + '" class="fa fa-square mdl-list__item-icon" aria-hidden="true"></i></td>'+
+            '<td class="mdl-data-table__cell--non-numeric">' +
                 data[i].taxon +
-            '</span>' +
-        '</li>'
+            '</td>' +
+            '<td>' + (data[i].frequency * 100) + '%</td>' +
+        '</tr>'
     );
 }
 
@@ -126,7 +127,8 @@ function resize() {
         .call(xAxis)
         .attr("transform", "translate(0," + height + ")")
         .select(".label")
-        .attr("transform", "translate(" + width / 2 + "," + margin.bottom / 1.5 + ")");
+        .attr("x", width / 2)
+        .attr("y", margin.bottom / 1.5);
 
     svg.select(".y.axis")
         .call(yAxis);
@@ -143,13 +145,15 @@ function resize() {
         .attr("height", function (d) {
             return height - y(d.frequency);
         })
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
 };
 
 // Call the resize function whenever a resize event occurs
 d3.select(window).on('resize', resize);
 
 // Call the resize function
-resize();
+// resize();
 
 function type(d) {
     d.frequency = +d.frequency;

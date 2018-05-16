@@ -155,7 +155,7 @@
                         {% for bug_data in leafpack_bugs %}
                             {% if bug_data.0.bug_count > 0 %}
                             <tr class="taxon">
-                                <td class="mdl-data-table__cell--non-numeric">{{ bug_data.0.bug.common_name|capfirst }} (<span data-name>{{ bug_data.0.bug.scientific_name }}</span>)
+                                <td class="mdl-data-table__cell--non-numeric" data-name>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
                                 </td>
                                 <td data-count>{{ bug_data.0.bug_count }}</td>
                             </tr>
@@ -173,23 +173,24 @@
                         {% endfor %}
                     </table>
                 </div>
+
                 <div class="col-12">
                     <br><br>
                     <h5 class="headline">Water Quality Index Values</h5>
                 </div>
 
                 <div class="col-sm-12 col-md-8">
-                    <div class="svg-container"></div>
+                    <div class="svg-container mdl-shadow--2dp"></div>
+                    <br><br>
                 </div>
 
                 <div class="col-sm-12 col-md-4">
                     <div id="legend-container">
-                        <ul class="mdl-list"></ul>
+                        <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover no-borders"></table>
                     </div>
                 </div>
 
-                <div class="col-12">
-                    <br><br>
+                <div class="col-sm-12 col-md-6">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Total Number of Individuals Found</td>
@@ -202,11 +203,11 @@
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Water Quality Category</td>
                             <td class="mdl-data-table__cell--non-numeric">Excellent - Organic Pollution Unlikely</td>
-                        </tr><tr>
+                        </tr>
+                        <tr>
                             <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
                             <td class="mdl-data-table__cell--non-numeric">36.8</td>
                         </tr>
-
                     </table>
                 </div>
             </div>
