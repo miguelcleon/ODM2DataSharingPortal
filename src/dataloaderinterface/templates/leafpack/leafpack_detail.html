@@ -35,6 +35,12 @@
                        class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                         <i class="material-icons center-icon">mode_edit</i> Edit
                     </a>
+
+                    <a href="{% url 'leafpack:csv_download' sampling_feature_code leafpack.id %}"
+                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                        Download CSV
+                    </a>
+
                 </div>
             </div>
 
