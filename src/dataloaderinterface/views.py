@@ -1022,9 +1022,17 @@ class OAuthRedirect(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(OAuthRedirect, self).get_context_data(**kwargs)
-        # Add 'redirect' as a url parameter
-        url = reverse('hydroshare_oauth_redirect') + '?redirect=true'
+
+        # Get the current scheme (http or https)
+        scheme = self.request.is_secure() and "https" or "http"
+        # Need to get the host since the host name can be 'data.envirodiy.org' or 'data.wikiwatershed.org'
+        host = self.request.META.get('HTTP_HOST', None)
+        # Build the url and add 'redirect' into the url params
+        url = '{scheme}://{host}{url}?{params}'.format(scheme=scheme, host=host,
+                                                       url=reverse('hydroshare_oauth_redirect'), params='redirect=true')
+
         context['redirect_url'] = mark_safe(url)
+
         return context
 
     def get(self, request, *args, **kwargs):
