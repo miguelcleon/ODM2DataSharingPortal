@@ -119,26 +119,26 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         context['sampling_feature_code'] = self.kwargs[self.slug_field]
 
         # TODO: Remove this random leaf pack type generator stuff - for testing only...
-        lpt_ids = [lp.id for lp in LeafPackType.objects.all()]
-        rand_len = random.randint(1, 5)
-        rand_lpts = list()
-        while len(rand_lpts) < rand_len:
-            lpt = random.randint(1, len(lpt_ids))
-            if lpt in lpt_ids and lpt not in rand_lpts:
-                rand_lpts.append(lpt)
+        # lpt_ids = [lp.id for lp in LeafPackType.objects.all()]
+        # rand_len = random.randint(1, 5)
+        # rand_lpts = list()
+        # while len(rand_lpts) < rand_len:
+        #     lpt = random.randint(1, len(lpt_ids))
+        #     if lpt in lpt_ids and lpt not in rand_lpts:
+        #         rand_lpts.append(lpt)
 
         # TODO: Remove mock values (placement date, retrieval date, etc.) - they are for testing
         context['leafpack_form'] = LeafPackForm(initial={
             'site_registration': SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field]),
-            'placement_date': date.today() - timedelta(days=7),
-            'retrieval_date': date.today(),
-            'placement_air_temp': 75.0,
-            'placement_water_temp': 75.0,
-            'retrieval_air_temp': 75.0,
-            'retrieval_water_temp': 75.0,
-            'leafpack_retrieval_count': 1,
-            'leafpack_placement_count': 1,
-            'types': LeafPackType.objects.filter(reduce(OR, [Q(id=i) for i in rand_lpts]))
+            # 'placement_date': date.today() - timedelta(days=7),
+            # 'retrieval_date': date.today(),
+            # 'placement_air_temp': 75.0,
+            # 'placement_water_temp': 75.0,
+            # 'retrieval_air_temp': 75.0,
+            # 'retrieval_water_temp': 75.0,
+            # 'leafpack_retrieval_count': 1,
+            # 'leafpack_placement_count': 1,
+            # 'types': LeafPackType.objects.filter(reduce(OR, [Q(id=i) for i in rand_lpts]))
         })
 
         context['bug_count_form_list'] = LeafPackBugFormFactory.formset_factory()

@@ -10,7 +10,7 @@ class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         for choice in self.choices:
             field_id = "id_" + name + "_" + str(choice[0])
             field_value = str(choice[0])
-            is_checked = "checked" if choice[0] in value else ""
+            is_checked = "checked" if isinstance(choice, list) and choice[0] in value else ""
             label = str(choice[1])
             html += '<li class="mdl-list__item col-sm-6 col-lg-4">' \
                     '<span class="mdl-list__item-primary-content">' \
