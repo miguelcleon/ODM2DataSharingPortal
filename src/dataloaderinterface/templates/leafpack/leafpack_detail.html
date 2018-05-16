@@ -149,10 +149,10 @@
                         </tr>
                         {% for bug_data in leafpack_bugs %}
                             {% if bug_data.0.bug_count > 0 %}
-                            <tr>
-                                <td class="mdl-data-table__cell--non-numeric">{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
+                            <tr class="taxon">
+                                <td class="mdl-data-table__cell--non-numeric">{{ bug_data.0.bug.common_name|capfirst }} (<span data-name>{{ bug_data.0.bug.scientific_name }}</span>)
                                 </td>
-                                <td>{{ bug_data.0.bug_count }}</td>
+                                <td data-count>{{ bug_data.0.bug_count }}</td>
                             </tr>
                             {% endif %}
 
@@ -165,15 +165,36 @@
                                 </tr>
                                 {% endif %}
                             {% endfor %}
-
                         {% endfor %}
                     </table>
+                </div>
+                <div class="col-12">
+                    <br><br>
+                    <h5 class="headline">Water Quality Index Values</h5>
+                </div>
+
+                <div class="col-sm-12 col-md-8">
+                    <div class="svg-container"></div>
+                </div>
+
+                <div class="col-sm-12 col-md-4">
+                    <div id="legend-container">
+                        <ul class="mdl-list"></ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 
+{% block styles %}
+    {{ block.super }}
+    <link href="{% static 'dataloaderinterface/css/barchart.css' %}" rel="stylesheet"/>
+{% endblock %}
+
 {% block scripts %}
     {{ block.super }}
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="{% static 'dataloaderinterface/js/barchart.js' %}"></script>
 {% endblock %}
