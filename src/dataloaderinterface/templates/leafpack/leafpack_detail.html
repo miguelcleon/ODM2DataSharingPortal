@@ -153,7 +153,7 @@
                             <th>Tally</th>
                         </tr>
                         {% for bug_data in leafpack_bugs %}
-                            {% if bug_data.0.bug_count > 0 %}
+                            {% if bug_data.0.bug_count %}
                             <tr class="taxon">
                                 <td class="mdl-data-table__cell--non-numeric" data-name>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
                                 </td>
@@ -194,19 +194,19 @@
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Total Number of Individuals Found</td>
-                            <td class="mdl-data-table__cell--non-numeric">25</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.total_bug_count }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Biotic Index</td>
-                            <td class="mdl-data-table__cell--non-numeric">3.71</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.biotic_index }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Water Quality Category</td>
-                            <td class="mdl-data-table__cell--non-numeric">Excellent - Organic Pollution Unlikely</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.water_quality }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
-                            <td class="mdl-data-table__cell--non-numeric">36.8</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT }}</td>
                         </tr>
                     </table>
                 </div>
