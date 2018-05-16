@@ -30,7 +30,7 @@ var tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
     .html(function (d) {
-        return d.taxon + "<br><br><strong>% of Total Individuals:</strong> <span style='color:red'>" + (d.frequency * 100) + "%</span>";
+        return d.taxon + "<br><br><strong>% of Total Individuals:</strong> <span style='color:red'>" + (d.frequency * 100).toFixed(2) + "%</span>";
     });
 
 var svg = d3.select(".svg-container").append("svg")
@@ -59,12 +59,12 @@ for (var i = 0; i < data.length; i++) {
 
     // Populate legend container
     legendContainer.append(
-        '<tr class="small">' +
+        '<tr>' +
             '<td><i style="color: ' + c20(i) + '" class="fa fa-square mdl-list__item-icon" aria-hidden="true"></i></td>'+
             '<td class="mdl-data-table__cell--non-numeric">' +
                 data[i].taxon +
             '</td>' +
-            '<td>' + (data[i].frequency * 100) + '%</td>' +
+            '<td>' + (data[i].frequency * 100).toFixed(2) + '%</td>' +
         '</tr>'
     );
 }

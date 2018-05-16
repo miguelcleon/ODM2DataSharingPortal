@@ -1204,3 +1204,11 @@ table.no-borders td {
     border-radius: 4px;
     padding: 12px;
 }
+
+#legend-container table {
+    white-space: normal;
+}
+
+#legend-container table td {
+    padding: 6px 18px;
+}

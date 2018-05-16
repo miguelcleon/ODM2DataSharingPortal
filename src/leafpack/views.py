@@ -95,7 +95,6 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     Create View
     """
     form_class = LeafPackForm
-    model = LeafPack
     template_name = 'leafpack/leafpack_create.html'
     slug_field = 'sampling_feature_code'
 
@@ -139,7 +138,6 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
         leafpack_form = self.get_form()
         bug_forms = self.get_bug_count_forms()
 
