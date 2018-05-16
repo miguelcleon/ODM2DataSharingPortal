@@ -258,7 +258,7 @@
                                         <br><br>
                                         <div class="section-title inline">Macroinvertebrate Data</div>
 
-                                        <a id="new-leaf-pack-btn" href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
+                                        <a id="new-leaf-pack-btn" href="{% url 'leafpack:create' sampling_feature_form.sampling_feature_code.value %}"
                                            class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
                                             <i class="material-icons">add</i>
                                         </a>

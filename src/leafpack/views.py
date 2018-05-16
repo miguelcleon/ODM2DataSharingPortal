@@ -57,6 +57,9 @@ class LeafPackUpdateCreateMixin(LeafPackFormMixin):
                 is_valid = False
         return is_valid
 
+    def get_object(self):
+        return LeafPack.objects.get(id=self.kwargs['pk'])
+
 
 class LeafPackDetailView(DetailView):
     """
@@ -105,6 +108,11 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     form_class = LeafPackForm
     template_name = 'leafpack/leafpack_create.html'
     slug_field = 'sampling_feature_code'
+    object = None
+
+    def form_invalid(self, leafpack_form, bug_forms):
+        context = self.get_context_data(leafpack_form=leafpack_form, bug_forms=bug_forms)
+        return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
 
@@ -114,32 +122,40 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
             # database with default macroinvertebrate and leaf pack types.
             call_command('set_leafpackdb_defaults')
 
+        # if 'leafpack_form' is in kwargs, that means self.form_invalid was most likely called due to a failed POST request
+        if 'leafpack_form' in kwargs:
+            self.object = kwargs['leafpack_form'].instance
+
         context = super(LeafPackCreateView, self).get_context_data(**kwargs)
 
         context['sampling_feature_code'] = self.kwargs[self.slug_field]
 
         # TODO: Remove this random leaf pack type generator stuff - for testing only...
-        # lpt_ids = [lp.id for lp in LeafPackType.objects.all()]
-        # rand_len = random.randint(1, 5)
-        # rand_lpts = list()
-        # while len(rand_lpts) < rand_len:
-        #     lpt = random.randint(1, len(lpt_ids))
-        #     if lpt in lpt_ids and lpt not in rand_lpts:
-        #         rand_lpts.append(lpt)
+        lpt_ids = [lp.id for lp in LeafPackType.objects.all()]
+        rand_len = random.randint(1, 5)
+        rand_lpts = list()
+        while len(rand_lpts) < rand_len:
+            lpt = random.randint(1, len(lpt_ids))
+            if lpt in lpt_ids and lpt not in rand_lpts:
+                rand_lpts.append(lpt)
 
-        # TODO: Remove mock values (placement date, retrieval date, etc.) - they are for testing
-        context['leafpack_form'] = LeafPackForm(initial={
-            'site_registration': SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field]),
-            # 'placement_date': date.today() - timedelta(days=7),
-            # 'retrieval_date': date.today(),
-            # 'placement_air_temp': 75.0,
-            # 'placement_water_temp': 75.0,
-            # 'retrieval_air_temp': 75.0,
-            # 'retrieval_water_temp': 75.0,
-            # 'leafpack_retrieval_count': 1,
-            # 'leafpack_placement_count': 1,
-            # 'types': LeafPackType.objects.filter(reduce(OR, [Q(id=i) for i in rand_lpts]))
-        })
+        if 'leafpack_form' in context:
+            context['leafpack_form'] = context.pop('leafpack_form')
+        else:
+            # TODO: Remove mock values (placement date, retrieval date, etc.) - they are for testing
+            context['leafpack_form'] = LeafPackForm(initial={
+                'site_registration': SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field]),
+                'placement_date': date.today() - timedelta(days=7),
+                'retrieval_date': date.today(),
+                'placement_air_temp': 75.0,
+                'placement_water_temp': 75.0,
+                'retrieval_air_temp': 75.0,
+                'retrieval_water_temp': 75.0,
+                'leafpack_retrieval_count': 1,
+                'leafpack_placement_count': 1,
+                'storm_precipitation': 0,
+                'types': LeafPackType.objects.filter(reduce(OR, [Q(id=i) for i in rand_lpts]))
+            })
 
         context['bug_count_form_list'] = LeafPackBugFormFactory.formset_factory()
 
@@ -148,6 +164,8 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     def post(self, request, *args, **kwargs):
         leafpack_form = self.get_form()
         bug_forms = self.get_bug_count_forms()
+
+        # leafpack_form.data['storm_precipitation'] = 0
 
         if self.forms_valid([leafpack_form] + bug_forms):
             leafpack_form.save()
@@ -159,7 +177,7 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
             return redirect(reverse('site_detail', kwargs={'sampling_feature_code':
                                                            self.kwargs['sampling_feature_code']}))
 
-        return self.form_invalid(leafpack_form)
+        return self.form_invalid(leafpack_form, bug_forms)
 
 
 class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
@@ -176,9 +194,6 @@ class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
         context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(leafpack)
         context['sampling_feature_code'] = leafpack.site_registration.sampling_feature_code
         return context
-
-    def get_object(self, queryset=None):
-        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def post(self, request, *args, **kwargs):
         leafpack_form = LeafPackForm(request.POST, instance=self.get_object())
