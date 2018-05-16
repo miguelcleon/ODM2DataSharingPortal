@@ -2,22 +2,27 @@
 from __future__ import unicode_literals
 
 import random
+import csv
+import io
+import re
+from tempfile import mkstemp
+from datetime import date, timedelta
+from functools import reduce
+from operator import __or__ as OR
 
-# from django.shortcuts import render
+from django.db.models import Q
 from dataloaderinterface.models import SiteRegistration
 from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView, BaseDetailView
 from django.views.generic.detail import DetailView
 from django.shortcuts import reverse, redirect
-from django.db.models import Q
-from operator import __or__ as OR
-from functools import reduce
+from django.http import HttpResponse
+from django.core.management import call_command
+
 from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
-from django.core.management import call_command
-from uuid import UUID
-import re
-from datetime import date, timedelta
 from dataloaderinterface.views import LoginRequiredMixin
+
+from csv_writer import LeafPackCSVWriter
 
 
 class LeafPackFormMixin(object):
@@ -62,7 +67,7 @@ class LeafPackDetailView(DetailView):
     model = LeafPack
 
     def get_object(self, queryset=None):
-        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def get_bugs(self):
         lpbugs = []
@@ -87,6 +92,9 @@ class LeafPackDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
+        # import csv_parser
+        # csv_parser.parse()
+        # call_command('set_leafpackdb_defaults')
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
@@ -170,7 +178,7 @@ class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
         return context
 
     def get_object(self, queryset=None):
-        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def post(self, request, *args, **kwargs):
         leafpack_form = LeafPackForm(request.POST, instance=self.get_object())
@@ -185,7 +193,7 @@ class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
                 bug.save()
 
             return redirect(reverse('leafpack:view', kwargs={self.slug_field: self.kwargs[self.slug_field],
-                                                             'uuid': self.get_object().uuid}))
+                                                             'pk': self.get_object().id}))
 
         return self.form_invalid(leafpack_form)
 
@@ -197,9 +205,31 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
     slug_field = 'sampling_feature_code'
 
     def get_object(self, queryset=None):
-        return LeafPack.objects.get(uuid=UUID(self.kwargs['uuid']))
+        return LeafPack.objects.get(id=self.kwargs['pk'])
 
     def post(self, request, *args, **kwargs):
         leafpack = self.get_object()
         leafpack.delete()
         return redirect(reverse('site_detail', kwargs={self.slug_field: self.kwargs[self.slug_field]}))
+
+
+def download_leafpack_csv(request, sampling_feature_code, pk):
+    """
+    Download handler that uses csv_writer.py to parse out a leaf pack expirement into a csv file.
+    :param request: the request object
+    :param sampling_feature_code: the first URL parameter
+    :param pk: the second URL parameter and id of the leafpack experiement to download 
+    """
+    leafpack = LeafPack.objects.get(id=pk)
+    site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
+
+    writer = LeafPackCSVWriter(leafpack, site)
+    writer.write()
+
+    # filename format: {Sampling Feature Code}_{Placement date}_{zero padded leafpack id}.csv
+    filename = '{}_{}_{:03d}.csv'.format(sampling_feature_code, leafpack.placement_date, int(pk))
+
+    response = HttpResponse(writer.read(), content_type='application/csv')
+    response['Content-Disposition'] = 'inline; filename={0}'.format(filename)
+
+    return response

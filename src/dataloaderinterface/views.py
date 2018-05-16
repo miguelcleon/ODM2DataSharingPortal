@@ -114,7 +114,7 @@ class UserUpdateView(UpdateView):
             }
             return render(request, self.template_name, context=context)
         else:
-            user = User.objects.get(pk=request.user.pk)
+            user = settings.AUTH_USER_MODEL.objects.get(pk=request.user.pk)
             form = UserUpdateForm(request.POST, instance=user,
                                   initial={'organization': user.odm2user.affiliation.organization})
             if form.is_valid():
@@ -726,7 +726,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
             # Update Site Registration
             site_registration.affiliation_id = affiliation.affiliation_id
-            site_registration.django_user = User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
+            site_registration.django_user = settings.AUTH_USER_MODEL.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
             site_registration.person = str(affiliation.person)
             site_registration.organization = str(affiliation.organization)
             site_registration.sampling_feature_code = sampling_feature.sampling_feature_code
@@ -860,7 +860,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             registration_data = {
                 'registration_token': uuid4(),
                 'registration_date': datetime.now(),
-                'django_user': User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
+                'django_user': settings.AUTH_USER_MODEL.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
                 'affiliation_id': affiliation.affiliation_id,
                 'person': str(affiliation.person),
                 'organization': str(affiliation.organization),

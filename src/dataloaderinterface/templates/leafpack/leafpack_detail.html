@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-6 text-right">
                     <form class="inline" method="post"
-                          action="{% url 'leafpack:delete' sampling_feature_code leafpack.uuid %}">
+                          action="{% url 'leafpack:delete' sampling_feature_code leafpack.id %}">
                         {% csrf_token %}
                         <button id="btn-del-leaf-exp" type="submit"
                                 class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
@@ -30,7 +30,7 @@
                         </button>
                     </form>
 
-                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
+                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
                        id="btn-edit-leaf-exp"
                        class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                         <i class="material-icons center-icon">mode_edit</i> Edit

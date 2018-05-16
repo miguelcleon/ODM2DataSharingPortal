@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-12">
             <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>
-            <form method="post" action="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}">
+            <form method="post" action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}">
                 {{ form.site_registration }}
                 {% csrf_token %}
                 <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>
@@ -23,8 +23,8 @@
                             <td>{{ form.retrieval_date }}</td>
                         </tr>
                         <tr>
-                            <td>uuid</td>
-                            <td>{{ leafpack.uuid }}</td>
+                            <td>id</td>
+                            <td>{{ leafpack.id }}</td>
                         </tr>
                         <tr>
                             <td>leafpack_placement_count</td>
@@ -67,8 +67,8 @@
                             <td>{{ form.storm_count }}</td>
                         </tr>
                         <tr>
-                            <td>storm_precipiation</td>
-                            <td>{{ form.storm_precipiation }}</td>
+                            <td>storm_precipitation</td>
+                            <td>{{ form.storm_precipitation }}</td>
                         </tr>
                         <tr>
                             <td>Leaf Pack Types and Composition</td>

@@ -73,17 +73,11 @@ def start_jobs(user=True):
         Add additional jobs below here if ever needed... 
         """
 
-        # print jobs created
-        logging.info(colorize("Started crontab jobs: ", fg='blue'))
-        for job in cron:
-            logging.info(colorize('\t' + str(job), fg='green'))
 
-
-def stop_jobs(cron=None, user=None):
+def stop_jobs(cron=None):
     """ Stops crontab jobs containing JOB_COMMENT_PREPENDER in the job's comment """
-    logging.info(colorize("Stopping crontab jobs: ", fg='blue'))
-    if cron is None and user:
-        cron = CronTab(user=user)
+    if cron is None:
+        return
 
     for job in cron:
         if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):
