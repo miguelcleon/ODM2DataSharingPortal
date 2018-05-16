@@ -277,12 +277,12 @@ svg.not-stale {
     text-decoration: none;
 }
 
-.buttons-toolbar .button-link {
+.buttons-toolbar .button-link, .buttons-toolbar button {
     margin-bottom: 15px;
 }
 
 @media (max-width: 576px) {
-    .buttons-toolbar .button-link {
+    .buttons-toolbar .button-link, .buttons-toolbar form, .buttons-toolbar button {
         width: 100%;
     }
 }
@@ -596,7 +596,7 @@ footer .separator {
     text-decoration: none;
 }
 
-#btn-delete-site {
+#btn-delete-site, #btn-del-leaf-exp {
     background-color: #d9534f;
     border-color: #d43f3a;
 }

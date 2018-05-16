@@ -16,24 +16,29 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="buttons-toolbar row">
                 <div class="col-6">
+                    <h5 class="headline">Leaf Pack Details</h5>
+                </div>
+                <div class="col-6 text-right">
                     <form class="inline" method="post"
                           action="{% url 'leafpack:delete' sampling_feature_code leafpack.uuid %}">
                         {% csrf_token %}
-                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Delete</button>
+                        <button id="btn-del-leaf-exp" type="submit"
+                                class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
+                            <i class="material-icons center-icon">delete_forever</i> Delete
+                        </button>
                     </form>
 
                     <a href="{% url 'leafpack:update' sampling_feature_code leafpack.uuid %}"
-                       class="mdl-button mdl-button--raised mdl-button--accent">Update</a>
+                       id="btn-edit-leaf-exp"
+                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                        <i class="material-icons center-icon">mode_edit</i> Edit
+                    </a>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-12">
-                    <h5 class="headline">Leaf Pack Details</h5>
-                </div>
-
                 <div class="col-sm-12 col-md-6">
                     {# <code>{{ leafpack.uuid }}</code> #}
                     <h6 class="title">Placement Information</h6>
@@ -181,6 +186,28 @@
                     <div id="legend-container">
                         <ul class="mdl-list"></ul>
                     </div>
+                </div>
+
+                <div class="col-12">
+                    <br><br>
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Total Number of Individuals Found</td>
+                            <td class="mdl-data-table__cell--non-numeric">25</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Biotic Index</td>
+                            <td class="mdl-data-table__cell--non-numeric">3.71</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Water Quality Category</td>
+                            <td class="mdl-data-table__cell--non-numeric">Excellent - Organic Pollution Unlikely</td>
+                        </tr><tr>
+                            <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
+                            <td class="mdl-data-table__cell--non-numeric">36.8</td>
+                        </tr>
+
+                    </table>
                 </div>
             </div>
         </div>

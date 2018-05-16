@@ -18,6 +18,7 @@ var y = d3.scale.linear()
 
 var xAxis = d3.svg.axis()
     .scale(x)
+    .tickValues([])
     .orient("bottom");
 
 var yAxis = d3.svg.axis()
@@ -29,7 +30,7 @@ var tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
     .html(function (d) {
-        return "<strong>% of Total Individuals:</strong> <span style='color:red'>" + (d.frequency * 100) + "%</span>";
+        return d.taxon + "<br><br><strong>% of Total Individuals:</strong> <span style='color:red'>" + (d.frequency * 100) + "%</span>";
     });
 
 var svg = d3.select(".svg-container").append("svg")
@@ -64,7 +65,7 @@ for (var i = 0; i < data.length; i++) {
                 data[i].taxon +
             '</span>' +
         '</li>'
-    )
+    );
 }
 
 plot(data);
@@ -81,7 +82,7 @@ function plot(data) {
         .append("text")
         .style("text-anchor", "middle")
         .attr("x", width / 2 )
-        .attr("y", 60 )
+        .attr("y", 30 )
         .text("Taxonomic Group");
 
     svg.append("g")
@@ -105,7 +106,7 @@ function plot(data) {
         .attr("y", function (d) {
             return y(d.frequency);
         })
-        .attr("fill", function(d, i){
+        .attr("fill", function (d, i) {
             return c20(i);
         })
         .attr("height", function (d) {
@@ -113,7 +114,7 @@ function plot(data) {
         })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide)
-};
+}
 
 function type(d) {
     d.frequency = +d.frequency;
