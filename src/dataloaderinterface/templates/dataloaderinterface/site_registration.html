@@ -127,94 +127,97 @@
                                 <br>
                             </fieldset>
 
-                            <fieldset class="form-fieldset">
-                                <div class="row">
-                                    <div class="col-lg-12 results-table" id="formset"
-                                         data-formset-prefix="{{ results_formset.prefix }}">
+                            {{ results_formset.management_form }}
 
-                                        <div class="section-title inline">Sensors</div>
+                            {% if request.resolver_match.view_name == "site_update" %}
+                                <fieldset class="form-fieldset">
+                                    <div class="row">
+                                        <div class="col-lg-12 results-table" id="formset"
+                                             data-formset-prefix="{{ results_formset.prefix }}">
 
-                                        <span id="new-result-button" data-toggle="modal"
-                                              data-target="#result-dialog"
-                                              class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
+                                            <div class="section-title inline">Sensors</div>
+
+                                            <span id="new-result-button" data-toggle="modal"
+                                                  data-target="#result-dialog"
+                                                  class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
                                             <i class="material-icons">add</i>
-                                        </span>
+                                            </span>
 
-                                        <div class="mdl-tooltip" data-mdl-for="new-result-button">
-                                           Add New Sensor
-                                        </div>
+                                            <div class="mdl-tooltip" data-mdl-for="new-result-button">
+                                                Add New Sensor
+                                            </div>
 
-                                        <br><br>
+                                            <br><br>
 
-                                        {{ results_formset.management_form }}
+                                            <div style="overflow: auto;">
+                                                <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
+                                                    <thead>
+                                                    <tr class="full-width">
+                                                        <th class="mdl-data-table__cell--non-numeric">Equipment Model
+                                                        </th>
+                                                        <th class="mdl-data-table__cell--non-numeric">Measured
+                                                            Variable
+                                                        </th>
+                                                        <th class="mdl-data-table__cell--non-numeric">Units</th>
+                                                        <th class="mdl-data-table__cell--non-numeric">Sampled Medium
+                                                        </th>
+                                                        <th class="mdl-data-table__cell--non-numeric">Edit</th>
+                                                        <th class="mdl-data-table__cell--non-numeric">Delete</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for result_form in results_formset %}
+                                                        {% if result_form|has_data %}
+                                                            <tr class="result-form {% if result_form|is_deleted %} deleted-row {% endif %}"
+                                                                data-result="{{ result_form.prefix }}">
+                                                                <input type="hidden"
+                                                                       name="{{ result_form.prefix }}-result_id"
+                                                                       class="field-value"
+                                                                       value="{{ result_form.initial.result_id }}"/>
+                                                                <input type="hidden"
+                                                                       name="{{ result_form.prefix }}-result_uuid"
+                                                                       class="field-value"
+                                                                       value="{{ result_form.initial.result_uuid }}"/>
+                                                                {% for field in result_form %}
+                                                                    {% if field.name != "DELETE" %}
+                                                                        <td data-field="{{ field.name }}"
+                                                                            class="mdl-data-table__cell--non-numeric">
+                                                                            <span class="field-text">{{ result_form|get_field_data:field.name }}</span>
+                                                                            <input type="hidden"
+                                                                                   name="{{ field.html_name }}"
+                                                                                   class="field-value"
+                                                                                   value="{{ field.value }}"/>
+                                                                        </td>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                <td data-behaviour="edit"
+                                                                    class="mdl-data-table__cell--non-numeric">
+                                                                    <button class="mdl-button mdl-button--accent"
+                                                                            type="button">
+                                                                        <i class="material-icons center-icon">mode_edit</i>
+                                                                    </button>
+                                                                </td>
+                                                                <td data-behaviour="delete"
+                                                                    class="mdl-data-table__cell--non-numeric">
+                                                                    <button class="mdl-button" style="color: #d9534f"
+                                                                            type="button">
+                                                                        <i class="material-icons center-icon">delete_forever</i>
+                                                                        {{ result_form.DELETE }}
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    <tr class="no-sensors-row bg-white {% if result_form|length > 0 %}hidden{% endif %}">
+                                                        <td colspan="6" class="text-center">No sensors have been
+                                                            added.
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
 
-                                        <div style="overflow: auto;">
-                                            <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
-                                                <thead>
-                                                <tr class="full-width">
-                                                    <th class="mdl-data-table__cell--non-numeric">Equipment Model
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Measured
-                                                        Variable
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Units</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Sampled Medium
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for result_form in results_formset %}
-                                                    {% if result_form|has_data %}
-                                                        <tr class="result-form {% if result_form|is_deleted %} deleted-row {% endif %}"
-                                                            data-result="{{ result_form.prefix }}">
-                                                            <input type="hidden"
-                                                                   name="{{ result_form.prefix }}-result_id"
-                                                                   class="field-value"
-                                                                   value="{{ result_form.initial.result_id }}"/>
-                                                            <input type="hidden"
-                                                                   name="{{ result_form.prefix }}-result_uuid"
-                                                                   class="field-value"
-                                                                   value="{{ result_form.initial.result_uuid }}"/>
-                                                            {% for field in result_form %}
-                                                                {% if field.name != "DELETE" %}
-                                                                    <td data-field="{{ field.name }}"
-                                                                        class="mdl-data-table__cell--non-numeric">
-                                                                        <span class="field-text">{{ result_form|get_field_data:field.name }}</span>
-                                                                        <input type="hidden"
-                                                                               name="{{ field.html_name }}"
-                                                                               class="field-value"
-                                                                               value="{{ field.value }}"/>
-                                                                    </td>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                            <td data-behaviour="edit"
-                                                                class="mdl-data-table__cell--non-numeric">
-                                                                <button class="mdl-button mdl-button--accent"
-                                                                        type="button">
-                                                                    <i class="material-icons center-icon">mode_edit</i>
-                                                                </button>
-                                                            </td>
-                                                            <td data-behaviour="delete"
-                                                                class="mdl-data-table__cell--non-numeric">
-                                                                <button class="mdl-button" style="color: #d9534f"
-                                                                        type="button">
-                                                                    <i class="material-icons center-icon">delete_forever</i>
-                                                                    {{ result_form.DELETE }}
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    {% endif %}
-                                                {% endfor %}
-                                                <tr class="no-sensors-row bg-white {% if result_form|length > 0 %}hidden{% endif %}">
-                                                    <td colspan="6" class="text-center">No sensors have been added.</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-                                        <script id="sensor-row" type="text/plain">
+                                            <script id="sensor-row" type="text/plain">
                                             <tr class="result-form" data-result="form-__prefix__">
                                                 <td data-field="equipment_model" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
@@ -244,19 +247,19 @@
                                                     </button>
                                                 </td>
                                             </tr>
-                                        </script>
+
+                                            </script>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <a href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
+                                           class="mdl-button mdl-button--raised mdl-button--accent">Add Leaf Pack</a>
                                     </div>
                                 </div>
-                            </fieldset>
-
-                            <br>
-
-                            <div class="row">
-                                <div class="col-12">
-                                    <a href="{% url 'leafpack:create' site.sampling_feature.sampling_feature_code %}"
-                                       class="mdl-button mdl-button--raised mdl-button--accent">Add Leaf Pack</a>
-                                </div>
-                            </div>
+                            {% endif %}
 
                             <div style="margin-top: 20px;">
                                 <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
