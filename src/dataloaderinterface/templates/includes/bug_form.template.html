@@ -14,11 +14,11 @@
     </div>
 
     {% if bug_forms.1 %}
-    <div class="mdl-card__title full-width">
+    <div class="mdl-card__title">
         <table class="full-width">
             {% for family_form in bug_forms.1 %}
                 <tr>
-                    <td ><small><label
+                    <td><small><label
                             for="{{ family_form.bug_count.id_for_label }}">
                         {{ family_form.bug_count.label|capfirst }}
                         ({{ family_form.instance.bug.scientific_name }})

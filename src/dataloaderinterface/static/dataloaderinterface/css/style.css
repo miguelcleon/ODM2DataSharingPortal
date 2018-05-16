@@ -834,7 +834,7 @@ i.material-icons.site-card-icon {
 
 .page-title, .section-title {
     text-transform: uppercase;
-    color: rgba(0, 0, 0, 0.541176);
+    color: rgb(4, 138, 138);
     font-size: 18px;
     font-weight: 500;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -1151,6 +1151,10 @@ div#followedSites .mdl-card__menu {
     margin-left: 20px;
 }
 
+td.indent-left {
+    padding-left: 48px !important;
+}
+
 .form-leafpack .step-number {
     display: inline-block;
     border-radius: 50%;
@@ -1182,4 +1186,16 @@ div#followedSites .mdl-card__menu {
 
 .mdl-card.full-width .mdl-card__supporting-text, .mdl-card.full-width .mdl-card__title {
     width: 100%;
+}
+
+h6.title {
+    color: #048a8a;
+}
+
+table.no-borders {
+    border: 0;
+}
+
+table.no-borders td {
+    border: 0;
 }
