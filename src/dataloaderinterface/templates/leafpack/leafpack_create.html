@@ -187,7 +187,7 @@
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
                                                     {% if forloop.counter < 7 %}
-                                                        {% include 'includes/bug_form.template.html' with bug_forms=bug_forms %}
+                                                        {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
                                             {% endfor %}
@@ -197,7 +197,7 @@
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
                                                     {% if forloop.counter > 6 %}
-                                                        {% include 'includes/bug_form.template.html' with bug_forms=bug_forms %}
+                                                        {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
                                             {% endfor %}

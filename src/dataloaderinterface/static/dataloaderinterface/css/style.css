@@ -916,18 +916,15 @@ a.accent:hover {
     font-size: 12px;
 }
 
-#site-table-header {
-    font-weight: 500;
-    font-size: 16px;
-    border-top: 6px solid #90a877;
-}
 table.site-table thead {
     border-top: 6px solid #90a877;
 }
+
 table.site-table thead th {
     font-weight: 500;
     font-size: 16px;
 }
+
 table.site-table i {
     margin-right: 10px;
 }

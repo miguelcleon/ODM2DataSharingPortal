@@ -21,6 +21,11 @@
                     <h5 class="headline">Leaf Pack Details</h5>
                 </div>
                 <div class="col-6 text-right">
+                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
+                       id="btn-edit-leaf-exp"
+                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                        <i class="material-icons center-icon">mode_edit</i> Edit
+                    </a>
                     <form class="inline" method="post"
                           action="{% url 'leafpack:delete' sampling_feature_code leafpack.id %}">
                         {% csrf_token %}
@@ -29,12 +34,6 @@
                             <i class="material-icons center-icon">delete_forever</i> Delete
                         </button>
                     </form>
-
-                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
-                       id="btn-edit-leaf-exp"
-                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                        <i class="material-icons center-icon">mode_edit</i> Edit
-                    </a>
                 </div>
             </div>
 
