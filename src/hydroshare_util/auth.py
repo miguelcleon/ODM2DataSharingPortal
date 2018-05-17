@@ -38,12 +38,12 @@ class AuthUtil(HydroShareUtilityBaseClass):
             return self.__implementation.refresh_access_token()
 
     @staticmethod
-    def authorize_client(response_type=None):
-        return OAuthUtil.authorize_client(response_type=response_type)
+    def authorize_client(request, response_type=None):
+        return OAuthUtil.authorize_client(request, response_type=response_type)
 
     @staticmethod
-    def authorize_client_callback(code):
-        return OAuthUtil.authorize_client_callback(code)
+    def authorize_client_callback(request):
+        return OAuthUtil.authorize_client_callback(request)
 
     @staticmethod
     def authorize(scheme=None, username=None, password=None, token=None, hostname=None, port=None):
@@ -76,13 +76,29 @@ class OAuthUtil(AuthUtilImplementor):
     _HS_API_URL_PROTO = '{base}hsapi/'
     _HS_OAUTH_URL_PROTO = '{base}o/'
 
+    __client_id = None
+    __client_secret = None
+    __redirect_uri = None
+
     @property
     def auth_type(self):
         return self.__authorization_grant_type
 
-    def __init__(self, use_https=True, hostname='www.hydroshare.org',
-                 port=None, scope=None, access_token=None, refresh_token=None, expires_in=None, token_type='Bearer',
-                 response_type='code', username=None, password=None):
+    def __init__(self, use_https=True, hostname='www.hydroshare.org', client_id=None, client_secret=None,
+                 redirect_uri=None, port=None, scope=None, access_token=None, refresh_token=None, expires_in=None,
+                 token_type='Bearer', response_type='code', username=None, password=None):
+
+        if client_id:
+            self.__client_id = client_id
+
+        if client_secret:
+            self.__client_secret = client_secret
+
+        if redirect_uri:
+            self.__redirect_uri = redirect_uri
+
+        if None in [self.__client_id, self.__client_secret, self.__redirect_uri]:
+            raise ImproperlyConfiguredError()
 
         self.token_type = token_type
         self.response_type = response_type
@@ -105,13 +121,6 @@ class OAuthUtil(AuthUtilImplementor):
 
         self.api_url = self._HS_API_URL_PROTO.format(base=self.base_url)
         self.oauth_url = self._HS_OAUTH_URL_PROTO.format(base=self.base_url)
-
-        if settings.HYDROSHARE_UTIL_CONFIG:
-            self.__client_id = settings.HYDROSHARE_UTIL_CONFIG['CLIENT_ID']
-            self.__client_secret = settings.HYDROSHARE_UTIL_CONFIG['CLIENT_SECRET']
-            self.__redirect_uri = settings.HYDROSHARE_UTIL_CONFIG['REDIRECT_URI']
-        else:
-            raise ImproperlyConfiguredError()
 
         if self.username and self.password:
             self.__authorization_grant_type = OAUTH_ROPC
@@ -155,13 +164,13 @@ class OAuthUtil(AuthUtilImplementor):
         return HydroShareAdapter(auth=auth, default_headers=authorization_header)
 
     @staticmethod
-    def authorize_client(response_type=None):  # type: (str) -> None
+    def authorize_client(request, response_type=None):
         """
         Redirects user from the client (data.envirodiy.org) to www.hydroshare.org/o/authorize/. After the user provides
         their hydroshare account credentials and authorizes the requesting client, the user is redirected back to the
         client website.
-
-        :param response_type: a string representing the auth response type (defaults is 'code').
+        :param request: A Django HttpRequest object
+        :param response_type: (optional) a string representing the auth response type (defaults is 'code').
         :return: None
         """
         if response_type:
@@ -169,14 +178,14 @@ class OAuthUtil(AuthUtilImplementor):
         else:
             auth = OAuthUtil()
 
-        url = auth._get_authorization_code_url()
+        url = auth._get_authorization_code_url(request)
         return redirect(url)
 
     @staticmethod
-    def authorize_client_callback(code, response_type=None):
+    def authorize_client_callback(request, response_type=None):
         """
         Callback handler after a user authorizes the client (data.envirodiy.org).
-        :param code: a string representing the authorization code recieved by hydroshare.org
+        :param request: a Django HttpRequest
         :param response_type: a string representing the oauth response_type
         :return: a dictionary representing the token
         """
@@ -186,7 +195,7 @@ class OAuthUtil(AuthUtilImplementor):
         else:
             auth = OAuthUtil()
 
-        token = auth._request_access_token(code)
+        token = auth._request_access_token(request)
 
         return token
 
@@ -242,28 +251,44 @@ class OAuthUtil(AuthUtilImplementor):
 
         return "{oauth_url}{path}?{params}".format(oauth_url=self.oauth_url, path=path, params="&".join(url_params))
 
-    def _get_authorization_code_url(self):
+    def _get_authorization_code_url(self, request):
+
+        redirect_url = self._get_redirect_url(request.scheme, request.META['HTTP_HOST'])
+
         params = {
             'response_type': self.response_type,
             'client_id': self.__client_id,
-            'redirect_uri': self.__redirect_uri
+            'redirect_uri': redirect_url
         }
 
         return self._build_oauth_url('authorize/', params)
 
-    def _get_access_token_url(self, code):
+    def _get_access_token_url(self, request):
+
+        redirect_url = self._get_redirect_url(request.scheme, request.META['HTTP_HOST'])
+
         params = {
             'grant_type': 'authorization_code',
             'client_id': self.__client_id,
             'client_secret': self.__client_secret,
-            'redirect_uri': self.__redirect_uri,
-            'code': code
+            'redirect_uri': redirect_url,
+            'code': request.GET['code']
         }
 
         return self._build_oauth_url('token/', params)
 
-    def _request_access_token(self, code):
-        url = self._get_access_token_url(code)
+    def _get_redirect_url(self, scheme, host):
+        if scheme and host in self.__redirect_uri:
+            return self.__redirect_uri
+
+        redirect_uri = self.__redirect_uri
+        if '/' == redirect_uri[0]:
+            redirect_uri = redirect_uri[1:]
+
+        return '{scheme}://{host}/{uri}'.format(scheme=scheme, host=host, uri=redirect_uri)
+
+    def _request_access_token(self, request):
+        url = self._get_access_token_url(request)
 
         response = requests.post(url)
 
@@ -326,17 +351,15 @@ class AuthUtilFactory(object):
         hsauth = AuthUtilFactory.create(username='<your username>', password='<your password>')
 
     Example of creating a 'AuthUtil' object using the 'oauth' authentication scheme and client credential grant type:
-        hsauth = AuthUtilFactory.create(username='<your_username>', password='<your_password>',
-                                        client_id='<__client_id>', client_secret='<__client_secret>')
+        hsauth = AuthUtilFactory.create(scheme='oauth', username='<your_username>', password='<your_password>')
 
     Example of creating an 'AuthUtil' object using the 'auth' authentication scheme and authorization code grant type:
         token = get_token() # get_token is a stand for getting a token dictionary
-        hsauth = AuthUtilFactory.create(client_id='<__client_id>', client_secret='<__client_secret>',
-                                        token=token, __redirect_uri='<your_app_redirect_uri>')
+        hsauth = AuthUtilFactory.create(token=token)
     """
     @staticmethod
-    def create(scheme=None, username=None, password=None, token=None, hostname=None, port=None):
-        # type: (AuthScheme, str, str, dict, str, int) -> AuthUtil
+    def create(scheme=None, username=None, password=None, token=None, hostname=None, port=None, use_https=None):
+        # type: (AuthScheme, str, str, dict, str, int, bool) -> AuthUtil
         """
         Factory method creates and returns an instance of AuthUtil. The chosen scheme ('basic' or 'oauth') determines
         the background implementation. The following table shows which parameters are required for each type of
@@ -361,31 +384,38 @@ class AuthUtilFactory(object):
         and 'scope'
         :param hostname: The hostname if using a self signed security certificate
         :param port: The port to connect to if trying to connect to a hydroshare development server
+        :param use_https: True if using HTTPS is required, otherwise False, default is None
         """
         if token:
             # OAuth using authorization-code
             implementation = OAuthUtil(**token)
-        elif scheme and scheme == AuthScheme.OAUTH._value_ and username and password:
+
+        elif scheme == 'oauth' and username and password:
+
             # OAuth using resource-owner-password-credentials
             implementation = OAuthUtil(username=username, password=password)
-        elif username and password:
+
+        elif scheme == 'basic' and username and password:
+
             # Basic auth - username and password
             implementation = BasicAuthUtil(username, password)
-        elif scheme == AuthScheme.SELF_SIGNED_CERTIFICATE._value_ and hostname:
+
+        elif scheme == 'self-signed-certificate' and hostname:
+
             # Auth using a self signed security certificate
             implementation = SelfSignSecurityCertAuth(hostname, port=port)
+
         else:
-            scheme = scheme if scheme else "not specified"
+
             raise ValueError("incorrect arguments supplied to 'AuthUtilFactory.create()' using authentication scheme \
-                '{scheme}'".format(scheme=scheme))
+                '{scheme}'".format(scheme=scheme if scheme else "not specified"))
 
-        return AuthUtil(implementation)
+        util = AuthUtil(implementation)
+
+        if use_https is not None:
+            util.use_https = use_https
+
+        return util
 
 
-class AuthScheme(Enum):
-    BASIC = 'basic'
-    OAUTH = 'oauth'
-    SELF_SIGNED_CERTIFICATE = 'self-signed-certificate'
-
-
-__all__ = ["AuthUtil", "OAuthUtil", "BasicAuthUtil", "SelfSignSecurityCertAuth", "AuthUtilFactory", "AuthScheme"]
+__all__ = ["AuthUtil", "OAuthUtil", "BasicAuthUtil", "SelfSignSecurityCertAuth", "AuthUtilFactory"]

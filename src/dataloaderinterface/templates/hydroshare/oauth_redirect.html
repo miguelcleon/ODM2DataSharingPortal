@@ -41,10 +41,10 @@
 {{ block.super }}
 <script>
     $(() => {
-        setTimeout(function () {
+        {#setTimeout(function () {#}
             {# Redirect user to hydroshare oauth url after 3 seconds #}
-            window.location.replace('{{ redirect_url  }}');
-        }, 3000);
+        {#    window.location.replace('{{ redirect_url  }}');#}
+        {#}, 3000);#}
     });
 </script>
 {% endblock %}

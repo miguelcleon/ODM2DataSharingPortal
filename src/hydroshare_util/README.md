@@ -1,16 +1,29 @@
 # HydroShareUtil Documentation
 
+### Note
+Many features in this library have not been tested. Please submit an issue if you find any problems!
+
 ### Configuration
 
-In `settings.json` in your django project, include the following configuration to enable using OAuth 2.0 with `hydroshare_util`.  
+Include the following configuration in your Django project settings file to enable using OAuth 2.0 with `hydroshare_util`.  
  
 ```python
+# settings.py
+
+MIDDLEWARE = [
+    'hydroshare_util.middleware.AuthMiddleware',
+    ...
+]
+
 HYDROSHARE_UTIL_CONFIG = {
     'CLIENT_ID': '<your_client_id>',
     'CLIENT_SECRET': '<your_client_secret>',
     'REDIRECT_URI': '<your_redirect_uri>'
 }
 ```
+The value for `REDIRECT_URI` can be a fully qualified URL or a relative URL. 
+For example, the value of `REDIRECT_URI` can be `http://localhost:8000/hydroshare/callback/` or `hydroshare/callback/`; either will work.
+
 
 It is also possible to authenticate users with OAuth 2.0 using the `Resource Owner Password Credentials` 
 authorization-grant type described in [RFC 6749](https://tools.ietf.org/html/rfc6749#section-1.3.3). 
@@ -27,13 +40,12 @@ from django.shortcuts import redirect
 
 
 def hydroshare(request):
-    # auth.authorize_client() redirects the user to www.hydroshare.org to authorize your application  
-    return AuthUtil.authorize_client()
+    # AuthUtil.authorize_client(request) redirects the user to www.hydroshare.org for them to authorize your application  
+    return AuthUtil.authorize_client(request)
     
 def hydroshare_callback(request):
-    authorization_code = request.GET['code']
-    
     try:
+        token = AuthUtil.authorize_client_callback(request)
         # 'token' is a dictionary obtained after succesfully authenticating a user through HydroShare 
         #   {
         #       "access_token": "<your_access_token>",
@@ -42,14 +54,13 @@ def hydroshare_callback(request):
         #       "refresh_token": "<your_refresh_token>",
         #       "scope": "read write"
         #   }
-        token = AuthUtil.authorize_client_callback(authorization_code)
     except:
         # authorization failed
         return redirect('/<authorization_failure_url>')
     
-    auth = AuthUtil.authorize(token=token)
+    auth_util = AuthUtil.authorize(token=token)
     
-    # do other stuff like save the access token to a database and redirecting the user to a success page 
+    # do other stuff like save the access token to a database and redirect the user to a success page 
     ...
 ```
 
@@ -80,7 +91,7 @@ from hydroshare_util.auth import AuthUtil
 def hydroshare(request):
     username = request.POST['username']
     password = request.POST['password']
-    auth = AuthUtil.authorize(username=username, password=password)
+    auth_util = AuthUtil.authorize(username=username, password=password)
 ```
 
 #### Authorization using a self signed security certificate (to connect to a hydroshare development server)
@@ -89,14 +100,13 @@ from hydroshare_util.auth import AuthUtil
 
 def hydroshare(request):
     hostname = '<your_hostname>'
-    auth = AuthUtil.authorize(hostname=hostname)
+    auth_util = AuthUtil.authorize(hostname=hostname)
     
-    # You can also connect to a specific port
-    auth = AuthUtil.authorize_client(hostname=hostname, port=8080)
+    # You can also connect using a specific port number
+    auth_util = AuthUtil.authorize_client(request, hostname=hostname, port=8080)
     
     # If you're connecting to a port other than port 80, but need to connect using https
-    auth = AuthUtil.authorize_client(hostname=hostname, port=8080)
-    auth.use_https = True
+    auth_util = AuthUtil.authorize_client(request, hostname=hostname, port=8080, use_https=True)
 ```
 
 ### Usage
@@ -109,10 +119,10 @@ To get information about the user:
 from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.auth import AuthUtil
 
-token = get_token() # You will need to implement your own method for retrieving a token 
-auth = AuthUtil.authorize('oauth', token=token)
+token = get_token() # You will need to implement your own method to retrieving a token 
+auth_util = AuthUtil.authorize('oauth', token=token)
 
-util = HydroShareUtility(auth=auth)
+util = HydroShareUtility(auth=auth_util)
 
 user_info = util.get_user_info()
 # user_info = {
