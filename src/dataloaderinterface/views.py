@@ -961,13 +961,13 @@ class OAuthAuthorize(TemplateView):
     def get(self, request, *args, **kwargs):
         if 'code' in request.GET:
             try:
-                token_dict = AuthUtil.authorize_client_callback(request.GET['code'])  # type: dict
-                auth_utility = AuthUtil.authorize(token=token_dict)  # type: AuthUtil
+                token_dict = AuthUtil.authorize_client_callback(request)  # type: dict
+                auth_util = AuthUtil.authorize(token=token_dict)  # type: AuthUtil
             except Exception as e:
                 print 'Authorizition failure: {}'.format(e)
-                return HttpResponse('Error: Authorization failure!')
+                return HttpResponse(mark_safe("<p>Error: Authorization failure!</p><p>{e}</p>".format(e=e)))
 
-            client = auth_utility.get_client()  # type: HydroShareAdapter
+            client = auth_util.get_client()  # type: HydroShareAdapter
             user_info = client.getUserInfo()
             print('\nuser_info: %s', json.dumps(user_info, indent=3))
 
@@ -1002,7 +1002,7 @@ class OAuthAuthorize(TemplateView):
         elif 'error' in request.GET:
             return HttpResponseServerError(request.GET['error'])
         else:
-            return AuthUtil.authorize_client()
+            return AuthUtil.authorize_client(request)
 
 
 class OAuthRedirect(TemplateView):
@@ -1022,16 +1022,24 @@ class OAuthRedirect(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(OAuthRedirect, self).get_context_data(**kwargs)
-        # Add 'redirect' as a url parameter
-        url = reverse('hydroshare_oauth_redirect') + '?redirect=true'
+
+        # Get the current scheme (http or https)
+        scheme = self.request.is_secure() and "https" or "http"
+        # Need to get the host since the host name can be 'data.envirodiy.org' or 'data.wikiwatershed.org'
+        host = self.request.META.get('HTTP_HOST', None)
+        # Build the url and add 'redirect' into the url params
+        url = '{scheme}://{host}{url}?{params}'.format(scheme=scheme, host=host,
+                                                       url=reverse('hydroshare_oauth_redirect'), params='redirect=true')
+
         context['redirect_url'] = mark_safe(url)
+
         return context
 
     def get(self, request, *args, **kwargs):
         if 'redirect' in request.GET and request.GET['redirect'] == 'true':
-            return AuthUtil.authorize_client()
-        else:
-            return super(OAuthRedirect, self).get(request, args, kwargs)
+            return AuthUtil.authorize_client(request)
+
+        return super(OAuthRedirect, self).get(request, args, kwargs)
 
 
 def delete_result(result):

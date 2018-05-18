@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'requests',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,6 +67,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hydroshare_util.middleware.AuthMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -179,7 +180,7 @@ DATETIME_FORMAT = "N j, Y g:i a"
 HYDROSHARE_UTIL_CONFIG = {
     'CLIENT_ID': data["hydroshare_oauth"]["client_id"],
     'CLIENT_SECRET': data["hydroshare_oauth"]["client_secret"],
-    'REDIRECT_URI': data["hydroshare_oauth"]["redirect_uri"],
+    'REDIRECT_URI': data['hydroshare_oauth']['redirect_uri']
 }
 
 INFLUX_URL_QUERY = data['influx_query']
