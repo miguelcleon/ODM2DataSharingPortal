@@ -56,3 +56,11 @@ def round_float(value, argv):
         return round(value, round_to)
     else:
         return value
+
+
+@register.filter("divide")
+def divide(value, arg):
+    try:
+        return float(value) / float(arg)
+    except (ValueError, ZeroDivisionError):
+        return None

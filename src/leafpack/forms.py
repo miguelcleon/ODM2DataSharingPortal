@@ -125,7 +125,7 @@ class LeafPackBugForm(forms.ModelForm):
             # Does the model instance have children?
             self.has_children = len(self.instance.bug.families.all()) > 0
 
-            self.fields['bug_count'].label = self.instance.bug.common_name + '(' + self.instance.bug.scientific_name + ')'
+            self.fields['bug_count'].label = self.instance.bug.common_name + ' (' + self.instance.bug.scientific_name + ')'
 
 
 class LeafPackBugFormFactory(forms.BaseFormSet):
@@ -151,9 +151,9 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
     def formset_factory(leafpack=None):
         form_list = []
 
-        order_bugs = [bug for bug in Macroinvertebrate.objects.filter(family_of=None).order_by('common_name')]
+        queryset = Macroinvertebrate.objects.filter(family_of=None).order_by('pollution_tolerance').order_by('-form_priority')
 
-        for order_bug in order_bugs:
+        for order_bug in queryset:
             if leafpack is not None:
                 lpg = LeafPackBug.objects.get(bug=order_bug.id, leaf_pack=leafpack.id)
             else:
