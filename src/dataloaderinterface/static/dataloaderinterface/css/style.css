@@ -59,6 +59,23 @@ html > body {
     }
 }
 
+/*ICON COLORS*/
+.icon-blue {
+    color: rgb(31, 119, 180);
+}
+
+.icon-orange {
+    color: rgb(255, 127, 14);;
+}
+
+.icon-green {
+    color: rgb(44, 160, 44);
+}
+
+.icon-light-blue {
+    color: rgb(23, 190, 207);
+}
+
 .map-container {
     margin-top: 25px;
     height: 450px;
@@ -385,7 +402,7 @@ table.sensors td:not([data-behaviour]) {
     shape-rendering: crispEdges;
 }
 
-.x.axis path {
+.plot_box .x.axis path {
     display: none;
 }
 
@@ -690,6 +707,8 @@ table tr.taxon {
 
 .mdl-data-table__cell--icon {
     padding: 0 !important;
+    font-size: 16px;
+    text-align: center !important;
 }
 
 .mdl-button--raised {
