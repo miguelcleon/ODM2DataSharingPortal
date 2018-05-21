@@ -4,103 +4,338 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>
-            <form method="post" action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}">
-                {{ form.site_registration }}
+    <div class="ribbon ribbon-lightblue"></div>
+
+    <div class="ribbon-container">
+        <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title">
+                        {#   TODO: ADD THE SITE NAME BELOW #}
+                        Edit Leaf Pack Experiment at {{ leafpack_form.site_registration.sampling_feature_name }}
+                    </div>
+                </div>
+            </div>
+            <form class="form-leafpack" method="POST" action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}">
                 {% csrf_token %}
-                <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>
-                <table class="mdl-data-table leafpack-data-table">
-                    <tbody>
-                        <tr>
-                            <td>placement_date</td>
-                            <td>{{ form.placement_date }}</td>
-                        </tr>
-                        <tr>
-                            <td>retrieval_date</td>
-                            <td>{{ form.retrieval_date }}</td>
-                        </tr>
-                        <tr>
-                            <td>id</td>
-                            <td>{{ leafpack.id }}</td>
-                        </tr>
-                        <tr>
-                            <td>leafpack_placement_count</td>
-                            <td>{{ form.leafpack_placement_count }}</td>
-                        </tr>
-                        <tr>
-                            <td>leafpack_retrieval_count</td>
-                            <td>{{ form.leafpack_retrieval_count }}</td>
-                        </tr>
-                        <tr>
-                            <td>placement_air_temp</td>
-                            <td>{{ form.placement_air_temp }}</td>
-                        </tr>
-                        <tr>
-                            <td>placement_water_temp</td>
-                            <td>{{ form.placement_water_temp }}</td>
-                        </tr>
-                        <tr>
-                            <td>retrieval_air_temp</td>
-                            <td>{{ form.retrieval_air_temp }}</td>
-                        </tr>
-                        <tr>
-                            <td>retrieval_water_temp</td>
-                            <td>{{ form.retrieval_water_temp }}</td>
-                        </tr>
-                        <tr>
-                            <td>had_storm</td>
-                            <td>{{ form.had_storm }}</td>
-                        </tr>
-                        <tr>
-                            <td>had_flood</td>
-                            <td>{{ form.had_flood }}</td>
-                        </tr>
-                        <tr>
-                            <td>had_drought</td>
-                            <td>{{ form.had_drought }}</td>
-                        </tr>
-                        <tr>
-                            <td>storm_count</td>
-                            <td>{{ form.storm_count }}</td>
-                        </tr>
-                        <tr>
-                            <td>storm_precipitation</td>
-                            <td>{{ form.storm_precipitation }}</td>
-                        </tr>
-                        <tr>
-                            <td>Leaf Pack Types and Composition</td>
-                            <td>{{ form.types|add_class:"form-control" }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="row">
+                    <div class="col-12">
+                        <span class="step-number center-icon">1</span>
+                        <h5 class="headline d-inline-block">Enter your leaf pack placement information</h5>
+                    </div>
+                </div>
 
+                <div class="row step-row">
+                    {{ form.site_registration }}
+                    <div class="col-sm-12 col-md-6">
+                        <div class="mdl-card mdl-shadow--2dp full-width">
+                            <div class="mdl-card__title mdl-card--border">
+                                Leaf Pack Placement Data
+                            </div>
+                            <div class="mdl-card__supporting-text default-font">
+                                <div class="row">
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
+                                        {{ form.placement_date|add_class:"form-control datepicker" }}
+                                    </div>
 
-                <table>
-                    <tbody>
-                        {% for form_list in leafpack_bugform %}
-                        <tr>
-                            <td>{{ form_list.0 }}</td>
-                        </tr>
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.leafpack_placement_count.id_for_label }}">{{ form.leafpack_placement_count.label }}</label>
+                                        {{ form.leafpack_placement_count|add_class:"form-control" }}
+                                    </div>
 
-                        {% for family_form in form_list.1 %}
-                        <tr>
-                            <td>{{ family_form }}</td>
-                        </tr>
-                        {% endfor %}
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
+                                        {{ form.placement_air_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </div>
 
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
+                                        {{ form.placement_water_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6">
+                        <div class="mdl-card mdl-shadow--2dp full-width">
+                            <div class="mdl-card__title mdl-card--border">
+                                Leaf Pack Type and Composition
+                            </div>
+
+                            <div class="mdl-card__supporting-text default-font">
+                                <div class="form-field">
+                                    {{ form.types }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <span class="step-number center-icon">2</span>
+                        <h5 class="headline d-inline-block">Enter your leaf pack retrieval information</h5>
+                    </div>
+                </div>
+
+                <div class="row step-row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="mdl-card mdl-shadow--2dp full-width">
+                            <div class="mdl-card__title mdl-card--border">
+                                Leaf Pack Retrieval Data
+                            </div>
+                            <div class="mdl-card__supporting-text default-font">
+                                <div class="row">
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
+                                        {{ form.retrieval_date|add_class:"form-control"|add_class:"form-control datepicker" }}
+                                    </div>
+
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
+                                        {{ form.leafpack_retrieval_count|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
+                                        {{ form.retrieval_air_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </div>
+
+                                    <div class="form-field col-6">
+                                        <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
+                                        {{ form.retrieval_water_temp|add_class:"form-control" }}
+                                        <small class="text-muted">Degrees Celcius</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br><br>
+                    </div>
+
+                    <div class="col-sm-12 col-md-6">
+                        <div class="mdl-card mdl-shadow--2dp full-width">
+                            <div class="mdl-card__title mdl-card--border">
+                                Storm and Non-Storm Events
+                            </div>
+                            <div class="mdl-card__supporting-text default-font form-group">
+                                <div class="form-field">
+                                    <label for="{{ form.had_storm.id_for_label }}">{{ form.had_storm.label }}</label>
+                                    {{ form.had_storm|add_class:"form-control" }}
+                                </div>
+
+                                <div id="storm-additional" class="indent-left collapse">
+                                    <p class="text-muted">If storms occured, please provide some additional
+                                        information:
+                                    </p>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.storm_count.id_for_label }}">{{ form.storm_count.label }}</label>
+                                        {{ form.storm_count|add_class:"form-control" }}
+                                    </div>
+
+                                    <div class="form-field">
+                                        <label for="{{ form.storm_precipitation.id_for_label }}">{{ form.storm_precipitation.label }}</label>
+                                        {{ form.storm_precipitation|add_class:"form-control" }}
+                                        <small class="text-muted">depth (cm)</small>
+                                    </div>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="{{ form.had_flood.id_for_label }}">{{ form.had_flood.label }}</label>
+                                    {{ form.had_flood|add_class:"form-control" }}
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="{{ form.had_drought.id_for_label }}">{{ form.had_drought.label }}</label>
+                                    {{ form.had_drought|add_class:"form-control" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <span class="step-number center-icon">3</span>
+                        <h5 class="headline d-inline-block">Enter your macroinvertebrate count data</h5>
+                    </div>
+                </div>
+
+                <div class="row step-row">
+                    <div class="col-12">
+                        <div class="mdl-card mdl-shadow--2dp full-width">
+                            <div class="mdl-card__title mdl-card--border" style="display: block;">
+                                <div>Macroinvertebrate Counts</div>
+                                <small class="text-muted mdl-card__subtitle-text">Enter the numbers you recorded in
+                                    the "TOTAL" column in the Project Summary Data Sheet:
+                                </small>
+                            </div>
+                            <div class="mdl-card__supporting-text mdl-card--border">
+                                <span>Enter 0 for taxa not found in your leaf packs!</span>
+                            </div>
+                            <div class="mdl-card__supporting-text mdl-card--border default-font">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-6">
+                                        {% for bug_forms in leafpack_bugform %}
+                                            {% with parent_form=bug_forms.0 %}
+                                                {% if forloop.counter < 7 %}
+                                                    {% include 'includes/bug_form.template.html' %}
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6">
+                                        {% for bug_forms in leafpack_bugform %}
+                                            {% with parent_form=bug_forms.0 %}
+                                                {% if forloop.counter > 6 %}
+                                                    {% include 'includes/bug_form.template.html' %}
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Update
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
-</div>
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block scripts %}
     {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/leafpack-create.js' %}"></script>
 {% endblock %}
+
+{#{% extends 'dataloaderinterface/base.html' %}#}
+{#{% load staticfiles %}#}
+{#{% load site %}#}
+{#{% load widget_tweaks %}#}
+{##}
+{#{% block content %}#}
+{#<div class="container">#}
+{#    <div class="row">#}
+{#        <div class="col-12">#}
+{#            <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>#}
+{#            <form method="post" action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}">#}
+{#                {{ form.site_registration }}#}
+{#                {% csrf_token %}#}
+{#                <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>#}
+{#                <table class="mdl-data-table leafpack-data-table">#}
+{#                    <tbody>#}
+{#                        <tr>#}
+{#                            <td>placement_date</td>#}
+{#                            <td>{{ form.placement_date }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>retrieval_date</td>#}
+{#                            <td>{{ form.retrieval_date }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>id</td>#}
+{#                            <td>{{ leafpack.id }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>leafpack_placement_count</td>#}
+{#                            <td>{{ form.leafpack_placement_count }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>leafpack_retrieval_count</td>#}
+{#                            <td>{{ form.leafpack_retrieval_count }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>placement_air_temp</td>#}
+{#                            <td>{{ form.placement_air_temp }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>placement_water_temp</td>#}
+{#                            <td>{{ form.placement_water_temp }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>retrieval_air_temp</td>#}
+{#                            <td>{{ form.retrieval_air_temp }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>retrieval_water_temp</td>#}
+{#                            <td>{{ form.retrieval_water_temp }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>had_storm</td>#}
+{#                            <td>{{ form.had_storm }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>had_flood</td>#}
+{#                            <td>{{ form.had_flood }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>had_drought</td>#}
+{#                            <td>{{ form.had_drought }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>storm_count</td>#}
+{#                            <td>{{ form.storm_count }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>storm_precipitation</td>#}
+{#                            <td>{{ form.storm_precipitation }}</td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td>Leaf Pack Types and Composition</td>#}
+{#                            <td>{{ form.types|add_class:"form-control" }}</td>#}
+{#                        </tr>#}
+{#                    </tbody>#}
+{#                </table>#}
+{##}
+{##}
+{#                <table>#}
+{#                    <tbody>#}
+{#                        {% for form_list in leafpack_bugform %}#}
+{#                        <tr>#}
+{#                            <td>{{ form_list.0 }}</td>#}
+{#                        </tr>#}
+{##}
+{#                        {% for family_form in form_list.1 %}#}
+{#                        <tr>#}
+{#                            <td>{{ family_form }}</td>#}
+{#                        </tr>#}
+{#                        {% endfor %}#}
+{##}
+{#                        {% endfor %}#}
+{#                    </tbody>#}
+{#                </table>#}
+{#                <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>#}
+{#            </form>#}
+{#        </div>#}
+{#    </div>#}
+{#</div>#}
+{#{% endblock %}#}
+{##}
+{#{% block scripts %}#}
+{#    {{ block.super }}#}
+{#{% endblock %}#}

@@ -14,10 +14,28 @@ html > body {
     src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
 }
 
+/*MEDIA QUERIES*/
+
+@media only screen and (max-width: 480px) {
+    .site-update__connect-hs-card.mdl-card {
+        width: 100%;
+    }
+}
+
 @media only screen and (min-width: 992px) {
     button.download-data-button {
         margin-top: 18px;
         margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    #table-macro-extra tr:first-child {
+        display: none;
+    }
+
+    #table-macro-extra {
+        top: -1px;
     }
 }
 
@@ -27,6 +45,17 @@ html > body {
         clear: left;
         margin-top: 0;
         margin-bottom: 20px;
+    }
+
+    .navbar-nav > li > a {
+        line-height: 35px !important;
+        height: initial;
+    }
+}
+
+@media (max-width: 576px) {
+    .buttons-toolbar .button-link, .buttons-toolbar form, .buttons-toolbar button {
+        width: 100%;
     }
 }
 
@@ -281,12 +310,6 @@ svg.not-stale {
     margin-bottom: 15px;
 }
 
-@media (max-width: 576px) {
-    .buttons-toolbar .button-link, .buttons-toolbar form, .buttons-toolbar button {
-        width: 100%;
-    }
-}
-
 .table-trigger {
     cursor: pointer;
 }
@@ -519,14 +542,6 @@ ul.errorlist li {
     transition: all 0.2s;
 }
 
-
-@media only screen and (max-width: 992px) {
-    .navbar-nav > li > a {
-        line-height: 35px !important;
-        height: initial;
-    }
-}
-
 .navbar-nav > li > a.user-info {
     pointer-events: none;
 }
@@ -661,8 +676,20 @@ dialog#data-table-dialog .mdl-dialog__content {
     white-space: normal;
 }
 
+.mdl-data-table__header {
+    background-color: #f4f4f4;
+}
+
+table tr.taxon {
+    font-weight: bold;
+}
+
 .mdl-data-table-no-hover tbody tr:hover {
     background-color: #FFF;
+}
+
+.mdl-data-table__cell--icon {
+    padding: 0 !important;
 }
 
 .mdl-button--raised {
@@ -1062,12 +1089,6 @@ label.checkbox-label {
 
 .site-update__connect-hs-card > .mdl-card__menu {
     color: #fff;
-}
-
-@media only screen and (max-width: 480px) {
-    .site-update__connect-hs-card.mdl-card {
-        width: 100%;
-    }
 }
 
 div#mySites .mdl-card__title,

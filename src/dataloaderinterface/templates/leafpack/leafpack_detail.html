@@ -50,21 +50,29 @@
                     <hr>
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i></td>
                             <td class="mdl-data-table__cell--non-numeric">Placement Date</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
                         </tr>
                         <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-leaf" aria-hidden="true"></i></td>
                             <td class="mdl-data-table__cell--non-numeric">Number of Packs Placed</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_placement_count }}</td>
                         </tr>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Placement Air Temperature</td>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                Placement Air Temperature
+                            </td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_air_temp }}
                                 <small class="text-muted">Degrees Celcius</small>
                             </td>
                         </tr>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Placement Water Temperature</td>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-quarter" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                Placement Water Temperature
+                            </td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_water_temp }}
                                 <small class="text-muted">Degrees Celcius</small>
                             </td>
@@ -92,20 +100,24 @@
                     <hr>
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i></td>
                             <td class="mdl-data-table__cell--non-numeric">Retrieval Date</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_date }}</td>
                         </tr>
                         <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-leaf" aria-hidden="true"></i></td>
                             <td class="mdl-data-table__cell--non-numeric">Number of Packs Retrieved</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_retrieval_count }}</td>
                         </tr>
                         <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-three-quarters" aria-hidden="true"></i></td>
                             <td class="mdl-data-table__cell--non-numeric">Retrieval Air Temperature</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_air_temp }}
                                 <small class="text-muted">Degrees Celcius</small>
                             </td>
                         </tr>
                         <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-quarter" aria-hidden="true"></i></td>
                             <td class="mdl-data-table__cell--non-numeric">Retrieval Water Temperature</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_water_temp }}
                                 <small class="text-muted">Degrees Celcius</small>
@@ -120,28 +132,33 @@
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Did storms occur while your leaf packs were in
-                                the stream
+                                the stream?
                             </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.had_storm }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{% if leafpack.had_storm %}Yes{% else %}No{% endif %}</td>
                         </tr>
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric indent-left">Number of storms that occurred</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_count }}</td>
-                        </tr>
-                        <tr>
-                            <td class="mdl-data-table__cell--non-numeric indent-left">Total precipitation depth (cm) that occurred
-                            </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }}</td>
-                        </tr>
+                        {% if leafpack.had_storm %}
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric indent-left">Number of storms that
+                                    occurred
+                                </td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_count }}</td>
+                            </tr>
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric indent-left">Total precipitation depth (cm)
+                                    that occurred
+                                </td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }}</td>
+                            </tr>
+                        {% endif %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Did flooding occur?</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.had_flood }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{% if leafpack.had_flood %}Yes{% else %}No{% endif %}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Was this site experiencing a drought during
                                 your experiment?
                             </td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.had_drought }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{% if leafpack.had_drought %}Yes{% else %}No{% endif %}</td>
                         </tr>
                     </table>
                 </div>
@@ -154,12 +171,14 @@
                 <div class="col-sm-12 col-md-6">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
                         <tr>
-                            <th class="mdl-data-table__cell--non-numeric">Taxon</th>
-                            <th>Tally</th>
+                            <th class="mdl-data-table__cell--non-numeric mdl-data-table__header">Taxon</th>
+                            <th class="mdl-data-table__header">Tally</th>
                         </tr>
                         {% for bug_data in leafpack_bugs %}
+                            {% if forloop.counter0 < 6 %}
                             <tr class="taxon">
-                                <td class="mdl-data-table__cell--non-numeric" data-name>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
+                                <td class="mdl-data-table__cell--non-numeric" data-name>
+                                    {{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
                                 </td>
                                 <td data-count>{{ bug_data.0.bug_count }}</td>
                             </tr>
@@ -171,6 +190,35 @@
                                     <td>{{ child_bug.bug_count }}</td>
                                 </tr>
                             {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <table id="table-macro-extra" class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric mdl-data-table__header">Taxon</th>
+                            <th class="mdl-data-table__header">Tally</th>
+                        </tr>
+                        {% for bug_data in leafpack_bugs %}
+                            {% if forloop.counter0 > 5 %}
+                                <tr class="taxon">
+                                    <td class="mdl-data-table__cell--non-numeric" data-name>
+                                        {{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
+                                    </td>
+                                    <td data-count>{{ bug_data.0.bug_count }}</td>
+                                </tr>
+
+                                {% for child_bug in bug_data.1 %}
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric indent-left">{{ child_bug.bug.common_name|capfirst }}
+                                            ({{ child_bug.bug.scientific_name }})
+                                        </td>
+                                        <td>{{ child_bug.bug_count }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
                     </table>
                 </div>
