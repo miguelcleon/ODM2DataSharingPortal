@@ -9,11 +9,23 @@ import re
 
 from dataloaderinterface.models import HydroShareResource, SiteRegistration, SiteAlert
 
+allowed_site_types = [
+    'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
+    'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Observation well', 'Soil hole',
+    'Storm sewer', 'Stream gage', 'Tidal stream', 'Water quality station', 'Weather station', 'Wetland', 'Other'
+]
+
 
 class SiteTypeSelect(forms.Select):
+    site_types = {
+        name: definition
+        for (name, definition)
+        in SiteType.objects.filter(name__in=allowed_site_types).values_list('name', 'definition')
+    }
+
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
         option = super(SiteTypeSelect, self).create_option(name, value, label, selected, index, subindex, attrs)
-        option['attrs']['title'] = self.choices.queryset.get(name=value).definition if value else ''
+        option['attrs']['title'] = self.site_types[value] if value in self.site_types else ''
         return option
 
 
@@ -37,7 +49,7 @@ class MDLRadioButton(forms.RadioSelect):
         html = re.sub(r'</?(ul|li).*?>', '', html)
         html = re.sub(r'(<label )', r'\1class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ', html)
         html = re.sub(r'(<input )', r'\1class="mdl-radio__button" ', html)
-        return html
+        return h
 
 
 class HydroShareSettingsForm(forms.Form):
@@ -119,6 +131,41 @@ class HydroShareResourceDeleteForm(forms.Form):
 
 
 # ODM2
+
+class SiteRegistrationForm(forms.ModelForm):
+    affiliation_id = forms.ModelChoiceField(
+        queryset=Affiliation.objects.for_display(),
+        required=False,
+        help_text='Select the user that deployed or manages the site',
+        label='Deployed By'
+    )
+    site_type = forms.ModelChoiceField(
+        queryset=SiteType.objects.filter(name__in=allowed_site_types),
+        help_text='Select the type of site you are deploying (e.g., "Stream")',
+        widget=SiteTypeSelect
+    )
+
+    class Meta:
+        model = SiteRegistration
+        fields = [
+            'affiliation_id', 'sampling_feature_code', 'sampling_feature_name', 'latitude', 'longitude', 'elevation_m',
+            'elevation_datum', 'site_type', 'stream_name', 'major_watershed', 'sub_basin', 'closest_town'
+        ]
+        labels = {
+            'sampling_feature_code': 'Site Code',
+            'sampling_feature_name': 'Site Name',
+            'elevation_m': 'Elevation',
+
+        }
+        help_texts = {
+            'sampling_feature_code': 'Enter a brief and unique text string to identify your site (e.g., "Del_Phil")',
+            'sampling_feature_name': 'Enter a brief but descriptive name for your site (e.g., "Delaware River near Phillipsburg")',
+            'latitude': 'Enter the latitude of your site in decimal degrees (e.g., 40.6893)',
+            'longitude': 'Enter the longitude of your site in decimal degrees (e.g., -75.2033)',
+            'elevation_m': 'Enter the elevation of your site in meters',
+            'elevation_datum': 'Choose the elevation datum for your site\'s elevation. If you don\'t know it, choose "MSL"',
+        }
+
 
 class ActionByForm(forms.ModelForm):
     use_required_attribute = False
@@ -246,3 +293,5 @@ class SiteAlertForm(forms.ModelForm):
         labels = {
             'notify': 'Receive email notifications for this site',
         }
+
+

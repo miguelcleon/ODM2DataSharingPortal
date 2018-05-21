@@ -30,13 +30,13 @@ from django.http.response import HttpResponseRedirect, Http404, HttpResponse, Js
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView
+from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView, ModelFormMixin
 from django.views.generic.list import ListView
 from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, \
     OrganizationForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
-    HydroShareResourceDeleteForm
+    HydroShareResourceDeleteForm, SiteRegistrationForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
@@ -698,9 +698,9 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
 class SiteRegistrationView(LoginRequiredMixin, CreateView):
     template_name = 'dataloaderinterface/site_registration.html'
+    form_class = SiteRegistrationForm
     model = SiteRegistration
     object = None
-    fields = []
 
     def get_success_url(self):
         return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
@@ -713,85 +713,33 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         }
         return data
 
+    def get_form(self, form_class=None):
+        return self.get_form_class()(initial=self.get_default_data())
+
     def get_context_data(self, **kwargs):
-        default_data = self.get_default_data()
         context = super(SiteRegistrationView, self).get_context_data()
-        data = self.request.POST if self.request.POST else None
-        context['sampling_feature_form'] = SamplingFeatureForm(data, initial=default_data)
-        context['site_form'] = SiteForm(data, initial=default_data)
-        context['results_formset'] = ResultFormSet(data)
-        context['action_by_form'] = ActionByForm(data)
+        data = self.request.POST or {}
         context['email_alert_form'] = SiteAlertForm(data)
-        context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
+        context['zoom_level'] = data['zoom-level'] if 'zoom-level' in data else None
         return context
 
     def post(self, request, *args, **kwargs):
-        sampling_feature_form = SamplingFeatureForm(request.POST)
-        site_form = SiteForm(request.POST)
-        results_formset = ResultFormSet(request.POST)
-        action_by_form = ActionByForm(request.POST)
+        form = self.get_form_class()(request.POST)
         notify_form = SiteAlertForm(request.POST)
-        registration_form = self.get_form()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
-            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.affiliation
-
-            # Create sampling feature
-            sampling_feature = sampling_feature_form.instance
-            sampling_feature.sampling_feature_type_id = 'Site'
-            sampling_feature.save()
-
-            # Create Site
-            site = site_form.instance
-            site.sampling_feature = sampling_feature
-            site.spatial_reference = SpatialReference.objects.get(srs_name='WGS84')
-            site.save()
-
-            # Create Data Logger file
-            data_logger_program = DataLoggerProgramFile.objects.create(
-                affiliation=affiliation,
-                program_name='%s' % sampling_feature.sampling_feature_code
-            )
-
-            data_logger_file = DataLoggerFile.objects.create(
-                program=data_logger_program,
-                data_logger_file_name='%s' % sampling_feature.sampling_feature_code
-            )
-
-            # Create Site Registration TODO: maybe do it in another function.
-            registration_data = {
-                'registration_token': uuid4(),
-                'registration_date': datetime.now(),
-                'django_user': User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
-                'affiliation_id': affiliation.affiliation_id,
-                'person': str(affiliation.person),
-                'organization': str(affiliation.organization),
-                'sampling_feature_id': sampling_feature.sampling_feature_id,
-                'sampling_feature_code': sampling_feature.sampling_feature_code,
-                'sampling_feature_name': sampling_feature.sampling_feature_name,
-                'elevation_m': sampling_feature.elevation_m,
-                'latitude': sampling_feature.site.latitude,
-                'longitude': sampling_feature.site.longitude,
-                'site_type': sampling_feature.site.site_type_id,
-            }
-
-            site_registration = SiteRegistration(**registration_data)
-            registration_form.instance = site_registration
-            site_registration.save()
+        if form.is_valid() and notify_form.is_valid():
+            form.instance.affiliation_id = form.cleaned_data['affiliation_id'] or request.user.affiliation_id
+            self.object = form.save()
 
             if notify_form.cleaned_data['notify']:
                 self.request.user.site_alerts.create(
-                    site_registration=site_registration,
+                    site_registration=form.instance,
                     hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
                 )
-
-            for result_form in results_formset.forms:
-                create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
-
-            return self.form_valid(registration_form)
+            return super(ModelFormMixin, self).form_valid(form)
         else:
             messages.error(request, 'There are still some required fields that need to be filled out!')
-            return self.form_invalid(registration_form)
+            return self.form_invalid(form)
 
 
 def all_forms_valid(*forms):

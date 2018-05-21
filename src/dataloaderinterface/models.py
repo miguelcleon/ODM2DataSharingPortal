@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import uuid
 
 from datetime import timedelta, datetime
+from uuid import uuid4
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
@@ -21,9 +22,9 @@ HYDROSHARE_SYNC_TYPES = (('M', 'Manual'), ('S', 'Scheduled'))
 
 class SiteRegistration(models.Model):
     registration_id = models.AutoField(primary_key=True, db_column='RegistrationID')
-    registration_token = models.CharField(max_length=64, editable=False, db_column='RegistrationToken', unique=True)
+    registration_token = models.CharField(max_length=64, editable=False, db_column='RegistrationToken', unique=True, default=uuid4)
 
-    registration_date = models.DateTimeField(db_column='RegistrationDate')
+    registration_date = models.DateTimeField(db_column='RegistrationDate', default=datetime.utcnow)
     deployment_date = models.DateTimeField(db_column='DeploymentDate', blank=True, null=True)
 
     django_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='User', related_name='deployed_sites')
@@ -35,20 +36,26 @@ class SiteRegistration(models.Model):
     person_first_name = models.CharField(max_length=255, db_column='PersonFirstName', blank=True, null=True)  # NEW: TEMPORARILY NULLABLE
     person_last_name = models.CharField(max_length=255, db_column='PersonLastName', blank=True, null=True)  # NEW
 
-    organization = models.CharField(max_length=255, db_column='Organization', blank=True, null=True)
+    organization = models.CharField(max_length=255, db_column='Organization', blank=True, null=True)  # DEPRECATED
 
     organization_id = models.IntegerField(db_column='OrganizationID', null=True)  # NEW
     organization_code = models.CharField(db_column='OrganizationCode', max_length=50, blank=True, null=True)  # NEW
     organization_name = models.CharField(max_length=255, db_column='OrganizationName', blank=True, null=True)  # NEW
 
-    sampling_feature_id = models.IntegerField(db_column='SamplingFeatureID')
+    sampling_feature_id = models.IntegerField(db_column='SamplingFeatureID', null=True)
     sampling_feature_code = models.CharField(max_length=50, unique=True, db_column='SamplingFeatureCode')
-    sampling_feature_name = models.CharField(max_length=255, blank=True, db_column='SamplingFeatureName')
+    sampling_feature_name = models.CharField(max_length=255, db_column='SamplingFeatureName')
     elevation_m = models.FloatField(blank=True, null=True, db_column='Elevation')
+    elevation_datum = models.CharField(max_length=255, db_column='ElevationDatum', blank=True, null=True)
 
     latitude = models.FloatField(db_column='Latitude')
     longitude = models.FloatField(db_column='Longitude')
-    site_type = models.CharField(max_length=765, db_column='SiteType')
+    site_type = models.CharField(max_length=255, db_column='SiteType')
+
+    stream_name = models.CharField(max_length=255, db_column='StreamName', blank=True, null=True)
+    major_watershed = models.CharField(max_length=255, db_column='MajorWatershed', blank=True, null=True)
+    sub_basin = models.CharField(max_length=255, db_column='SubBasin', blank=True, null=True)
+    closest_town = models.CharField(max_length=255, db_column='ClosestTown', blank=True, null=True)
 
     followed_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followed_sites')
     alert_listeners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='+', through='SiteAlert')
@@ -62,6 +69,7 @@ class SiteRegistration(models.Model):
     @property
     def odm2_affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
+
 
     def __str__(self):
         return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
