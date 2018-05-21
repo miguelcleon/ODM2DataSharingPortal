@@ -158,22 +158,18 @@
                             <th>Tally</th>
                         </tr>
                         {% for bug_data in leafpack_bugs %}
-                            {% if bug_data.0.bug_count %}
                             <tr class="taxon">
                                 <td class="mdl-data-table__cell--non-numeric" data-name>{{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
                                 </td>
                                 <td data-count>{{ bug_data.0.bug_count }}</td>
                             </tr>
-                            {% endif %}
 
                             {% for child_bug in bug_data.1 %}
-                                {% if child_bug.bug_count > 0 %}
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric indent-left">{{ child_bug.bug.common_name|capfirst }} ({{ child_bug.bug.scientific_name }})
                                     </td>
                                     <td>{{ child_bug.bug_count }}</td>
                                 </tr>
-                                {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </table>
