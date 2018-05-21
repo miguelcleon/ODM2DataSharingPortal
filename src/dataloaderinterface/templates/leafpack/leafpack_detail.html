@@ -144,10 +144,10 @@
                                 <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_count }}</td>
                             </tr>
                             <tr>
-                                <td class="mdl-data-table__cell--non-numeric indent-left">Total precipitation depth (cm)
-                                    that occurred
+                                <td class="mdl-data-table__cell--non-numeric indent-left">Total precipitation depth that
+                                    occurred
                                 </td>
-                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }}</td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }} <small class="text-muted">cm</small></td>
                             </tr>
                         {% endif %}
                         <tr>
@@ -228,12 +228,12 @@
                     <h5 class="headline">Water Quality Index Values</h5>
                 </div>
 
-                <div class="col-sm-12 col-md-8">
+                <div class="col-sm-12 col-lg-7">
                     <div class="svg-container mdl-shadow--2dp"></div>
                     <br><br>
                 </div>
 
-                <div class="col-sm-12 col-md-4">
+                <div class="col-sm-12 col-lg-5">
                     <div id="legend-container">
                         <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover no-borders"></table>
                     </div>
@@ -255,7 +255,7 @@
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT }}%</td>
                         </tr>
                     </table>
                 </div>

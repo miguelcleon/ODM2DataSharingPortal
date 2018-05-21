@@ -196,7 +196,7 @@
                                         {% for bug_forms in leafpack_bugform %}
                                             {% with parent_form=bug_forms.0 %}
                                                 {% if forloop.counter > 6 %}
-                                                    {% include 'includes/bug_form.template.html' %}
+                                                    {% include 'includes/bug_form.template.html' with bug_forms=bug_forms %}
                                                 {% endif %}
                                             {% endwith %}
                                         {% endfor %}

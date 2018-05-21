@@ -1249,3 +1249,7 @@ table.mdl-data-table {
 #legend-container table td {
     padding: 6px 18px;
 }
+
+#legend-container table td:first-child {
+    padding: 0;
+}
