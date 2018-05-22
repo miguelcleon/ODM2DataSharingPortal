@@ -248,7 +248,7 @@
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Biotic Index</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.biotic_index }}</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.biotic_index|floatformat:2 }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Water Quality Category</td>
@@ -256,7 +256,7 @@
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
-                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT }}%</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT|floatformat:2 }}%</td>
                         </tr>
                     </table>
                 </div>

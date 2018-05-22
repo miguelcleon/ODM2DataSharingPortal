@@ -1,5 +1,4 @@
-from dataloaderinterface.models import SiteRegistration
-from leafpack.models import LeafPackBug, LeafPackType, LeafPack, Macroinvertebrate
+from leafpack.models import LeafPackType, Macroinvertebrate
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
