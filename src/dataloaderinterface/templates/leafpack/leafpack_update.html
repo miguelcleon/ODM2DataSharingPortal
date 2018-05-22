@@ -196,7 +196,7 @@
                                         {% for bug_forms in leafpack_bugform %}
                                             {% with parent_form=bug_forms.0 %}
                                                 {% if forloop.counter > 6 %}
-                                                    {% include 'includes/bug_form.template.html' with bug_forms=bug_forms %}
+                                                    {% include 'includes/bug_form.template.html' %}
                                                 {% endif %}
                                             {% endwith %}
                                         {% endfor %}
@@ -210,7 +210,9 @@
                 <br><br>
                 <div class="row">
                     <div class="col">
-                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Update
+                        <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                           href="{% url 'leafpack:view' leafpack.site_registration.sampling_feature_code leafpack.id %}">Cancel</a>
+                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Save Edits
                         </button>
                     </div>
                 </div>

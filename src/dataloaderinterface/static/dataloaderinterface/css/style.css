@@ -345,7 +345,7 @@ svg.not-stale {
     background-color: initial;
 }
 
-table.sensors td:not([data-behaviour]) {
+table.sensors td:not([data-behaviour]), table.macroinvertebrate td:not([data-behaviour]){
     white-space: normal;
 }
 
@@ -1184,6 +1184,10 @@ div#followedSites .mdl-card__menu {
     display: inline-block;
 }
 
+.macroinvertebrate-card label {
+    margin-bottom: 0;
+}
+
 .indent-left {
     margin-left: 20px;
 }
@@ -1247,7 +1251,8 @@ table.mdl-data-table {
 }
 
 #legend-container table td {
-    padding: 6px 18px;
+    padding: 8px;
+    height: initial;
 }
 
 #legend-container table td:first-child {
