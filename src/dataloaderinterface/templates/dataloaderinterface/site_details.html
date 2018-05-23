@@ -45,10 +45,13 @@
                                 </div>
                             {% endif %}
                         </div>
+                        <div class="buttons-toolbar row">
+                            <div class="col-sm-12 col-md-6">
+                                <h6 class="title">Details for {{ site.sampling_feature_code }}</h6>
+                            </div>
 
-                        {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                            <div class="buttons-toolbar row">
-                                <div class="col-sm-12 text-right">
+                            {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                <div class="col-sm-12 col-md-6 text-right">
                                     <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                        class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                        id="code-visiblity-toggle">
@@ -65,21 +68,16 @@
                                         <i class="material-icons center-icon">delete_forever</i> Delete
                                     </a>
                                 </div>
-                            </div>
-                        {% endif %}
+                            {% endif %}
+                        </div>
                         {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
                     <div class="row">
                         <div class="registration-data col-sm-12 col-md-6">
                             {# Deployment fields #}
-                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
-                                <tr>
-                                    <td class="mdl-data-table__cell--non-numeric" id="site-table-header" colspan="2">
-                                        Details for {{ site.sampling_feature_code }}
-                                    </td>
-                                </tr>
 
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-user-o" aria-hidden="true"></i> Deployment By
@@ -340,11 +338,12 @@
                                 <tbody>
                                     {% for leafpack in leafpacks %}
                                         <tr>
+                                            {# TODO: Populate fields below #}
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">Experiment Type</td>
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">Leaves</td>
-                                            <td class="mdl-data-table__cell--non-numeric">{# {{ leafpack.placement_date }} #}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">Content</td>
+                                            <td class="mdl-data-table__cell--non-numeric">Deployment Type</td>
                                             <td class="mdl-data-table__cell--non-numeric">
                                                 <a class="mdl-button mdl-js-button button-link mdl-button--primary"
                                                    href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.id %}">
@@ -363,7 +362,6 @@
                         {% endif %}
                         </div>
                     </div>
-
                 </section>
             </div>
         </div>

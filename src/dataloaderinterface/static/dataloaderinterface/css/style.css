@@ -14,10 +14,28 @@ html > body {
     src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons-halflingsregular') format('svg');
 }
 
+/*MEDIA QUERIES*/
+
+@media only screen and (max-width: 480px) {
+    .site-update__connect-hs-card.mdl-card {
+        width: 100%;
+    }
+}
+
 @media only screen and (min-width: 992px) {
     button.download-data-button {
         margin-top: 18px;
         margin-bottom: 20px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    #table-macro-extra tr:first-child {
+        display: none;
+    }
+
+    #table-macro-extra {
+        top: -1px;
     }
 }
 
@@ -28,6 +46,34 @@ html > body {
         margin-top: 0;
         margin-bottom: 20px;
     }
+
+    .navbar-nav > li > a {
+        line-height: 35px !important;
+        height: initial;
+    }
+}
+
+@media (max-width: 576px) {
+    .buttons-toolbar .button-link, .buttons-toolbar form, .buttons-toolbar button {
+        width: 100%;
+    }
+}
+
+/*ICON COLORS*/
+.icon-blue {
+    color: rgb(31, 119, 180);
+}
+
+.icon-orange {
+    color: rgb(255, 127, 14);;
+}
+
+.icon-green {
+    color: rgb(44, 160, 44);
+}
+
+.icon-light-blue {
+    color: rgb(23, 190, 207);
 }
 
 .map-container {
@@ -281,12 +327,6 @@ svg.not-stale {
     margin-bottom: 15px;
 }
 
-@media (max-width: 576px) {
-    .buttons-toolbar .button-link, .buttons-toolbar form, .buttons-toolbar button {
-        width: 100%;
-    }
-}
-
 .table-trigger {
     cursor: pointer;
 }
@@ -305,7 +345,7 @@ svg.not-stale {
     background-color: initial;
 }
 
-table.sensors td:not([data-behaviour]) {
+table.sensors td:not([data-behaviour]), table.macroinvertebrate td:not([data-behaviour]){
     white-space: normal;
 }
 
@@ -362,7 +402,7 @@ table.sensors td:not([data-behaviour]) {
     shape-rendering: crispEdges;
 }
 
-.x.axis path {
+.plot_box .x.axis path {
     display: none;
 }
 
@@ -519,14 +559,6 @@ ul.errorlist li {
     transition: all 0.2s;
 }
 
-
-@media only screen and (max-width: 992px) {
-    .navbar-nav > li > a {
-        line-height: 35px !important;
-        height: initial;
-    }
-}
-
 .navbar-nav > li > a.user-info {
     pointer-events: none;
 }
@@ -661,8 +693,22 @@ dialog#data-table-dialog .mdl-dialog__content {
     white-space: normal;
 }
 
+.mdl-data-table__header {
+    background-color: #f4f4f4;
+}
+
+table tr.taxon {
+    font-weight: bold;
+}
+
 .mdl-data-table-no-hover tbody tr:hover {
     background-color: #FFF;
+}
+
+.mdl-data-table__cell--icon {
+    padding: 0 !important;
+    font-size: 16px;
+    text-align: center !important;
 }
 
 .mdl-button--raised {
@@ -916,18 +962,15 @@ a.accent:hover {
     font-size: 12px;
 }
 
-#site-table-header {
-    font-weight: 500;
-    font-size: 16px;
-    border-top: 6px solid #90a877;
-}
 table.site-table thead {
     border-top: 6px solid #90a877;
 }
+
 table.site-table thead th {
     font-weight: 500;
     font-size: 16px;
 }
+
 table.site-table i {
     margin-right: 10px;
 }
@@ -1067,12 +1110,6 @@ label.checkbox-label {
     color: #fff;
 }
 
-@media only screen and (max-width: 480px) {
-    .site-update__connect-hs-card.mdl-card {
-        width: 100%;
-    }
-}
-
 div#mySites .mdl-card__title,
 div#followedSites .mdl-card__title {
     height: 48px !important; /* important! to override the all powerful mdl css*/
@@ -1147,6 +1184,10 @@ div#followedSites .mdl-card__menu {
     display: inline-block;
 }
 
+.macroinvertebrate-card label {
+    margin-bottom: 0;
+}
+
 .indent-left {
     margin-left: 20px;
 }
@@ -1205,10 +1246,15 @@ table.no-borders td {
     padding: 12px;
 }
 
-#legend-container table {
+table.mdl-data-table {
     white-space: normal;
 }
 
 #legend-container table td {
-    padding: 6px 18px;
+    padding: 8px;
+    height: initial;
+}
+
+#legend-container table td:first-child {
+    padding: 0;
 }

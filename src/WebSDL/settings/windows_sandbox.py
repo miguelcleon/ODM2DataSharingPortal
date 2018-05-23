@@ -12,6 +12,6 @@ if "host_staging" in data:
     ALLOWED_HOSTS.append(data["host_staging"])
 
 STATIC_ROOT = data["static_root"]
-SITE_ROOT = "C:/Users/fryar/projects/ODM2WebSDL/"
+SITE_ROOT = "C:\Users\crbla\Projects\ODM2DataSharingPortal"
 STATIC_URL = '/static/'
 SITE_URL = ''

@@ -46,6 +46,7 @@ from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
 from hydroshare_util.coverage import PointCoverage, BoxCoverage, PeriodCoverage, Coverage
+from accounts.models import User
 
 
 class LoginRequiredMixin(object):
@@ -661,7 +662,12 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         context = super(SiteUpdateView, self).get_context_data()
         data = self.request.POST if self.request.POST else None
         sampling_feature = self.get_object().sampling_feature
-        action_by = sampling_feature.feature_actions.first().action.action_by.first()
+
+        # TODO: Haxor code - remove this try/except block if Craig forgets...
+        try:
+            action_by = sampling_feature.feature_actions.first().action.action_by.first()
+        except (ObjectDoesNotExist, AttributeError):
+            action_by = ActionBy()
 
         site_alert = self.request.user.site_alerts\
             .filter(site_registration__sampling_feature_code=sampling_feature.sampling_feature_code)\
@@ -831,7 +837,14 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         notify_form = SiteAlertForm(request.POST)
         registration_form = self.get_form()
 
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
+        try:
+            sf = SamplingFeature.objects.get(sampling_feature_code='TestSite01')
+            sf.delete()
+        except:
+            pass
+
+
+        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, notify_form):
             affiliation = action_by_form.cleaned_data['affiliation'] or request.user.odm2user.affiliation
 
             # Create sampling feature
@@ -860,7 +873,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             registration_data = {
                 'registration_token': uuid4(),
                 'registration_date': datetime.now(),
-                'django_user': settings.AUTH_USER_MODEL.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
+                'django_user': User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first(),
                 'affiliation_id': affiliation.affiliation_id,
                 'person': str(affiliation.person),
                 'organization': str(affiliation.organization),
@@ -883,8 +896,8 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
                     hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
                 )
 
-            for result_form in results_formset.forms:
-                create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
+            # for result_form in results_formset.forms:
+            #     create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
 
             return self.form_valid(registration_form)
         else:

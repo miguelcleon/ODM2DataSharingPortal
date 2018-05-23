@@ -11,7 +11,6 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        {#   TODO: ADD THE SITE NAME BELOW #}
                         Create a Leaf Pack Experiment at {{ leafpack_form.site_registration.sampling_feature_name }}
                     </div>
                 </div>
@@ -187,7 +186,7 @@
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
                                                     {% if forloop.counter < 7 %}
-                                                        {% include 'includes/bug_form.template.html' with bug_forms=bug_forms %}
+                                                        {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
                                             {% endfor %}
@@ -197,7 +196,7 @@
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
                                                     {% if forloop.counter > 6 %}
-                                                        {% include 'includes/bug_form.template.html' with bug_forms=bug_forms %}
+                                                        {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
                                             {% endfor %}
@@ -208,13 +207,12 @@
                         </div>
                     </div>
                 {% endwith %}
-                {#        </form>#}
-                {#        <form method="POST" action="{% url 'leafpack:create' sampling_feature_code %}">#}
-                {#        {% csrf_token %}#}
 
                 <br><br>
                 <div class="row">
                     <div class="col">
+                        <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                           href="">Cancel</a>
                         <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Submit
                         </button>
                     </div>

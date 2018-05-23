@@ -1,31 +1,16 @@
 from django import forms
 from .models import LeafPack, LeafPackType, Macroinvertebrate, LeafPackBug
 from dataloaderinterface.models import SiteRegistration
-from django.utils.safestring import mark_safe
 
 
 class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+    template_name = 'mdl-checkbox-select-multiple.html'
+
     def render(self, name, value, attrs=None, renderer=None):
-        html = '<ul id="id_' + name + '" class="mdl-list list-leafpack-types row">'
-        for choice in self.choices:
-            field_id = "id_" + name + "_" + str(choice[0])
-            field_value = str(choice[0])
-            is_checked = "checked" if isinstance(choice, list) and choice[0] in value else ""
-            label = str(choice[1])
-            html += '<li class="mdl-list__item col-sm-6 col-lg-4">' \
-                    '<span class="mdl-list__item-primary-content">' \
-                    '</span>' \
-                    '<span class="mdl-list__item-secondary-action">' \
-                    '<label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect vertical-align-center" for="' + field_id + '">' \
-                    '<input type="checkbox" id="' + field_id + '" name="' + name + '"' \
-                    ' class="mdl-checkbox__input" ' + is_checked + ' value="' + field_value + '" />' \
-                    + label + \
-                    '</label>' \
-                    '</span>' \
-                    '</li>'
-        html += '</ul>'
-        html = mark_safe(html)
-        return html
+        context = self.get_context(name, value, attrs)
+        context['choices'] = [choice[1][0] for choice in context['widget']['optgroups']]
+        context['name'] = name
+        return self._render(self.template_name, context, renderer)
 
 
 class LeafPackForm(forms.ModelForm):
@@ -142,6 +127,7 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
          element.
         3. Element 1 is an empty list the Order in element 0 has no Families.
     """
+
     def get_form_kwargs(self, index):
         kwargs = super(LeafPackBugFormFactory, self).get_form_kwargs(index)
         kwargs['instance'] = kwargs['bugs'][index]

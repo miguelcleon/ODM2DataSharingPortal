@@ -21,6 +21,13 @@ def start_jobs(user=True):
     :param user: A {bool} or a {string} that represents an OS level user (i.e. 'root'). If user is a bool and equal to
     True, crontab jobs are scheduled under the current OS user.
     """
+
+    if os.name != "posix":
+        """
+        crontab is a UNIX thing - skip executing if OS doesn't support this operation (i.e. Windows) 
+        """
+        return
+
     # check if LOGFILE exists and create if not
     if not os.path.exists(LOGFILE):
         try:
