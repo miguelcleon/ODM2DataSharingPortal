@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'requests',
+    'reset_migrations'
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -36,7 +36,8 @@
                                     <div class="row">
                                         <div class="form-field col-6">
                                             <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
-                                            {{ form.placement_date|add_class:"form-control datepicker" }}
+                                            <input type="text" class="form-control datepicker" value="{{ form.placement_date.value|date_format:'m/d/Y' }}"
+                                               id="{{ form.placement_date.id }}" name="{{ form.placement_date.name }}" required>
                                         </div>
 
                                         <div class="form-field col-6">
@@ -70,6 +71,10 @@
                                 <div class="mdl-card__supporting-text default-font">
                                     <div class="form-field">
                                         {{ form.types }}
+                                        <label for="{{ form.types_other.id_for_label }}">
+                                            {{ form.types_other.label }}
+                                            {{ form.types_other }}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +98,8 @@
                                     <div class="row">
                                         <div class="form-field col-6">
                                             <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
-                                            {{ form.retrieval_date|add_class:"form-control"|add_class:"form-control datepicker" }}
+                                            <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
+                                               id="{{ form.retrieval_date.id }}" name="{{ form.retrieval_date.name }}" required>
                                         </div>
 
                                         <div class="form-field col-6">

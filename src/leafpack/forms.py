@@ -1,6 +1,7 @@
 from django import forms
 from .models import LeafPack, LeafPackType, Macroinvertebrate, LeafPackBug
 from dataloaderinterface.models import SiteRegistration
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
@@ -14,6 +15,31 @@ class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
 
 
 class LeafPackForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(LeafPackForm, self).__init__(*args, **kwargs)
+        if self.instance is not None and self.instance.pk is not None:
+            other_types = self.instance.types.all().filter(created_by__isnull=False)
+            self.initial['types_other'] = ', '.join([other.name for other in other_types])
+
+    def save(self, commit=True):
+        super(LeafPackForm, self).save(commit=commit)
+
+        # LeafPackTypes from the cleaned form data (these types may or may not exist)
+        types_other_cleaned = self.cleaned_data.get('types_other', '').split(',')
+
+        for other in types_other_cleaned:
+            # remove leading/trailing white space
+            other = other.strip()
+
+            try:
+                lptype = LeafPackType.objects.get(name=other)
+                self.instance.types.add(lptype)
+            except ObjectDoesNotExist:
+                continue
+
+        self.instance.save()
+
     site_registration = forms.ModelChoiceField(
         widget=forms.HiddenInput,
         queryset=SiteRegistration.objects.all()
@@ -21,7 +47,13 @@ class LeafPackForm(forms.ModelForm):
 
     types = forms.ModelMultipleChoiceField(
         widget=MDLCheckboxSelectMultiple,
-        queryset=LeafPackType.objects.all(),
+        queryset=LeafPackType.objects.filter(created_by=None),
+    )
+
+    types_other = forms.CharField(
+        max_length=255,
+        label='Enter values as comma separated list',
+        required=False
     )
 
     placement_date = forms.DateField(
@@ -90,7 +122,7 @@ class LeafPackForm(forms.ModelForm):
 
     class Meta:
         model = LeafPack
-        exclude = ['uuid', 'bugs']
+        exclude = ['bugs']
 
 
 class LeafPackBugForm(forms.ModelForm):
@@ -140,7 +172,7 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
 
         queryset = Macroinvertebrate.objects.filter(family_of=None)\
             .order_by('pollution_tolerance')\
-            .order_by('-form_priority')
+            .order_by('-sort_priority')
 
         for taxon in queryset:
             if leafpack is not None:

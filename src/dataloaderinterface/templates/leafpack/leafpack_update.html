@@ -38,7 +38,6 @@
                                         <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
                                         <input type="text" class="form-control datepicker" value="{{ form.placement_date.value|date_format:'m/d/Y' }}"
                                                id="{{ form.placement_date.id }}" name="{{ form.placement_date.name }}" required>
-{#                                        {{ form.placement_date|add_class:"form-control datepicker" }}#}
                                     </div>
 
                                     <div class="form-field col-6">
@@ -72,6 +71,10 @@
                             <div class="mdl-card__supporting-text default-font">
                                 <div class="form-field">
                                     {{ form.types }}
+                                    <label for="{{ form.types_other.id_for_label }}">
+                                        {{ form.types_other.label }}
+                                        {{ form.types_other }}
+                                    </label>
                                 </div>
                             </div>
                         </div>
