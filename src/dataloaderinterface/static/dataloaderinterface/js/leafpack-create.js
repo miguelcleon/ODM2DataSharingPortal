@@ -7,23 +7,43 @@ $(document).ready(function () {
         startDate: '0d'
     });
 
+    // Validation for placement date
+    $('#id_placement_date, #id_retrieval_date').change(function () {
+        var placement = $('#id_placement_date').val();
+        var retrieval = $('#id_retrieval_date').val();
+        if (placement && retrieval) {
+            var placementDate = new Date(placement);
+            var retrievalDate = new Date(retrieval);
+            if (placementDate > retrievalDate)
+                $('#id_placement_date')[0].setCustomValidity('Placement date has to be before the retrieval date.');
+            else
+                $('#id_placement_date')[0].setCustomValidity('');
+        }
+        else if (!$(this).val()) {
+            this.setCustomValidity('Please fill out this field.');
+        }
+    });
+
     $("#id_had_storm").change(function () {
         var val = parseInt($(this).val());
         var collapse = $("#storm-additional");
+        var items = collapse.find("input");
         if (val == 2) {
-            var items = collapse.find("[data-name]");
             items.each(function () {
-                $(this).attr("name", $(this).attr("data-name"));
+                if ($(this).attr("data-name")) {
+                    $(this).attr("name", $(this).attr("data-name"));
+                    $(this).removeAttr("data-name");
+                }
                 $(this).prop('required', true);
-                $(this).removeAttr("data-name");
             });
             $("#storm-additional").collapse('show');
         }
         else {
-            var items = collapse.find("[name]");
             items.each(function () {
-                $(this).attr("data-name", $(this).attr("name"));
-                $(this).removeAttr("name");
+                if ($(this).attr("name")) {
+                    $(this).attr("data-name", $(this).attr("name"));
+                    $(this).removeAttr("name");
+                }
                 $(this).prop('required', false);
             });
             $("#storm-additional").collapse('hide');

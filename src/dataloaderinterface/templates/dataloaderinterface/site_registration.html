@@ -270,6 +270,7 @@
                                         <br><br>
 
                                         <div style="overflow: auto;">
+{#                                            TODO: Populate this table#}
                                             <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table macroinvertebrate full-width">
                                                 <thead>
                                                 <tr class="full-width">
@@ -301,10 +302,7 @@
                                    href="{% autoescape off %}{% url 'site_detail' sampling_feature_form.sampling_feature_code.value %}{% endautoescape %}"
                                         {% else %}
                                    href="{% url 'sites_list' %}"
-                                        {% endif %}
-                                >
-                                    Cancel
-                                </a>
+                                        {% endif %}> Cancel</a>
 
                                 <button id="btnRegisterSite" type="submit"
                                         class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
@@ -383,7 +381,7 @@
                         </button>
 
                         <button id="add-sensor-button"
-                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect">
                             Add New Sensor
                         </button>
                     </div>
