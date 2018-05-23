@@ -1,6 +1,7 @@
 {% extends 'dataloaderinterface/base.html' %}
 {% load staticfiles %}
 {% load site %}
+{% load helpers %}
 
 {% block styles %}
     {{ block.super }}
@@ -45,6 +46,7 @@
                                 </div>
                             {% endif %}
                         </div>
+                        {% include 'includes/messages.template.html' with messages=messages %}
                         <div class="buttons-toolbar row">
                             <div class="col-sm-12 col-md-6">
                                 <h6 class="title">Details for {{ site.sampling_feature_code }}</h6>
@@ -70,7 +72,6 @@
                                 </div>
                             {% endif %}
                         </div>
-                        {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
                     <div class="row">
@@ -160,6 +161,15 @@
                                     </tr>
                                 {% endif %}
                             </table>
+
+                            {% if site.django_user_id == request.user.id %}
+                                <div class="text-muted">
+                                    <br><br>
+                                    <i class="fa fa-bell center-icon" aria-hidden="true"></i> You will be notified if this site stops receiving sensor data
+                                    after: <strong>{{ site.alerts.first.hours_threshold.total_seconds|divide:3600 }}
+                                        hour{% if site.alerts.first.hours_threshold.total_seconds|divide:3600 > 1 %}s{% endif %}.</strong>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <div class="detail-map-container col-sm-12 col-md-6">

@@ -39,3 +39,11 @@ def is_stale(value, default):
         return (datetime.utcnow() - value) > timedelta(hours=72)
     except AttributeError:
         return ''
+
+
+@register.filter
+def divide(value, arg):
+    try:
+        return int(value) / int(arg) if int(arg) != 0 else 0
+    except (ValueError, ZeroDivisionError):
+        return None
