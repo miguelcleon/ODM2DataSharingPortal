@@ -50,6 +50,7 @@ $(document).ready(function () {
         }
     });
 
+    // Trigger on page load to set properties
     $("#id_had_storm").trigger("change");
 
     $(".bug-count").change(function() {
