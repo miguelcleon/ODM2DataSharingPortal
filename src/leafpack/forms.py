@@ -110,8 +110,8 @@ class LeafPackBugForm(forms.ModelForm):
             # Does the model instance have children?
             self.has_children = len(self.instance.bug.families.all()) > 0
 
-            self.fields[
-                'bug_count'].label = self.instance.bug.common_name + ' (' + self.instance.bug.scientific_name + ')'
+            self.fields['bug_count'].label = self.instance.bug.common_name + ' (' + self.instance.bug.scientific_name + ')'
+            self.fields['bug_count'].min_value = 0
 
 
 class LeafPackBugFormFactory(forms.BaseFormSet):
@@ -138,20 +138,26 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
     def formset_factory(leafpack=None):
         form_list = []
 
-        order_bugs = [bug for bug in Macroinvertebrate.objects.filter(family_of=None).order_by('common_name')]
+        queryset = Macroinvertebrate.objects.filter(family_of=None)\
+            .order_by('pollution_tolerance')\
+            .order_by('-form_priority')
 
-        for order_bug in order_bugs:
+        for taxon in queryset:
             if leafpack is not None:
-                lpg = LeafPackBug.objects.get(bug=order_bug.id, leaf_pack=leafpack.id)
+                lpg = LeafPackBug.objects.get(bug=taxon.id, leaf_pack=leafpack.id)
             else:
-                lpg = LeafPackBug(bug=order_bug)
+                lpg = LeafPackBug(bug=taxon)
 
             order_bug_form = LeafPackBugForm(instance=lpg)
 
-            families = order_bug.families.all().order_by('scientific_name')
+            families = taxon.families.all().order_by('common_name')
             family_bug_forms = list()
             if len(families) > 0:
-                family_bug_forms = [LeafPackBugForm(instance=LeafPackBug(bug=bug)) for bug in families]
+                if leafpack is not None:
+                    child_taxons = [LeafPackBug.objects.get(bug=bug, leaf_pack=leafpack) for bug in families]
+                    family_bug_forms = [LeafPackBugForm(instance=taxon) for taxon in child_taxons]
+                else:
+                    family_bug_forms = [LeafPackBugForm(instance=LeafPackBug(bug=bug)) for bug in families]
 
             form_list.append((order_bug_form, family_bug_forms))
 

@@ -106,4 +106,9 @@ class LeafPackTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Macroinvertebrate)
 class MacroinvertebrateAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = ('scientific_name', 'pollution_tolerance', 'common_name')
+
+    def get_queryset(self, request):
+        queryset = super(MacroinvertebrateAdmin, self).get_queryset(request)
+        return queryset.order_by('pollution_tolerance')
