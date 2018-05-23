@@ -47,7 +47,7 @@
                 <div class="col-sm-12 col-md-6">
                     {# <code>{{ leafpack.uuid }}</code> #}
                     <h6 class="title">Placement Information</h6>
-                    <hr>
+                    <hr class="dotted">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-plus-o icon-blue" aria-hidden="true"></i></td>
@@ -82,22 +82,17 @@
 
                 <div class="col-sm-12 col-md-6">
                     <h6 class="title">Leaf Pack Type and Composition</h6>
-                    <hr>
+                    <hr class="dotted">
                     <p class="text-muted">Predominant Leaf Species:</p>
-                    <ul class="mdl-list">
-                        {% for lp in leafpack.types.all %}
-                            <li class="mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                              {{ lp }}
-                            </span>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    {% for lp in leafpack.types.all %}
+                        <h5 class="d-inline"><span class="badge badge-info">{{ lp }}</span></h5>
+                    {% endfor %}
+                    <br><br>
                 </div>
 
                 <div class="col-sm-12 col-md-6">
                     <h6 class="title">Retrieval Information</h6>
-                    <hr>
+                    <hr class="dotted">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-minus-o icon-blue" aria-hidden="true"></i></td>
@@ -128,7 +123,7 @@
 
                 <div class="col-sm-12 col-md-6">
                     <h6 class="title">Storm and Non-Storm Events</h6>
-                    <hr>
+                    <hr class="dotted">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Did storms occur while your leaf packs were in

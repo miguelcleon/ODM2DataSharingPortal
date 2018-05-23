@@ -50,6 +50,7 @@
                         <div class="buttons-toolbar row">
                             <div class="col-sm-12 col-md-6">
                                 <h6 class="title">Details for {{ site.sampling_feature_code }}</h6>
+                                <hr class="dotted">
                             </div>
 
                             {% if site.django_user_id == request.user.id or request.user.is_staff %}
@@ -199,8 +200,8 @@
 
                     <div class="row">
                         <div class="col-sm-12">
-                            <h5 class="section-title">
-                                Sensor Observations at this Site</h5>
+                            <h6 class="section-title">
+                                Sensor Observations at this Site</h6>
                             <hr>
                         </div>
 

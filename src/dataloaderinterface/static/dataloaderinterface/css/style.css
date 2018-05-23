@@ -1258,3 +1258,7 @@ table.mdl-data-table {
 #legend-container table td:first-child {
     padding: 0;
 }
+
+hr.dotted {
+    border-top: 1px dotted #ccc;
+}
