@@ -72,33 +72,32 @@ class LeafPackDetailView(DetailView):
     def get_object(self, queryset=None):
         return LeafPack.objects.get(id=self.kwargs['pk'])
 
-    def get_bugs(self):
-        lpbugs = []
+    def get_taxon(self):
+        lptaxons = []
         leafpack = self.get_object()
-        bugs = Macroinvertebrate.objects.filter(family_of=None).order_by('common_name')
 
-        for order_bug in bugs:
-            lp_parent_bug = LeafPackBug.objects.get(leaf_pack=leafpack, bug=order_bug)
-            lp_child_bugs = []
-            for family_bug in order_bug.families.all():
-                lp_child_bugs.append(LeafPackBug.objects.get(leaf_pack=leafpack, bug=family_bug))
-            lpbugs.append((lp_parent_bug, lp_child_bugs))
+        # order taxon by pollution_tolerance, then by form_priority in descending order
+        taxon = Macroinvertebrate.objects.filter(family_of=None)\
+            .order_by('pollution_tolerance')\
+            .order_by('-form_priority')
 
-        return lpbugs
+        # get subcategories of taxon
+        for parent in taxon:
+            parent_taxon = LeafPackBug.objects.get(leaf_pack=leafpack, bug=parent)
+            child_taxons = []
+            for child in parent.families.all().order_by('common_name'):
+                child_taxons.append(LeafPackBug.objects.get(leaf_pack=leafpack, bug=child))
+            lptaxons.append((parent_taxon, child_taxons))
+
+        return lptaxons
 
     def get_context_data(self, **kwargs):
         context = super(LeafPackDetailView, self).get_context_data(**kwargs)
         context['leafpack'] = self.get_object()
-        context['leafpack_bugs'] = self.get_bugs()
+        context['leafpack_bugs'] = self.get_taxon()
         context['sampling_feature_code'] = self.get_object().site_registration.sampling_feature_code
 
         return context
-
-    def get(self, request, *args, **kwargs):
-        # import csv_parser
-        # csv_parser.parse()
-        # call_command('set_leafpackdb_defaults')
-        return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
 class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
@@ -130,12 +129,9 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
 
         context['sampling_feature_code'] = self.kwargs[self.slug_field]
 
-        if 'leafpack_form' in context:
-            context['leafpack_form'] = context.pop('leafpack_form')
-        else:
-            context['leafpack_form'] = LeafPackForm(initial={
-                'site_registration': SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field]),
-            })
+        if 'leafpack_form' not in context:
+            site_registration = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
+            context['leafpack_form'] = LeafPackForm(initial={'site_registration': site_registration})
 
         context['bug_count_form_list'] = LeafPackBugFormFactory.formset_factory()
 
@@ -158,19 +154,21 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return self.form_invalid(leafpack_form, bug_forms)
 
 
-class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
+class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, UpdateView):
     """
     Update view
     """
     form_class = LeafPackForm
     template_name = 'leafpack/leafpack_update.html'
     slug_field = 'sampling_feature_code'
+    object = None
 
     def get_context_data(self, **kwargs):
         context = super(LeafPackUpdateView, self).get_context_data(**kwargs)
-        leafpack = self.get_object()
-        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(leafpack)
-        context['sampling_feature_code'] = leafpack.site_registration.sampling_feature_code
+
+        context['sampling_feature_code'] = self.kwargs[self.slug_field]
+        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(self.get_object())
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -219,7 +217,7 @@ def download_leafpack_csv(request, sampling_feature_code, pk):
     writer = LeafPackCSVWriter(leafpack, site)
     writer.write()
 
-    # filename format: {Sampling Feature Code}_{Placement date}_{zero padded leafpack id}.csv
+    # filename format: {Sampling Feature Code}_{Placement date}_{leafpack ID padded with zeros}.csv
     filename = '{}_{}_{:03d}.csv'.format(sampling_feature_code, leafpack.placement_date, int(pk))
 
     response = HttpResponse(writer.read(), content_type='application/csv')

@@ -34,8 +34,11 @@
                             <div class="mdl-card__supporting-text default-font">
                                 <div class="row">
                                     <div class="form-field col-6">
+                                        {{ form.placement_date.errors }}
                                         <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
-                                        {{ form.placement_date|add_class:"form-control datepicker" }}
+                                        <input type="text" class="form-control datepicker" value="{{ form.placement_date.value|date_format:'m/d/Y' }}"
+                                               id="{{ form.placement_date.id }}" name="{{ form.placement_date.name }}" required>
+{#                                        {{ form.placement_date|add_class:"form-control datepicker" }}#}
                                     </div>
 
                                     <div class="form-field col-6">
@@ -91,8 +94,10 @@
                             <div class="mdl-card__supporting-text default-font">
                                 <div class="row">
                                     <div class="form-field col-6">
+                                        {{ form.retrieval_date.errors }}
                                         <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
-                                        {{ form.retrieval_date|add_class:"form-control"|add_class:"form-control datepicker" }}
+                                        <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
+                                               id="{{ form.retrieval_date.id }}" name="{{ form.retrieval_date.name }}" required>
                                     </div>
 
                                     <div class="form-field col-6">
@@ -210,7 +215,7 @@
                 <div class="row">
                     <div class="col">
                         <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                           href="{% url 'leafpack:view' leafpack.site_registration.sampling_feature_code leafpack.id %}">Cancel</a>
+                           href="{% url 'leafpack:view' sampling_feature_code leafpack.id %}">Cancel</a>
                         <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Save Edits
                         </button>
                     </div>
@@ -233,111 +238,3 @@
     <script src="{% static 'dataloaderinterface/js/site-form.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/leafpack-create.js' %}"></script>
 {% endblock %}
-
-
-{#{% extends 'dataloaderinterface/base.html' %}#}
-{#{% load staticfiles %}#}
-{#{% load site %}#}
-{#{% load widget_tweaks %}#}
-{##}
-{#{% block content %}#}
-{#<div class="container">#}
-{#    <div class="row">#}
-{#        <div class="col-12">#}
-{#            <h4>Leaf Pack for {{ leafpack.site_registration.sampling_feature_name }}</h4>#}
-{#            <form method="post" action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}">#}
-{#                {{ form.site_registration }}#}
-{#                {% csrf_token %}#}
-{#                <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>#}
-{#                <table class="mdl-data-table leafpack-data-table">#}
-{#                    <tbody>#}
-{#                        <tr>#}
-{#                            <td>placement_date</td>#}
-{#                            <td>{{ form.placement_date }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>retrieval_date</td>#}
-{#                            <td>{{ form.retrieval_date }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>id</td>#}
-{#                            <td>{{ leafpack.id }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>leafpack_placement_count</td>#}
-{#                            <td>{{ form.leafpack_placement_count }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>leafpack_retrieval_count</td>#}
-{#                            <td>{{ form.leafpack_retrieval_count }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>placement_air_temp</td>#}
-{#                            <td>{{ form.placement_air_temp }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>placement_water_temp</td>#}
-{#                            <td>{{ form.placement_water_temp }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>retrieval_air_temp</td>#}
-{#                            <td>{{ form.retrieval_air_temp }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>retrieval_water_temp</td>#}
-{#                            <td>{{ form.retrieval_water_temp }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>had_storm</td>#}
-{#                            <td>{{ form.had_storm }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>had_flood</td>#}
-{#                            <td>{{ form.had_flood }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>had_drought</td>#}
-{#                            <td>{{ form.had_drought }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>storm_count</td>#}
-{#                            <td>{{ form.storm_count }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>storm_precipitation</td>#}
-{#                            <td>{{ form.storm_precipitation }}</td>#}
-{#                        </tr>#}
-{#                        <tr>#}
-{#                            <td>Leaf Pack Types and Composition</td>#}
-{#                            <td>{{ form.types|add_class:"form-control" }}</td>#}
-{#                        </tr>#}
-{#                    </tbody>#}
-{#                </table>#}
-{##}
-{##}
-{#                <table>#}
-{#                    <tbody>#}
-{#                        {% for form_list in leafpack_bugform %}#}
-{#                        <tr>#}
-{#                            <td>{{ form_list.0 }}</td>#}
-{#                        </tr>#}
-{##}
-{#                        {% for family_form in form_list.1 %}#}
-{#                        <tr>#}
-{#                            <td>{{ family_form }}</td>#}
-{#                        </tr>#}
-{#                        {% endfor %}#}
-{##}
-{#                        {% endfor %}#}
-{#                    </tbody>#}
-{#                </table>#}
-{#                <button type="submit" class="mdl-button mdl-button--raised mdl-button--primary">Save</button>#}
-{#            </form>#}
-{#        </div>#}
-{#    </div>#}
-{#</div>#}
-{#{% endblock %}#}
-{##}
-{#{% block scripts %}#}
-{#    {{ block.super }}#}
-{#{% endblock %}#}

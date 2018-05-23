@@ -17,7 +17,6 @@ class Macroinvertebrate(models.Model):
     class Meta:
         db_table = 'macroinvertebrate'
 
-    uuid = models.UUIDField(default=uuid.uuid4())
     scientific_name = models.CharField(max_length=255, unique=True)
     common_name = models.CharField(max_length=255, unique=True)
     family_of = models.ForeignKey('Macroinvertebrate',
@@ -26,9 +25,28 @@ class Macroinvertebrate(models.Model):
                                   blank=True,
                                   related_name='families')
     pollution_tolerance = models.FloatField()
+    form_priority = models.FloatField(default=0)  # used to determine the order taxon appear on the django forms
+
+    @property
+    def is_ept(self):
+        return self.scientific_name.lower() in ['ephemeroptera', 'plecoptera', 'tricoptera']
 
     def __str__(self):
-        return self.scientific_name
+        return '{0} ({1})'.format(self.common_name.title(), self.scientific_name.title())
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.family_of is not None and len(self.families.all()):
+            raise AttributeError("'{}' is a parent of another taxon and therefore cannot be a subcategory of '{}'".format(
+                self.__str__(), self.family_of.__str__()
+            ))
+
+        if self.family_of and self.family_of.family_of is not None:
+            raise AttributeError("'{}' is a subcategory of another taxon and therefore cannot be a parent of '{}'".format(
+                self.family_of.__str__(), self.__str__()
+            ))
+
+        super(Macroinvertebrate, self).save(force_insert=force_insert, force_update=force_update, using=using,
+                                            update_fields=update_fields)
 
 
 class LeafPack(models.Model):
