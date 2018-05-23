@@ -137,7 +137,9 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
     def formset_factory(leafpack=None):
         form_list = []
 
-        queryset = Macroinvertebrate.objects.filter(family_of=None).order_by('pollution_tolerance').order_by('-form_priority')
+        queryset = Macroinvertebrate.objects.filter(family_of=None)\
+            .order_by('pollution_tolerance')\
+            .order_by('-form_priority')
 
         for order_bug in queryset:
             if leafpack is not None:
