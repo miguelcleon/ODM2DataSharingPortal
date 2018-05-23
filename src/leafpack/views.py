@@ -154,19 +154,21 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return self.form_invalid(leafpack_form, bug_forms)
 
 
-class LeafPackUpdateView(LeafPackUpdateCreateMixin, UpdateView):
+class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, UpdateView):
     """
     Update view
     """
     form_class = LeafPackForm
     template_name = 'leafpack/leafpack_update.html'
     slug_field = 'sampling_feature_code'
+    object = None
 
     def get_context_data(self, **kwargs):
         context = super(LeafPackUpdateView, self).get_context_data(**kwargs)
-        leafpack = self.get_object()
-        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(leafpack)
-        context['sampling_feature_code'] = leafpack.site_registration.sampling_feature_code
+
+        context['sampling_feature_code'] = self.kwargs[self.slug_field]
+        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(self.get_object())
+
         return context
 
     def post(self, request, *args, **kwargs):
@@ -215,7 +217,7 @@ def download_leafpack_csv(request, sampling_feature_code, pk):
     writer = LeafPackCSVWriter(leafpack, site)
     writer.write()
 
-    # filename format: {Sampling Feature Code}_{Placement date}_{zero padded leafpack id}.csv
+    # filename format: {Sampling Feature Code}_{Placement date}_{leafpack ID padded with zeros}.csv
     filename = '{}_{}_{:03d}.csv'.format(sampling_feature_code, leafpack.placement_date, int(pk))
 
     response = HttpResponse(writer.read(), content_type='application/csv')
