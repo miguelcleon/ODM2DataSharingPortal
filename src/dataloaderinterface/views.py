@@ -20,7 +20,7 @@ from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeries
     InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
 from leafpack.models import LeafPack
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -732,7 +732,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
 
             # Update Site Registration
             site_registration.affiliation_id = affiliation.affiliation_id
-            site_registration.django_user = settings.AUTH_USER_MODEL.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
+            site_registration.django_user = get_user_model().objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
             site_registration.person = str(affiliation.person)
             site_registration.organization = str(affiliation.organization)
             site_registration.sampling_feature_code = sampling_feature.sampling_feature_code

@@ -35,7 +35,7 @@ def is_stale(value, default):
 
     try:
         if default > 0:
-            return (datetime.utcnow() - value) > timedelta(hours=default.hours_threshold.seconds/3600)
+            return (datetime.utcnow() - value) > timedelta(hours=default.hours_threshold.total_seconds()/3600)
         return (datetime.utcnow() - value) > timedelta(hours=72)
     except AttributeError:
         return ''
