@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     // Validation for placement date
-    $('#d_placement_date, #id_retrieval_date').change(function () {
+    $('#id_placement_date, #id_retrieval_date').change(function () {
         var placement = $('#id_placement_date').val();
         var retrieval = $('#id_retrieval_date').val();
         if (placement && retrieval) {
