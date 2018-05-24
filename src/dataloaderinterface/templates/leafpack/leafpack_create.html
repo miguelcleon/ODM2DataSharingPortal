@@ -71,9 +71,10 @@
                                 <div class="mdl-card__supporting-text default-font">
                                     <div class="form-field">
                                         {{ form.types }}
+                                        <h6 class="title">Other</h6>
                                         <label for="{{ form.types_other.id_for_label }}">
-                                            {{ form.types_other.label }}
-                                            {{ form.types_other }}
+                                            <label for="{{ form.types_other.id_for_label }}">{{ form.types_other.label }}</label>
+                                            {{ form.types_other|add_class:"form-control" }}
                                         </label>
                                     </div>
                                 </div>
@@ -191,7 +192,7 @@
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
-                                                    {% if forloop.counter < 7 %}
+                                                    {% if forloop.counter < 9 %}
                                                         {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
@@ -201,11 +202,13 @@
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
-                                                    {% if forloop.counter > 6 %}
+                                                    {% if forloop.counter > 8 %}
                                                         {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
                                             {% endfor %}
+                                            <br>
+                                            {% include 'includes/macroinv-link.template.html' %}
                                         </div>
                                     </div>
                                 </div>

@@ -1174,10 +1174,15 @@ div#followedSites .mdl-card__menu {
 
 .macroinvertebrate-card {
     min-height: initial;
+    border: 1px solid #DDD;
 }
 
 .macroinvertebrate-card .mdl-card__title {
     padding: 8px;
+}
+
+.macroinvertebrate-card > .mdl-card__title:first-child {
+    background-color: #F5F5F5;
 }
 
 .macroinvertebrate-card input[type="number"] {
