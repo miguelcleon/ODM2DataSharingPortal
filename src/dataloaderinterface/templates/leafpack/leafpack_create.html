@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        Create a Leaf Pack Experiment at {{ leafpack_form.site_registration.sampling_feature_name }}
+                        Create a Leaf Pack Experiment at {{ sampling_feature_code }}
                     </div>
                 </div>
             </div>
@@ -221,7 +221,7 @@
                 <div class="row">
                     <div class="col">
                         <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                           href="">Cancel</a>
+                           href="{% url 'site_update' sampling_feature_code %}">Cancel</a>
                         <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Submit
                         </button>
                     </div>
