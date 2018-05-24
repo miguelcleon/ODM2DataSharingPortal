@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models
 from dataloaderinterface.models import SiteRegistration
 from accounts.models import User
+from django.db.models import Sum, Q
 
 
 class Macroinvertebrate(models.Model):
@@ -24,7 +25,9 @@ class Macroinvertebrate(models.Model):
                                   null=True,
                                   blank=True,
                                   related_name='families')
-    pollution_tolerance = models.FloatField()
+    pollution_tolerance = models.FloatField(default=0)
+    itis_serial_number = models.CharField(max_length=255, null=True, blank=True)
+    url = models.CharField(max_length=255, null=True, blank=True)
 
     """
     'sort_priority' is used to determine the order taxon appear on things like django forms. HIGHER values  
@@ -77,50 +80,49 @@ class LeafPack(models.Model):
     storm_precipitation = models.FloatField(default=0)
     types = models.ManyToManyField('LeafPackType')
 
-    def total_bug_count(self):
+    def taxon_count(self):
         """
         Gets the total count of taxon for the entire leafpack experiement.
-        The forumla is: Summation, from 1 to n taxon, of nth taxon count minus the summation of sub-category taxon count
 
-        :var total: The total taxon count
-        :var lpgs: LeafPackBugs associated with this LeafPack whose count is greater than zero
         :return: total taxon count.
         """
-        total = 0
-        lpgs = LeafPackBug.objects.filter(leaf_pack=self, bug_count__gt=0)
+        queryset = LeafPackBug.objects.filter(leaf_pack=self)
+        taxon_counts = [lpg.bug_count - self.sub_taxon_count(lpg.bug) for lpg in queryset]
 
-        for lpg in lpgs:
-            sub_taxons = lpg.bug.families.all()
-            sub_taxon_count = 0
+        return sum(taxon_counts)
 
-            for taxon in sub_taxons:
-                lpg_taxon = LeafPackBug.objects.get(leaf_pack=self, bug=taxon)
-                sub_taxon_count += lpg_taxon.bug_count
+    def sub_taxon_count(self, parent_taxon):
+        queryset = LeafPackBug.objects.filter(leaf_pack=self)
+        sub_taxon_count = queryset.filter(bug__family_of=parent_taxon).aggregate(Sum('bug_count'))
 
-            total += lpg.bug_count - sub_taxon_count
+        if sub_taxon_count['bug_count__sum'] is not None:
+            return sub_taxon_count['bug_count__sum']
 
-        return total
+        return 0
 
     def percent_EPT(self):
         """
-        :return: The sum of the percentages of Ephemeroptera, Placoptera, and Tricoptera
+        :return: The ratio of Ephemeroptera, Placoptera, and Tricoptera taxon counts to the total taxon count
         """
-        total = self.total_bug_count()
-
-        ephemeroptera = Macroinvertebrate.objects.get(scientific_name='Ephemeroptera')
-        placoptera = Macroinvertebrate.objects.get(scientific_name='Plecoptera')
-        tricoptera = Macroinvertebrate.objects.get(scientific_name='Tricoptera')
-
-        ephemeroptera_count = LeafPackBug.objects.get(leaf_pack=self, bug=ephemeroptera).bug_count
-        placoptera_count = LeafPackBug.objects.get(leaf_pack=self, bug=placoptera).bug_count
-        tricoptera_count = LeafPackBug.objects.get(leaf_pack=self, bug=tricoptera).bug_count
+        total = self.taxon_count()
 
         if total == 0:
             return 0
 
-        return (float(ephemeroptera_count + placoptera_count + tricoptera_count) / float(total)) * 100.0
+        ept_names = ['Ephemeroptera', 'Plecoptera', 'Trichoptera']
+
+        queryset = LeafPackBug.objects.filter(bug__scientific_name__in=ept_names)
+
+        aggregate = queryset.aggregate(Sum('bug_count'))
+
+        ept_counts = aggregate.get('bug_count__sum', 0)
+
+        return (float(ept_counts) / float(total)) * 100.0
 
     def biotic_index(self):
+        """
+        :return: the biotic index... yeeup.
+        """
         leafpack_count = self.leafpack_retrieval_count
 
         if leafpack_count == 0:
@@ -148,6 +150,10 @@ class LeafPack(models.Model):
         return float(tolerance_avg_total) / float(count_avg_total)
 
     def water_quality(self, biotic_index=None):
+        """
+        :param biotic_index: The biotic_index. If biotic_index is None, the value is re-calculated.
+        :return: A string representation of the water quality based on the biotic_index.
+        """
         if not biotic_index:
             biotic_index = self.biotic_index()
 

@@ -27,6 +27,22 @@ from csv_writer import LeafPackCSVWriter
 
 
 class LeafPackFormMixin(object):
+
+    def __init__(self, **kwargs):
+        self.request = None
+        self.kwargs = kwargs
+
+        if kwargs and len(kwargs):
+            for key, value in kwargs:
+                setattr(self, key, value)
+
+    def forms_valid(self, forms):
+        is_valid = True
+        for form in forms:
+            if not form.is_valid():
+                is_valid = False
+        return is_valid
+
     def get_bug_count_forms(self, leafpack=None):
         re_bug_name = re.compile(r'^(?P<bug_name>.*)-bug_count')
         form_data = list()
@@ -57,12 +73,6 @@ class LeafPackFormMixin(object):
 
 
 class LeafPackUpdateCreateMixin(LeafPackFormMixin):
-    def forms_valid(self, forms):
-        is_valid = True
-        for form in forms:
-            if not form.is_valid():
-                is_valid = False
-        return is_valid
 
     def get_object(self):
         return LeafPack.objects.get(id=self.kwargs['pk'])
@@ -103,10 +113,26 @@ class LeafPackDetailView(DetailView):
 
         # get subcategories of taxon
         for parent in taxon:
-            parent_taxon = LeafPackBug.objects.get(leaf_pack=leafpack, bug=parent)
+            try:
+                parent_taxon = LeafPackBug.objects.get(leaf_pack=leafpack, bug=parent)
+            except ObjectDoesNotExist:
+                continue
+
             child_taxons = []
             for child in parent.families.all().order_by('common_name'):
-                child_taxons.append(LeafPackBug.objects.get(leaf_pack=leafpack, bug=child))
+
+                try:
+                    lpg = LeafPackBug.objects.get(leaf_pack=leafpack, bug=child)
+                except ObjectDoesNotExist:
+                    """
+                    ObjectDoesNotExist is raised when a taxon is added to the database after a leafpack experiment
+                    was created. In such cases, a new LeafPackBug object needs to be created that links 'leafpack' 
+                    and the new taxon.
+                    """
+                    lpg = LeafPackBug.objects.create(leaf_pack=leafpack, bug=child, bug_count=0)
+
+                child_taxons.append(lpg)
+
             lptaxons.append((parent_taxon, child_taxons))
 
         return lptaxons
@@ -119,6 +145,10 @@ class LeafPackDetailView(DetailView):
 
         return context
 
+    def get(self, request, *args, **kwargs):
+        # call_command('update_taxon')
+        return super(LeafPackDetailView, self).get(request, *args, **kwargs)
+
 
 class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     """
@@ -130,6 +160,7 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     object = None
 
     def form_invalid(self, leafpack_form, bug_forms):
+        super(LeafPackCreateView, self).form_invalid(leafpack_form)
         context = self.get_context_data(leafpack_form=leafpack_form, bug_forms=bug_forms)
         return self.render_to_response(context)
 
@@ -233,6 +264,7 @@ class LeafPackDeleteView(LoginRequiredMixin, DeleteView):
 def download_leafpack_csv(request, sampling_feature_code, pk):
     """
     Download handler that uses csv_writer.py to parse out a leaf pack expirement into a csv file.
+
     :param request: the request object
     :param sampling_feature_code: the first URL parameter
     :param pk: the second URL parameter and id of the leafpack experiement to download 

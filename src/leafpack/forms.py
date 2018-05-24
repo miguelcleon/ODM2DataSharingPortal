@@ -130,6 +130,8 @@ class LeafPackBugForm(forms.ModelForm):
         model = LeafPackBug
         fields = ['bug_count']
 
+    bug_count = forms.IntegerField(min_value=0)
+
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs and kwargs['instance'].bug:
             kwargs['prefix'] = kwargs['instance'].bug.scientific_name
@@ -143,22 +145,12 @@ class LeafPackBugForm(forms.ModelForm):
             self.has_children = len(self.instance.bug.families.all()) > 0
 
             self.fields['bug_count'].label = self.instance.bug.common_name + ' (' + self.instance.bug.scientific_name + ')'
-            self.fields['bug_count'].min_value = 0
 
 
 class LeafPackBugFormFactory(forms.BaseFormSet):
     """
     NOTE: The terms 'Order' and 'Family' (or 'Families') in the comments refers to taxonomical biological
     classification.
-
-    LeafPackBugFormFactory.formset_factory() returns a list of tuples, where the element 0 in each tuple is:
-        1. An instance of LeafPackBugForm
-        2. The model associated with the form is a macroinvertebrate 'Order'
-    Element 1 in each tuple is:
-        1. A list of BugCountForms
-        2. Models associated with the BugCountForms are macroinvertebrates 'Families' of the Order in the first
-         element.
-        3. Element 1 is an empty list the Order in element 0 has no Families.
     """
 
     def get_form_kwargs(self, index):
@@ -168,6 +160,37 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
 
     @staticmethod
     def formset_factory(leafpack=None):
+        """
+        Factory method to create a customized form set
+
+        :param leafpack: An instance of LeafPack.
+
+        :return []:
+
+            Returns an array of tuples, where:
+
+                Element 0 in each tuple is an instance of LeafPackBugForm:
+
+                    - The 'Macroinvertebrate' object associated with LeafPackBugForm will be a parent taxon. These taxon
+                      fall under the 'Order' category of taxonomic hierarchy.
+
+
+                Element 1 in each tuple is a list of LeafPackBugForms:
+
+                    - Each form's model instance is a taxon suborder of the parent taxon of the first element. These
+                      taxon fall under the 'suborder' category of taxonomic hierarchy.
+
+                    - this is an empty list if the parent taxon (in element 0) has no suborder taxons.
+
+
+            Example:
+                [
+                    (LeafPackBugForm, []),
+                    (LeafPackBugForm, [LeafPackBugForm]),
+                    (LeafPackBugForm, [LeafPackBugForm, LeafPackBugForm])
+                ]
+
+        """
         form_list = []
 
         queryset = Macroinvertebrate.objects.filter(family_of=None)\

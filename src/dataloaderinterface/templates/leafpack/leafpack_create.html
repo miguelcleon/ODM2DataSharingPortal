@@ -70,6 +70,7 @@
 
                                 <div class="mdl-card__supporting-text default-font">
                                     <div class="form-field">
+                                        {{ form.types.errors }}
                                         {{ form.types }}
                                         <label for="{{ form.types_other.id_for_label }}">
                                             {{ form.types_other.label }}

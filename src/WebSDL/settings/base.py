@@ -202,5 +202,6 @@ CRONTAB_LOGFILE_PATH = data.get('crontab_log_file', '/var/log/odm2websdl-cron.lo
 
 CRONTAB_EXECUTE_DAILY_AT_HOUR = 5
 
+GOOGLE_API_CONF = data.get('google_api_conf', None)
 
 AUTH_USER_MODEL = 'accounts.User'

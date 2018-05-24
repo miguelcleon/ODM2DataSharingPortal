@@ -58,14 +58,23 @@ class LeafPackCSVWriter(object):
         # write taxon names and corresponding count
         self.make_header(['Macroinvertebrate Counts'])
 
-        for lpg in LeafPackBug.objects.filter(leaf_pack=leafpack):
-            self.writer.writerow([lpg.bug.common_name.title(), lpg.bug_count])
+        for lpg in LeafPackBug.objects.filter(leaf_pack=leafpack)\
+                .order_by('bug__pollution_tolerance')\
+                .order_by('-bug__sort_priority'):
+
+            if lpg.bug.family_of is not None:
+                # prepend a '-' to suborder taxons
+                taxon_name = ' - {0} ({1})'.format(lpg.bug.common_name.title(), lpg.bug.scientific_name.title())
+            else:
+                taxon_name = '{0} ({1})'.format(lpg.bug.common_name.title(), lpg.bug.scientific_name.title())
+
+            self.writer.writerow([taxon_name, lpg.bug_count])
 
         self.blank_line()
 
         # write water quality index values
         self.make_header(['Water Quality Index Values'])
-        self.writerow(['Total number of individuals found', str(leafpack.total_bug_count())])
+        self.writerow(['Total number of individuals found', str(leafpack.taxon_count())])
         biotic_index = leafpack.biotic_index()
         self.writerow(['Biotic Index', round(biotic_index, 2)])
         self.writerow(['Water Quality Category', leafpack.water_quality(biotic_index=biotic_index)])
