@@ -28,7 +28,6 @@ class Command(BaseCommand):
         data = request.content
 
         reader = csv.DictReader(cStringIO.StringIO(data), delimiter=',')
-        next(reader, None)  # skip the header
 
         for row in reader:
             taxon_name = row['TaxonName']
