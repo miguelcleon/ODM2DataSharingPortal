@@ -72,9 +72,10 @@
                                 <div class="form-field">
                                     {{ form.types.errors }}
                                     {{ form.types }}
+                                    <h6 class="title">Other</h6>
                                     <label for="{{ form.types_other.id_for_label }}">
-                                        {{ form.types_other.label }}
-                                        {{ form.types_other }}
+                                        <label for="{{ form.types_other.id_for_label }}">{{ form.types_other.label }}</label>
+                                        {{ form.types_other|add_class:"form-control" }}
                                     </label>
                                 </div>
                             </div>
@@ -101,7 +102,7 @@
                                         {{ form.retrieval_date.errors }}
                                         <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
                                         <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
-                                               id="{{ form.retrieval_date.id }}" name="{{ form.retrieval_date.name }}" required>
+                                               id="id_{{ form.retrieval_date.name }}" name="{{ form.retrieval_date.name }}" required>
                                     </div>
 
                                     <div class="form-field col-6">
@@ -193,7 +194,7 @@
                                     <div class="col-sm-12 col-md-6">
                                         {% for bug_forms in leafpack_bugform %}
                                             {% with parent_form=bug_forms.0 %}
-                                                {% if forloop.counter < 7 %}
+                                                {% if forloop.counter < 9 %}
                                                     {% include 'includes/bug_form.template.html' %}
                                                 {% endif %}
                                             {% endwith %}
@@ -203,11 +204,13 @@
                                     <div class="col-sm-12 col-md-6">
                                         {% for bug_forms in leafpack_bugform %}
                                             {% with parent_form=bug_forms.0 %}
-                                                {% if forloop.counter > 6 %}
+                                                {% if forloop.counter > 8 %}
                                                     {% include 'includes/bug_form.template.html' %}
                                                 {% endif %}
                                             {% endwith %}
                                         {% endfor %}
+                                        <br>
+                                        {% include 'includes/macroinv-link.template.html' %}
                                     </div>
                                 </div>
                             </div>

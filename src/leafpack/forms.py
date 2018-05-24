@@ -52,8 +52,9 @@ class LeafPackForm(forms.ModelForm):
 
     types_other = forms.CharField(
         max_length=255,
-        label='Enter values as comma separated list',
-        required=False
+        label='Enter the three predominant leaf species:',
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Search'})
     )
 
     placement_date = forms.DateField(

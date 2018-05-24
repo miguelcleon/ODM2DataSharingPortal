@@ -151,13 +151,10 @@ function resize() {
         })
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
-};
+}
 
 // Call the resize function whenever a resize event occurs
 d3.select(window).on('resize', resize);
-
-// Call the resize function
-// resize();
 
 function type(d) {
     d.frequency = +d.frequency;

@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        Create a Leaf Pack Experiment at {{ leafpack_form.site_registration.sampling_feature_name }}
+                        Create a Leaf Pack Experiment at {{ sampling_feature_code }}
                     </div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
                                         <div class="form-field col-6">
                                             <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
                                             <input type="text" class="form-control datepicker" value="{{ form.placement_date.value|date_format:'m/d/Y' }}"
-                                               id="{{ form.placement_date.id }}" name="{{ form.placement_date.name }}" required>
+                                               id="id_{{ form.placement_date.name }}" name="{{ form.placement_date.name }}" required>
                                         </div>
 
                                         <div class="form-field col-6">
@@ -72,9 +72,10 @@
                                     <div class="form-field">
                                         {{ form.types.errors }}
                                         {{ form.types }}
+                                        <h6 class="title">Other</h6>
                                         <label for="{{ form.types_other.id_for_label }}">
-                                            {{ form.types_other.label }}
-                                            {{ form.types_other }}
+                                            <label for="{{ form.types_other.id_for_label }}">{{ form.types_other.label }}</label>
+                                            {{ form.types_other|add_class:"form-control" }}
                                         </label>
                                     </div>
                                 </div>
@@ -100,7 +101,7 @@
                                         <div class="form-field col-6">
                                             <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
                                             <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
-                                               id="{{ form.retrieval_date.id }}" name="{{ form.retrieval_date.name }}" required>
+                                               id="id_{{ form.retrieval_date.name }}" name="{{ form.retrieval_date.name }}" required>
                                         </div>
 
                                         <div class="form-field col-6">
@@ -192,7 +193,7 @@
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
-                                                    {% if forloop.counter < 7 %}
+                                                    {% if forloop.counter < 9 %}
                                                         {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
@@ -202,11 +203,13 @@
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
-                                                    {% if forloop.counter > 6 %}
+                                                    {% if forloop.counter > 8 %}
                                                         {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
                                             {% endfor %}
+                                            <br>
+                                            {% include 'includes/macroinv-link.template.html' %}
                                         </div>
                                     </div>
                                 </div>
@@ -219,7 +222,7 @@
                 <div class="row">
                     <div class="col">
                         <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                           href="">Cancel</a>
+                           href="{% url 'site_update' sampling_feature_code %}">Cancel</a>
                         <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Submit
                         </button>
                     </div>

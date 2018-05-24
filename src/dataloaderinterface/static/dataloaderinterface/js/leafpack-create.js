@@ -52,6 +52,7 @@ $(document).ready(function () {
 
     // Trigger on page load to set properties
     $("#id_had_storm").trigger("change");
+    $('#d_placement_date, #id_retrieval_date').trigger("change");
 
     $(".bug-count").change(function() {
         var items = $(this).closest(".mdl-card").find(".bug-count");

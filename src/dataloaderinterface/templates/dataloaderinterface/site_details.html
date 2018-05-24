@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ribbon ribbon-green"></div>
+    <div class="ribbon ribbon-blue"></div>
 
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
@@ -163,7 +163,7 @@
                                 {% endif %}
                             </table>
 
-                            {% if site.django_user_id == request.user.id %}
+                            {% if site.django_user_id == request.user.id and site.alerts.first.hours_threshold.total_seconds|divide:3600 > 0 %}
                                 <div class="text-muted">
                                     <br><br>
                                     <i class="fa fa-bell center-icon" aria-hidden="true"></i> You will be notified if this site stops receiving sensor data

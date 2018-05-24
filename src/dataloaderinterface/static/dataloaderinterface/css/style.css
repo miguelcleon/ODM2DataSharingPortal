@@ -1174,10 +1174,15 @@ div#followedSites .mdl-card__menu {
 
 .macroinvertebrate-card {
     min-height: initial;
+    border: 1px solid #DDD;
 }
 
 .macroinvertebrate-card .mdl-card__title {
     padding: 8px;
+}
+
+.macroinvertebrate-card > .mdl-card__title:first-child {
+    background-color: #F5F5F5;
 }
 
 .macroinvertebrate-card input[type="number"] {
@@ -1261,4 +1266,38 @@ table.mdl-data-table {
 
 hr.dotted {
     border-top: 1px dotted #ccc;
+}
+
+.link-card {
+    display: inline-block;
+}
+
+.link-card, .link-card:hover {
+    text-decoration: none;
+    color: initial;
+}
+
+.link-card > div {
+    padding: 16px 16px 4px 16px;
+    min-height: initial;
+    width: 330px;
+    transition: all 0.2s;
+}
+
+.link-card .link-card-title {
+    font-weight: 500;
+    font-size: 13px;
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+.link-card > div:hover {
+    background-color: #f5f5f5;
+    box-shadow: 0 1px 3px 1px rgba(60, 64, 67, .2), 0 2px 8px 4px rgba(60, 64, 67, .1);
+}
+
+.link-card-icon {
+    font-size: 44px;
+    float: left;
+    margin-right: 15px;
 }
