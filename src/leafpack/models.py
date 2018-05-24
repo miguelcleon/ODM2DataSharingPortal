@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from dataloaderinterface.models import SiteRegistration
-import uuid
+from accounts.models import User
 
 
 class Macroinvertebrate(models.Model):
@@ -25,7 +25,12 @@ class Macroinvertebrate(models.Model):
                                   blank=True,
                                   related_name='families')
     pollution_tolerance = models.FloatField()
-    form_priority = models.FloatField(default=0)  # used to determine the order taxon appear on the django forms
+
+    """
+    'sort_priority' is used to determine the order taxon appear on things like django forms. HIGHER values  
+    of sort_priority should appear first, and LOWER values last
+    """
+    sort_priority = models.FloatField(default=0)
 
     @property
     def is_ept(self):
@@ -174,14 +179,12 @@ class LeafPackBug(models.Model):
 class LeafPackType(models.Model):
     """
     A simple class to store a leaf pack type (i.e. beech, birch, elm, gum, maple, pine, etc.)
-
-    Will remove the need to hard code leaf pack types, make choice fields easier to populate choices for, and leave the
-    management of adding/removing/editing leaf pack types to administrators/users.
     """
     class Meta:
         db_table = 'leafpack_type'
 
     name = models.CharField(max_length=255, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.name

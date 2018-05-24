@@ -17,6 +17,7 @@ from django.views.generic.detail import DetailView
 from django.shortcuts import reverse, redirect
 from django.http import HttpResponse
 from django.core.management import call_command
+from django.core.exceptions import ObjectDoesNotExist
 
 from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
@@ -48,6 +49,12 @@ class LeafPackFormMixin(object):
 
         return bug_forms
 
+    def get_leafpack_types_other(self):
+        lp_types = self.request.POST.get('types', None)
+
+        if lp_types is None:
+            return []
+
 
 class LeafPackUpdateCreateMixin(LeafPackFormMixin):
     def forms_valid(self, forms):
@@ -59,6 +66,19 @@ class LeafPackUpdateCreateMixin(LeafPackFormMixin):
 
     def get_object(self):
         return LeafPack.objects.get(id=self.kwargs['pk'])
+
+    def add_types_other(self):
+        """
+        Creates new LeafPackTypes from self.request.POST['types_other'] (i.e., custom leaf pack types entered by user)
+        :return: None
+        """
+
+        leafpack_types_other = self.request.POST.get('types_other', '')
+        for other_type in leafpack_types_other.split(','):
+            try:
+                _ = LeafPackType.objects.get(name=other_type.strip())
+            except ObjectDoesNotExist:
+                LeafPackType.objects.create(name=other_type.strip(), created_by=self.request.user)
 
 
 class LeafPackDetailView(DetailView):
@@ -76,10 +96,10 @@ class LeafPackDetailView(DetailView):
         lptaxons = []
         leafpack = self.get_object()
 
-        # order taxon by pollution_tolerance, then by form_priority in descending order
+        # order taxon by pollution_tolerance, then by sort_priority in descending order
         taxon = Macroinvertebrate.objects.filter(family_of=None)\
             .order_by('pollution_tolerance')\
-            .order_by('-form_priority')
+            .order_by('-sort_priority')
 
         # get subcategories of taxon
         for parent in taxon:
@@ -138,6 +158,9 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return context
 
     def post(self, request, *args, **kwargs):
+
+        self.add_types_other()
+
         leafpack_form = self.get_form()
         bug_forms = self.get_bug_count_forms()
 
@@ -172,6 +195,9 @@ class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, UpdateVi
         return context
 
     def post(self, request, *args, **kwargs):
+
+        self.add_types_other()
+
         leafpack_form = LeafPackForm(request.POST, instance=self.get_object())
         bug_forms = self.get_bug_count_forms()
 
