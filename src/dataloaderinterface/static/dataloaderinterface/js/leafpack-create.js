@@ -8,7 +8,7 @@ $(document).ready(function () {
     });
 
     // Validation for placement date
-    $('#id_placement_date, #id_retrieval_date').change(function () {
+    $('#d_placement_date, #id_retrieval_date').change(function () {
         var placement = $('#id_placement_date').val();
         var retrieval = $('#id_retrieval_date').val();
         if (placement && retrieval) {
@@ -52,6 +52,7 @@ $(document).ready(function () {
 
     // Trigger on page load to set properties
     $("#id_had_storm").trigger("change");
+    $('#d_placement_date, #id_retrieval_date').trigger("change");
 
     $(".bug-count").change(function() {
         var items = $(this).closest(".mdl-card").find(".bug-count");

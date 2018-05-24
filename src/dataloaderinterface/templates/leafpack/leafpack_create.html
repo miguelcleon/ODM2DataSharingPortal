@@ -37,7 +37,7 @@
                                         <div class="form-field col-6">
                                             <label for="{{ form.placement_date.id_for_label }}">{{ form.placement_date.label }}</label>
                                             <input type="text" class="form-control datepicker" value="{{ form.placement_date.value|date_format:'m/d/Y' }}"
-                                               id="{{ form.placement_date.id }}" name="{{ form.placement_date.name }}" required>
+                                               id="id_{{ form.placement_date.name }}" name="{{ form.placement_date.name }}" required>
                                         </div>
 
                                         <div class="form-field col-6">
@@ -100,7 +100,7 @@
                                         <div class="form-field col-6">
                                             <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
                                             <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
-                                               id="{{ form.retrieval_date.id }}" name="{{ form.retrieval_date.name }}" required>
+                                               id="id_{{ form.retrieval_date.name }}" name="{{ form.retrieval_date.name }}" required>
                                         </div>
 
                                         <div class="form-field col-6">
