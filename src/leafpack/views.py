@@ -1,16 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import random
-import csv
-import io
 import re
-from tempfile import mkstemp
-from datetime import date, timedelta
-from functools import reduce
-from operator import __or__ as OR
-
-from django.db.models import Q
 from dataloaderinterface.models import SiteRegistration
 from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView, BaseDetailView
 from django.views.generic.detail import DetailView
@@ -26,7 +17,7 @@ from dataloaderinterface.views import LoginRequiredMixin
 from csv_writer import LeafPackCSVWriter
 
 
-class LeafPackFormMixin(object):
+class LeafPackViewMixin(object):
 
     def __init__(self, **kwargs):
         self.request = None
@@ -72,7 +63,7 @@ class LeafPackFormMixin(object):
             return []
 
 
-class LeafPackUpdateCreateMixin(LeafPackFormMixin):
+class LeafPackUpdateCreateMixin(LeafPackViewMixin):
 
     def get_object(self):
         return LeafPack.objects.get(id=self.kwargs['pk'])
@@ -165,12 +156,6 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
-
-        # TODO: Probably get rid of this eventually...
-        if not len(Macroinvertebrate.objects.all()):
-            # If there are no macroinvertebrates in the database, run 'set_leafpackdb_defaults' command to populate
-            # database with default macroinvertebrate and leaf pack types.
-            call_command('set_leafpackdb_defaults')
 
         # if 'leafpack_form' is in kwargs, that means self.form_invalid was most likely called due to a failed POST request
         if 'leafpack_form' in kwargs:
