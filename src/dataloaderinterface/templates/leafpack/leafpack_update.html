@@ -194,7 +194,7 @@
                                     <div class="col-sm-12 col-md-6">
                                         {% for bug_forms in leafpack_bugform %}
                                             {% with parent_form=bug_forms.0 %}
-                                                {% if forloop.counter < 9 %}
+                                                {% if forloop.counter0 <= 9 %}
                                                     {% include 'includes/bug_form.template.html' %}
                                                 {% endif %}
                                             {% endwith %}
@@ -204,7 +204,7 @@
                                     <div class="col-sm-12 col-md-6">
                                         {% for bug_forms in leafpack_bugform %}
                                             {% with parent_form=bug_forms.0 %}
-                                                {% if forloop.counter > 8 %}
+                                                {% if forloop.counter0 > 9 %}
                                                     {% include 'includes/bug_form.template.html' %}
                                                 {% endif %}
                                             {% endwith %}
