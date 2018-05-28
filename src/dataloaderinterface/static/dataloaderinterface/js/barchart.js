@@ -56,6 +56,7 @@ var legendContainer = $("#legend-container table");
 // Compute percentages
 for (var i = 0; i < data.length; i++) {
     data[i].frequency = data[i].frequency / total;
+    var f = isNaN(data[i].frequency)? "0" :(data[i].frequency * 100).toFixed(2);
 
     // Populate legend container
     legendContainer.append(
@@ -64,7 +65,7 @@ for (var i = 0; i < data.length; i++) {
             '<td class="mdl-data-table__cell--non-numeric">' +
                 data[i].taxon +
             '</td>' +
-            '<td>' + (data[i].frequency * 100).toFixed(2) + '%</td>' +
+            '<td>' + f + '%</td>' +
         '</tr>'
     );
 }

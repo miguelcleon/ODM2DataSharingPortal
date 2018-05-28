@@ -271,12 +271,12 @@
 
                                         <div style="overflow: auto;">
 {#                                            TODO: Populate this table#}
-                                            <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table macroinvertebrate full-width">
+                                            <table class="no-hover mdl-data-table mdl-js-data-table macroinvertebrate">
                                                 <thead>
                                                 <tr class="full-width">
-                                                    <th class="mdl-data-table__cell--non-numeric">Experiment ID
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>
+{#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment ID#}
+{#                                                    </th>#}
+{#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
                                                     <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
                                                     <th class="mdl-data-table__cell--non-numeric">Content</th>
                                                     <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
@@ -288,9 +288,8 @@
                                                 {% if leafpacks %}
                                                     {% for leafpack in leafpacks %}
                                                         <tr class="bg-white">
-
-                                                            <td>{{ leafpack.id }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">Leaf Pack</td>
+{#                                                            <td>{{ leafpack.id }}</td>#}
+{#                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
                                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
                                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
                                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
