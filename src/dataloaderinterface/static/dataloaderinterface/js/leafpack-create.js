@@ -14,10 +14,13 @@ $(document).ready(function () {
         if (placement && retrieval) {
             var placementDate = new Date(placement);
             var retrievalDate = new Date(retrieval);
-            if (placementDate > retrievalDate)
+            if (placementDate > retrievalDate) {
                 $('#id_placement_date')[0].setCustomValidity('Placement date has to be before the retrieval date.');
-            else
+            }
+            else {
                 $('#id_placement_date')[0].setCustomValidity('');
+                $('#id_retrieval_date')[0].setCustomValidity('');
+            }
         }
         else if (!$(this).val()) {
             this.setCustomValidity('Please fill out this field.');
