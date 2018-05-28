@@ -715,9 +715,8 @@ table tr.taxon {
     background: rgba(255, 255, 255, 0.2);
 }
 
-*:active {
-    outline: none;
-}
+/*Remove browser's outline from mdl components since they are already styled*/
+*[class^="mdl-"]:focus { outline: none; }
 
 span.table-trigger, span.tsa-trigger, span.download-trigger {
     margin-left: 20px !important;
