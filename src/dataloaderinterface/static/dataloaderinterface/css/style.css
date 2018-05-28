@@ -715,7 +715,7 @@ table tr.taxon {
     background: rgba(255, 255, 255, 0.2);
 }
 
-button:focus, span.table-trigger, span.tsa-trigger, span.download-trigger {
+*:active {
     outline: none;
 }
 
