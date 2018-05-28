@@ -1,5 +1,13 @@
 var markers = [];
 var filters = {
+    dataTypes: {
+        key: 'dataType',
+        icon: 'layers',
+        label: 'Data Types',
+        values: {},
+        values_sortable: [],
+        inclusive: true
+    },
     organizations: {
         key: 'organization',
         label: 'Organizations',
@@ -99,10 +107,22 @@ $(document).ready(function () {
 
     markerData.forEach(function (site) {
         for (var f in filters) {
-            if (filters[f].values[site[filters[f].key]])
-                filters[f].values[site[filters[f].key]] += 1;
-            else
-                filters[f].values[site[filters[f].key]] = 1;
+            var keys = [site[filters[f].key]];
+            if (filters[f].inclusive) {
+                keys = [];
+                var includes = site[filters[f].key].split(",");
+                for (var i = 0; i < includes.length; i++) {
+                    if (includes[i].trim()) {
+                        keys.push(includes[i].trim());
+                    }
+                }
+            }
+            for (var ckey in keys) {
+                if (filters[f].values[keys[ckey]])
+                    filters[f].values[keys[ckey]] += 1;
+                else
+                    filters[f].values[keys[ckey]] = 1;    // Initialize count
+            }
         }
     });
 
@@ -209,7 +229,6 @@ $(document).ready(function () {
                 for (var j = 0; j < checkedItems.length; j++) {
                     if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) >= 0) {
                         visible = true; // Display if included in some filter
-                        continue;
                     }
                 }
                 markers[i].setVisible(visible);
