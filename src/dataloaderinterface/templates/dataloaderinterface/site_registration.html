@@ -285,10 +285,40 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr class="bg-white">
-                                                    <td colspan="7" class="text-center">
-                                                        No macroinvertebrate data have been added to this site.
-                                                    </td>
+                                                {% if leafpacks %}
+                                                    {% for leafpack in leafpacks %}
+                                                        <tr class="bg-white">
+
+                                                            <td>{{ leafpack.id }}</td>
+                                                            <td class="mdl-data-table__cell--non-numeric">Leaf Pack</td>
+                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
+                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
+                                                            <td class="mdl-data-table__cell--non-numeric">
+                                                                <a href="{% url 'leafpack:update' siteregistration.sampling_feature_code leafpack.id %}"
+                                                                   class="mdl-button mdl-button--accent">
+                                                                        <i class="material-icons center-icon">mode_edit</i>
+                                                                </a>
+                                                            </td>
+                                                            <td class="mdl-data-table__cell--non-numeric">
+                                                                <form method="post" action="{% url 'leafpack:delete' siteregistration.sampling_feature_code leafpack.id %}">
+                                                                    {% csrf_token %}
+                                                                    <button class="mdl-button" style="color: #d9534f"
+                                                                            type="submit">
+                                                                        <i class="material-icons center-icon">delete_forever</i>
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+
+                                                {% else %}
+                                                    <tr class="bg-white">
+                                                        <td colspan="7" class="text-center">
+                                                            No macroinvertebrate data have been added to this site.
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
                                                 </tr>
                                                 </tbody>
                                             </table>

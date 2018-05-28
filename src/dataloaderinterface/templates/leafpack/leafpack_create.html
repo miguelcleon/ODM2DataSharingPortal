@@ -56,6 +56,16 @@
                                             {{ form.placement_water_temp|add_class:"form-control" }}
                                             <small class="text-muted">Degrees Celcius</small>
                                         </div>
+
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.deployment_type.id_for_label }}">{{ form.deployment_type.label }}</label>
+                                            {{ form.deployment_type|add_class:"form-control" }}
+                                        </div>
+
+                                        <div class="form-field col-6">
+                                            <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
+                                            {{ form.content|add_class:"form-control" }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -99,9 +109,10 @@
                                 <div class="mdl-card__supporting-text default-font">
                                     <div class="row">
                                         <div class="form-field col-6">
-                                            <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}</label>
-                                            <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
-                                               id="id_{{ form.retrieval_date.name }}" name="{{ form.retrieval_date.name }}" required>
+                                            <label for="{{ form.retrieval_date.id_for_label }}">{{ form.retrieval_date.label }}
+                                                <input type="text" class="form-control datepicker" value="{{ form.retrieval_date.value|date_format:'m/d/Y' }}"
+                                                   id="id_{{ form.retrieval_date.name }}" name="{{ form.retrieval_date.name }}" required>
+                                            </label>
                                         </div>
 
                                         <div class="form-field col-6">

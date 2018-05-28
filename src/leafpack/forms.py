@@ -16,6 +16,9 @@ class MDLCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
 
 class LeafPackForm(forms.ModelForm):
 
+    DEPLOYMENT_TYPE_CHOICES = (('Unknown', 'Unknown'), ('Pool', 'Pool'), ('Riffle', 'Riffle'), ('Run', 'Run'))
+    CONTENT_CHOICES = (('Leaves', 'Leaves'),)
+
     def __init__(self, *args, **kwargs):
         super(LeafPackForm, self).__init__(*args, **kwargs)
         if self.instance is not None and self.instance.pk is not None:
@@ -25,7 +28,7 @@ class LeafPackForm(forms.ModelForm):
     def save(self, commit=True):
         super(LeafPackForm, self).save(commit=commit)
 
-        # LeafPackTypes from the cleaned form data (these types may or may not exist)
+        # LeafPackTypes from the cleaned form data. These types may or may not exist (i.e. they were created by a user)
         types_other_cleaned = self.cleaned_data.get('types_other', '').split(',')
 
         for other in types_other_cleaned:
@@ -33,6 +36,7 @@ class LeafPackForm(forms.ModelForm):
             other = other.strip()
 
             try:
+                # if the type doesn't exist, skip over it since it's 'created_by' value will be empty
                 lptype = LeafPackType.objects.get(name=other)
                 self.instance.types.add(lptype)
             except ObjectDoesNotExist:
@@ -120,6 +124,10 @@ class LeafPackForm(forms.ModelForm):
         label='Was this site experiencing a drought during your experiment?',
         required=False
     )
+
+    deployment_type = forms.ChoiceField(choices=DEPLOYMENT_TYPE_CHOICES)
+
+    content = forms.ChoiceField(choices=CONTENT_CHOICES)
 
     class Meta:
         model = LeafPack

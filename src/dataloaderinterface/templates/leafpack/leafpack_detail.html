@@ -77,6 +77,16 @@
                                 <small class="text-muted">Degrees Celcius</small>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric"></td>
+                            <td class="mdl-data-table__cell--non-numeric">Deployment Type</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric"></td>
+                            <td class="mdl-data-table__cell--non-numeric">Content</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
+                        </tr>
                     </table>
                 </div>
 

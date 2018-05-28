@@ -18,7 +18,7 @@ from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeries
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
     InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
-from leafpack.models import LeafPack
+from leafpack.models import LeafPack, LeafPackBug, Macroinvertebrate
 from django.contrib import messages
 from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -674,6 +674,9 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             .first()
         alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} if site_alert else {}
 
+        # lpgs = LeafPackBug.objects.filter(leaf_pack__site_registration=self.get_object())
+
+        context['leafpacks'] = LeafPack.objects.filter(site_registration=self.get_object())
         context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
         context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
         context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
