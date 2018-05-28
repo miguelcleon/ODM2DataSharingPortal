@@ -281,7 +281,7 @@
                                                         <span class="last-observation">{{ sensor.last_measurement_datetime|default:"-" }}</span>
                                                     </div>
                                                     <div class="col-6 text-right">
-                                                        <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:" - " }}</h3>
+                                                        <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement_value|roundfloat:4|default:" - " }}</h3>
                                                         <h6 style="margin-top: 0;" class="unit">
                                                             ({{ sensor.unit_abbreviation }})</h6>
                                                     </div>
@@ -332,13 +332,13 @@
                             <hr>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-12" style="overflow: auto;">
                         {% if leafpacks %}
-                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                                 <thead>
                                     <tr>
-                                        <th class="mdl-data-table__cell--non-numeric">Experiment ID</th>
-                                        <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>
+{#                                        <th class="mdl-data-table__cell--non-numeric">Experiment ID</th>#}
+{#                                        <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
                                         <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
                                         <th class="mdl-data-table__cell--non-numeric">Content</th>
                                         <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
@@ -348,12 +348,12 @@
                                 <tbody>
                                     {% for leafpack in leafpacks %}
                                         <tr>
-                                            {# TODO: Populate fields below #}
-                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">Experiment Type</td>
+                                            {# TODO: Populate field experiment_type #}
+{#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>#}
+{#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">Content</td>
-                                            <td class="mdl-data-table__cell--non-numeric">Deployment Type</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">
                                                 <a class="mdl-button mdl-js-button button-link mdl-button--primary"
                                                    href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.id %}">

@@ -204,7 +204,7 @@
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
-                                                    {% if forloop.counter0 <= 9 %}
+                                                    {% if forloop.counter0 <= 8 %}
                                                         {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}
@@ -214,7 +214,7 @@
                                         <div class="col-sm-12 col-md-6">
                                             {% for bug_forms in bug_count_form_list %}
                                                 {% with parent_form=bug_forms.0 %}
-                                                    {% if forloop.counter0 > 9 %}
+                                                    {% if forloop.counter0 > 8 %}
                                                         {% include 'includes/bug_form.template.html' %}
                                                     {% endif %}
                                                 {% endwith %}

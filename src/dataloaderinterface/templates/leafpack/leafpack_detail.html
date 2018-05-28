@@ -180,7 +180,7 @@
                             <th class="mdl-data-table__header">Tally</th>
                         </tr>
                         {% for bug_data in leafpack_bugs %}
-                            {% if forloop.counter0 <= 9 %}
+                            {% if forloop.counter0 <= 8 %}
                             <tr class="taxon">
                                 <td class="mdl-data-table__cell--non-numeric" data-name>
                                     {{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
@@ -207,7 +207,7 @@
                             <th class="mdl-data-table__header">Tally</th>
                         </tr>
                         {% for bug_data in leafpack_bugs %}
-                            {% if forloop.counter0 > 9 %}
+                            {% if forloop.counter0 > 8 %}
                                 <tr class="taxon">
                                     <td class="mdl-data-table__cell--non-numeric" data-name>
                                         {{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
