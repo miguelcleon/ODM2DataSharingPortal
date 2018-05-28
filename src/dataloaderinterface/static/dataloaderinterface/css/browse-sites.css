@@ -35,9 +35,13 @@ body {
     }
 }
 
-#filters label {
+#filters label:not(.mdl-switch) {
     display: table-cell;
     padding-right: 40px;
+}
+
+#filters .mdl-switch {
+    margin-top: 20px;
 }
 
 #filters .badge {

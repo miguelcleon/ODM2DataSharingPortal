@@ -1,12 +1,13 @@
 var markers = [];
+var map;
 var filters = {
     dataTypes: {
         key: 'dataType',
-        icon: 'layers',
+        icon: 'cloud_queue',
         label: 'Data Types',
         values: {},
         values_sortable: [],
-        inclusive: true
+        inclusive: true // For filter items that can take multiple values from a set of values
     },
     organizations: {
         key: 'organization',
@@ -45,7 +46,7 @@ function initMap() {
 
     var markerData = JSON.parse(document.getElementById('sites-data').innerHTML);
 
-    var map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), {
         center: MAP_CENTER,
         zoom: ZOOM_LEVEL,
         gestureHandling: 'greedy',
@@ -175,7 +176,7 @@ $(document).ready(function () {
             $("#collapse-" + filters[f].key + " > table tbody").append(' <tr>\
                 <td class="mdl-data-table__cell--non-numeric">\
                     <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '">\
-                        <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '" \
+                        <input type="checkbox" id="chk-' + filters[f].key + '-' + filters[f].values_sortable[item][0] + '"\
                         class="mdl-checkbox__input chk-filter" data-value="'+ filters[f].values_sortable[item][0] + '">\
                         <span class="mdl-checkbox__label">' + filters[f].values_sortable[item][0] + '</span>\
                     </label>\
@@ -217,6 +218,7 @@ $(document).ready(function () {
 
     $(".chk-filter").change(function() {
         var checkedItems = getCurrentFilters();
+
         // If nothing selected, display all
         if (!checkedItems.length) {
             for (var i = 0; i < markers.length; i++) {
@@ -227,15 +229,55 @@ $(document).ready(function () {
             for (var i = 0; i < markers.length; i++) {
                 var visible = true;    // Starts as true by default
                 for (var j = 0; j < checkedItems.length; j++) {
-                    if (checkedItems[j][1].indexOf(markers[i][checkedItems[j][0]]) < 0) {
-                        visible = false; // Hide if not included in some filter
+                    var key = checkedItems[j][0];
+                    var values = checkedItems[j][1];
+
+                    var isInclusive = false;
+                    for (var f in filters) {
+                        if (filters[f].key == key && filters[f].inclusive) {
+                            isInclusive = true;
+                            break;
+                        }
+                    }
+
+                    if (isInclusive) {
+                        var ckey = markers[i][key].split(",");
+                        var found = false;
+                        for (var v in ckey) {
+                            if (ckey[v] && !(values.indexOf(ckey[v]) < 0)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        visible = visible && found; // Hide if not any of the values was filtered
+                    }
+                    else {
+                        if (values.indexOf(markers[i][key]) < 0) {
+                            visible = false; // Hide if not included in some filter
+                        }
                     }
                 }
                 markers[i].setVisible(visible);
             }
         }
+
+        if ($("#switch-zoom").prop("checked")) {
+            zoomExtent();
+        }
+
     });
 });
+
+function zoomExtent() {
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0; i < markers.length; i++) {
+        if (markers[i].visible) {
+            bounds.extend(markers[i].getPosition());
+        }
+    }
+
+    map.fitBounds(bounds);
+}
 
 // Returns an object listing currently checked filter items
 function getCurrentFilters() {
