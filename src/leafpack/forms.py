@@ -58,7 +58,7 @@ class LeafPackForm(forms.ModelForm):
         max_length=255,
         label='Enter the three predominant leaf species:',
         required=False,
-        widget=forms.TextInput(attrs={'placeholder': 'Search'})
+        widget=forms.TextInput(attrs={'placeholder': 'i.e., Species 1, Species 2, Species 3'})
     )
 
     placement_date = forms.DateField(
