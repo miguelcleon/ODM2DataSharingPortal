@@ -146,7 +146,7 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     Create View
     """
     form_class = LeafPackForm
-    template_name = 'leafpack/leafpack_create.html'
+    template_name = 'leafpack/leafpack_registration.html'
     slug_field = 'sampling_feature_code'
     object = None
 
@@ -169,7 +169,7 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
             site_registration = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
             context['leafpack_form'] = LeafPackForm(initial={'site_registration': site_registration})
 
-        context['bug_count_form_list'] = LeafPackBugFormFactory.formset_factory()
+        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory()
 
         return context
 
@@ -198,7 +198,7 @@ class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, UpdateVi
     Update view
     """
     form_class = LeafPackForm
-    template_name = 'leafpack/leafpack_update.html'
+    template_name = 'leafpack/leafpack_registration.html'
     slug_field = 'sampling_feature_code'
     object = None
 

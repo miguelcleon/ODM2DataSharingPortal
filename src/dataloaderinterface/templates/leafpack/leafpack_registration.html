@@ -11,11 +11,20 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        Edit Leaf Pack Experiment at {{ leafpack.site_registration.sampling_feature_name }}
+                        {% if request.resolver_match.view_name == "leafpack:create" %}
+                            Create Leaf Pack Experiment at {{ sampling_feature_code }}
+                        {% else %}
+                            Edit Leaf Pack Experiment at {{ leafpack.site_registration.sampling_feature_name }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            <form class="form-leafpack" method="POST" action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}">
+            <form class="form-leafpack" method="POST"
+                    {% if request.resolver_match.view_name == "leafpack:create" %}
+                  action="{% url 'leafpack:create' sampling_feature_code %}"
+                    {% else %}
+                  action="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
+                    {% endif %}>
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-12">
@@ -235,8 +244,18 @@
                 <div class="row">
                     <div class="col">
                         <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                           href="{% url 'leafpack:view' sampling_feature_code leafpack.id %}">Cancel</a>
-                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">Save Edits
+                                {% if request.resolver_match.view_name == "leafpack:create" %}
+                                    href="{% url 'site_update' sampling_feature_code %}"
+                                {% else %}
+                                    href="{% url 'leafpack:view' sampling_feature_code leafpack.id %}"
+                                {% endif %}
+                        >Cancel</a>
+                        <button type="submit" class="mdl-button mdl-button--raised mdl-button--accent">
+                            {% if request.resolver_match.view_name == "leafpack:create" %}
+                                Submit
+                            {% else %}
+                                Save Edits
+                            {% endif %}
                         </button>
                     </div>
                 </div>
