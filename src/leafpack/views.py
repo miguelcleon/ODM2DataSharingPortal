@@ -150,26 +150,28 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
     slug_field = 'sampling_feature_code'
     object = None
 
-    def form_invalid(self, leafpack_form, bug_forms):
-        super(LeafPackCreateView, self).form_invalid(leafpack_form)
-        context = self.get_context_data(leafpack_form=leafpack_form, bug_forms=bug_forms)
+    def form_invalid(self, leafpack_form, taxon_forms):
+        context = self.get_context_data(form=leafpack_form, taxon_forms=taxon_forms)
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
 
         # if 'leafpack_form' is in kwargs, that means self.form_invalid was most likely called due to a failed POST request
-        if 'leafpack_form' in kwargs:
-            self.object = kwargs['leafpack_form'].instance
+        if 'form' in kwargs:
+            self.object = kwargs['form'].instance
 
         context = super(LeafPackCreateView, self).get_context_data(**kwargs)
 
         context['sampling_feature_code'] = self.kwargs[self.slug_field]
 
-        if 'leafpack_form' not in context:
+        if self.object is None:
             site_registration = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
-            context['leafpack_form'] = LeafPackForm(initial={'site_registration': site_registration})
+            context['form'] = LeafPackForm(initial={'site_registration': site_registration})
 
-        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory()
+        if 'taxon_forms' in kwargs:
+            context['taxon_forms'] = LeafPackBugFormFactory.formset_factory(taxon_forms=kwargs.pop('taxon_forms'))
+        else:
+            context['taxon_forms'] = LeafPackBugFormFactory.formset_factory()
 
         return context
 
@@ -202,11 +204,18 @@ class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, UpdateVi
     slug_field = 'sampling_feature_code'
     object = None
 
+    def form_invalid(self, form):
+        response = super(LeafPackUpdateView, self).form_invalid(form)
+        return response
+
     def get_context_data(self, **kwargs):
         context = super(LeafPackUpdateView, self).get_context_data(**kwargs)
 
         context['sampling_feature_code'] = self.kwargs[self.slug_field]
-        context['leafpack_bugform'] = LeafPackBugFormFactory.formset_factory(self.get_object())
+        context['taxon_forms'] = LeafPackBugFormFactory.formset_factory(self.get_object())
+
+        if 'leafpack' not in context:
+            context['leafpack'] = self.get_object()
 
         return context
 

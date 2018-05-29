@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 <div class="mdl-card full-width macroinvertebrate-card">
-    <div class="mdl-card__title{% if bug_forms.1 %} mdl-card--border{% endif %}">
+    <div class="mdl-card__title{% if forms.1 %} mdl-card--border{% endif %}">
         <table class="full-width">
             <tr>
                 <td>
@@ -13,10 +13,10 @@
         </table>
     </div>
 
-    {% if bug_forms.1 %}
+    {% if forms.1 %}
         <div class="mdl-card__title">
             <table class="full-width">
-                {% for family_form in bug_forms.1 %}
+                {% for family_form in forms.1 %}
                     <tr>
                         <td class="small">
                             <label for="{{ family_form.bug_count.id_for_label }}">

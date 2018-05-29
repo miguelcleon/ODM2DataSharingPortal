@@ -168,11 +168,12 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
         return kwargs
 
     @staticmethod
-    def formset_factory(leafpack=None):
+    def formset_factory(leafpack=None, taxon_forms=None):  # type: (LeafPack, [LeafPackBugForm]) -> list
         """
         Factory method to create a customized form set
 
-        :param leafpack: An instance of LeafPack.
+        :param leafpack: An instance of LeafPack (optional).
+        :param taxon_forms: An array of LeafPackBugForms(optional).
 
         :return []:
 
@@ -224,6 +225,20 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
                     family_bug_forms = [LeafPackBugForm(instance=LeafPackBug(bug=bug)) for bug in families]
 
             form_list.append((order_bug_form, family_bug_forms))
+
+        if taxon_forms is not None:
+
+            def get_taxon_count(taxon_):
+                for form in taxon_forms:
+                    if form.instance.bug == taxon_:
+                        return form.instance.bug_count
+                return 0
+
+            for forms_ in taxon_forms:
+                forms_[0].initial['bug_count'] = get_taxon_count(forms_[0].instance.bug)
+
+                for form in forms_[1]:
+                    form.initial['bug_count'] = get_taxon_count(form.instance.bug)
 
         return form_list
 
