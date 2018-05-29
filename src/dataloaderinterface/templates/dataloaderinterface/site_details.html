@@ -144,6 +144,8 @@
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Registration Token
+                                            <br>
+                                            <small class="text-muted"><i class="fa fa-eye" aria-hidden="true"></i> Only you can see this.</small>
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <span id="reg-token" data-copy-target="reg-token">{{ site.registration_token }}</span>
@@ -155,6 +157,8 @@
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Sampling Feature UUID
+                                            <br>
+                                            <small class="text-muted"><i class="fa fa-eye" aria-hidden="true"></i> Only you can see this.</small>
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <span id="samp-token" data-copy-target="samp-token">{{ site.sampling_feature.sampling_feature_uuid }}</span>
@@ -409,7 +413,7 @@
     </dialog>
 
     <dialog class="mdl-dialog" id="site-delete-dialog">
-        <h4 class="mdl-dialog__title">Delete Site</h4>
+        <h4 class="mdl-dialog__title">Delete Site?</h4>
         <div class="mdl-dialog__content">
             <div>
                 <p>
@@ -422,10 +426,10 @@
             <form method="POST"
                   action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
                 {% csrf_token %}
-                <button type="submit" class="mdl-button confirm-delete"> Confirm</button>
+                <button type="submit" class="mdl-button confirm-delete">Delete</button>
             </form>
 
-            <button type="button" class="mdl-button dialog-close">Close</button>
+            <button type="button" class="mdl-button dialog-close">Cancel</button>
         </div>
     </dialog>
 

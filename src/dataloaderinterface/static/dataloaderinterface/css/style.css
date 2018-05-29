@@ -680,6 +680,10 @@ dialog#data-table-dialog .mdl-dialog__content {
     color: #555;
 }
 
+.mdl-dialog {
+    border-radius: 4px;
+}
+
 .site-tokens .input-group-copy .input-group-addon:first-child {
     width: 186px;
     text-align: left;
