@@ -7,21 +7,24 @@ var filters = {
         label: 'Data Types',
         values: {},
         values_sortable: [],
-        inclusive: true // For filter items that can take multiple values from a set of values
+        inclusive: true, // For filter items that can take multiple values from a set of values
+        has_search: false
     },
     organizations: {
         key: 'organization',
         label: 'Organizations',
         icon: 'business',   // From https://material.io/icons/
         values: {},
-        values_sortable: []
+        values_sortable: [],
+        has_search: true
     },
     siteTypes: {
         key: 'type',
         icon: 'layers',
         label: 'Site Types',
         values: {},
-        values_sortable: []
+        values_sortable: [],
+        has_search: true
     }
 };
 
@@ -55,8 +58,10 @@ function initMap() {
             position: google.maps.ControlPosition.LEFT_BOTTOM
         },
         mapTypeId: google.maps.MapTypeId.TERRAIN,
-        scaleControl: true
+        scaleControl: true,
     });
+
+    map.setOptions({minZoom: 3, maxZoom: 15});
 
     var infoWindow = new google.maps.InfoWindow({
         content: ''
@@ -157,16 +162,16 @@ $(document).ready(function () {
                 </div>\
                 <div id="collapse-' + filters[f].key + '" class="show filter-body" data-facet="' + filters[f].key + '">\
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp full-width">\
-                        <tbody>\
-                            <tr class="td-filter">\
+                        <tbody>'+ (filters[f].has_search ?
+                            '<tr class="td-filter">\
                                 <td class="mdl-data-table__cell--non-numeric">\
                                     <div class="input-group">\
                                         <span class="input-group-addon" id="basic-addon1"><i class="material-icons">search</i></span>\
                                         <input type="text" class="form-control input-filter" placeholder="Search ' + filters[f].label + '...">\
                                     </div>\
                                 </td>\
-                            </tr>\
-                        </tbody>\
+                            </tr>':'')+
+                        '</tbody>\
                     </table>\
                 </div></div>'
         );

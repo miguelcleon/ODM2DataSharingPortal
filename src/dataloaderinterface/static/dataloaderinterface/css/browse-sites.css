@@ -52,8 +52,7 @@ body {
 }
 
 .filter-container {
-    margin-top: 20px;
-    margin-bottom: 40px;
+    margin: 20px 0;
 }
 
 .filter-body {
