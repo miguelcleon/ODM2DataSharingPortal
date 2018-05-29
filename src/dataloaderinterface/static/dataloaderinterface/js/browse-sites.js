@@ -205,7 +205,7 @@ $(document).ready(function () {
         }
     });
 
-    $("#btnClearFilters").click(function() {
+    $("#btnClearFilters").click(function () {
         // document.querySelector('.chk-filter').parentElement.MaterialCheckbox.uncheck();
         var items = $(".chk-filter");
         for (var i = 0; i < items.length; i++) {
@@ -213,6 +213,10 @@ $(document).ready(function () {
         }
         for (var i = 0; i < markers.length; i++) {
             markers[i].setVisible(true);
+        }
+
+        if ($("#switch-zoom").prop("checked")) {
+            zoomExtent();
         }
     });
 
@@ -264,7 +268,6 @@ $(document).ready(function () {
         if ($("#switch-zoom").prop("checked")) {
             zoomExtent();
         }
-
     });
 });
 
