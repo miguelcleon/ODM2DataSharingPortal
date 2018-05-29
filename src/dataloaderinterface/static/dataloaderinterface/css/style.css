@@ -224,7 +224,7 @@ div.form-field {
     display: inline-block;
 }
 
-td[data-behaviour="delete"] input {
+td[data-behavior="delete"] input {
     display: none;
 }
 
@@ -345,7 +345,7 @@ svg.not-stale {
     background-color: initial;
 }
 
-table.sensors td:not([data-behaviour]), table.macroinvertebrate td:not([data-behaviour]){
+table.sensors td:not([data-behavior]), table.macroinvertebrate td:not([data-behavior]){
     white-space: normal;
 }
 

@@ -408,7 +408,7 @@
         </div>
     </dialog>
 
-     <dialog class="mdl-dialog" id="site-delete-dialog">
+    <dialog class="mdl-dialog" id="site-delete-dialog">
         <h4 class="mdl-dialog__title">Delete Site</h4>
         <div class="mdl-dialog__content">
             <div>
@@ -419,7 +419,8 @@
             </div>
         </div>
         <div class="mdl-dialog__actions">
-            <form method="POST" action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
+            <form method="POST"
+                  action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
                 {% csrf_token %}
                 <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
             </form>

@@ -77,7 +77,6 @@ function initMap() {
     });
 }
 
-
 function applyInstrumentOutputFilter(equipmentModelSelect) {
     var resultForm = equipmentModelSelect.parents('.result-form');
     var variableSelect = resultForm.find('[name$="variable"]');
@@ -323,7 +322,7 @@ function updateRowData(row) {
 }
 
 function bindResultEditEvent(row) {
-    row.find('td[data-behaviour="edit"] button').on('click', function(event) {
+    row.find('td[data-behavior="edit"] button').on('click', function() {
         var rowElement = $(this).parents('tr');
         var result_uuid = rowElement.find('input[name$="result_uuid"]').val();
 
@@ -335,7 +334,7 @@ function bindResultEditEvent(row) {
 }
 
 function bindResultDeleteEvent(row) {
-    row.find('td[data-behaviour="delete"] button').on('click', function(event) {
+    row.find('td[data-behavior="delete"] button').on('click', function() {
         var sensor = $(this).parents('tr');
         $('#confirm-delete').data('to-delete', sensor).modal('toggle');
     });
@@ -364,11 +363,8 @@ $(document).ready(function() {
     initializeResultsForm();
     initializeResultsTable();
 
-    $('#btn-confirm-delete').on('click', function(event) {
+    $('#btn-confirm-delete').on('click', function() {
         var dialog = $('#confirm-delete');
-        // var totalForms = $('input[name="form-TOTAL_FORMS"]');
-        // totalForms.val(totalForms.val() - 1);
-
         dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
         dialog.modal('toggle');
         defaultTableMessage();
