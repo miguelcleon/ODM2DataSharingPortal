@@ -1,8 +1,3 @@
-// (function() {
-//     'use strict';
-//
-// }());
-
 function updateSitePosition(map, position) {
     map.panTo(position);
     $('input[name="latitude"]').val(Math.round(position.lat() * 100000) / 100000).trigger('keypress');
@@ -11,11 +6,11 @@ function updateSitePosition(map, position) {
 
 function updateSiteElevation(position) {
     var elevator = new google.maps.ElevationService();
-     elevator.getElevationForLocations({'locations':[position]}, function(results, status) {
-          if (status == google.maps.ElevationStatus.OK && results[0]) {
-              $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
-          }
-     });
+    elevator.getElevationForLocations({'locations': [position]}, function (results, status) {
+        if (status == google.maps.ElevationStatus.OK && results[0]) {
+            $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
+        }
+    });
 }
 
 function initMap() {
@@ -146,8 +141,8 @@ function bindResultEvents(resultForm) {
             }
         );
     });
-    equipmentModelSelect.trigger('change', [true]);
 
+    equipmentModelSelect.trigger('change', [true]);
 
     variableSelect.on('change', function() {
         var resultForm = $(this).parents('.result-form');
@@ -170,8 +165,8 @@ function bindResultEvents(resultForm) {
             filterSelectOptions(unitSelect, outputVariableData.variables[variableId]);
         }
     });
-    variableSelect.trigger('change', [true]);
 
+    variableSelect.trigger('change', [true]);
 
     unitSelect.on('change', function() {
         var resultForm = $(this).parents('.result-form');
@@ -192,6 +187,7 @@ function bindResultEvents(resultForm) {
 
         filterSelectOptions(variableSelect, outputVariableData.units[unitId]);
     });
+
     unitSelect.trigger('change', [true]);
 }
 
@@ -246,8 +242,8 @@ function initializeResultsForm() {
                 $('div.results-table table').append(newRow);
                 defaultTableMessage();
                 $('#result-dialog').modal('toggle');
-                
-            } else if (xhr.status == 206) {
+            }
+            else if (xhr.status == 206) {
                 // not valid
                 var form = $('div#result-dialog div.result-form');
                 for (var fieldName in data) {
@@ -305,6 +301,7 @@ function fillFormData(row) {
         formSelect.val(selectedValue);
         formSelect.trigger('change');
     });
+
     $('#result-dialog').data('row', row);
 }
 
@@ -347,13 +344,14 @@ function initializeResultsTable() {
 }
 
 function notifyInputStatus() {
+    var hours_threshold = $("#id_hours_threshold");
     if (!$("#id_notify").prop("checked")) {
-        $("#id_hours_threshold").removeAttr("name");
-        $("#id_hours_threshold").removeAttr("required");
+        hours_threshold.removeAttr("name");
+        hours_threshold.removeAttr("required");
     }
     else {
-        $("#id_hours_threshold").attr("name", "hours_threshold");
-        $("#id_hours_threshold").attr("required", true);
+        hours_threshold.attr("name", "hours_threshold");
+        hours_threshold.attr("required", true);
     }
 }
 
