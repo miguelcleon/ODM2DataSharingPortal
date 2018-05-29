@@ -35,6 +35,8 @@ function initMap() {
         scaleControl: true
     });
 
+    map.setOptions({minZoom: 3, maxZoom: 18});
+
     var marker = new google.maps.Marker({
         position: (mapPosition.lat && mapPosition.lng)? mapPosition: undefined,
         map: map

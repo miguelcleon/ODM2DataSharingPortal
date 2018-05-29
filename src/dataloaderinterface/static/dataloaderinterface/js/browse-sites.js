@@ -58,10 +58,10 @@ function initMap() {
             position: google.maps.ControlPosition.LEFT_BOTTOM
         },
         mapTypeId: google.maps.MapTypeId.TERRAIN,
-        scaleControl: true,
+        scaleControl: true
     });
 
-    map.setOptions({minZoom: 3, maxZoom: 15});
+    map.setOptions({minZoom: 3, maxZoom: 18});
 
     var infoWindow = new google.maps.InfoWindow({
         content: ''

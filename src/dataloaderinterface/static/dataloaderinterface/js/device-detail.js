@@ -15,6 +15,8 @@ function initMap() {
         mapTypeId: google.maps.MapTypeId.HYBRID,
     });
 
+    map.setOptions({minZoom: 3, maxZoom: 18});
+
     var marker = new google.maps.Marker({
         position: sitePosition,
         map: map

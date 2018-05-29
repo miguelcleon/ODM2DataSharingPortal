@@ -32,6 +32,8 @@ function initMap() {
         scaleControl: true
     });
 
+    map.setOptions({minZoom: 3, maxZoom: 18});
+
     map.addListener('zoom_changed', function(){
         var CURRENT_ZOOM = map.getZoom();
 

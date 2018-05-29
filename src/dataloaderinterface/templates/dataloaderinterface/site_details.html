@@ -422,12 +422,13 @@
             <form method="POST"
                   action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
                 {% csrf_token %}
-                <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
+                <button type="submit" class="mdl-button confirm-delete"> Confirm</button>
             </form>
 
             <button type="button" class="mdl-button dialog-close">Close</button>
         </div>
     </dialog>
+
     {% if site.django_user_id == request.user.id or request.user.is_staff %}
     <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">
         <div class="vertical-alignment-helper">
