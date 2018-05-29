@@ -21,21 +21,6 @@ function initMap() {
     });
 }
 
-// Makes all site cards have the same height.
-function fixViewPort() {
-    var cards = $('.plot_box');
-
-    var maxHeight = 0;
-    for (var i = 0; i < cards.length; i++) {
-        maxHeight = Math.max($(cards[i]).height(), maxHeight);
-    }
-
-    // set to new max height
-    for (var i = 0; i < cards.length; i++) {
-        $(cards[i]).height(maxHeight);
-    }
-}
-
 function bindDeleteDialogEvents() {
     var deleteDialog = document.querySelector('#site-delete-dialog');
     var deleteButton = document.querySelector('#btn-delete-site');
@@ -107,13 +92,9 @@ function drawSparklinePlot(seriesInfo, seriesData) {
         return;
     }
 
-    // $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
-
     var lastRead = Math.max.apply(Math, seriesData.map(function(value){
         return new Date(value.DateTime);
     }));
-
-    // $lastObservation.text(formatDate(lastRead)); //
 
     var dataTimeOffset = Math.min.apply(Math, seriesData.map(function(value){
         return new Date(value.DateTime);
@@ -285,7 +266,6 @@ $(document).ready(function () {
 
     $('nav .menu-sites-list').addClass('active');
 
-
     var sensors = document.querySelectorAll('.device-data .plot_box');
     for (var index = 0; index < sensors.length; index++) {
         var sensorInfo = sensors[index].dataset;
@@ -293,25 +273,4 @@ $(document).ready(function () {
     }
 
     bindDeleteDialogEvents();
-
-    // Executes when page loads
-    // fixViewPort();
-
-    // Executes each time window size changes
-    $(window).resize(
-        ResponsiveBootstrapToolkit.changed(function () {
-            $('.plot_box').height("initial");   // Reset height
-            // fixViewPort();
-        }));
 });
-
-function formatDate(date) {
-    date = new Date(date);
-
-    var options = {
-        year: "numeric", month: "short",
-        day: "numeric", hour: "2-digit", minute: "2-digit"
-    };
-
-    return date.toLocaleTimeString("en-us", options);
-}
