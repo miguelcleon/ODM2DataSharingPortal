@@ -95,8 +95,7 @@ class LeafPackForm(forms.ModelForm):
         label='Retrieval Water Temperature'
     )
 
-    had_storm = forms.BooleanField(
-        widget=forms.NullBooleanSelect,
+    had_storm = forms.NullBooleanField(
         label='Did storms occur while your leaf packs were in the stream?',
         required=False
     )
@@ -113,14 +112,12 @@ class LeafPackForm(forms.ModelForm):
         required=False
     )
 
-    had_flood = forms.BooleanField(
-        widget=forms.NullBooleanSelect,
+    had_flood = forms.NullBooleanField(
         label='Did flooding occur?',
         required=False
     )
 
-    had_drought = forms.BooleanField(
-        widget=forms.NullBooleanSelect,
+    had_drought = forms.NullBooleanField(
         label='Was this site experiencing a drought during your experiment?',
         required=False
     )
@@ -226,12 +223,13 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
 
             form_list.append((order_bug_form, family_bug_forms))
 
+        # If taxon_forms is not None, plug bug_count values into new formset
         if taxon_forms is not None:
 
             def get_taxon_count(taxon_):
-                for form in taxon_forms:
-                    if form.instance.bug == taxon_:
-                        return form.instance.bug_count
+                for tf in taxon_forms:
+                    if tf.instance.bug == taxon_:
+                        return tf.instance.bug_count
                 return 0
 
             for forms_ in taxon_forms:
