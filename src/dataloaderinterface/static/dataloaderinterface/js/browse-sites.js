@@ -77,10 +77,35 @@ function initMap() {
         sessionStorage.setItem('CURRENT_CENTER', CURRENT_CENTER);
     });
 
+    var icons = {
+        followed: {
+            url: "/static/dataloaderinterface/images/marker-blue-dotted.png",
+            size: new google.maps.Size(36, 63),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(18, 58),
+            scaledSize: new google.maps.Size(36, 63)
+        },
+        owned: {
+            url: "/static/dataloaderinterface/images/marker-red-dotted.png",
+            size: new google.maps.Size(36, 62),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(18, 58),
+            scaledSize: new google.maps.Size(36, 62)
+        },
+        unfollowed: {
+            url: "/static/dataloaderinterface/images/marker-blue.png",
+            size: new google.maps.Size(36, 63),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(18, 58),
+            scaledSize: new google.maps.Size(36, 63)
+        }
+    };
+
     markerData.forEach(function(site) {
         var marker = new google.maps.Marker({
-            position: { lat: site.latitude, lng: site.longitude },
+            position: {lat: site.latitude, lng: site.longitude},
             map: map,
+            icon: icons[site.status]
         });
 
         for (var f in filters) {
