@@ -290,7 +290,8 @@
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
                         "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
-                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
+                        "status":"owned"
                      }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
                 {% endfor %}
                 {% for site in followed_sites %}
@@ -302,7 +303,8 @@
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
                         "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
-                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
+                        "status":"followed"
                      }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]
