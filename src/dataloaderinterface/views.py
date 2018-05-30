@@ -588,25 +588,37 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
         try:
             hs_site = HydroShareResource.objects.get(site_registration=self.get_object())
             hs_site.delete()
+        except (ObjectDoesNotExist, AttributeError):
+            pass
+
+        try:
+            sampling_feature = site.sampling_feature
+            data_logger_program = DataLoggerProgramFile.objects.filter(
+                affiliation_id=site.affiliation_id,
+                program_name__contains=sampling_feature.sampling_feature_code
+            ).first()
+            data_logger_file = data_logger_program.data_logger_files.first()
+
+            feature_actions = sampling_feature.feature_actions.with_results().all()
+            for feature_action in feature_actions:
+
+                result = feature_action.results.first()
+
+                try:
+                    delete_result(result)
+                except (ObjectDoesNotExist, AttributeError):
+                    pass
+
+            for obj in [data_logger_file, data_logger_program, sampling_feature.site, sampling_feature]:
+
+                try:
+                    obj.delete()
+                except AttributeError:
+                    continue
+
         except ObjectDoesNotExist:
             pass
 
-        sampling_feature = site.sampling_feature
-        data_logger_program = DataLoggerProgramFile.objects.filter(
-            affiliation_id=site.affiliation_id,
-            program_name__contains=sampling_feature.sampling_feature_code
-        ).first()
-        data_logger_file = data_logger_program.data_logger_files.first()
-
-        feature_actions = sampling_feature.feature_actions.with_results().all()
-        for feature_action in feature_actions:
-            result = feature_action.results.first()
-            delete_result(result)
-
-        data_logger_file.delete()
-        data_logger_program.delete()
-        sampling_feature.site.delete()
-        sampling_feature.delete()
         site.sensors.all().delete()
         site.delete()
         return HttpResponseRedirect(self.success_url)
