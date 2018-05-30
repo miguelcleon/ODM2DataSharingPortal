@@ -58,7 +58,11 @@
                     "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                     "dataType": "{% if site.sensors.all %}EnviroDIY,{% endif %}{% if site.leafpack_set.all %}Leaf Pack{% endif %}",
-                    "status":{% if request.user.id and site.django_user_id == request.user.id %}"owned"{% elif request.user.id and site.pk in request.user.followed_sites.all %}"followed"{% else %}"unfollowed"{% endif %}
+                    "status":
+                    {% if request.user.id and site.django_user_id == request.user.id %}"owned"
+                    {% elif request.user.id and site in request.user.followed_sites.all %}"followed"
+                    {% else %}"unfollowed"
+                    {% endif %}
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]
