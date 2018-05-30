@@ -25,6 +25,9 @@ class OrganizationQuerySet(ODM2QuerySet):
     def exclude_vendors(self):
         return self.exclude(organization_type__in=['Vendor', 'Manufacturer'])
 
+    def only_vendors(self):
+        return self.filter(organization_type__in=['Vendor', 'Manufacturer'])
+
 
 class MethodQuerySet(ODM2QuerySet):
     def instrument_deployment_methods(self):

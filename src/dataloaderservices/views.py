@@ -6,6 +6,7 @@ from StringIO import StringIO
 
 import requests
 from django.conf import settings
+from django.forms.models import model_to_dict
 from django.http.response import HttpResponse
 from django.views.generic.base import View
 from unicodecsv.py2 import UnicodeWriter
@@ -20,10 +21,10 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dataloaderinterface.forms import ResultForm
-from dataloaderinterface.models import SiteSensor, SiteRegistration
+from dataloaderinterface.forms import ResultForm, SiteSensorForm
+from dataloaderinterface.models import SiteSensor, SiteRegistration, SensorOutput
 from dataloaderservices.auth import UUIDAuthentication
-from dataloaderservices.serializers import OrganizationSerializer
+from dataloaderservices.serializers import OrganizationSerializer, SensorSerializer
 
 from pytz import utc
 
@@ -58,6 +59,53 @@ class ModelVariablesApi(APIView):
         output = equipment_model.instrument_output_variables.values('variable', 'instrument_raw_output_unit')
 
         return Response(output)
+
+
+class OutputVariablesApi(APIView):
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request):
+        output = SensorOutput.objects.for_filters()
+        return Response(output)
+
+
+class RegisterSensorApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        form = SiteSensorForm(data=request.POST)
+
+        if not form.is_valid():
+            error_data = dict(form.errors)
+            return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
+
+        registration = form.cleaned_data['registration']
+        sensor_output = form.cleaned_data['output_variable']
+        site_sensor = SiteSensor.objects.create(registration=registration, sensor_output=sensor_output)
+        return Response(model_to_dict(site_sensor, fields=[field.name for field in site_sensor._meta.fields]), status=status.HTTP_201_CREATED)
+
+
+class EditSensorApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        if 'id' not in request.POST:
+            return Response({'id': 'No sensor id in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        sensor = SiteSensor.objects.filter(pk=request.POST['id']).first()
+        if not sensor:
+            return Response({'id': 'Sensor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        form = SiteSensorForm(data=request.POST, instance=sensor)
+
+        if not form.is_valid():
+            error_data = dict(form.errors)
+            return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
+
+        sensor_output = form.cleaned_data['output_variable']
+        sensor.sensor_output = sensor_output
+        sensor.save(update_fields=['sensor_output'])
+        return Response(model_to_dict(sensor, fields=[field.name for field in sensor._meta.fields]), status=status.HTTP_202_ACCEPTED)
 
 
 class OrganizationApi(APIView):

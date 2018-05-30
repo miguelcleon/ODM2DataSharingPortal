@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from django.forms import NumberInput
+from django.forms.widgets import HiddenInput
+
 from dataloader.models import SamplingFeature, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
-    OrganizationType, ActionBy, SiteType
+    OrganizationType, ActionBy, SiteType, Variable, Unit
 from django import forms
 from django.forms.formsets import formset_factory
 import re
 
-from dataloaderinterface.models import HydroShareResource, SiteRegistration, SiteAlert
+from dataloaderinterface.models import HydroShareResource, SiteRegistration, SiteAlert, SiteSensor, SensorOutput
 
 allowed_site_types = [
     'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
@@ -49,7 +51,7 @@ class MDLRadioButton(forms.RadioSelect):
         html = re.sub(r'</?(ul|li).*?>', '', html)
         html = re.sub(r'(<label )', r'\1class="mdl-radio mdl-js-radio mdl-js-ripple-effect" ', html)
         html = re.sub(r'(<input )', r'\1class="mdl-radio__button" ', html)
-        return h
+        return html
 
 
 class HydroShareSettingsForm(forms.Form):
@@ -246,6 +248,45 @@ class SiteForm(forms.ModelForm):
         ]
 
 
+class SiteSensorForm(forms.ModelForm):
+    allowed_sampled_medium = ['Air', 'Soil', 'Sediment', 'Liquid aqueous', 'Equipment', 'Not applicable', 'Other']
+
+    id = forms.CharField(widget=HiddenInput(), required=False)
+    registration = forms.CharField(widget=HiddenInput())
+    output_variable = forms.CharField(widget=HiddenInput())
+    sensor_manufacturer = forms.ModelChoiceField(queryset=Organization.objects.only_vendors(), label='Sensor Manufacturer', help_text='Choose the manufacturer', to_field_name='organization_code')
+    sensor_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all(), label='Sensor Model', help_text='Choose the model of your sensor')
+    variable = forms.ModelChoiceField(queryset=Variable.objects.all(), label='Measured Variable', help_text='Choose the measured variable')
+    unit = forms.ModelChoiceField(queryset=Unit.objects.all(), label='Units', help_text='Choose the measured units')
+    sampled_medium = SampledMediumField(queryset=Medium.objects.filter(pk__in=allowed_sampled_medium), label='Sampled Medium', help_text='Choose the sampled medium')
+
+    def clean_registration(self):
+        data = self.cleaned_data['registration']
+        if not data:
+            raise forms.ValidationError(message='Site Registration id is required.')
+        try:
+            instance = SiteRegistration.objects.get(pk=data)
+        except SiteRegistration.DoesNotExist:
+            raise forms.ValidationError(message='Site Registration not found.')
+        return instance
+
+    def clean_output_variable(self):
+        data = self.cleaned_data['output_variable']
+        if not data:
+            raise forms.ValidationError(message='Output variable id is required.')
+        try:
+            instance = SensorOutput.objects.get(pk=data)
+        except SensorOutput.DoesNotExist:
+            raise forms.ValidationError(message='Output variable not found.')
+        return instance
+
+    class Meta:
+        model = SiteSensor
+        fields = [
+            'output_variable', 'sensor_manufacturer', 'sensor_model', 'variable', 'unit', 'sampled_medium'
+        ]
+
+
 class ResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ResultForm, self).__init__(*args, **kwargs)
@@ -293,5 +334,4 @@ class SiteAlertForm(forms.ModelForm):
         labels = {
             'notify': 'Receive email notifications for this site',
         }
-
 

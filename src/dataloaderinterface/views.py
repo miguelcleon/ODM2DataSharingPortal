@@ -36,7 +36,7 @@ from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, \
     OrganizationForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
-    HydroShareResourceDeleteForm, SiteRegistrationForm
+    HydroShareResourceDeleteForm, SiteRegistrationForm, SiteSensorForm
 from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, HydroShareAccount, HydroShareResource, \
     SiteAlert, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
@@ -521,35 +521,39 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class SiteUpdateView(LoginRequiredMixin, UpdateView):
-    template_name = 'dataloaderinterface/site_registration.html'
-    model = SiteRegistration
-    slug_field = 'sampling_feature_code'
+    template_name = 'dataloaderinterface/site_registration_update.html'
     slug_url_kwarg = 'sampling_feature_code'
+    slug_field = 'sampling_feature_code'
+    form_class = SiteRegistrationForm
+    model = SiteRegistration
     object = None
-    fields = []
 
-    def get_success_url(self):
-        print 'Getting success url'
-        return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
-
-    def get_formset_initial_data(self, *args):
-        # this shouldn't be here.
-        if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.can_administer_site(self.get_object()):
             raise Http404
 
-        registration = self.get_object()
-        result_form_data = [
-            {
-                'result_id': sensor.result_id,
-                'result_uuid': sensor.result_uuid,
-                'equipment_model': sensor.equipment_model,
-                'variable': sensor.variable,
-                'unit': sensor.unit,
-                'sampled_medium': sensor.medium
-            }
-            for sensor in registration.sensors.all()
-        ]
-        return result_form_data
+        return super(SiteUpdateView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
+
+    def get_queryset(self):
+        return super(SiteUpdateView, self).get_queryset().with_sensors()
+
+    # def get_formset_initial_data(self, *args):
+    #     registration = self.get_object()
+    #     result_form_data = [
+    #         {
+    #             'result_id': sensor.result_id,
+    #             'result_uuid': sensor.result_uuid,
+    #             'equipment_model': sensor.equipment_model,
+    #             'variable': sensor.variable,
+    #             'unit': sensor.unit,
+    #             'sampled_medium': sensor.medium
+    #         }
+    #         for sensor in registration.sensors.all()
+    #     ]
+    #     return result_form_data
 
     def get_hydroshare_accounts(self):
         try:
@@ -558,142 +562,145 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             return []
 
     def get_context_data(self, **kwargs):
-        if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
-            raise Http404
+        data = self.request.POST or {}
         context = super(SiteUpdateView, self).get_context_data()
-        data = self.request.POST if self.request.POST else None
-        sampling_feature = self.get_object().sampling_feature
-        action_by = sampling_feature.feature_actions.first().action.action_by.first()
 
-        site_alert = self.request.user.site_alerts\
-            .filter(site_registration__sampling_feature_code=sampling_feature.sampling_feature_code)\
-            .first()
-        alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} if site_alert else {}
+        context['sensor_form'] = SiteSensorForm(initial={'registration':self.get_object().registration_id})
+        context['email_alert_form'] = SiteAlertForm(data)
+        context['zoom_level'] = data['zoom-level'] if 'zoom-level' in data else None
 
-        context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
-        context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
-        context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
-        context['action_by_form'] = ActionByForm(data=data, instance=action_by)
-        context['email_alert_form'] = SiteAlertForm(data=data, initial=alert_data)
-        context['zoom_level'] = data['zoom-level'] if data and 'zoom-level' in data else None
+        # sampling_feature = self.get_object().sampling_feature
+        # action_by = sampling_feature.feature_actions.first().action.action_by.first()
+        #
+        # site_alert = self.request.user.site_alerts\
+        #     .filter(site_registration__sampling_feature_code=sampling_feature.sampling_feature_code)\
+        #     .first()
+        # alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} if site_alert else {}
+        #
+        # context['sampling_feature_form'] = SamplingFeatureForm(data=data, instance=sampling_feature)
+        # context['site_form'] = SiteForm(data=data, instance=sampling_feature.site)
+        # context['results_formset'] = ResultFormSet(data=data, initial=self.get_formset_initial_data())
+        # context['action_by_form'] = ActionByForm(data=data, instance=action_by)
+        # context['email_alert_form'] = SiteAlertForm(data=data, initial=alert_data)
         return context
 
     def post(self, request, *args, **kwargs):
-        if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
-            raise Http404
-        site_registration = SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code']).first()
-        sampling_feature = site_registration.sampling_feature
-
-        sampling_feature_form = SamplingFeatureForm(data=self.request.POST, instance=sampling_feature)
-        site_form = SiteForm(data=self.request.POST, instance=sampling_feature.site)
-        results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
-        action_by_form = ActionByForm(request.POST)
-        notify_form = SiteAlertForm(request.POST)
-        registration_form = self.get_form()
-
-        if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
-            affiliation = action_by_form.cleaned_data['affiliation'] or request.user.affiliation
-            data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
-            data_logger_program = data_logger_file.program
-
-            # Update notification settings
-            site_alert = self.request.user.site_alerts.filter(site_registration=site_registration).first()
-
-            if notify_form.cleaned_data['notify'] and site_alert:
-                site_alert.hours_threshold = timedelta(hours=int(notify_form.data['hours_threshold']))
-                site_alert.save()
-
-            elif notify_form.cleaned_data['notify'] and not site_alert:
-                self.request.user.site_alerts.create(
-                    site_registration=site_registration,
-                    hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
-                )
-
-            elif not notify_form.cleaned_data['notify'] and site_alert:
-                site_alert.delete()
-
-            # Update sampling feature
-            sampling_feature_form.instance.save()
-
-            # Update Site
-            site_form.instance.save()
-
-            # Update datalogger program and datalogger file names
-            data_logger_program.program_name = '%s' % sampling_feature.sampling_feature_code
-            data_logger_program.affiliation = affiliation
-            data_logger_program.save()
-
-            data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
-            data_logger_file.save()
-
-            # Update Site Registration
-            site_registration.affiliation_id = affiliation.affiliation_id
-            site_registration.django_user = User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
-            site_registration.person = str(affiliation.person)
-            site_registration.organization = str(affiliation.organization)
-            site_registration.sampling_feature_code = sampling_feature.sampling_feature_code
-            site_registration.sampling_feature_name = sampling_feature.sampling_feature_name
-            site_registration.elevation_m = sampling_feature.elevation_m
-            site_registration.latitude = sampling_feature.site.latitude
-            site_registration.longitude = sampling_feature.site.longitude
-            site_registration.site_type = sampling_feature.site.site_type_id
-            registration_form.instance = site_registration
-            site_registration.save()
-
-            for result_form in results_formset.forms:
-                is_new_result = 'result_id' not in result_form.initial
-                to_delete = result_form['DELETE'].data
-
-                if is_new_result and to_delete:
-                    continue
-                elif is_new_result:
-                    create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
-                    continue
-                elif to_delete:
-                    result = Result.objects.get(result_id=result_form.initial['result_id'])
-                    delete_result(result)
-                    continue
-
-                # Update Result
-                result = Result.objects.get(result_id=result_form.initial['result_id'])
-                result.variable = result_form.cleaned_data['variable']
-                result.sampled_medium = result_form.cleaned_data['sampled_medium']
-                result.unit = result_form.cleaned_data['unit']
-                result.save()
-
-                # Update Data Logger file column
-                instrument_output_variable = InstrumentOutputVariable.objects.filter(
-                    model=result_form.cleaned_data['equipment_model'],
-                    instrument_raw_output_unit=result.unit,
-                    variable=result.variable,
-                ).first()
-
-                data_logger_file_column = result.data_logger_file_columns.first()
-                data_logger_file_column.instrument_output_variable = instrument_output_variable
-                data_logger_file_column.column_label = '%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
-                data_logger_file_column.save()
-
-                # Update action by
-                action_by = result.feature_action.action.action_by.first()
-                action_by.affiliation = affiliation
-                action_by.save()
-
-                # Update Site Sensor
-                site_sensor = SiteSensor.objects.filter(result_id=result.result_id).first()
-                site_sensor.model_name = instrument_output_variable.model.model_name
-                site_sensor.model_manufacturer = instrument_output_variable.model.model_manufacturer.organization_name
-                site_sensor.variable_name = result.variable.variable_name_id
-                site_sensor.variable_code = result.variable.variable_code
-                site_sensor.unit_name = result.unit.unit_name
-                site_sensor.unit_abbreviation = result.unit.unit_abbreviation
-                site_sensor.sampled_medium = result.sampled_medium_id
-                site_sensor.save()
-
-            messages.success(request, 'The site has been updated successfully.')
-            return self.form_valid(registration_form)
-        else:
-            messages.error(request, 'There are still some required fields that need to be filled out.')
-            return self.form_invalid(registration_form)
+        # if self.get_object().django_user != self.request.user and not self.request.user.is_staff:
+        #     raise Http404
+        # site_registration = SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code']).first()
+        # sampling_feature = site_registration.sampling_feature
+        #
+        # sampling_feature_form = SamplingFeatureForm(data=self.request.POST, instance=sampling_feature)
+        # site_form = SiteForm(data=self.request.POST, instance=sampling_feature.site)
+        # results_formset = ResultFormSet(data=self.request.POST, initial=self.get_formset_initial_data())
+        # action_by_form = ActionByForm(request.POST)
+        # notify_form = SiteAlertForm(request.POST)
+        # registration_form = self.get_form()
+        #
+        # if all_forms_valid(registration_form, sampling_feature_form, site_form, action_by_form, results_formset, notify_form):
+        #     affiliation = action_by_form.cleaned_data['affiliation'] or request.user.affiliation
+        #     data_logger_file = DataLoggerFile.objects.filter(data_logger_file_name=site_registration.sampling_feature_code).first()
+        #     data_logger_program = data_logger_file.program
+        #
+        #     # Update notification settings
+        #     site_alert = self.request.user.site_alerts.filter(site_registration=site_registration).first()
+        #
+        #     if notify_form.cleaned_data['notify'] and site_alert:
+        #         site_alert.hours_threshold = timedelta(hours=int(notify_form.data['hours_threshold']))
+        #         site_alert.save()
+        #
+        #     elif notify_form.cleaned_data['notify'] and not site_alert:
+        #         self.request.user.site_alerts.create(
+        #             site_registration=site_registration,
+        #             hours_threshold=timedelta(hours=int(notify_form.data['hours_threshold']))
+        #         )
+        #
+        #     elif not notify_form.cleaned_data['notify'] and site_alert:
+        #         site_alert.delete()
+        #
+        #     # Update sampling feature
+        #     sampling_feature_form.instance.save()
+        #
+        #     # Update Site
+        #     site_form.instance.save()
+        #
+        #     # Update datalogger program and datalogger file names
+        #     data_logger_program.program_name = '%s' % sampling_feature.sampling_feature_code
+        #     data_logger_program.affiliation = affiliation
+        #     data_logger_program.save()
+        #
+        #     data_logger_file.data_logger_file_name = '%s' % sampling_feature.sampling_feature_code
+        #     data_logger_file.save()
+        #
+        #     # Update Site Registration
+        #     site_registration.affiliation_id = affiliation.affiliation_id
+        #     site_registration.django_user = User.objects.filter(odm2user__affiliation_id=affiliation.affiliation_id).first()
+        #     site_registration.person = str(affiliation.person)
+        #     site_registration.organization = str(affiliation.organization)
+        #     site_registration.sampling_feature_code = sampling_feature.sampling_feature_code
+        #     site_registration.sampling_feature_name = sampling_feature.sampling_feature_name
+        #     site_registration.elevation_m = sampling_feature.elevation_m
+        #     site_registration.latitude = sampling_feature.site.latitude
+        #     site_registration.longitude = sampling_feature.site.longitude
+        #     site_registration.site_type = sampling_feature.site.site_type_id
+        #     registration_form.instance = site_registration
+        #     site_registration.save()
+        #
+        #     for result_form in results_formset.forms:
+        #         is_new_result = 'result_id' not in result_form.initial
+        #         to_delete = result_form['DELETE'].data
+        #
+        #         if is_new_result and to_delete:
+        #             continue
+        #         elif is_new_result:
+        #             create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file)
+        #             continue
+        #         elif to_delete:
+        #             result = Result.objects.get(result_id=result_form.initial['result_id'])
+        #             delete_result(result)
+        #             continue
+        #
+        #         # Update Result
+        #         result = Result.objects.get(result_id=result_form.initial['result_id'])
+        #         result.variable = result_form.cleaned_data['variable']
+        #         result.sampled_medium = result_form.cleaned_data['sampled_medium']
+        #         result.unit = result_form.cleaned_data['unit']
+        #         result.save()
+        #
+        #         # Update Data Logger file column
+        #         instrument_output_variable = InstrumentOutputVariable.objects.filter(
+        #             model=result_form.cleaned_data['equipment_model'],
+        #             instrument_raw_output_unit=result.unit,
+        #             variable=result.variable,
+        #         ).first()
+        #
+        #         data_logger_file_column = result.data_logger_file_columns.first()
+        #         data_logger_file_column.instrument_output_variable = instrument_output_variable
+        #         data_logger_file_column.column_label = '%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
+        #         data_logger_file_column.save()
+        #
+        #         # Update action by
+        #         action_by = result.feature_action.action.action_by.first()
+        #         action_by.affiliation = affiliation
+        #         action_by.save()
+        #
+        #         # Update Site Sensor
+        #         site_sensor = SiteSensor.objects.filter(result_id=result.result_id).first()
+        #         site_sensor.model_name = instrument_output_variable.model.model_name
+        #         site_sensor.model_manufacturer = instrument_output_variable.model.model_manufacturer.organization_name
+        #         site_sensor.variable_name = result.variable.variable_name_id
+        #         site_sensor.variable_code = result.variable.variable_code
+        #         site_sensor.unit_name = result.unit.unit_name
+        #         site_sensor.unit_abbreviation = result.unit.unit_abbreviation
+        #         site_sensor.sampled_medium = result.sampled_medium_id
+        #         site_sensor.save()
+        #
+        #     messages.success(request, 'The site has been updated successfully.')
+        #     return self.form_valid(registration_form)
+        # else:
+        #     messages.error(request, 'There are still some required fields that need to be filled out.')
+        #     return self.form_invalid(registration_form)
+        pass
 
 
 class SiteRegistrationView(LoginRequiredMixin, CreateView):

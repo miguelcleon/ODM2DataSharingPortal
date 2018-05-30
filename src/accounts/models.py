@@ -20,5 +20,8 @@ class User(AbstractUser):
     def affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
 
+    def can_administer_site(self, registration):
+        return self.is_staff or registration.django_user == self
+
     class Meta:
         db_table = 'auth_user'

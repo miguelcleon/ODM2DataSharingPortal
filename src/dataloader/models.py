@@ -888,7 +888,7 @@ class EquipmentModel(models.Model):
     objects = EquipmentModelQuerySet.as_manager()
 
     def __str__(self):
-        return '%s %s' % (self.model_manufacturer, self.model_name)
+        return '%s' % self.model_name
 
     def __repr__(self):
         return "<EquipmentModel('%s', '%s', '%s', Organization[%s, %s])>" % (

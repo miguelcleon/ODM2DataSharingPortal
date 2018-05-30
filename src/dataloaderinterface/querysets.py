@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db.models.aggregates import Max
+from django.db.models.expressions import F
 from django.db.models.query import Prefetch
 
 
@@ -41,4 +42,20 @@ class SiteSensorQuerySet(models.QuerySet):
 
 
 class SensorOutputQuerySet(models.QuerySet):
-    pass
+    def with_filter_names(self):
+        return self.annotate(
+            sensor_manufacturer=F('model_manufacturer'),
+            sensor_model=F('model_id'),
+            variable=F('variable_id'),
+            unit=F('unit_id')
+        )
+
+    def for_filters(self):
+        return self.with_filter_names().values(
+            'pk',
+            'sensor_manufacturer',
+            'sensor_model',
+            'variable',
+            'unit',
+            'sampled_medium'
+        )

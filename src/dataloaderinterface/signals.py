@@ -78,20 +78,3 @@ def handle_site_registration_post_save(sender, instance, created, update_fields=
         sampling_feature.annotations.filter(annotation_code='closest_town').update(annotation_text=instance.closest_town)
 
 
-def create_odm2_site(site_registration):
-    sampling_feature = SamplingFeature.objects.create(
-        sampling_feature_type_id='Site',
-        sampling_feature_code=site_registration.sampling_feature_code,
-        sampling_feature_name=site_registration.sampling_feature_name,
-        elevation_m=site_registration.elevation_m,
-        elevation_datum_id=site_registration.elevation_datum
-    )
-
-    Site.objects.create(
-        sampling_feature=sampling_feature,
-        site_type_id=site_registration.site_type,
-        latitude=site_registration.latitude,
-        longitude=site_registration.longitude
-    )
-
-    return sampling_feature

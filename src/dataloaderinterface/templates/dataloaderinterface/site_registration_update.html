@@ -12,8 +12,7 @@
             <div class="row">
                 <section class="device-data col-lg-12">
                     <header class="section-header">
-                        <div class="page-title">{% if request.resolver_match.view_name == "site_update" %}Edit Site
-                            Information{% else %}Register a Site{% endif %}</div>
+                        <div class="page-title">Edit Site Information</div>
                         {% include 'includes/messages.template.html' with messages=messages %}
                     </header>
 
@@ -27,22 +26,7 @@
                                 <br>
                                 <div class="row">
                                     <div class="form-group col-sm-12 col-md-4 sampling-feature-fields">
-                                        {% if user.is_staff %}
-                                            {% for field in action_by_form %}
-                                                <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                                                     data-field="{{ field.name }}">
-                                                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                    <i id="action-by-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
-                                                    {{ field.errors }}
-                                                    <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="action-by-help{{ forloop.counter0 }}">
-                                                        {{ field.help_text }}
-                                                    </div>
-                                                    {{ field|add_class:"form-control input-sm" }}
-                                                </div>
-                                            {% endfor %}
-                                        {% endif %}
-
-                                        {% for field in sampling_feature_form %}
+                                        {% for field in form %}
                                             <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
                                                  data-field="{{ field.name }}">
                                                 <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
@@ -53,66 +37,6 @@
                                                 </div>
                                                 {{ field|add_class:"form-control input-sm" }}
                                             </div>
-                                        {% endfor %}
-
-                                        {% for field in site_form %}
-                                            <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                                                 data-field="{{ field.name }}">
-                                                <label class="control-label"
-                                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                <i id="site-help{{ forloop.counter0 }}"
-                                                   class="material-icons text-muted help-icon">help</i>
-                                                {{ field.errors }}
-                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                                                     data-mdl-for="site-help{{ forloop.counter0 }}">
-                                                    {{ field.help_text }}
-                                                </div>
-                                                {{ field|add_class:"form-control input-sm" }}
-                                            </div>
-                                        {% endfor %}
-
-                                        {% for field in email_alert_form %}
-                                            {% if field.name == 'notify' %}
-                                                <div class="form-field checkbox {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                                                     data-field="{{ field.name }}">
-                                                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                                                           for="{{ field.id_for_label }}">
-                                                        {{ field|add_class:"mdl-checkbox__input" }}
-                                                        {{ field.label }}
-
-                                                        {{ field.errors }}
-                                                        {% if field.help_text %}
-                                                            <i id="email-alert-help-{{ forloop.counter0 }}"
-                                                               class="material-icons text-muted help-icon">help</i>
-                                                        {% endif %}
-
-                                                        {% if field.help_text %}
-                                                            <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                                                                 data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
-                                                                {{ field.help_text }}
-                                                            </div>
-                                                        {% endif %}
-                                                    </label>
-                                                </div>
-                                            {% else %}
-                                                <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %} {% if not field.value %}hidden{% endif %}"
-                                                     data-field="{{ field.name }}" style="margin-top: -15px;">
-                                                    <label class="control-label"
-                                                           for="{{ field.id_for_label }}">{{ field.label }}{{ field.label_suffix }}
-                                                    {% if field.help_text %}
-                                                        <i id="email-alert-help-{{ forloop.counter0 }}"
-                                                           class="material-icons text-muted help-icon">help</i>
-                                                        {{ field.errors }}
-                                                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                                                             data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
-                                                            {{ field.help_text }}
-                                                        </div>
-                                                    {% endif %}
-                                                    {{ field|add_class:"form-control input-sm" }}
-                                                    {{ email_alert_form.suffix }}
-                                                    </label>
-                                                </div>
-                                            {% endif %}
                                         {% endfor %}
                                     </div>
                                     <div class="form-group col-sm-12 col-md-8 map-container">
@@ -146,13 +70,11 @@
 
                                         <br><br>
 
-                                        {{ results_formset.management_form }}
-
                                         <div style="overflow: auto;">
                                             <table class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
                                                 <thead>
                                                 <tr class="full-width">
-                                                    <th class="mdl-data-table__cell--non-numeric">Equipment Model
+                                                    <th class="mdl-data-table__cell--non-numeric">Equipment Make-Model
                                                     </th>
                                                     <th class="mdl-data-table__cell--non-numeric">Measured
                                                         Variable
@@ -165,49 +87,49 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for result_form in results_formset %}
-                                                    {% if result_form|has_data %}
-                                                        <tr class="result-form {% if result_form|is_deleted %} deleted-row {% endif %}"
-                                                            data-result="{{ result_form.prefix }}">
-                                                            <input type="hidden"
-                                                                   name="{{ result_form.prefix }}-result_id"
-                                                                   class="field-value"
-                                                                   value="{{ result_form.initial.result_id }}"/>
-                                                            <input type="hidden"
-                                                                   name="{{ result_form.prefix }}-result_uuid"
-                                                                   class="field-value"
-                                                                   value="{{ result_form.initial.result_uuid }}"/>
-                                                            {% for field in result_form %}
-                                                                {% if field.name != "DELETE" %}
-                                                                    <td data-field="{{ field.name }}"
-                                                                        class="mdl-data-table__cell--non-numeric">
-                                                                        <span class="field-text">{{ result_form|get_field_data:field.name }}</span>
-                                                                        <input type="hidden"
-                                                                               name="{{ field.html_name }}"
-                                                                               class="field-value"
-                                                                               value="{{ field.value }}"/>
-                                                                    </td>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                            <td data-behaviour="edit"
-                                                                class="mdl-data-table__cell--non-numeric">
-                                                                <button class="mdl-button mdl-button--accent"
-                                                                        type="button">
-                                                                    <i class="material-icons center-icon">mode_edit</i>
-                                                                </button>
-                                                            </td>
-                                                            <td data-behaviour="delete"
-                                                                class="mdl-data-table__cell--non-numeric">
-                                                                <button class="mdl-button" style="color: #d9534f"
-                                                                        type="button">
-                                                                    <i class="material-icons center-icon">delete_forever</i>
-                                                                    {{ result_form.DELETE }}
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    {% endif %}
+                                                {% for sensor in object.sensors.all %}
+                                                <tr class="result-form"
+                                                        data-id="{{ sensor.id }}"
+                                                        data-result_id="{{ sensor.result_id }}"
+                                                        data-result_uuid="{{ sensor.result_uuid }}"
+                                                        data-sensor_output="{{ sensor.sensor_output_id }}"
+                                                        data-sensor_manufacturer="{{ sensor.sensor_output.model_manufacturer }}"
+                                                        data-sensor_model="{{ sensor.sensor_output.model_id }}"
+                                                        data-variable="{{ sensor.sensor_output.variable_id }}"
+                                                        data-unit="{{ sensor.sensor_output.unit_id }}"
+                                                        data-sampled_medium="{{ sensor.sensor_output.sampled_medium }}">
+
+                                                    <td data-field="sensor_model" class="mdl-data-table__cell--non-numeric">
+                                                        <span class="field-text">{{ sensor.sensor_output.model_name }}</span>
+                                                    </td>
+
+                                                    <td data-field="variable" class="mdl-data-table__cell--non-numeric">
+                                                        <span class="field-text">{{ sensor.sensor_output.variable_code }}</span>
+                                                    </td>
+
+                                                    <td data-field="unit" class="mdl-data-table__cell--non-numeric">
+                                                        <span class="field-text">{{ sensor.sensor_output.unit_name }}</span>
+                                                    </td>
+
+                                                    <td data-field="sampled_medium" class="mdl-data-table__cell--non-numeric">
+                                                        <span class="field-text">{{ sensor.sensor_output.sampled_medium }}</span>
+                                                    </td>
+                                                    <td data-behaviour="edit"
+                                                        class="mdl-data-table__cell--non-numeric">
+                                                        <button class="mdl-button mdl-button--accent"
+                                                                type="button">
+                                                            <i class="material-icons center-icon">mode_edit</i>
+                                                        </button>
+                                                    </td>
+                                                    <td data-behaviour="delete"
+                                                        class="mdl-data-table__cell--non-numeric">
+                                                        <button class="mdl-button" style="color: #d9534f" type="button">
+                                                            <i class="material-icons center-icon">delete_forever</i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                                 {% endfor %}
-                                                <tr class="no-sensors-row bg-white {% if result_form|length > 0 %}hidden{% endif %}">
+                                                <tr class="no-sensors-row bg-white {% if object.sensors.count > 0 %}hidden{% endif %}">
                                                     <td colspan="6" class="text-center">No sensors have been added.</td>
                                                 </tr>
                                                 </tbody>
@@ -215,32 +137,37 @@
                                         </div>
 
                                         <script id="sensor-row" type="text/plain">
-                                            <tr class="result-form" data-result="form-__prefix__">
-                                                <td data-field="equipment_model" class="mdl-data-table__cell--non-numeric">
+                                            <tr class="result-form"
+                                                    data-id="" data-result_id="" data-result_uuid="" data-sensor_output=""
+                                                    data-sensor_manufacturer="" data-sensor_model="" data-variable=""
+                                                    data-unit="" data-sampled_medium="">
+
+                                                <td data-field="sensor_model" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
-                                                    <input type="hidden" name="form-__prefix__-equipment_model" class="field-value" value="" />
                                                 </td>
+
                                                 <td data-field="variable" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
-                                                    <input type="hidden" name="form-__prefix__-variable" class="field-value" value="" />
                                                 </td>
+
                                                 <td data-field="unit" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
-                                                    <input type="hidden" name="form-__prefix__-unit" class="field-value" value="" />
                                                 </td>
+
                                                 <td data-field="sampled_medium" class="mdl-data-table__cell--non-numeric">
                                                     <span class="field-text"></span>
-                                                    <input type="hidden" name="form-__prefix__-sampled_medium" class="field-value" value="" />
                                                 </td>
-                                                <td data-behaviour="edit" class="mdl-data-table__cell--non-numeric">
-                                                    <button class="mdl-button mdl-button--accent" type="button">
+                                                <td data-behaviour="edit"
+                                                    class="mdl-data-table__cell--non-numeric">
+                                                    <button class="mdl-button mdl-button--accent"
+                                                            type="button">
                                                         <i class="material-icons center-icon">mode_edit</i>
                                                     </button>
                                                 </td>
-                                                <td data-behaviour="delete" class="mdl-data-table__cell--non-numeric">
-                                                    <button class="mdl-button" type="button" data-toggle="modal">
-                                                        <i style="color: #d9534f;" class="material-icons center-icon">delete_forever</i>
-                                                        <input type="checkbox" name="form-__prefix__-DELETE" class="field-value"/>
+                                                <td data-behaviour="delete"
+                                                    class="mdl-data-table__cell--non-numeric">
+                                                    <button class="mdl-button" style="color: #d9534f" type="button">
+                                                        <i class="material-icons center-icon">delete_forever</i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -291,15 +218,16 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="form-group col-12 result-form">
-                            {% for field in results_formset.empty_form %}
-                                {% if field.name != "DELETE" %}
-                                <div class="form-field {% if field.field.required %}required-field{% endif %} {% if field.errors %}has-error{% endif %}">
-                                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label> {{ field.errors }}
+                            {% for hidden in sensor_form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                            {% for field in sensor_form.visible_fields %}
+                                <div class="form-field {% if field.field.required %}required-field{% endif %}">
+                                    <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                                     {% with "placeholder:"|add:field.help_text as placeholder %}
                                         {{ field|add_class:"form-control input-sm"|attr:placeholder }}
                                     {% endwith %}
                                 </div>
-                                {% endif %}
                             {% endfor %}
                             </div>
 
@@ -373,8 +301,11 @@
 
 {% block services_urls %}
     {{ block.super }}
+    <input id="output-variables-api" type="hidden" value="{% url 'output_variables_service' %}">
     <input id="model-variables-api" type="hidden" value="{% url 'model_variables_service' %}">
     <input id="result-validation-api" type="hidden" value="{% url 'result_validation_service' %}">
+    <input id="sensor-registration-api" type="hidden" value="{% url 'register_sensor_service' %}">
+    <input id="sensor-edit-api" type="hidden" value="{% url 'edit_sensor_service' %}">
 {% endblock %}
 
 {% block styles %}
@@ -387,7 +318,7 @@
     {{ block.super }}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
-    <script src="{% static 'dataloaderinterface/js/site-creation-form.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/site-update-form.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 {% endblock %}

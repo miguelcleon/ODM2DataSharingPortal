@@ -23,7 +23,7 @@ function selectSoloOptions(select) {
         var options = selectElement.children('[value!=""]:not([disabled])');
         if (options.length === 1) {
             selectElement.val(options.get(0).value);
-            selectElement.trigger('change')
+            selectElement.trigger('change', [true])
         }
     });
 }
@@ -48,9 +48,10 @@ function filterSelectOptions(select, values) {
         }
     });
 
-    if (values.indexOf(select.val()) === -1) {
-        select.val('');
-    }
+    // if (values.indexOf(select.val()) === -1) {
+    //     select.val('');
+    // }
+    select.val('');
 
     selectSoloOptions(select);
     initializeSelect(select);

@@ -15,7 +15,7 @@ from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesRe
 from django.db import models
 from django.conf import settings
 
-from dataloaderinterface.querysets import SiteRegistrationQuerySet
+from dataloaderinterface.querysets import SiteRegistrationQuerySet, SensorOutputQuerySet
 
 HYDROSHARE_SYNC_TYPES = (('M', 'Manual'), ('S', 'Scheduled'))
 
@@ -117,6 +117,8 @@ class SensorOutput(models.Model):
 
     sampled_medium = models.CharField(max_length=255, null=True)
 
+    objects = SensorOutputQuerySet.as_manager()
+
     def __str__(self):
         return '%s %s %s %s %s' % (self.model_manufacturer, self.model_name, self.variable_code, self.unit_name, self.sampled_medium)
 
@@ -129,30 +131,30 @@ class SensorOutput(models.Model):
 class SiteSensor(models.Model):
     registration = models.ForeignKey('SiteRegistration', db_column='RegistrationID', related_name='sensors')
 
-    result_id = models.IntegerField(db_column='ResultID', unique=True)
-    result_uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_column='ResultUUID', unique=True)
+    result_id = models.IntegerField(db_column='ResultID', unique=True, null=True)
+    result_uuid = models.UUIDField(db_column='ResultUUID', unique=True, null=True)
 
     sensor_output = models.ForeignKey('SensorOutput', related_name='sensor_instances', null=True)  # NEW: TEMPORARILY NULLABLE
 
-    model_name = models.CharField(db_column='ModelName', max_length=255)  # DEPRECATED
-    model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255)  # DEPRECATED
+    activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
+    activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
-    variable_name = models.CharField(max_length=255, db_column='VariableName')  # DEPRECATED
-    variable_code = models.CharField(max_length=50, db_column='VariableCode')  # DEPRECATED
+    model_name = models.CharField(db_column='ModelName', max_length=255, null=True)  # DEPRECATED
+    model_manufacturer = models.CharField(db_column='ModelManufacturer', max_length=255, null=True)  # DEPRECATED
 
-    unit_name = models.CharField(max_length=255, db_column='UnitsName')  # DEPRECATED
-    unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation')  # DEPRECATED
+    variable_name = models.CharField(max_length=255, db_column='VariableName', null=True)  # DEPRECATED
+    variable_code = models.CharField(max_length=50, db_column='VariableCode', null=True)  # DEPRECATED
 
-    sampled_medium = models.CharField(db_column='SampledMedium', max_length=255)  # DEPRECATED
+    unit_name = models.CharField(max_length=255, db_column='UnitsName', null=True)  # DEPRECATED
+    unit_abbreviation = models.CharField(max_length=255, db_column='UnitAbbreviation', null=True)  # DEPRECATED
+
+    sampled_medium = models.CharField(db_column='SampledMedium', max_length=255, null=True)  # DEPRECATED
 
     last_measurement_id = models.IntegerField(db_column='LastMeasurementID', unique=True, blank=True, null=True)  # DEPRECATED
     last_measurement_value = models.FloatField(db_column='LastMeasurementValue', blank=True, null=True)  # DEPRECATED
     last_measurement_datetime = models.DateTimeField(db_column='LastMeasurementDatetime', blank=True, null=True)  # DEPRECATED
     last_measurement_utc_offset = models.IntegerField(db_column='LastMeasurementUtcOffset', blank=True, null=True)  # DEPRECATED
     last_measurement_utc_datetime = models.DateTimeField(db_column='LastMeasurementUtcDatetime', blank=True, null=True)  # DEPRECATED
-
-    activation_date = models.DateTimeField(db_column='ActivationDate', blank=True, null=True)
-    activation_date_utc_offset = models.IntegerField(db_column='ActivationDateUtcOffset', blank=True, null=True)
 
     class Meta:
         ordering = ['result_id']

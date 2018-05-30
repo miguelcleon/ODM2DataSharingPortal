@@ -4,7 +4,7 @@ from dataloader.models import *
 
 
 # Register your models here.
-from dataloaderinterface.models import SiteRegistration, SiteSensor, HydroShareResource, HydroShareAccount
+from dataloaderinterface.models import SiteRegistration, SiteSensor, HydroShareResource, HydroShareAccount, SensorOutput
 
 
 def update_sensor_data(obj, form, sensor_fields):
@@ -64,6 +64,11 @@ class UnitAdmin(admin.ModelAdmin):
 
 @admin.register(InstrumentOutputVariable)
 class InstrumentOutputVariableAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(SensorOutput)
+class SensorOutputAdmin(admin.ModelAdmin):
     pass
 
 
