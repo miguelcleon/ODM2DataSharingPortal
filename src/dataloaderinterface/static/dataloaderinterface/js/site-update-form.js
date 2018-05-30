@@ -279,16 +279,15 @@ function initializeResultsForm() {
         make_sensor_api_request(edit_sensor_api).done(function(data, message, xhr) {
             var form = $('div#result-dialog div.result-form');
 
-            if (xhr.status === 201) {
+            if (xhr.status === 202) {
                 // valid
-                var newRow = $($('#sensor-row').html());
+                var row = $('div#result-dialog').data('row');
                 form.find('[name="id"]').val(data['id']);
 
-                updateRowData(newRow);
-                bindResultEditEvent(newRow);
-                bindResultDeleteEvent(newRow);
+                updateRowData(row);
+                bindResultEditEvent(row);
+                bindResultDeleteEvent(row);
 
-                $('div.results-table table').append(newRow);
                 defaultTableMessage();
 
                 $('#result-dialog').modal('toggle');
