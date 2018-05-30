@@ -108,6 +108,21 @@ class EditSensorApi(APIView):
         return Response(model_to_dict(sensor, fields=[field.name for field in sensor._meta.fields]), status=status.HTTP_202_ACCEPTED)
 
 
+class DeleteSensorApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        if 'id' not in request.POST:
+            return Response({'id': 'No sensor id in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        sensor = SiteSensor.objects.filter(pk=request.POST['id']).first()
+        if not sensor:
+            return Response({'id': 'Sensor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        deleted = sensor.delete()
+        return Response(deleted, status=status.HTTP_202_ACCEPTED)
+
+
 class OrganizationApi(APIView):
     authentication_classes = (SessionAuthentication, )
 

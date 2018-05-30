@@ -17,7 +17,7 @@ from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from dataloaderservices.views import TimeSeriesValuesApi, OrganizationApi, ModelVariablesApi, ResultApi, FollowSiteApi, \
-    CSVDataApi, OutputVariablesApi, RegisterSensorApi, EditSensorApi
+    CSVDataApi, OutputVariablesApi, RegisterSensorApi, EditSensorApi, DeleteSensorApi
 
 urlpatterns = [
     url(r'^api/data-stream/$', TimeSeriesValuesApi.as_view(), name='api_post'),
@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^api/sensor-form/$', ResultApi.as_view(), name='result_validation_service'),
     url(r'^api/register-sensor/$', RegisterSensorApi.as_view(), name='register_sensor_service'),
     url(r'^api/edit-sensor/$', EditSensorApi.as_view(), name='edit_sensor_service'),
+    url(r'^api/delete-sensor/$', DeleteSensorApi.as_view(), name='delete_sensor_service'),
     url(r'^api/organization/$', OrganizationApi.as_view(), name='organization_service'),
     url(r'^api/equipment-variables/$', ModelVariablesApi.as_view(), name='model_variables_service'),
     url(r'^api/output-variables/$', OutputVariablesApi.as_view(), name='output_variables_service')

@@ -313,30 +313,10 @@ function initializeResultsForm() {
                 }
             }
         });
-
-        // var dialog = $('#result-dialog');
-        // var row = dialog.data('row');
-        // updateRowData(row);
-        // dialog.modal('toggle');
     });
 
     defaultTableMessage();
     notifyInputStatus();
-}
-
-function validateResultForm() {
-    var prefixText = '-__prefix__-';
-    var data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
-        var fieldName = field.name.substring(field.name.indexOf(prefixText) + prefixText.length, field.name.length);
-        dict[fieldName] = field.value;
-        return dict;
-    }, {});
-    
-    return $.ajax({
-        url: $('#result-validation-api').val(),
-        type: 'post',
-        data: $.extend({ csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val() }, data)
-    });
 }
 
 
@@ -436,8 +416,29 @@ $(document).ready(function() {
 
     $('#btn-confirm-delete').on('click', function(event) {
         var dialog = $('#confirm-delete');
+        var row = dialog.data('to-delete');
 
-        // dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
+        $.ajax({
+            url: $('#sensor-delete-api').val(),
+            type: 'post',
+            data: {
+                csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val(),
+                id: row.data('id')
+            }
+        }).done(function(data, message, xhr) {
+            if (xhr.status === 202) {
+                // valid
+                row.remove();
+                console.log('sensor deleted! :)');
+                // TODO: Maurice - Show message saying the deletion was successful.
+
+            } else if (xhr.status === 206) {
+                console.log('sensor couldn\'t be deleted! :(');
+                // TODO: Maurice - Show message saying the deletion was unsuccessful.
+            }
+
+        });
+
         dialog.modal('toggle');
         defaultTableMessage();
     });
