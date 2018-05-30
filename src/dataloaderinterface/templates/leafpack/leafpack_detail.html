@@ -11,7 +11,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        Leaf Experiment Details at {{ leafpack.site_registration.sampling_feature_name }}
+                        Leaf Experiment Details at
+                        <a href="{% url 'site_detail' sampling_feature_code %}"
+                           style="color: inherit;">
+                            {{ leafpack.site_registration.sampling_feature_name }}
+                        </a>
                     </div>
                 </div>
             </div>
