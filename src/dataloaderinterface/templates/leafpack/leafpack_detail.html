@@ -11,7 +11,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        Leaf Experiment Details at {{ leafpack.site_registration.sampling_feature_name }}
+                        Leaf Experiment Details at
+                        <a href="{% url 'site_detail' sampling_feature_code %}"
+                           style="color: inherit;">
+                            {{ leafpack.site_registration.sampling_feature_name }}
+                        </a>
                     </div>
                 </div>
             </div>
@@ -139,7 +143,15 @@
                             <td class="mdl-data-table__cell--non-numeric">Did storms occur while your leaf packs were in
                                 the stream?
                             </td>
-                            <td class="mdl-data-table__cell--non-numeric">{% if leafpack.had_storm %}Yes{% else %}No{% endif %}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {% if leafpack.had_storm is None %}
+                                    Unknown
+                                {% elif leafpack.had_storm %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
                         </tr>
                         {% if leafpack.had_storm %}
                             <tr>
@@ -157,13 +169,29 @@
                         {% endif %}
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Did flooding occur?</td>
-                            <td class="mdl-data-table__cell--non-numeric">{% if leafpack.had_flood %}Yes{% else %}No{% endif %}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {% if leafpack.had_flood is None %}
+                                    Unknown
+                                {% elif leafpack.had_flood %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--non-numeric">Was this site experiencing a drought during
                                 your experiment?
                             </td>
-                            <td class="mdl-data-table__cell--non-numeric">{% if leafpack.had_drought %}Yes{% else %}No{% endif %}</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {% if leafpack.had_drought is None %}
+                                    Unknown
+                                {% elif leafpack.had_drought %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
                         </tr>
                     </table>
                 </div>
