@@ -1326,3 +1326,8 @@ hr.dotted {
     float: left;
     margin-right: 15px;
 }
+
+.img-branding {
+    max-width: 200px;
+    margin-top: -10px;
+}

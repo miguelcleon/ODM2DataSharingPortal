@@ -206,7 +206,11 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <h6 class="section-title">
-                                Sensor Observations at this Site</h6>
+                                <img class="img-fluid img-branding pull-right"
+                                     src="{% static 'dataloaderinterface/images/envirodiy_logo.png' %}"
+                                     alt="Data Sharing Portal">
+                                Sensor Observations at this Site
+                            </h6>
                             <hr>
                         </div>
 
@@ -336,13 +340,19 @@
                     </div>
 
                     <div class="row">
-                         <div class="col-sm-12">
+                        <div class="col-12">
                             <h5 class="section-title">
-                                Macroinvertebrate Data at this Site</h5>
-                            <hr>
+                                <img class="img-fluid img-branding pull-right"
+                                 src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo-horiz-black.png' %}"
+                                 alt="Leaf Pack Network logo">
+                                Macroinvertebrate Data at this Site
+                            </h5>
                         </div>
 
+                        <div class="col-12"><hr></div>
+
                         <div class="col-12" style="overflow: auto;">
+
                         {% if leafpacks %}
                             <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                                 <thead>
