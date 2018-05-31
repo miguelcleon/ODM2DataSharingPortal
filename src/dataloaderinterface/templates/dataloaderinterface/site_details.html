@@ -66,10 +66,11 @@
                                        class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                         <i class="material-icons center-icon">mode_edit</i> Edit
                                     </a>
-                                    <a href="#" id="btn-delete-site"
-                                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                    <button type="button" data-toggle="modal" data-target="#site-delete-dialog"
+                                            style="background: #d9534f; color:#FFF;"
+                                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
                                         <i class="material-icons center-icon">delete_forever</i> Delete
-                                    </a>
+                                    </button>
                                 </div>
                             {% endif %}
                         </div>
@@ -381,11 +382,15 @@
         </div>
     </div>
 
-    <dialog class="mdl-dialog" id="data-table-dialog">
-        <h4 class="mdl-dialog__title"></h4>
-
-        <div class="mdl-dialog__content">
-            <div class="measurements-table">
+    <div class="modal fade" id="data-table-dialog" role="contentinfo" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Data Table</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="measurements-table">
                 {% for sensor in site.sensors.all %}
                     <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
                            width="100%" data-result-id="{{ sensor.result_id }}">
@@ -406,32 +411,40 @@
                     </table>
                 {% endfor %}
             </div>
-        </div>
-        <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button dialog-close">Close</button>
-        </div>
-    </dialog>
-
-    <dialog class="mdl-dialog" id="site-delete-dialog">
-        <h4 class="mdl-dialog__title">Delete Site?</h4>
-        <div class="mdl-dialog__content">
-            <div>
-                <p>
-                    <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
-                    <strong>Are you really really really sure you want to do this?</strong>
-                </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
-        <div class="mdl-dialog__actions">
-            <form method="POST"
-                  action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
-                {% csrf_token %}
-                <button type="submit" class="mdl-button confirm-delete">Delete</button>
-            </form>
+    </div>
 
-            <button type="button" class="mdl-button dialog-close">Cancel</button>
+    <div class="modal fade" id="site-delete-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Site?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
+                        <strong>Are you really really really sure you want to do this?</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                    <form method="POST"
+                          action="{% autoescape off %}{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}{% endautoescape %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mdl-button mdl-button--raised"
+                                style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </dialog>
+    </div>
 
     {% if site.django_user_id == request.user.id or request.user.is_staff %}
     <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">

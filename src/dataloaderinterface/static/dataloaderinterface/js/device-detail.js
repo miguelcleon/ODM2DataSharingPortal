@@ -23,31 +23,6 @@ function initMap() {
     });
 }
 
-function bindDeleteDialogEvents() {
-    var deleteDialog = document.querySelector('#site-delete-dialog');
-    var deleteButton = document.querySelector('#btn-delete-site');
-
-    if (!deleteButton) {
-        return;
-    }
-
-    if (!deleteDialog.showModal) {
-        dialogPolyfill.registerDialog(deleteDialog);
-    }
-
-    deleteButton.addEventListener('click', function () {
-        deleteDialog.showModal();
-    });
-
-    deleteDialog.querySelector('.dialog-close').addEventListener('click', function () {
-        deleteDialog.close();
-    });
-
-    deleteDialog.querySelector('.confirm-delete').addEventListener('click', function () {
-        deleteDialog.close();
-    });
-}
-
 function fillValueTable(table, data) {
     var rows = data.map(function (dataValue) {
         return "<tr><td class='mdl-data-table__cell--non-numeric'>" + dataValue.DateTime + "</td><td class='mdl-data-table__cell--non-numeric'>" + dataValue.TimeOffset + "</td><td>" + dataValue.Value + "</td></tr>";
@@ -214,11 +189,7 @@ function getTimeSeriesData(sensorInfo) {
 }
 
 $(document).ready(function () {
-    var dialog = document.querySelector('#data-table-dialog');
-    if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog);
-    }
-
+    var dialog = $('#data-table-dialog');
     $("#chkFollow").on("change", function () {
         var statusContainer = $(".follow-status");
         var followForm = $("#follow-site-form");
@@ -255,14 +226,10 @@ $(document).ready(function () {
 
         tables.filter('[data-result-id="' + id + '"]').show();
         var title = box.data('variable-name') + ' (' + box.data('variable-code') + ')';
-        $(dialog).find('.mdl-dialog__title').text(title);
-        $(dialog).find('.mdl-dialog__title').attr("title", title);
+        dialog.find('.modal-title').text(title);
+        dialog.find('.modal-title').attr("title", title);
 
-        dialog.showModal();
-    });
-
-    dialog.querySelector('.dialog-close').addEventListener('click', function () {
-        dialog.close();
+        dialog.modal('show');
     });
 
     $('nav .menu-sites-list').addClass('active');
@@ -272,6 +239,4 @@ $(document).ready(function () {
         var sensorInfo = sensors[index].dataset;
         getTimeSeriesData(sensorInfo);
     }
-
-    bindDeleteDialogEvents();
 });
