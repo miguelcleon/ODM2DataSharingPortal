@@ -5,7 +5,7 @@ from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch.dispatcher import receiver
 
 from dataloader.models import SamplingFeature, Site, Annotation, SamplingFeatureAnnotation, SpatialReference, Action, \
-    Method, Result, ProcessingLevel, TimeSeriesResult, ActionBy
+    Method, Result, ProcessingLevel, TimeSeriesResult
 from dataloaderinterface.models import SiteRegistration, SiteSensor
 
 
@@ -75,6 +75,13 @@ def handle_site_registration_post_save(sender, instance, created, update_fields=
         sampling_feature.annotations.filter(annotation_code='major_watershed').update(annotation_text=instance.major_watershed)
         sampling_feature.annotations.filter(annotation_code='sub_basin').update(annotation_text=instance.sub_basin)
         sampling_feature.annotations.filter(annotation_code='closest_town').update(annotation_text=instance.closest_town)
+
+
+@receiver(post_delete, sender=SiteRegistration)
+def handle_site_registration_post_delete(sender, instance, **kwargs):
+    sampling_feature = instance.sampling_feature
+    sampling_feature.annotations.all().delete()
+    sampling_feature and sampling_feature.delete()
 
 
 @receiver(pre_save, sender=SiteSensor)

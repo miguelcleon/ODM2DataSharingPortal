@@ -482,42 +482,20 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
     slug_url_kwarg = 'sampling_feature_code'
     success_url = reverse_lazy('sites_list')
 
-    def post(self, request, *args, **kwargs):
-        site = self.get_object(self.get_queryset())
-        if not site:
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.can_administer_site(self.get_object()):
             raise Http404
-
-        if request.user.id != site.django_user_id and not self.request.user.is_staff:
-            raise Http404
-
-        try:
-            hs_site = HydroShareResource.objects.get(site_registration=self.get_object())
-            hs_site.delete()
-        except ObjectDoesNotExist:
-            pass
-
-        sampling_feature = site.sampling_feature
-        data_logger_program = DataLoggerProgramFile.objects.filter(
-            affiliation_id=site.affiliation_id,
-            program_name__contains=sampling_feature.sampling_feature_code
-        ).first()
-        data_logger_file = data_logger_program.data_logger_files.first()
-
-        feature_actions = sampling_feature.feature_actions.with_results().all()
-        for feature_action in feature_actions:
-            result = feature_action.results.first()
-            delete_result(result)
-
-        data_logger_file.delete()
-        data_logger_program.delete()
-        sampling_feature.site.delete()
-        sampling_feature.delete()
-        site.sensors.all().delete()
-        site.delete()
-        return HttpResponseRedirect(self.success_url)
+        return super(SiteDeleteView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        raise Http404
+        return redirect(reverse('site_detail', kwargs={'sampling_feature_code': self.get_object().sampling_feature_code}))
+
+    def post(self, request, *args, **kwargs):
+        site_registration = self.get_object()
+        site_registration.delete()
+
+        messages.success(request, 'The site has been deleted successfully.')
+        return HttpResponseRedirect(self.success_url)
 
 
 class SiteUpdateView(LoginRequiredMixin, UpdateView):

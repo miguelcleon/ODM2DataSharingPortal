@@ -64,15 +64,11 @@ class SiteRegistration(models.Model):
 
     @property
     def sampling_feature(self):
-        return SamplingFeature.objects.get(pk=self.sampling_feature_id)
+        return SamplingFeature.objects.filter(pk=self.sampling_feature_id).first()
 
     @property
     def odm2_affiliation(self):
-        return Affiliation.objects.get(pk=self.affiliation_id)
-
-
-    def __str__(self):
-        return '%s by %s from %s on %s' % (self.sampling_feature_code, self.person, self.organization, self.registration_date)
+        return Affiliation.objects.filter(pk=self.affiliation_id).first()
 
     def __repr__(self):
         return "<SiteRegistration('%s', '%s', '%s', '%s')>" % (
@@ -161,7 +157,7 @@ class SiteSensor(models.Model):
 
     @property
     def result(self):
-        return Result.objects.get(pk=self.result_id)
+        return Result.objects.filter(pk=self.result_id).first()
 
     @property
     def equipment_model(self):
