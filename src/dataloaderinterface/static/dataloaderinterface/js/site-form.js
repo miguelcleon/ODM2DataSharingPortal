@@ -282,7 +282,7 @@ function initializeResultsForm() {
 
 function validateResultForm() {
     var prefixText = '-__prefix__-';
-    var data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
+    var data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function (dict, field) {
         var fieldName = field.name.substring(field.name.indexOf(prefixText) + prefixText.length, field.name.length);
         dict[fieldName] = field.value;
         return dict;
@@ -335,7 +335,7 @@ function bindResultEditEvent(row) {
 function bindResultDeleteEvent(row) {
     row.find('td[data-behavior="delete"] button').on('click', function() {
         var sensor = $(this).parents('tr');
-        $('#confirm-delete').data('to-delete', sensor).modal('toggle');
+        $('#confirm-delete').data('to-delete', sensor).modal('show');
     });
 }
 
@@ -366,7 +366,7 @@ $(document).ready(function() {
     $('#btn-confirm-delete').on('click', function() {
         var dialog = $('#confirm-delete');
         dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
-        dialog.modal('toggle');
+        dialog.modal('hide');
         defaultTableMessage();
     });
 
@@ -374,4 +374,44 @@ $(document).ready(function() {
         $("div[data-field='hours_threshold']").toggleClass("hidden", !this.checked);
         notifyInputStatus();
     });
+
+    $(".btn-delete-experiment").click(function () {
+        var experiment = $(this).parents('tr');
+        $('#confirm-delete-experiment').data('to-delete', experiment).modal('show');
+    });
+
+    $("#btn-confirm-delete-experiment").click(function () {
+        // Commenting out code below. The row should instead be marked for deletion.
+        // var dialog = $('#confirm-delete-experiment');
+        // var button = dialog.data('to-delete').find(".btn-delete-experiment");
+        // var url = button.attr("data-action");
+        // var token = button.parent().find("[name=csrfmiddlewaretoken]").val();
+        // $("#btn-confirm-delete-experiment").prop("disabled", true).text("Deleting...");
+
+        // $.ajax({
+        //     url: url,
+        //     type: 'post',
+        //     data: {csrfmiddlewaretoken: token}
+        // }).done(function (data, message, xhr) {
+        //     var msg;
+        //     var snackbarContainer = document.querySelector('#clipboard-snackbar');
+        //     if (message == "success") {
+        //         dialog.data('to-delete').remove();
+        //         msg = {
+        //             message: 'Experiment has been deleted!',
+        //             timeout: 3000
+        //         };
+        //     }
+        //     else {
+        //         msg = {
+        //             message: 'Failed to delete Experiment',
+        //             timeout: 3000
+        //         };
+        //     }
+        //
+            dialog.modal('hide');
+        //     snackbarContainer.MaterialSnackbar.showSnackbar(msg);
+        //     $("#btn-confirm-delete-experiment").prop("disabled", false).text("Delete");
+        // })
+    })
 });

@@ -633,6 +633,15 @@ footer .separator {
     border-color: #d43f3a;
 }
 
+#btn-confirm-delete-experiment:not([disabled]) {
+    background: #d9534f;
+    color: #FFF;
+}
+
+tr.no-experiments-row:not(only-child) {
+    display: none;
+}
+
 .center-icon {
     display: inline-block;
     vertical-align: middle;

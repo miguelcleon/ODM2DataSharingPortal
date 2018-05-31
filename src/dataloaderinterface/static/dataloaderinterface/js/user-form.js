@@ -36,7 +36,7 @@ $(document).ready(function() {
             dict[field.name] = field.value;
             return dict;
         }, {});
-        
+
         $.ajax({
             url: $('#new-organization-api').val(),
             type: 'post',

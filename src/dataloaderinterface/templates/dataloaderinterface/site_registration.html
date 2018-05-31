@@ -300,24 +300,22 @@
                                                                 </a>
                                                             </td>
                                                             <td class="mdl-data-table__cell--non-numeric">
-                                                                <form method="post" action="{% url 'leafpack:delete' siteregistration.sampling_feature_code leafpack.id %}">
-                                                                    {% csrf_token %}
-                                                                    <button class="mdl-button" style="color: #d9534f"
-                                                                            type="submit">
-                                                                        <i class="material-icons center-icon">delete_forever</i>
-                                                                    </button>
-                                                                </form>
+                                                                {% csrf_token %}
+                                                                <button data-action="{% url 'leafpack:delete' siteregistration.sampling_feature_code leafpack.id %}"
+                                                                        class="mdl-button btn-delete-experiment"
+                                                                        style="color: #d9534f"
+                                                                        type="button">
+                                                                    <i class="material-icons center-icon">delete_forever</i>
+                                                                    {{ leafpack.DELETE }}
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                         {% endfor %}
-
-                                                {% else %}
-                                                    <tr class="bg-white">
-                                                        <td colspan="7" class="text-center">
-                                                            No macroinvertebrate data have been added to this site.
-                                                        </td>
-                                                    </tr>
                                                 {% endif %}
+                                                <tr class="no-experiments-row bg-white">
+                                                    <td colspan="5" class="text-center">
+                                                        No macroinvertebrate data have been added to this site.
+                                                    </td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -430,7 +428,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div id="data-removal-warning" class="alert alert-danger hidden">All stored data corresponding to
+                    <div class="alert alert-danger hidden">All stored data corresponding to
                         this sensor will be deleted.<br/></div>
                     <p>Are you sure you want to remove this sensor?</p>
                 </div>
@@ -438,6 +436,28 @@
                     <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
                     <button type="button" class="mdl-button mdl-button--raised"
                             style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirm-delete-experiment" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Experiment?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger hidden">All stored data corresponding to
+                        this experiment will be deleted.<br/></div>
+                    <p>Are you sure you want to remove this experiment?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="mdl-button mdl-button--raised" id="btn-confirm-delete-experiment">
+                        Delete
                     </button>
                 </div>
             </div>

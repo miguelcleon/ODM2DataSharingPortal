@@ -250,6 +250,12 @@ $(document).ready(function () {
         }
     });
 
+    $("#switch-zoom").change(function () {
+        if ($(this).prop("checked")) {
+            zoomExtent();
+        }
+    });
+
     $(".chk-filter").change(function() {
         var checkedItems = getCurrentFilters();
 
