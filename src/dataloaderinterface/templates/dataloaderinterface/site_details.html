@@ -297,20 +297,25 @@
                                         <div class="full-width mdl-card__supporting-text">
                                             <table class="mdl-data-table mdl-js-data-table full-width no-hover">
                                                 <tr>
-                                                    <td>Medium:</td>
+                                                    <td><strong>Medium:</strong></td>
                                                     <td class="mdl-data-table__cell--non-numeric">{{ sensor.sampled_medium }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Sensor:</td>
+                                                    <td><strong>Sensor:</strong></td>
                                                     <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
                                                 </tr>
                                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                                                <tr>
-                                                    <td>UUID:</td>
-                                                    <td class="mdl-data-table__cell--non-numeric">
+                                                    <tr>
+                                                        <td><strong>UUID:</strong></td>
+                                                        <td class="mdl-data-table__cell--non-numeric">
                                                         <span id="uuid-{{ sensor.result_id }}"
                                                               data-copy-target="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
-                                                    </td>
+                                                            <br>
+                                                            <small class="text-muted"><i class="fa fa-eye"
+                                                                                         aria-hidden="true"></i> Only
+                                                                you can see this.
+                                                            </small>
+                                                        </td>
                                                 </tr>
                                                 {% endif %}
                                             </table>
