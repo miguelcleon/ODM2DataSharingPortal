@@ -193,8 +193,12 @@ function bindResultEvents(resultForm) {
     unitSelect.trigger('change', [true]);
 }
 
-function defaultTableMessage() {
+function defaultSensorsMessage() {
     $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
+}
+
+function defaultExperimentsMessage() {
+    $("tr.no-experiments-row").toggleClass("hidden", !!$("tr.leafpack-form:not(.deleted-row)").length);
 }
 
 function initializeResultsForm() {
@@ -242,7 +246,7 @@ function initializeResultsForm() {
                 bindResultDeleteEvent(newRow);
         
                 $('div.results-table table').append(newRow);
-                defaultTableMessage();
+                defaultSensorsMessage();
                 $('#result-dialog').modal('toggle');
             }
             else if (xhr.status == 206) {
@@ -276,7 +280,7 @@ function initializeResultsForm() {
         dialog.modal('toggle');
     });
 
-    defaultTableMessage();
+    defaultSensorsMessage();
     notifyInputStatus();
 }
 
@@ -367,7 +371,7 @@ $(document).ready(function() {
         var dialog = $('#confirm-delete');
         dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
         dialog.modal('hide');
-        defaultTableMessage();
+        defaultSensorsMessage();
     });
 
     $("#id_notify").change(function() {
@@ -381,37 +385,11 @@ $(document).ready(function() {
     });
 
     $("#btn-confirm-delete-experiment").click(function () {
-        // Commenting out code below. The row should instead be marked for deletion.
-        // var dialog = $('#confirm-delete-experiment');
-        // var button = dialog.data('to-delete').find(".btn-delete-experiment");
-        // var url = button.attr("data-action");
-        // var token = button.parent().find("[name=csrfmiddlewaretoken]").val();
-        // $("#btn-confirm-delete-experiment").prop("disabled", true).text("Deleting...");
+        var dialog = $('#confirm-delete-experiment');
+        dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
+        defaultExperimentsMessage();
+        dialog.modal('hide');
+    });
 
-        // $.ajax({
-        //     url: url,
-        //     type: 'post',
-        //     data: {csrfmiddlewaretoken: token}
-        // }).done(function (data, message, xhr) {
-        //     var msg;
-        //     var snackbarContainer = document.querySelector('#clipboard-snackbar');
-        //     if (message == "success") {
-        //         dialog.data('to-delete').remove();
-        //         msg = {
-        //             message: 'Experiment has been deleted!',
-        //             timeout: 3000
-        //         };
-        //     }
-        //     else {
-        //         msg = {
-        //             message: 'Failed to delete Experiment',
-        //             timeout: 3000
-        //         };
-        //     }
-        //
-            dialog.modal('hide');
-        //     snackbarContainer.MaterialSnackbar.showSnackbar(msg);
-        //     $("#btn-confirm-delete-experiment").prop("disabled", false).text("Delete");
-        // })
-    })
+    defaultExperimentsMessage();
 });

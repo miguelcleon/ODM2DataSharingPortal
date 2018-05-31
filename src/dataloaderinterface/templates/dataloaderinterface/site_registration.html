@@ -287,7 +287,7 @@
                                                 <tbody>
                                                 {% if leafpacks %}
                                                     {% for leafpack in leafpacks %}
-                                                        <tr class="bg-white">
+                                                        <tr class="bg-white leafpack-form">
 {#                                                            <td>{{ leafpack.id }}</td>#}
 {#                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
                                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
@@ -301,11 +301,11 @@
                                                             </td>
                                                             <td class="mdl-data-table__cell--non-numeric">
                                                                 {% csrf_token %}
-                                                                <button data-action="{% url 'leafpack:delete' siteregistration.sampling_feature_code leafpack.id %}"
-                                                                        class="mdl-button btn-delete-experiment"
+                                                                <button class="mdl-button btn-delete-experiment"
                                                                         style="color: #d9534f"
                                                                         type="button">
                                                                     <i class="material-icons center-icon">delete_forever</i>
+{#                                                                    TODO: SETUP THIS DELETE FORM #}
                                                                     {{ leafpack.DELETE }}
                                                                 </button>
                                                             </td>

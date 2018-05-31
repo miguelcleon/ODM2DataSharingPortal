@@ -638,10 +638,6 @@ footer .separator {
     color: #FFF;
 }
 
-tr.no-experiments-row:not(only-child) {
-    display: none;
-}
-
 .center-icon {
     display: inline-block;
     vertical-align: middle;

@@ -12,10 +12,10 @@ function initMap() {
         center: sitePosition,
         gestureHandling: 'greedy',
         zoom: defaultZoomLevel,
-        mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeId: google.maps.MapTypeId.HYBRID
     });
 
-
+    map.setOptions({minZoom: 3, maxZoom: 18});
 
     var marker = new google.maps.Marker({
         position: sitePosition,
@@ -68,7 +68,6 @@ function drawSparklineOnResize(seriesInfo, seriesData) {
 function drawSparklinePlot(seriesInfo, seriesData) {
     var card = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"]');
     var plotBox = card.find(".graph-container");
-    // var $lastObservation = card.find(".last-observation");
 
     plotBox.empty();
 
