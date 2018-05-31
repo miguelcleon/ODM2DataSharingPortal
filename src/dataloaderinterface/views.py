@@ -749,71 +749,71 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 
-def all_forms_valid(*forms):
-    return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
+# def all_forms_valid(*forms):
+#     return reduce(lambda all_valid, form: all_valid and form.is_valid(), forms, True)
 
 
-def create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file):
-    # Create action
-    action = Action(
-        method=Method.objects.filter(method_type_id='Instrument deployment').first(),
-        action_type_id='Instrument deployment',
-        begin_datetime=datetime.utcnow(), begin_datetime_utc_offset=0
-    )
-    action.save()
-
-    # Create feature action
-    feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
-    feature_action.save()
-
-    # Create action by
-    action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
-    action_by.save()
-
-    # Create Results
-    result = result_form.instance
-    result.feature_action = feature_action
-    result.result_type_id = 'Time series coverage'
-    result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
-    result.status_id = 'Ongoing'
-    result.save()
-
-    # Create TimeSeriesResults
-    time_series_result = TimeSeriesResult(result=result)
-    time_series_result.aggregation_statistic_id = 'Average'
-    time_series_result.save()
-
-    # Create Data Logger file column
-    instrument_output_variable = InstrumentOutputVariable.objects.filter(
-        model=result_form.cleaned_data['equipment_model'],
-        variable=result_form.cleaned_data['variable'],
-        instrument_raw_output_unit=result_form.cleaned_data['unit'],
-    ).first()
-
-    DataLoggerFileColumn.objects.create(
-        result=result,
-        data_logger_file=data_logger_file,
-        instrument_output_variable=instrument_output_variable,
-        column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
-    )
-
-    sensor_data = {
-        'result_id': result.result_id,
-        'result_uuid': result.result_uuid,
-        'registration': site_registration,
-        'model_name': instrument_output_variable.model.model_name,
-        'model_manufacturer': instrument_output_variable.model.model_manufacturer.organization_name,
-        'variable_name': result.variable.variable_name_id,
-        'variable_code': result.variable.variable_code,
-        'unit_name': result.unit.unit_name,
-        'unit_abbreviation': result.unit.unit_abbreviation,
-        'sampled_medium': result.sampled_medium_id
-    }
-
-    site_sensor = SiteSensor(**sensor_data)
-    site_sensor.save()
-
-    return result
+# def create_result(site_registration, result_form, sampling_feature, affiliation, data_logger_file):
+#     # Create action
+#     action = Action(
+#         method=Method.objects.filter(method_type_id='Instrument deployment').first(),
+#         action_type_id='Instrument deployment',
+#         begin_datetime=datetime.utcnow(), begin_datetime_utc_offset=0
+#     )
+#     action.save()
+#
+#     # Create feature action
+#     feature_action = FeatureAction(action=action, sampling_feature=sampling_feature)
+#     feature_action.save()
+#
+#     # Create action by
+#     action_by = ActionBy(action=action, affiliation=affiliation, is_action_lead=True)
+#     action_by.save()
+#
+#     # Create Results
+#     result = result_form.instance
+#     result.feature_action = feature_action
+#     result.result_type_id = 'Time series coverage'
+#     result.processing_level = ProcessingLevel.objects.get(processing_level_code='Raw')
+#     result.status_id = 'Ongoing'
+#     result.save()
+#
+#     # Create TimeSeriesResults
+#     time_series_result = TimeSeriesResult(result=result)
+#     time_series_result.aggregation_statistic_id = 'Average'
+#     time_series_result.save()
+#
+#     # Create Data Logger file column
+#     instrument_output_variable = InstrumentOutputVariable.objects.filter(
+#         model=result_form.cleaned_data['equipment_model'],
+#         variable=result_form.cleaned_data['variable'],
+#         instrument_raw_output_unit=result_form.cleaned_data['unit'],
+#     ).first()
+#
+#     DataLoggerFileColumn.objects.create(
+#         result=result,
+#         data_logger_file=data_logger_file,
+#         instrument_output_variable=instrument_output_variable,
+#         column_label='%s(%s)' % (result.variable.variable_code, result.unit.unit_abbreviation)
+#     )
+#
+#     sensor_data = {
+#         'result_id': result.result_id,
+#         'result_uuid': result.result_uuid,
+#         'registration': site_registration,
+#         'model_name': instrument_output_variable.model.model_name,
+#         'model_manufacturer': instrument_output_variable.model.model_manufacturer.organization_name,
+#         'variable_name': result.variable.variable_name_id,
+#         'variable_code': result.variable.variable_code,
+#         'unit_name': result.unit.unit_name,
+#         'unit_abbreviation': result.unit.unit_abbreviation,
+#         'sampled_medium': result.sampled_medium_id
+#     }
+#
+#     site_sensor = SiteSensor(**sensor_data)
+#     site_sensor.save()
+#
+#     return result
 
 
 class OAuthAuthorize(TemplateView):
@@ -897,21 +897,21 @@ class OAuthRedirect(TemplateView):
             return super(OAuthRedirect, self).get(request, args, kwargs)
 
 
-def delete_result(result):
-    result_id = result.result_id
-    feature_action = result.feature_action
-    action = feature_action.action
-
-    result.data_logger_file_columns.all().delete()
-    result.timeseriesresult.values.all().delete()
-    result.timeseriesresult.delete()
-
-    action.action_by.all().delete()
-    result.delete()
-
-    feature_action.delete()
-    action.delete()
-    SiteSensor.objects.filter(result_id=result_id).delete()
+# def delete_result(result):
+#     result_id = result.result_id
+#     feature_action = result.feature_action
+#     action = feature_action.action
+#
+#     result.data_logger_file_columns.all().delete()
+#     result.timeseriesresult.values.all().delete()
+#     result.timeseriesresult.delete()
+#
+#     action.action_by.all().delete()
+#     result.delete()
+#
+#     feature_action.delete()
+#     action.delete()
+#     SiteSensor.objects.filter(result_id=result_id).delete()
 
 
 def get_site_files(site_registration):

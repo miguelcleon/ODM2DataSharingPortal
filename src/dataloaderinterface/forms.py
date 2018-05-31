@@ -254,6 +254,9 @@ class SiteSensorForm(forms.ModelForm):
     id = forms.CharField(widget=HiddenInput(), required=False)
     registration = forms.CharField(widget=HiddenInput())
     output_variable = forms.CharField(widget=HiddenInput())
+    result_id = forms.CharField(widget=HiddenInput(), required=False)
+    result_uuid = forms.CharField(widget=HiddenInput(), required=False)
+
     sensor_manufacturer = forms.ModelChoiceField(queryset=Organization.objects.only_vendors(), label='Sensor Manufacturer', help_text='Choose the manufacturer', to_field_name='organization_code')
     sensor_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all(), label='Sensor Model', help_text='Choose the model of your sensor')
     variable = forms.ModelChoiceField(queryset=Variable.objects.all(), label='Measured Variable', help_text='Choose the measured variable')

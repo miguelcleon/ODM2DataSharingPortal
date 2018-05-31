@@ -240,6 +240,8 @@ function initializeResultsForm() {
                 // valid
                 var newRow = $($('#sensor-row').html());
                 form.find('[name="id"]').val(data['id']);
+                form.find('[name="result_id"]').val(data['result_id']);
+                form.find('[name="result_uuid"]').val(data['result_uuid']);
 
                 updateRowData(newRow);
                 bindResultEditEvent(newRow);
@@ -283,6 +285,8 @@ function initializeResultsForm() {
                 // valid
                 var row = $('div#result-dialog').data('row');
                 form.find('[name="id"]').val(data['id']);
+                form.find('[name="result_id"]').val(data['result_id']);
+                form.find('[name="result_uuid"]').val(data['result_uuid']);
 
                 updateRowData(row);
                 bindResultEditEvent(row);
@@ -350,6 +354,8 @@ function fillFormData(row) {
 
     form.find('input[name="id"]').val(rowData['id']);
     form.find('input[name="output_variable"]').val(rowData['sensor_output']);
+    form.find('input[name="result_id"]').val(rowData['result_id']);
+    form.find('input[name="result_uuid"]').val(rowData['result_uuid']);
 
     $('#result-dialog').data('row', row);
 }
@@ -369,6 +375,7 @@ function updateRowData(row) {
             dataColumn.find('.field-text').text(selectedOption.text());
         }
     }
+
 }
 
 
@@ -380,7 +387,9 @@ function bindResultEditEvent(row) {
         clear_filters();
         fillFormData(rowElement);
 
+        $('#result-dialog-uuid').text(result_uuid).parent().show();
         $('#result-dialog').modal('toggle');
+
     });
 }
 
