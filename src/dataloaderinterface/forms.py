@@ -147,6 +147,12 @@ class SiteRegistrationForm(forms.ModelForm):
         widget=SiteTypeSelect
     )
 
+    def clean_affiliation_id(self):
+        return self.data['affiliation_id']
+
+    def clean_site_type(self):
+        return self.data['site_type']
+
     class Meta:
         model = SiteRegistration
         fields = [
