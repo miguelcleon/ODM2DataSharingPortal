@@ -316,7 +316,7 @@
                                                                 you can see this.
                                                             </small>
                                                         </td>
-                                                </tr>
+                                                    </tr>
                                                 {% endif %}
                                             </table>
                                         </div>
@@ -389,35 +389,33 @@
 
     <div class="modal fade" id="data-table-dialog" role="contentinfo" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Data Table</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body">
+            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
+                <h4 class="mdl-dialog__title">Data Table</h4>
+
+                <div class="mdl-dialog__content">
                     <div class="measurements-table">
-                {% for sensor in site.sensors.all %}
-                    <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
-                           width="100%" data-result-id="{{ sensor.result_id }}">
-                        <thead>
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric">
-                                    Timestamp
-                                </th>
-                                <th class="mdl-data-table__cell--non-numeric">
-                                    UTC Offset
-                                </th>
-                                <th>
-                                    Value
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                {% endfor %}
-            </div>
+                        {% for sensor in site.sensors.all %}
+                            <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
+                                   width="100%" data-result-id="{{ sensor.result_id }}">
+                                <thead>
+                                <tr>
+                                    <th class="mdl-data-table__cell--non-numeric">
+                                        Timestamp
+                                    </th>
+                                    <th class="mdl-data-table__cell--non-numeric">
+                                        UTC Offset
+                                    </th>
+                                    <th>
+                                        Value
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        {% endfor %}
+                    </div>
                 </div>
-                <div class="modal-footer">
+                <div class="mdl-dialog__actions text-right">
                     <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -426,19 +424,16 @@
 
     <div class="modal fade" id="site-delete-dialog" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete Site?</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <div class="modal-body">
+            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
+                <h4 class="mdl-dialog__title">Delete Site?</h4>
+
+                <div class="mdl-dialog__content">
                     <p>
                         <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
                         <strong>Are you really really really sure you want to do this?</strong>
                     </p>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                <div class="mdl-dialog__actions text-right">
                     <form method="POST"
                           action="{% autoescape off %}{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}{% endautoescape %}">
                         {% csrf_token %}
@@ -446,6 +441,7 @@
                                 style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
                         </button>
                     </form>
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>

@@ -226,8 +226,8 @@ $(document).ready(function () {
 
         tables.filter('[data-result-id="' + id + '"]').show();
         var title = box.data('variable-name') + ' (' + box.data('variable-code') + ')';
-        dialog.find('.modal-title').text(title);
-        dialog.find('.modal-title').attr("title", title);
+        dialog.find('.mdl-dialog__title').text(title);
+        dialog.find('.mdl-dialog__title').attr("title", title);
 
         dialog.modal('show');
     });

@@ -677,16 +677,20 @@ footer .separator {
     margin-bottom: 20px;
 }
 
-/*dialog#data-table-dialog {*/
-    /*width: 480px;*/
-/*}*/
+.mdl-modal-content {
+    background-color: #FFF;
+    border: 0;
+}
 
-/*dialog#data-table-dialog .mdl-dialog__content {*/
-    /*color: #555;*/
-/*}*/
+.mdl-modal-content .mdl-dialog__actions {
+    padding: 0 24px 24px 24px;
+}
 
-.mdl-dialog {
-    border-radius: 4px;
+@media (min-width: 576px) {
+    .mdl-modal-content {
+        max-width: 500px;
+        margin: 30px auto;
+    }
 }
 
 .site-tokens .input-group-copy .input-group-addon:first-child {
