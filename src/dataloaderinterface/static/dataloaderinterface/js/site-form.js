@@ -212,7 +212,7 @@ function initializeResultsForm() {
             $(this).find('#add-sensor-button').show();
             $(this).find('#edit-sensor-button').hide();
             $(this).find('#result-dialog-title').text("Add Sensor");
-             $('#result-dialog-uuid').parent().hide();
+            $('#result-dialog-uuid').parent().hide();
             var fields = form.find('select');
             var fieldsParents = fields.parents('div.form-field');
             clearSelectFilter(fields);

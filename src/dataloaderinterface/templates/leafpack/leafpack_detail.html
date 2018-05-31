@@ -36,14 +36,11 @@
                         <i class="material-icons center-icon">mode_edit</i> Edit
                     </a>
 
-                    <form class="inline" method="post"
-                          action="{% url 'leafpack:delete' sampling_feature_code leafpack.id %}">
-                        {% csrf_token %}
-                        <button id="btn-del-leaf-exp" type="submit"
-                                class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
-                            <i class="material-icons center-icon">delete_forever</i> Delete
-                        </button>
-                    </form>
+                    <button id="btn-del-leaf-exp" type="button"
+                            data-toggle="modal" data-target="#experiment-delete-dialog"
+                            class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
+                        <i class="material-icons center-icon">delete_forever</i> Delete
+                    </button>
                 </div>
             </div>
 
@@ -294,6 +291,33 @@
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT|floatformat:2 }}%</td>
                         </tr>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="experiment-delete-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Leaf Experiment?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <strong>WARNING:</strong> All data associated with this experiment will be deleted.<br><br>
+                        <strong>Are you really really really sure you want to do this?</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                    <form method="POST"
+                          action="{% autoescape off %}{% url 'leafpack:delete' sampling_feature_code leafpack.id %}{% endautoescape %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mdl-button mdl-button--raised"
+                                style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
