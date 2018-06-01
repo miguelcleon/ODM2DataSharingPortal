@@ -270,7 +270,7 @@ class SiteSensorForm(forms.ModelForm):
     sampled_medium = SampledMediumField(queryset=Medium.objects.filter(pk__in=allowed_sampled_medium), label='Sampled Medium', help_text='Choose the sampled medium')
 
     def clean_registration(self):
-        data = self.cleaned_data['registration']
+        data = self.data['registration']
         if not data:
             raise forms.ValidationError(message='Site Registration id is required.')
         try:
@@ -280,7 +280,7 @@ class SiteSensorForm(forms.ModelForm):
         return instance
 
     def clean_output_variable(self):
-        data = self.cleaned_data['output_variable']
+        data = self.data['output_variable']
         if not data:
             raise forms.ValidationError(message='Output variable id is required.')
         try:

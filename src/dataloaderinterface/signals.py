@@ -44,10 +44,10 @@ def handle_site_registration_post_save(sender, instance, created, update_fields=
             spatial_reference=SpatialReference.objects.get(srs_name='WGS84')
         )
 
-        stream_name = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='stream_name', annotation_text=instance.stream_name)
-        major_watershed = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='major_watershed', annotation_text=instance.major_watershed)
-        sub_basin = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='sub_basin', annotation_text=instance.sub_basin)
-        closest_town = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='closest_town', annotation_text=instance.closest_town)
+        stream_name = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='stream_name', annotation_text=instance.stream_name or '')
+        major_watershed = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='major_watershed', annotation_text=instance.major_watershed or '')
+        sub_basin = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='sub_basin', annotation_text=instance.sub_basin or '')
+        closest_town = Annotation(annotation_type_id='Sampling feature annotation', annotation_code='closest_town', annotation_text=instance.closest_town or '')
         Annotation.objects.bulk_create([stream_name, major_watershed, sub_basin, closest_town])
 
         SamplingFeatureAnnotation.objects.bulk_create([
@@ -71,10 +71,10 @@ def handle_site_registration_post_save(sender, instance, created, update_fields=
             longitude=instance.longitude
         )
 
-        sampling_feature.annotations.filter(annotation_code='stream_name').update(annotation_text=instance.stream_name)
-        sampling_feature.annotations.filter(annotation_code='major_watershed').update(annotation_text=instance.major_watershed)
-        sampling_feature.annotations.filter(annotation_code='sub_basin').update(annotation_text=instance.sub_basin)
-        sampling_feature.annotations.filter(annotation_code='closest_town').update(annotation_text=instance.closest_town)
+        sampling_feature.annotations.filter(annotation_code='stream_name').update(annotation_text=instance.stream_name or '')
+        sampling_feature.annotations.filter(annotation_code='major_watershed').update(annotation_text=instance.major_watershed or '')
+        sampling_feature.annotations.filter(annotation_code='sub_basin').update(annotation_text=instance.sub_basin or '')
+        sampling_feature.annotations.filter(annotation_code='closest_town').update(annotation_text=instance.closest_town or '')
 
 
 @receiver(post_delete, sender=SiteRegistration)

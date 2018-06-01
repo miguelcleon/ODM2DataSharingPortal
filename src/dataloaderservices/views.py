@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from dataloaderinterface.forms import ResultForm, SiteSensorForm
-from dataloaderinterface.models import SiteSensor, SiteRegistration, SensorOutput
+from dataloaderinterface.models import SiteSensor, SiteRegistration, SensorOutput, SensorMeasurement
 from dataloaderservices.auth import UUIDAuthentication
 from dataloaderservices.serializers import OrganizationSerializer, SensorSerializer
 
@@ -292,14 +292,17 @@ class TimeSeriesValuesApi(APIView):
             result.result_datetime = measurement_datetime
             result.result_datetime_utc_offset = utc_offset
 
-            site_sensor.last_measurement_id = result_value.value_id
-            site_sensor.last_measurement_value = result_value.data_value
-            site_sensor.last_measurement_datetime = result_value.value_datetime
-            site_sensor.last_measurement_utc_offset = result_value.value_datetime_utc_offset
-            site_sensor.last_measurement_utc_datetime = result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset)
+            # delete last measurement
+            last_measurement = SensorMeasurement.objects.filter(sensor=site_sensor).first()
+            last_measurement and last_measurement.delete()
 
-            if site_sensor.last_measurement_utc_datetime.tzinfo is None:
-                site_sensor.last_measurement_utc_datetime = utc.localize(result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset))
+            # create new 'last' measurement
+            SensorMeasurement.objects.create(
+                sensor=site_sensor,
+                value_datetime=result_value.value_datetime,
+                value_datetime_utc_offset=timedelta(hours=result_value.value_datetime_utc_offset),
+                data_value=result_value.data_value
+            )
 
             if is_first_value:
                 result.valid_datetime = measurement_datetime
@@ -310,12 +313,9 @@ class TimeSeriesValuesApi(APIView):
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
                     site_sensor.registration.deployment_date_utc_offset = utc_offset
-                    # site_sensor.registration.deployment_date_utc_offset = utc_offset
                     site_sensor.registration.save(update_fields=['deployment_date'])
 
             site_sensor.save(update_fields=[
-                'last_measurement_id', 'last_measurement_value', 'last_measurement_datetime',
-                'last_measurement_utc_datetime', 'last_measurement_utc_offset',
                 'activation_date', 'activation_date_utc_offset'
             ])
             result.save(update_fields=[

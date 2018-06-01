@@ -538,7 +538,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             if site_alert \
             else {}
 
-        context['sensor_form'] = SiteSensorForm(initial={'registration': self.get_object()})
+        context['sensor_form'] = SiteSensorForm(initial={'registration': self.get_object().registration_id})
         context['email_alert_form'] = SiteAlertForm(data=alert_data)
         context['zoom_level'] = data['zoom-level'] if 'zoom-level' in data else None
 
