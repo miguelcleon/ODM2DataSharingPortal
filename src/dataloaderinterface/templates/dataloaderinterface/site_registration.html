@@ -95,78 +95,6 @@
                                 <br>
                             </fieldset>
 
-{#                            COPY TO SITE UPDATE#}
-                            <br>
-                            <div class="row">
-                                        <div class="col-12">
-                                            <br><br>
-                                            <div class="section-title inline">Macroinvertebrate Data</div>
-
-                                            <a id="new-leaf-pack-btn" href="{% url 'leafpack:create' sampling_feature_form.sampling_feature_code.value %}"
-                                           class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
-                                            <i class="material-icons">add</i>
-                                        </a>
-
-                                        <div class="mdl-tooltip" data-mdl-for="new-leaf-pack-btn">
-                                            Add New Leaf Pack Experiment
-                                        </div>
-
-                                        <br><br>
-
-                                        <div style="overflow: auto;">
-{#                                            TODO: Populate this table#}
-                                            <table class="no-hover mdl-data-table mdl-js-data-table macroinvertebrate">
-                                                <thead>
-                                                <tr class="full-width">
-{#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment ID#}
-{#                                                    </th>#}
-{#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
-                                                    <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Content</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% if leafpacks %}
-                                                    {% for leafpack in leafpacks %}
-                                                        <tr class="bg-white leafpack-form">
-{#                                                            <td>{{ leafpack.id }}</td>#}
-{#                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
-                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">
-                                                                <a href="{% url 'leafpack:update' siteregistration.sampling_feature_code leafpack.id %}"
-                                                                   class="mdl-button mdl-button--accent">
-                                                                        <i class="material-icons center-icon">mode_edit</i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="mdl-data-table__cell--non-numeric">
-                                                                {% csrf_token %}
-                                                                <button class="mdl-button btn-delete-experiment"
-                                                                        style="color: #d9534f"
-                                                                        type="button">
-                                                                    <i class="material-icons center-icon">delete_forever</i>
-{#                                                                    TODO: SETUP THIS DELETE FORM SIMILAR TO SENSOR DELETE FORMS #}
-                                                                    {{ leafpack.DELETE }}
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                {% endif %}
-                                                <tr class="no-experiments-row bg-white">
-                                                    <td colspan="5" class="text-center">
-                                                        No macroinvertebrate data have been added to this site.
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-
-{#                                        END COPY TO SITE UPDATE#}
-
                             <div style="margin-top: 20px;">
                                 <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                    href="{% url 'sites_list' %}">
@@ -185,32 +113,6 @@
             </div>
         </div>
     </div>
-
-
-{#    COPY TO SITE UPDATE#}
-
-    <div class="modal fade" id="confirm-delete-experiment" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
-                <h4 class="mdl-dialog__title">Delete Experiment?</h4>
-
-                <div class="mdl-dialog__content">
-                    <div class="alert alert-danger hidden">All stored data corresponding to
-                        this experiment will be deleted.<br/></div>
-                    <p>Are you sure you want to remove this experiment?</p>
-                </div>
-                <div class="mdl-dialog__actions text-right">
-                    <button type="button" class="mdl-button mdl-button--raised" id="btn-confirm-delete-experiment">
-                        Delete
-                    </button>
-                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-{#    END COPY TO SITE UPDATE#}
-
 {% endblock %}
 
 {% block services_urls %}
