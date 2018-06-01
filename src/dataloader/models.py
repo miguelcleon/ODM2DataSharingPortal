@@ -8,7 +8,7 @@ from dataloader.querysets import AffiliationQuerySet, RelatedActionManager, Resu
     DataLoggerFileManager, InstrumentOutputVariableManager, \
     EquipmentManager, CalibrationReferenceEquipmentManager, EquipmentUsedManager, MaintenanceActionManager, \
     RelatedEquipmentManager, CalibrationActionManager, ODM2QuerySet, ActionQuerySet, ActionByQuerySet, \
-    FeatureActionQuerySet, TimeSeriesValuesQuerySet, EquipmentModelQuerySet
+    FeatureActionQuerySet, TimeSeriesValuesQuerySet, EquipmentModelQuerySet, OrganizationQuerySet
 from django.conf import settings
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -428,6 +428,8 @@ class Organization(ODM2Model):
     parent_organization = models.ForeignKey('self', db_column='parentorganizationid', blank=True, null=True)
 
     people = models.ManyToManyField('People', through='Affiliation')
+
+    objects = OrganizationQuerySet.as_manager()
 
     def __str__(self):
         return '%s' % self.organization_code
@@ -886,7 +888,7 @@ class EquipmentModel(models.Model):
     objects = EquipmentModelQuerySet.as_manager()
 
     def __str__(self):
-        return '%s %s' % (self.model_manufacturer, self.model_name)
+        return '%s' % self.model_name
 
     def __repr__(self):
         return "<EquipmentModel('%s', '%s', '%s', Organization[%s, %s])>" % (

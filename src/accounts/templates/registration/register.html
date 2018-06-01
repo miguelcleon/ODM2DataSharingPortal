@@ -89,14 +89,14 @@
                                                 </div>
 
                                                 <div class="col-sm-12">
-                                                    <div class="form-field {% if form.organization.errors %}has-error{% endif %}">
+                                                    <div class="form-field {% if form.organization_code.errors %}has-error{% endif %}">
                                                         <label class="control-label" for="id_organization"><i class="fa fa-building" aria-hidden="true"></i> Organization</label>
                                                         <i id="organization-help" class="material-icons text-muted help-icon">help</i>
                                                         <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--right" data-mdl-for="organization-help">
-                                                            {{ form.organization.help_text }}
+                                                            {{ form.organization_code.help_text }}
                                                         </div>
-                                                        {{ form.organization|add_class:"form-control input-sm select2-hidden-accessible"|attr:"placeholder: Choose your affiliated organization" }}
-                                                        {{ form.organization.errors }}
+                                                        {{ form.organization_code|add_class:"form-control input-sm select2-hidden-accessible"|attr:"placeholder: Choose your affiliated organization" }}
+                                                        {{ form.organization_code.errors }}
                                                     </div>
                                                 </div>
 

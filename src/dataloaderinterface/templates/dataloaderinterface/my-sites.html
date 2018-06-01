@@ -127,7 +127,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">{{ site.latest_measurement }}
-                                                            ({{ site.latest_measurement_utc|utc_timesince }} ago)
+                                                            ({{ site.latest_measurement|utc_timesince }} ago)
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -249,7 +249,7 @@
                                                 <tr>
                                                     <td></td>
                                                     <td>{{ site.latest_measurement }}
-                                                        <br>({{ site.latest_measurement_utc|utc_timesince }} ago)
+                                                        <br>({{ site.latest_measurement|utc_timesince }} ago)
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -278,6 +278,7 @@
                 {% endif %}
             </div>
 
+            {# TODO: make web service to do this instead of using the html. #}
             {% autoescape off %}
             <script id="sites-data" type="application/json">
                 [

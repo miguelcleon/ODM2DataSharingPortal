@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.core.urlresolvers import reverse_lazy
 
-from dataloaderinterface.views import UserRegistrationView, UserUpdateView
+from accounts.views import UserRegistrationView, UserUpdateView
 
 
 BASE_URL = settings.SITE_URL[1:]
@@ -54,3 +54,9 @@ urlpatterns = [
     url(BASE_URL, include('dataloaderinterface.urls')),
     url(BASE_URL, include('dataloaderservices.urls'))
 ]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

@@ -2,6 +2,8 @@ from dataloader.models import People, Organization, Affiliation, EquipmentModel,
     TimeSeriesResult
 from rest_framework import serializers
 
+from dataloaderinterface.models import SiteSensor
+
 
 class VariableSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,6 +35,12 @@ class PersonSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
+        fields = '__all__'
+
+
+class SensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteSensor
         fields = '__all__'
 
 

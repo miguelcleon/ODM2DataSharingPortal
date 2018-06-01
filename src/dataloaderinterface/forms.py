@@ -1,23 +1,33 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
-from django.forms import NumberInput, TimeInput
-from dataloader.models import SamplingFeature, People, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
-    OrganizationType, ActionBy, SiteType
+
+from django.forms import NumberInput
+from django.forms.widgets import HiddenInput
+
+from dataloader.models import SamplingFeature, Organization, Affiliation, Result, Site, EquipmentModel, Medium, \
+    OrganizationType, ActionBy, SiteType, Variable, Unit
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.contrib.auth.models import User
-from django.db.models.query_utils import Q
 from django.forms.formsets import formset_factory
-from django.utils.safestring import mark_safe
 import re
 
-from dataloaderinterface.models import ODM2User, HydroShareResource, SiteRegistration, SiteAlert
+from dataloaderinterface.models import HydroShareResource, SiteRegistration, SiteAlert, SiteSensor, SensorOutput
+
+allowed_site_types = [
+    'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',
+    'Lake, Reservoir, Impoundment', 'Laboratory or sample-preparation area', 'Observation well', 'Soil hole',
+    'Storm sewer', 'Stream gage', 'Tidal stream', 'Water quality station', 'Weather station', 'Wetland', 'Other'
+]
 
 
 class SiteTypeSelect(forms.Select):
+    site_types = {
+        name: definition
+        for (name, definition)
+        in SiteType.objects.filter(name__in=allowed_site_types).values_list('name', 'definition')
+    }
+
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
         option = super(SiteTypeSelect, self).create_option(name, value, label, selected, index, subindex, attrs)
-        option['attrs']['title'] = self.choices.queryset.get(name=value).definition if value else ''
+        option['attrs']['title'] = self.site_types[value] if value in self.site_types else ''
         return option
 
 
@@ -32,11 +42,6 @@ class SampledMediumField(forms.ModelChoiceField):
 
     def label_from_instance(self, obj):
         return SampledMediumField.get_custom_label(obj.name)
-
-
-class UserOrganizationField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.organization_name
 
 
 class MDLRadioButton(forms.RadioSelect):
@@ -127,73 +132,48 @@ class HydroShareResourceDeleteForm(forms.Form):
         required=False)
 
 
-class UserRegistrationForm(UserCreationForm):
-    use_required_attribute = False
-
-    first_name = forms.CharField(required=True, max_length=50)
-    last_name = forms.CharField(required=True, max_length=50)
-    email = forms.EmailField(required=True, max_length=254)
-    organization = UserOrganizationField(
-        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']).order_by('organization_name'), required=False, help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
-    agreement = forms.BooleanField(required=True)
-
-    def save(self, commit=True):
-        user = super(UserRegistrationForm, self).save(commit=False)
-        user.first_name = self.cleaned_data['first_name']
-        user.last_name = self.cleaned_data['last_name']
-        user.email = self.cleaned_data['email']
-        user.agreement = self.cleaned_data['agreement']
-        organization = self.cleaned_data['organization']
-
-        if commit:
-            user.save()
-            person = People.objects.create(person_first_name=user.first_name, person_last_name=user.last_name)
-            affiliation = Affiliation.objects.create(person=person, organization=organization, affiliation_start_date=datetime.now(), primary_email=user.email)
-            ODM2User.objects.create(user=user, affiliation_id=affiliation.affiliation_id)
-
-        return user
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'organization']
-
-
-class UserUpdateForm(UserChangeForm):
-    use_required_attribute = False
-
-    first_name = forms.CharField(required=True, max_length=50)
-    last_name = forms.CharField(required=True, max_length=50)
-    email = forms.EmailField(required=True, max_length=254)
-    organization = forms.ModelChoiceField(
-        queryset=Organization.objects.all().exclude(organization_type__in=['Vendor', 'Manufacturer']),
-        required=False,
-        help_text='Begin to enter the common name of your organization to choose from the list. If "No results found", then clear your entry, click on the drop-down-list to select "Add New Organization".')
-
-    def save(self, commit=True):
-        user = super(UserUpdateForm, self).save(commit=False)
-        organization = self.cleaned_data['organization']
-
-        if commit:
-            affiliation = user.odm2user.affiliation
-            person = affiliation.person
-
-            person.person_first_name = user.first_name
-            person.person_last_name = user.last_name
-            affiliation.primary_email = user.email
-            affiliation.organization = organization
-
-            user.save()
-            person.save()
-            affiliation.save()
-
-        return user
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email', 'password', 'username', 'organization']
-
-
 # ODM2
+
+class SiteRegistrationForm(forms.ModelForm):
+    affiliation_id = forms.ModelChoiceField(
+        queryset=Affiliation.objects.for_display(),
+        required=False,
+        help_text='Select the user that deployed or manages the site',
+        label='Deployed By'
+    )
+    site_type = forms.ModelChoiceField(
+        queryset=SiteType.objects.filter(name__in=allowed_site_types),
+        help_text='Select the type of site you are deploying (e.g., "Stream")',
+        widget=SiteTypeSelect
+    )
+
+    def clean_affiliation_id(self):
+        return self.data['affiliation_id']
+
+    def clean_site_type(self):
+        return self.data['site_type']
+
+    class Meta:
+        model = SiteRegistration
+        fields = [
+            'affiliation_id', 'sampling_feature_code', 'sampling_feature_name', 'latitude', 'longitude', 'elevation_m',
+            'elevation_datum', 'site_type', 'stream_name', 'major_watershed', 'sub_basin', 'closest_town'
+        ]
+        labels = {
+            'sampling_feature_code': 'Site Code',
+            'sampling_feature_name': 'Site Name',
+            'elevation_m': 'Elevation',
+
+        }
+        help_texts = {
+            'sampling_feature_code': 'Enter a brief and unique text string to identify your site (e.g., "Del_Phil")',
+            'sampling_feature_name': 'Enter a brief but descriptive name for your site (e.g., "Delaware River near Phillipsburg")',
+            'latitude': 'Enter the latitude of your site in decimal degrees (e.g., 40.6893)',
+            'longitude': 'Enter the longitude of your site in decimal degrees (e.g., -75.2033)',
+            'elevation_m': 'Enter the elevation of your site in meters',
+            'elevation_datum': 'Choose the elevation datum for your site\'s elevation. If you don\'t know it, choose "MSL"',
+        }
+
 
 class ActionByForm(forms.ModelForm):
     use_required_attribute = False
@@ -274,6 +254,48 @@ class SiteForm(forms.ModelForm):
         ]
 
 
+class SiteSensorForm(forms.ModelForm):
+    allowed_sampled_medium = ['Air', 'Soil', 'Sediment', 'Liquid aqueous', 'Equipment', 'Not applicable', 'Other']
+
+    id = forms.CharField(widget=HiddenInput(), required=False)
+    registration = forms.CharField(widget=HiddenInput())
+    output_variable = forms.CharField(widget=HiddenInput())
+    result_id = forms.CharField(widget=HiddenInput(), required=False)
+    result_uuid = forms.CharField(widget=HiddenInput(), required=False)
+
+    sensor_manufacturer = forms.ModelChoiceField(queryset=Organization.objects.only_vendors(), label='Sensor Manufacturer', help_text='Choose the manufacturer', to_field_name='organization_code')
+    sensor_model = forms.ModelChoiceField(queryset=EquipmentModel.objects.all(), label='Sensor Model', help_text='Choose the model of your sensor')
+    variable = forms.ModelChoiceField(queryset=Variable.objects.all(), label='Measured Variable', help_text='Choose the measured variable')
+    unit = forms.ModelChoiceField(queryset=Unit.objects.all(), label='Units', help_text='Choose the measured units')
+    sampled_medium = SampledMediumField(queryset=Medium.objects.filter(pk__in=allowed_sampled_medium), label='Sampled Medium', help_text='Choose the sampled medium')
+
+    def clean_registration(self):
+        data = self.data['registration']
+        if not data:
+            raise forms.ValidationError(message='Site Registration id is required.')
+        try:
+            instance = SiteRegistration.objects.get(pk=data)
+        except SiteRegistration.DoesNotExist:
+            raise forms.ValidationError(message='Site Registration not found.')
+        return instance
+
+    def clean_output_variable(self):
+        data = self.data['output_variable']
+        if not data:
+            raise forms.ValidationError(message='Output variable id is required.')
+        try:
+            instance = SensorOutput.objects.get(pk=data)
+        except SensorOutput.DoesNotExist:
+            raise forms.ValidationError(message='Output variable not found.')
+        return instance
+
+    class Meta:
+        model = SiteSensor
+        fields = [
+            'output_variable', 'sensor_manufacturer', 'sensor_model', 'variable', 'unit', 'sampled_medium'
+        ]
+
+
 class ResultForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ResultForm, self).__init__(*args, **kwargs)
@@ -321,3 +343,4 @@ class SiteAlertForm(forms.ModelForm):
         labels = {
             'notify': 'Receive email notifications for this site',
         }
+
