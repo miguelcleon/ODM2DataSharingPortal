@@ -7,7 +7,7 @@ default_app_config = 'dataloaderinterface.apps.DataloaderinterfaceConfig'
 
 def on_dataloaderinterface_shutdown(*args):
     from django.conf import settings
-    crontab_jobs.stop_jobs(user=settings.CRONTAB_USER)
+    crontab_jobs.stop_jobs()
     sys.exit(0)
 
 

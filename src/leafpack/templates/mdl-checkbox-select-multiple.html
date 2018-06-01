@@ -1,0 +1,16 @@
+<ul id="id_{{ name }}" class="mdl-list list-leafpack-types row">
+
+    {% for choice in choices %}
+
+    <li class="mdl-list__item col-sm-6 col-lg-4">
+        <span class="mdl-list__item-primary-content"></span>
+        <span class="mdl-list__item-secondary-action">
+            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect vertical-align-center" for="{{ choice.attrs.id }}">
+                <input type="checkbox" id="{{ choice.attrs.id }}" name="{{ choice.name }}"
+                class="mdl-checkbox__input" value="{{ choice.value }}" {% if choice.selected %}checked{% endif %}/>
+                {{ choice.label }}
+            </label>
+        </span>
+    </li>
+    {% endfor %}
+</ul>

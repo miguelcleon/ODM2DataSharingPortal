@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
@@ -21,7 +22,7 @@ class TestAuthentication(TestCase):
         user_data = TestAuthentication.get_test_user_data()
         del user_data['password1']
         del user_data['password2']
-        return User.objects.get_or_create(**user_data)[0]
+        return settings.AUTH_USER_MODEL.objects.get_or_create(**user_data)[0]
 
     def setUp(self):
         pass
@@ -65,7 +66,7 @@ class TestAuthentication(TestCase):
         self.assertRedirects(response, expected_url=redirect_location)
 
     def tearDown(self):
-        user = User.objects.filter(username='preparetodie')
+        user = settings.AUTH_USER_MODEL.objects.filter(username='preparetodie')
         if user.exists():
             user.delete()
 
@@ -84,7 +85,7 @@ class TestDevicesListView(TestCase):
         pass
 
     def tearDown(self):
-        self.user.delete()
+        self.settings.AUTH_USER_MODEL.delete()
 
 
 class TestDeviceDetailView(TestCase):

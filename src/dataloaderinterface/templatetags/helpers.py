@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from django import template
 from django.utils.timesince import timesince
 from django.utils.formats import date_format
@@ -26,3 +26,24 @@ def replace_hour(value, argv):
         return datetime.combine(value.date(), time(hour=5, minute=0))
     else:
         return ''
+
+
+@register.filter("is_stale")
+def is_stale(value, default):
+    if not value:
+        return ''
+
+    try:
+        if default > 0:
+            return (datetime.utcnow() - value) > timedelta(hours=default.hours_threshold.total_seconds()/3600)
+        return (datetime.utcnow() - value) > timedelta(hours=72)
+    except AttributeError:
+        return ''
+
+
+@register.filter
+def divide(value, arg):
+    try:
+        return int(value) / int(arg) if int(arg) != 0 else 0
+    except (ValueError, ZeroDivisionError):
+        return None

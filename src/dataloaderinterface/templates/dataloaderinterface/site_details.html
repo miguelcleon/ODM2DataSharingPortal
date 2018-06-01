@@ -1,6 +1,7 @@
 {% extends 'dataloaderinterface/base.html' %}
 {% load staticfiles %}
 {% load site %}
+{% load helpers %}
 
 {% block styles %}
     {{ block.super }}
@@ -13,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="ribbon ribbon-green"></div>
+    <div class="ribbon ribbon-blue"></div>
 
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
@@ -45,10 +46,15 @@
                                 </div>
                             {% endif %}
                         </div>
+                        {% include 'includes/messages.template.html' with messages=messages %}
+                        <div class="buttons-toolbar row">
+                            <div class="col-sm-12 col-md-6">
+                                <h6 class="title">Details for {{ site.sampling_feature_code }}</h6>
+                                <hr class="dotted">
+                            </div>
 
-                        {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                            <div class="buttons-toolbar row">
-                                <div class="col-sm-12 text-right">
+                            {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                <div class="col-sm-12 col-md-6 text-right">
                                     <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                        class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                        id="code-visiblity-toggle">
@@ -60,26 +66,21 @@
                                        class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
                                         <i class="material-icons center-icon">mode_edit</i> Edit
                                     </a>
-                                    <a href="#" id="btn-delete-site"
-                                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                    <button type="button" data-toggle="modal" data-target="#site-delete-dialog"
+                                            style="background: #d9534f; color:#FFF;"
+                                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
                                         <i class="material-icons center-icon">delete_forever</i> Delete
-                                    </a>
+                                    </button>
                                 </div>
-                            </div>
-                        {% endif %}
-                        {% include 'includes/messages.template.html' with messages=messages %}
+                            {% endif %}
+                        </div>
                     </header>
 
                     <div class="row">
                         <div class="registration-data col-sm-12 col-md-6">
                             {# Deployment fields #}
-                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
-                                <tr>
-                                    <td class="mdl-data-table__cell--non-numeric" id="site-table-header" colspan="2">
-                                        Details for {{ site.sampling_feature_code }}
-                                    </td>
-                                </tr>
 
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-user-o" aria-hidden="true"></i> Deployment By
@@ -144,6 +145,8 @@
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Registration Token
+                                            <br>
+                                            <small class="text-muted"><i class="fa fa-eye" aria-hidden="true"></i> Only you can see this.</small>
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <span id="reg-token" data-copy-target="reg-token">{{ site.registration_token }}</span>
@@ -155,6 +158,8 @@
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Sampling Feature UUID
+                                            <br>
+                                            <small class="text-muted"><i class="fa fa-eye" aria-hidden="true"></i> Only you can see this.</small>
                                         </td>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <span id="samp-token" data-copy-target="samp-token">{{ site.sampling_feature.sampling_feature_uuid }}</span>
@@ -162,6 +167,15 @@
                                     </tr>
                                 {% endif %}
                             </table>
+
+                            {% if site.django_user_id == request.user.id and site.alerts.first.hours_threshold.total_seconds|divide:3600 > 0 %}
+                                <div class="text-muted">
+                                    <br><br>
+                                    <i class="fa fa-bell center-icon" aria-hidden="true"></i> You will be notified if this site stops receiving sensor data
+                                    after: <strong>{{ site.alerts.first.hours_threshold.total_seconds|divide:3600 }}
+                                        hour{% if site.alerts.first.hours_threshold.total_seconds|divide:3600 > 1 %}s{% endif %}.</strong>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <div class="detail-map-container col-sm-12 col-md-6">
@@ -191,8 +205,12 @@
 
                     <div class="row">
                         <div class="col-sm-12">
-                            <h5 class="section-title"><i class="material-icons text-muted center-icon">query_builder</i>
-                                Sensor Observations at this Site</h5>
+                            <h6 class="section-title">
+                                <img class="img-fluid img-branding pull-right"
+                                     src="{% static 'dataloaderinterface/images/envirodiy_logo.png' %}"
+                                     alt="Data Sharing Portal">
+                                Sensor Observations at this Site
+                            </h6>
                             <hr>
                         </div>
 
@@ -220,7 +238,6 @@
                                          data-variable-name="{{ sensor.variable_name }}"
                                          data-variable-code="{{ sensor.variable_code }}"
                                          data-influx-url="{{ sensor.influx_url }}">
-
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-6">
@@ -273,7 +290,7 @@
                                                         <span class="last-observation">{{ sensor.last_measurement_datetime|default:"-" }}</span>
                                                     </div>
                                                     <div class="col-6 text-right">
-                                                        <h3 style="margin: 0;">{{ sensor.last_measurement_value|roundfloat:4|default:" - " }}</h3>
+                                                        <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement_value|roundfloat:4|default:" - " }}</h3>
                                                         <h6 style="margin-top: 0;" class="unit">
                                                             ({{ sensor.unit_abbreviation }})</h6>
                                                     </div>
@@ -284,21 +301,26 @@
                                         <div class="full-width mdl-card__supporting-text">
                                             <table class="mdl-data-table mdl-js-data-table full-width no-hover">
                                                 <tr>
-                                                    <td>Medium:</td>
+                                                    <td><strong>Medium:</strong></td>
                                                     <td class="mdl-data-table__cell--non-numeric">{{ sensor.sampled_medium }}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Sensor:</td>
+                                                    <td><strong>Sensor:</strong></td>
                                                     <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
                                                 </tr>
                                                 {% if site.django_user_id == request.user.id or request.user.is_staff %}
-                                                <tr>
-                                                    <td>UUID:</td>
-                                                    <td class="mdl-data-table__cell--non-numeric">
+                                                    <tr>
+                                                        <td><strong>UUID:</strong></td>
+                                                        <td class="mdl-data-table__cell--non-numeric">
                                                         <span id="uuid-{{ sensor.result_id }}"
                                                               data-copy-target="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
-                                                    </td>
-                                                </tr>
+                                                            <br>
+                                                            <small class="text-muted"><i class="fa fa-eye"
+                                                                                         aria-hidden="true"></i> Only
+                                                                you can see this.
+                                                            </small>
+                                                        </td>
+                                                    </tr>
                                                 {% endif %}
                                             </table>
                                         </div>
@@ -307,10 +329,67 @@
                                 {% endfor %}
                                 {% if not site.sensors.all %}
                                     <div class="col-12">
-                                        <p>No sensors have been added to this site.</p>
+                                        <i class="material-icons no-data-icon center-icon">
+                                            cloud_off
+                                        </i>
+                                        <span class="text-muted">No sensors have been added to this site.</span>
                                     </div>
                                 {% endif %}
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="section-title">
+                                <img class="img-fluid img-branding pull-right"
+                                 src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo-horiz-black.png' %}"
+                                 alt="Leaf Pack Network logo">
+                                Macroinvertebrate Data at this Site
+                            </h5>
+                        </div>
+
+                        <div class="col-12"><hr></div>
+
+                        <div class="col-12" style="overflow: auto;">
+
+                        {% if leafpacks %}
+                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
+                                <thead>
+                                    <tr>
+{#                                        <th class="mdl-data-table__cell--non-numeric">Experiment ID</th>#}
+{#                                        <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
+                                        <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Content</th>
+                                        <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
+                                        <th class="mdl-data-table__cell--non-numeric"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for leafpack in leafpacks %}
+                                        <tr>
+                                            {# TODO: Populate field experiment_type #}
+{#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>#}
+{#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">
+                                                <a class="mdl-button mdl-js-button button-link mdl-button--primary"
+                                                   href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.id %}">
+                                                    View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <i class="material-icons no-data-icon center-icon">
+                                cloud_off
+                            </i>
+                            <span class="text-muted">No Macroinvertebrate Data have been added to this site.</span>
+                        {% endif %}
                         </div>
                     </div>
                 </section>
@@ -318,56 +397,66 @@
         </div>
     </div>
 
-    <dialog class="mdl-dialog" id="data-table-dialog">
-        <h4 class="mdl-dialog__title"></h4>
+    <div class="modal fade" id="data-table-dialog" role="contentinfo" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
+                <h4 class="mdl-dialog__title">Data Table</h4>
 
-        <div class="mdl-dialog__content">
-            <div class="measurements-table">
-                {% for sensor in site.sensors.all %}
-                    <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
-                           width="100%" data-result-id="{{ sensor.result_id }}">
-                        <thead>
-                            <tr>
-                                <th class="mdl-data-table__cell--non-numeric">
-                                    Timestamp
-                                </th>
-                                <th class="mdl-data-table__cell--non-numeric">
-                                    UTC Offset
-                                </th>
-                                <th>
-                                    Value
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                {% endfor %}
+                <div class="mdl-dialog__content">
+                    <div class="measurements-table">
+                        {% for sensor in site.sensors.all %}
+                            <table class="mdl-data-table mdl-shadow--2dp data-values" cellspacing="0"
+                                   width="100%" data-result-id="{{ sensor.result_id }}">
+                                <thead>
+                                <tr>
+                                    <th class="mdl-data-table__cell--non-numeric">
+                                        Timestamp
+                                    </th>
+                                    <th class="mdl-data-table__cell--non-numeric">
+                                        UTC Offset
+                                    </th>
+                                    <th>
+                                        Value
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="mdl-dialog__actions text-right">
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
-        <div class="mdl-dialog__actions">
-            <button type="button" class="mdl-button dialog-close">Close</button>
-        </div>
-    </dialog>
+    </div>
 
-     <dialog class="mdl-dialog" id="site-delete-dialog">
-        <h4 class="mdl-dialog__title">Delete Site</h4>
-        <div class="mdl-dialog__content">
-            <div>
-                <p>
-                    <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
-                    <strong>Are you really really really sure you want to do this?</strong>
-                </p>
+    <div class="modal fade" id="site-delete-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
+                <h4 class="mdl-dialog__title">Delete Site?</h4>
+
+                <div class="mdl-dialog__content">
+                    <p>
+                        <strong>WARNING:</strong> All data associated with this site will be deleted.<br><br>
+                        <strong>Are you really really really sure you want to do this?</strong>
+                    </p>
+                </div>
+                <div class="mdl-dialog__actions text-right">
+                    <form method="POST"
+                          action="{% autoescape off %}{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}{% endautoescape %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mdl-button mdl-button--raised"
+                                style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
+                        </button>
+                    </form>
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                </div>
             </div>
         </div>
-        <div class="mdl-dialog__actions">
-            <form method="POST" action="{% autoescape off %}{% url 'site_delete' site.sampling_feature_code %}{% endautoescape %}">
-                {% csrf_token %}
-                <input type="submit" class="mdl-button confirm-delete" value="Delete Site">
-            </form>
+    </div>
 
-            <button type="button" class="mdl-button dialog-close">Close</button>
-        </div>
-    </dialog>
     {% if site.django_user_id == request.user.id or request.user.is_staff %}
     <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">
         <div class="vertical-alignment-helper">

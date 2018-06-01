@@ -18,8 +18,9 @@ from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeries
     SpatialReference, \
     ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
     InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
+from leafpack.models import LeafPack, LeafPackBug, Macroinvertebrate
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -45,6 +46,7 @@ from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
 from hydroshare_util.coverage import PointCoverage, BoxCoverage, PeriodCoverage, Coverage
+from accounts.models import User
 
 
 class LoginRequiredMixin(object):
@@ -122,6 +124,8 @@ class SiteDetailView(DetailView):
         context = super(SiteDetailView, self).get_context_data(**kwargs)
         context['is_followed'] = self.object.followed_by.filter(id=self.request.user.id).exists()
         context['tsa_url'] = settings.TSA_URL
+
+        context['leafpacks'] = LeafPack.objects.filter(site_registration=context['site'].pk)
 
         try:
             context["hydroshare_account"] = self.request.user.hydroshare_account
@@ -538,6 +542,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             if site_alert \
             else {}
 
+        # maybe just access site.leafpacks in the template?
+        context['leafpacks'] = LeafPack.objects.filter(site_registration=self.get_object())
         context['sensor_form'] = SiteSensorForm(initial={'registration': self.get_object().registration_id})
         context['email_alert_form'] = SiteAlertForm(data=alert_data)
         context['zoom_level'] = data['zoom-level'] if 'zoom-level' in data else None

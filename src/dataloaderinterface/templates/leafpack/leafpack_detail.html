@@ -1,0 +1,335 @@
+{% extends 'dataloaderinterface/base.html' %}
+{% load staticfiles %}
+{% load site %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div class="ribbon ribbon-lightblue"></div>
+
+    <div class="ribbon-container">
+        <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title">
+                        Leaf Experiment Details at
+                        <a href="{% url 'site_detail' sampling_feature_code %}"
+                           style="color: inherit;">
+                            {{ leafpack.site_registration.sampling_feature_name }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons-toolbar row">
+                <div class="col-6">
+                    <h5 class="headline">Leaf Pack Details</h5>
+                </div>
+                <div class="col-6 text-right">
+                    <a href="{% url 'leafpack:csv_download' sampling_feature_code leafpack.id %}"
+                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                        <i class="material-icons center-icon">cloud_download</i> Download CSV
+                    </a>
+
+                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
+                       id="btn-edit-leaf-exp"
+                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                        <i class="material-icons center-icon">mode_edit</i> Edit
+                    </a>
+
+                    <button id="btn-del-leaf-exp" type="button"
+                            data-toggle="modal" data-target="#experiment-delete-dialog"
+                            class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
+                        <i class="material-icons center-icon">delete_forever</i> Delete
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    {# <code>{{ leafpack.uuid }}</code> #}
+                    <h6 class="title">Placement Information</h6>
+                    <hr class="dotted">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-plus-o icon-blue" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Placement Date</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-leaf icon-green" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Number of Packs Placed</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_placement_count }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-three-quarters icon-light-blue" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                Placement Air Temperature
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_air_temp }}
+                                <small class="text-muted">Degrees Celcius</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-quarter icon-light-blue" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                Placement Water Temperature
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_water_temp }}
+                                <small class="text-muted">Degrees Celcius</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-cube" style="color: cadetblue;" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Deployment Type</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i style="color: rosybrown;" class="fa fa-archive" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Content</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <h6 class="title">Leaf Pack Type and Composition</h6>
+                    <hr class="dotted">
+                    <p class="text-muted">Predominant Leaf Species:</p>
+                    {% for lp in leafpack.types.all %}
+                        <h5 class="d-inline"><span class="badge badge-info">{{ lp }}</span></h5>
+                    {% endfor %}
+                    <br><br>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <h6 class="title">Retrieval Information</h6>
+                    <hr class="dotted">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-minus-o icon-blue" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Retrieval Date</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-leaf icon-orange" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Number of Packs Retrieved</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_retrieval_count }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-three-quarters icon-light-blue" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Retrieval Air Temperature</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_air_temp }}
+                                <small class="text-muted">Degrees Celcius</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-quarter icon-light-blue" aria-hidden="true"></i></td>
+                            <td class="mdl-data-table__cell--non-numeric">Retrieval Water Temperature</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_water_temp }}
+                                <small class="text-muted">Degrees Celcius</small>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <h6 class="title">Storm and Non-Storm Events</h6>
+                    <hr class="dotted">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Did storms occur while your leaf packs were in
+                                the stream?
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {% if leafpack.had_storm is None %}
+                                    Unknown
+                                {% elif leafpack.had_storm %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% if leafpack.had_storm %}
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric indent-left">Number of storms that
+                                    occurred
+                                </td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_count }}</td>
+                            </tr>
+                            <tr>
+                                <td class="mdl-data-table__cell--non-numeric indent-left">Total precipitation depth that
+                                    occurred
+                                </td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }} <small class="text-muted">cm</small></td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Did flooding occur?</td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {% if leafpack.had_flood is None %}
+                                    Unknown
+                                {% elif leafpack.had_flood %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Was this site experiencing a drought during
+                                your experiment?
+                            </td>
+                            <td class="mdl-data-table__cell--non-numeric">
+                                {% if leafpack.had_drought is None %}
+                                    Unknown
+                                {% elif leafpack.had_drought %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="headline">Macroinvertebrate Counts</h5>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric mdl-data-table__header">Taxon</th>
+                            <th class="mdl-data-table__header">Tally</th>
+                        </tr>
+                        {% for bug_data in leafpack_bugs %}
+                            {% if forloop.counter0 <= 8 %}
+                            <tr class="taxon">
+                                <td class="mdl-data-table__cell--non-numeric" data-name>
+                                    {{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
+                                </td>
+                                <td data-count>{{ bug_data.0.bug_count }}</td>
+                            </tr>
+
+                            {% for child_bug in bug_data.1 %}
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric indent-left">{{ child_bug.bug.common_name|capfirst }} ({{ child_bug.bug.scientific_name }})
+                                    </td>
+                                    <td>{{ child_bug.bug_count }}</td>
+                                </tr>
+                            {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <table id="table-macro-extra" class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width">
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric mdl-data-table__header">Taxon</th>
+                            <th class="mdl-data-table__header">Tally</th>
+                        </tr>
+                        {% for bug_data in leafpack_bugs %}
+                            {% if forloop.counter0 > 8 %}
+                                <tr class="taxon">
+                                    <td class="mdl-data-table__cell--non-numeric" data-name>
+                                        {{ bug_data.0.bug.common_name|capfirst }} ({{ bug_data.0.bug.scientific_name }})
+                                    </td>
+                                    <td data-count>{{ bug_data.0.bug_count }}</td>
+                                </tr>
+
+                                {% for child_bug in bug_data.1 %}
+                                    <tr>
+                                        <td class="mdl-data-table__cell--non-numeric indent-left">{{ child_bug.bug.common_name|capfirst }}
+                                            ({{ child_bug.bug.scientific_name }})
+                                        </td>
+                                        <td>{{ child_bug.bug_count }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                    <br>
+                    {% include 'includes/macroinv-link.template.html' %}
+                </div>
+
+                <div class="col-12">
+                    <br><br>
+                    <h5 class="headline">Water Quality Index Values</h5>
+                </div>
+
+                <div class="col-sm-12 col-lg-7">
+                    <div class="svg-container mdl-shadow--2dp"></div>
+                    <br><br>
+                </div>
+
+                <div class="col-sm-12 col-lg-5">
+                    <div id="legend-container">
+                        <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover no-borders"></table>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <br><br>
+                    <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Total Number of Individuals Found</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.taxon_count }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Biotic Index</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.biotic_index|floatformat:2 }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Water Quality Category</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.water_quality }}</td>
+                        </tr>
+                        <tr>
+                            <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
+                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT|floatformat:2 }}%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="experiment-delete-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
+                <h4 class="mdl-dialog__title">Delete Leaf Experiment?</h4>
+
+                <div class="mdl-dialog__content">
+                    <p>
+                        <strong>WARNING:</strong> All data associated with this experiment will be deleted.<br><br>
+                        <strong>Are you really really really sure you want to do this?</strong>
+                    </p>
+                </div>
+                <div class="mdl-dialog__actions text-right">
+                    <form method="POST"
+                          action="{% autoescape off %}{% url 'leafpack:delete' sampling_feature_code leafpack.id %}{% endautoescape %}">
+                        {% csrf_token %}
+                        <button type="submit" class="mdl-button mdl-button--raised"
+                                style="background: #d9534f; color:#FFF;" id="btn-confirm-delete">Delete
+                        </button>
+                    </form>
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link href="{% static 'dataloaderinterface/css/barchart.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <script src="{% static 'dataloaderinterface/js/barchart.js' %}"></script>
+{% endblock %}

@@ -12,52 +12,14 @@ function initMap() {
         center: sitePosition,
         gestureHandling: 'greedy',
         zoom: defaultZoomLevel,
-        mapTypeId: google.maps.MapTypeId.HYBRID,
+        mapTypeId: google.maps.MapTypeId.HYBRID
     });
+
+    map.setOptions({minZoom: 3, maxZoom: 18});
 
     var marker = new google.maps.Marker({
         position: sitePosition,
         map: map
-    });
-}
-
-// Makes all site cards have the same height.
-function fixViewPort() {
-    var cards = $('.plot_box');
-
-    var maxHeight = 0;
-    for (var i = 0; i < cards.length; i++) {
-        maxHeight = Math.max($(cards[i]).height(), maxHeight);
-    }
-
-    // set to new max height
-    for (var i = 0; i < cards.length; i++) {
-        $(cards[i]).height(maxHeight);
-    }
-}
-
-function bindDeleteDialogEvents() {
-    var deleteDialog = document.querySelector('#site-delete-dialog');
-    var deleteButton = document.querySelector('#btn-delete-site');
-
-    if (!deleteButton) {
-        return;
-    }
-
-    if (!deleteDialog.showModal) {
-        dialogPolyfill.registerDialog(deleteDialog);
-    }
-
-    deleteButton.addEventListener('click', function () {
-        deleteDialog.showModal();
-    });
-
-    deleteDialog.querySelector('.dialog-close').addEventListener('click', function () {
-        deleteDialog.close();
-    });
-
-    deleteDialog.querySelector('.confirm-delete').addEventListener('click', function () {
-        deleteDialog.close();
     });
 }
 
@@ -81,7 +43,6 @@ function drawSparklineOnResize(seriesInfo, seriesData) {
 function drawSparklinePlot(seriesInfo, seriesData) {
     var card = $('div.plot_box[data-result-id="' + seriesInfo['resultId'] + '"]');
     var plotBox = card.find(".graph-container");
-    // var $lastObservation = card.find(".last-observation");
 
     plotBox.empty();
 
@@ -107,13 +68,9 @@ function drawSparklinePlot(seriesInfo, seriesData) {
         return;
     }
 
-    // $('.plot_box[data-result-id=' + seriesInfo['resultId'] + ' ]').find('.latest-value').text(seriesData[seriesData.length - 1].Value);
-
     var lastRead = Math.max.apply(Math, seriesData.map(function(value){
         return new Date(value.DateTime);
     }));
-
-    // $lastObservation.text(formatDate(lastRead)); //
 
     var dataTimeOffset = Math.min.apply(Math, seriesData.map(function(value){
         return new Date(value.DateTime);
@@ -232,11 +189,7 @@ function getTimeSeriesData(sensorInfo) {
 }
 
 $(document).ready(function () {
-    var dialog = document.querySelector('#data-table-dialog');
-    if (!dialog.showModal) {
-        dialogPolyfill.registerDialog(dialog);
-    }
-
+    var dialog = $('#data-table-dialog');
     $("#chkFollow").on("change", function () {
         var statusContainer = $(".follow-status");
         var followForm = $("#follow-site-form");
@@ -273,45 +226,17 @@ $(document).ready(function () {
 
         tables.filter('[data-result-id="' + id + '"]').show();
         var title = box.data('variable-name') + ' (' + box.data('variable-code') + ')';
-        $(dialog).find('.mdl-dialog__title').text(title);
-        $(dialog).find('.mdl-dialog__title').attr("title", title);
+        dialog.find('.mdl-dialog__title').text(title);
+        dialog.find('.mdl-dialog__title').attr("title", title);
 
-        dialog.showModal();
-    });
-
-    dialog.querySelector('.dialog-close').addEventListener('click', function () {
-        dialog.close();
+        dialog.modal('show');
     });
 
     $('nav .menu-sites-list').addClass('active');
-
 
     var sensors = document.querySelectorAll('.device-data .plot_box');
     for (var index = 0; index < sensors.length; index++) {
         var sensorInfo = sensors[index].dataset;
         getTimeSeriesData(sensorInfo);
     }
-
-    bindDeleteDialogEvents();
-
-    // Executes when page loads
-    // fixViewPort();
-
-    // Executes each time window size changes
-    $(window).resize(
-        ResponsiveBootstrapToolkit.changed(function () {
-            $('.plot_box').height("initial");   // Reset height
-            // fixViewPort();
-        }));
 });
-
-function formatDate(date) {
-    date = new Date(date);
-
-    var options = {
-        year: "numeric", month: "short",
-        day: "numeric", hour: "2-digit", minute: "2-digit"
-    };
-
-    return date.toLocaleTimeString("en-us", options);
-}

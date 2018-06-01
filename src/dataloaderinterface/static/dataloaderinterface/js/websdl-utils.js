@@ -6,6 +6,10 @@ $(document).on('click', ".mdl-chip__action.action_cancel", function () {
     $(this).closest(".message-container").remove();
 });
 
+$(document).on('change', "#switch-zoom", function () {
+    localStorage.setItem("AutoZoom", JSON.stringify($(this).prop("checked")));
+});
+
 $(document).on('click', ".menu-order li", function () {
     var target = $(this).parent()[0].dataset.sortTarget;
 
@@ -92,4 +96,10 @@ $(document).ready(function () {
         $("#txtRelease").attr("href", URL);
         $("#txtRelease").text(tagName);
     });
+
+    // Set auto zoom status
+    if (localStorage.getItem("AutoZoom") != null) {
+        var autoZoomStatus = JSON.parse(localStorage.getItem("AutoZoom"));
+        $("#switch-zoom").prop("checked", autoZoomStatus)
+    }
 });

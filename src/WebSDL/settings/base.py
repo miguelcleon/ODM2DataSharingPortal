@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'dataloader.apps.DataloaderConfig',
     'dataloaderservices.apps.DataloaderservicesConfig',
     'dataloaderinterface.apps.DataloaderinterfaceConfig',
+    'leafpack',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'requests',
+    'reset_migrations'
 ]
 
 MIDDLEWARE = [
@@ -201,5 +203,6 @@ CRONTAB_LOGFILE_PATH = data.get('crontab_log_file', '/var/log/odm2websdl-cron.lo
 
 CRONTAB_EXECUTE_DAILY_AT_HOUR = 5
 
+GOOGLE_API_CONF = data.get('google_api_conf', None)
 
 AUTH_USER_MODEL = 'accounts.User'

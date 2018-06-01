@@ -3,7 +3,7 @@
 {% load helpers %}
 
 {% block content %}
-     <div class="ribbon ribbon-dark"></div>
+    <div class="ribbon ribbon-dark"></div>
 
     <div class="ribbon-container">
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
@@ -91,7 +91,7 @@
                                                 <tr>
                                                     <td><i class="material-icons site-card-icon">settings_remote</i></td>
                                                     <td>
-                                                        <span style="color:#66cccc;"> Sampling Feature</span>
+                                                        <span> Sampling Feature</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -106,7 +106,7 @@
                                                 <tr>
                                                     <td><i class="material-icons site-card-icon">today</i></td>
                                                     <td>
-                                                        <span style="color:#66cccc;"> Registration Date</span>
+                                                        <span> Registration Date</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -122,12 +122,12 @@
                                                     <tr>
                                                         <td><i class="material-icons site-card-icon">query_builder</i></td>
                                                         <td>
-                                                            <span style="color:#66cccc;"> Latest Measurement</span>
+                                                            <span> Latest Measurement</span>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2">{{ site.latest_measurement }}
-                                                            ({{ site.latest_measurement|utc_timesince }} ago)
+                                                            (<span {% if site.latest_measurement_utc|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -212,7 +212,7 @@
                                                 <tr>
                                                     <td><i class="material-icons site-card-icon">settings_remote</i></td>
                                                     <td>
-                                                        <span style="color:#66cccc;"> Sampling Feature</span>
+                                                        <span> Sampling Feature</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -227,7 +227,7 @@
                                                 <tr>
                                                     <td><i class="material-icons site-card-icon">today</i></td>
                                                     <td>
-                                                        <span style="color:#66cccc;"> Registration Date</span>
+                                                        <span> Registration Date</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -243,13 +243,13 @@
                                                 <tr>
                                                     <td><i class="material-icons site-card-icon">query_builder</i></td>
                                                     <td>
-                                                        <span style="color:#66cccc;"> Latest Measurement</span>
+                                                        <span> Latest Measurement</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td></td>
                                                     <td>{{ site.latest_measurement }}
-                                                        <br>({{ site.latest_measurement|utc_timesince }} ago)
+                                                        <br>(<span {% if site.latest_measurement_utc|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -291,7 +291,8 @@
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
                         "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
-                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
+                        "status":"owned"
                      }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
                 {% endfor %}
                 {% for site in followed_sites %}
@@ -303,7 +304,8 @@
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
                         "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
-                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                        "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
+                        "status":"followed"
                      }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]

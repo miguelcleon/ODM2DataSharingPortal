@@ -14,6 +14,7 @@ from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesRe
     Unit, Medium
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 from dataloaderinterface.querysets import SiteRegistrationQuerySet, SensorOutputQuerySet
 
@@ -69,6 +70,9 @@ class SiteRegistration(models.Model):
     @property
     def odm2_affiliation(self):
         return Affiliation.objects.filter(pk=self.affiliation_id).first()
+
+    def __str__(self):
+        return '%s' % self.sampling_feature_code
 
     def __repr__(self):
         return "<SiteRegistration('%s', '%s', '%s', '%s')>" % (

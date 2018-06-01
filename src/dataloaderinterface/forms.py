@@ -333,9 +333,9 @@ ResultFormSet = formset_factory(ResultForm, extra=0, can_order=False, min_num=1,
 
 
 class SiteAlertForm(forms.ModelForm):
-    notify = forms.BooleanField(required=False, initial=False, label='Notify me if site stops receiving sensor data')
+    notify = forms.BooleanField(required=False, initial=False, label='Notify me if site stops receiving sensor data.')
     hours_threshold = forms.DurationField(required=False, label='Notify after', widget=NumberInput(attrs={'min': 1}))
-    suffix = ' hours of site inactivity'
+    suffix = ' hours of site inactivity.'
 
     class Meta:
         model = SiteAlert

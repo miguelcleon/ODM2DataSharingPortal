@@ -5,6 +5,7 @@ from dataloader.models import *
 
 # Register your models here.
 from dataloaderinterface.models import SiteRegistration, SiteSensor, HydroShareResource, HydroShareAccount, SensorOutput
+from leafpack.models import LeafPack, LeafPackType, Macroinvertebrate
 
 
 def update_sensor_data(obj, form, sensor_fields):
@@ -85,3 +86,23 @@ class HydroShareAccountAdmin(admin.ModelAdmin):
 @admin.register(HydroShareResource)
 class HydroShareResourceAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(LeafPack)
+class LeafPackAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(LeafPackType)
+class LeafPackTypeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Macroinvertebrate)
+class MacroinvertebrateAdmin(admin.ModelAdmin):
+
+    list_display = ('scientific_name', 'pollution_tolerance', 'common_name')
+
+    def get_queryset(self, request):
+        queryset = super(MacroinvertebrateAdmin, self).get_queryset(request)
+        return queryset.order_by('pollution_tolerance')

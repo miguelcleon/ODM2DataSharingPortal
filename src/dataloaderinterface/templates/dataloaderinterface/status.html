@@ -1,4 +1,5 @@
 {% load site staticfiles %}
+{% load helpers %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -89,10 +90,8 @@
                 <td>
                     {% if site.latest_measurement %}
                     {{ site.latest_measurement }}
-                    ({{ site.latest_measurement|timesince }} ago)
-                    {% else %}-
-                    {% endif %}
-                </td>
+                    (<span {% if site.latest_measurement|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement|timesince }} ago</span>)
+                {% endif %}</td>
                 <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
                 <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
             </tr>
@@ -121,8 +120,7 @@
                 <td>{{ site.sampling_feature_name }}</td>
                 <td>{% if not site.latest_measurement %}
                     -{% else %}
-                    {{ site.latest_measurement }}
-                    ({{ site.latest_measurement|timesince }} ago)
+                    {{ site.latest_measurement }} (<span {% if site.latest_measurement|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement|timesince }} ago</span>)
                 {% endif %}</td>
                 <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
                 <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
@@ -136,26 +134,5 @@
     {% endif %}
     </tbody>
 </table>
-{##}
-{#{% for site in sites %}#}
-{#    <h4>{{ site.sampling_feature_code }}</h4>#}
-{#    <table>#}
-{#    <thead>#}
-{#        <tr>#}
-{#        {% for sensor in site.sensors.all %}#}
-{#            <th>{{ sensor.variable_code }}</th>#}
-{#        {% endfor %}#}
-{#        </tr>#}
-{#    </thead>#}
-{#    <tbody>#}
-{#        <tr>#}
-{#        {% for sensor in site.sensors.all %}#}
-{#            <td>{% if sensor.last_measurement %}{{ sensor.last_measurement.data_value }}{% endif %}</td>#}
-{#        {% endfor %}#}
-{#        </tr>#}
-{#    </tbody>#}
-{#    </table>#}
-{#    <br><br>#}
-{#{% endfor %}#}
 </body>
 </html>
