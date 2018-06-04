@@ -206,7 +206,11 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
 
         for taxon in queryset:
             if leafpack is not None:
-                lpg = LeafPackBug.objects.get(bug=taxon.id, leaf_pack=leafpack.id)
+                try:
+                    lpg = LeafPackBug.objects.get(bug=taxon.id, leaf_pack=leafpack.id)
+                except ObjectDoesNotExist:
+                    lpg = LeafPackBug(bug=taxon, leaf_pack=leafpack)
+                    lpg.save()
             else:
                 lpg = LeafPackBug(bug=taxon)
 
@@ -215,8 +219,20 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
             families = taxon.families.all().order_by('common_name')
             family_bug_forms = list()
             if len(families) > 0:
+
                 if leafpack is not None:
-                    child_taxons = [LeafPackBug.objects.get(bug=bug, leaf_pack=leafpack) for bug in families]
+
+                    child_taxons = []
+                    for child_bug in families:
+
+                        try:
+                            child_lpg = LeafPackBug.objects.get(bug=child_bug, leaf_pack=leafpack)
+                        except ObjectDoesNotExist:
+                            child_lpg = LeafPackBug(bug=child_bug, leaf_pack=leafpack)
+                            child_lpg.save()
+
+                        child_taxons.append(child_lpg)
+
                     family_bug_forms = [LeafPackBugForm(instance=taxon) for taxon in child_taxons]
                 else:
                     family_bug_forms = [LeafPackBugForm(instance=LeafPackBug(bug=bug)) for bug in families]

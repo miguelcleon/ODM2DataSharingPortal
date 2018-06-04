@@ -5,6 +5,7 @@ import json
 import requests
 import re
 import logging
+from oauthlib.oauth2.rfc6749.errors import TokenExpiredError
 
 from django.conf import settings
 from django.db.models.aggregates import Max
@@ -224,13 +225,17 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
 
         # Cycle through resources to make sure they still exist on hydroshare.org
         resources = HydroShareResource.objects.filter(site_registration=site.pk, visible=False)
+
         for resource in resources:
+
             hs_resource = self.get_hs_resource(resource)
             try:
-                # Basically, just make request to see if the resource still exists. This request can be anything
+                # Basically, just make request to see if the resource still exists. This request can be anything.
                 hs_resource.get_access_level()
             except HydroShareNotFound:
                 resource.delete()
+            except TokenExpiredError:
+                pass
 
         context['site'] = site
         form = HydroShareSettingsForm(initial={'site_registration': site.pk,
@@ -532,10 +537,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         data = self.request.POST or {}
         context = super(SiteUpdateView, self).get_context_data()
 
-        sampling_feature_code = self.get_object().sampling_feature_code
-
         site_alert = self.request.user.site_alerts\
-            .filter(site_registration__sampling_feature_code=sampling_feature_code)\
+            .filter(site_registration__sampling_feature_code=self.object.sampling_feature_code)\
             .first()
 
         alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} \
@@ -543,8 +546,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             else {}
 
         # maybe just access site.leafpacks in the template?
-        context['leafpacks'] = LeafPack.objects.filter(site_registration=self.get_object())
-        context['sensor_form'] = SiteSensorForm(initial={'registration': self.get_object().registration_id})
+        context['leafpacks'] = LeafPack.objects.filter(site_registration=self.object)
+        context['sensor_form'] = SiteSensorForm(initial={'registration': self.object.registration_id})
         context['email_alert_form'] = SiteAlertForm(data=alert_data)
         context['zoom_level'] = data['zoom-level'] if 'zoom-level' in data else None
 
@@ -629,6 +632,9 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
 class OAuthAuthorize(TemplateView):
     """handles the OAuth 2.0 authorization workflow with hydroshare.org"""
     def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return HttpResponseServerError('You are not logged in!')
+
         if 'code' in request.GET:
             try:
                 token_dict = AuthUtil.authorize_client_callback(request)  # type: dict

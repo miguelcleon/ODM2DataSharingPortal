@@ -3,7 +3,7 @@ import requests
 from hs_restclient import HydroShare, DEFAULT_HOSTNAME, HydroShareNotAuthorized, HydroShareNotFound, \
     HydroShareHTTPException, default_progress_callback
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
-
+from oauthlib.oauth2.rfc6749.errors import TokenExpiredError
 
 class HydroShareAdapter(HydroShare):
     def __init__(self, hostname=DEFAULT_HOSTNAME, port=None, use_https=True, verify=True,
@@ -35,6 +35,7 @@ class HydroShareAdapter(HydroShare):
             self._initializeSession()
             request = self.session.request(method, url, params=params, data=data, files=files, headers=headers,
                                            stream=stream, verify=self.verify, timeout=timeout)
+
         return request
 
     def getSystemMetadata(self, pid, **kwargs):

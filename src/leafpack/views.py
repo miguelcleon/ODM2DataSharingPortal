@@ -138,6 +138,7 @@ class LeafPackDetailView(DetailView):
 
     def get(self, request, *args, **kwargs):
         # call_command('update_taxon')
+        # call_command('set_leafpackdb_defaults')
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
@@ -269,7 +270,7 @@ def download_leafpack_csv(request, sampling_feature_code, pk):
     writer = LeafPackCSVWriter(leafpack, site)
     writer.write()
 
-    # filename format: {Sampling Feature Code}_{Placement date}_{leafpack ID padded with zeros}.csv
+    # Filename format: {Sampling Feature Code}_{Placement date}_{leafpack ID padded with zeros}.csv
     filename = '{}_{}_{:03d}.csv'.format(sampling_feature_code, leafpack.placement_date, int(pk))
 
     response = HttpResponse(writer.read(), content_type='application/csv')
