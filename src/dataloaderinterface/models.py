@@ -64,6 +64,11 @@ class SiteRegistration(models.Model):
     objects = SiteRegistrationQuerySet.as_manager()
 
     @property
+    def latest_measurement(self):
+        last_updated_sensor = self.sensors.order_by('-last_measurement__value_datetime').first()
+        return last_updated_sensor and last_updated_sensor.last_measurement
+
+    @property
     def sampling_feature(self):
         return SamplingFeature.objects.filter(pk=self.sampling_feature_id).first()
 
@@ -85,11 +90,14 @@ class SensorMeasurement(models.Model):
     value_datetime = models.DateTimeField()
     value_datetime_utc_offset = models.DurationField()
     data_value = models.FloatField()
-    # measurement_local_datetime = models.DateTimeField(db_column='MeasurementUtcDatetime')
 
     @property
-    def measurement_local_datetime(self):
-        return
+    def value_local_datetime(self):
+        return self.value_datetime + self.value_datetime_utc_offset
+
+    @property
+    def utc_offset_hours(self):
+        return int(self.value_datetime_utc_offset.total_seconds() / 3600)
 
     def __str__(self):
         return '%s: %s' % (self.value_datetime, self.data_value)

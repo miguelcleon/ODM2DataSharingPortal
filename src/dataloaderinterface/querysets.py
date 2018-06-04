@@ -33,9 +33,6 @@ class SiteRegistrationQuerySet(models.QuerySet):
     def followed_by(self, user_id):
         return self.filter(followed_by__id=user_id)
 
-    def with_latest_measurement(self):
-        return self.annotate(latest_measurement=Max('sensors__last_measurement__value_datetime'))
-
 
 class SiteSensorQuerySet(models.QuerySet):
     pass
