@@ -153,12 +153,12 @@ function bindResultEvents(form) {
     $.ajax({
         url: $('#output-variables-api').val(),
         data: {csrfmiddlewaretoken: $('form').find('[name="csrfmiddlewaretoken"]').val()}
-    }).fail(function(xhr, error) {
+    }).fail(function (xhr, error) {
         console.log(error);
-    }).done(function(data) {
+    }).done(function (data) {
         output_variables = data;
-    }).always(function(response, status, xhr) {
-        console.log(status + ": " + xhr.responseText);
+    }).always(function (response, status, xhr) {
+        // console.log(status + ": " + xhr.responseText);
     });
 
     for (var index = 0; index < filters.length; index++) {
@@ -217,10 +217,11 @@ function initializeResultsForm() {
 
     $('div#result-dialog button#add-sensor-button').on('click', function() {
         var new_sensor_api = $('#sensor-registration-api').val();
+        $("#add-sensor-button").prop("disabled", true).text("ADDING NEW SENSOR...");
 
         make_sensor_api_request(new_sensor_api).done(function(data, message, xhr) {
             var form = $('div#result-dialog div.result-form');
-
+            var message = "";
             if (xhr.status === 201) {
                 // valid
                 var newRow = $($('#sensor-row').html());
@@ -230,10 +231,10 @@ function initializeResultsForm() {
 
                 updateRowData(newRow);
                 $('div.results-table table').append(newRow);
-                defaultSensorsMessage();
-
-                $('#result-dialog').modal('toggle');
-            } else if (xhr.status === 206) {
+                message = "The new sensor has been added!";
+                $('#result-dialog').modal('hide');
+            }
+            else if (xhr.status === 206) {
                 // not valid
                 for (var fieldName in data) {
                     var element = form.find('[name*="' + fieldName + '"]');
@@ -252,30 +253,34 @@ function initializeResultsForm() {
                         }
                     });
                 }
+
+                message = "Failed to add sensor.";
             }
+
+            $("#add-sensor-button").prop("disabled", false).text("ADD NEW SENSOR");
+            snackbarMsg(message);
         });
     });
 
-    $('div#result-dialog button#edit-sensor-button').on('click', function() {
+    $('div#result-dialog button#edit-sensor-button').on('click', function () {
         var edit_sensor_api = $('#sensor-edit-api').val();
+        $("#edit-sensor-button").prop("disabled", true).text("UPDATING SENSOR...");
 
         make_sensor_api_request(edit_sensor_api).done(function(data, message, xhr) {
             var form = $('div#result-dialog div.result-form');
-
+            var message = "";
             if (xhr.status === 202) {
                 // valid
                 var row = $('div#result-dialog').data('row');
                 form.find('[name="id"]').val(data['id']);
                 form.find('[name="result_id"]').val(data['result_id']);
                 form.find('[name="result_uuid"]').val(data['result_uuid']);
-
                 updateRowData(row);
-
                 defaultSensorsMessage();
-
-                $('#result-dialog').modal('toggle');
-
-            } else if (xhr.status === 206) {
+                $('#result-dialog').modal('hide');
+                message = "Sensor updated successfully!"
+            }
+            else if (xhr.status === 206) {
                 // not valid
                 for (var fieldName in data) {
                     var element = form.find('[name*="' + fieldName + '"]');
@@ -294,7 +299,11 @@ function initializeResultsForm() {
                         }
                     });
                 }
+                message = "Failed to update sensor."
             }
+
+            $("#edit-sensor-button").prop("disabled", false).text("UPDATE SENSOR");
+            snackbarMsg(message);
         });
     });
 
@@ -394,11 +403,10 @@ $(document).ready(function() {
 
     initializeResultsForm();
 
-    $('#btn-confirm-delete').on('click', function(event) {
+    $('#btn-confirm-delete').on('click', function() {
         var dialog = $('#confirm-delete');
         var row = dialog.data('to-delete');
         $("#btn-confirm-delete").prop("disabled", true).text("DELETING...");
-        var snackbarContainer = document.querySelector('#clipboard-snackbar');
 
         $.ajax({
             url: $('#sensor-delete-api').val(),
@@ -411,17 +419,11 @@ $(document).ready(function() {
             if (xhr.status === 202) {
                 // Valid
                 row.remove();
-                snackbarContainer.MaterialSnackbar.showSnackbar({
-                    message: 'Sensor deleted!',
-                    timeout: 3000
-                });
+                snackbarMsg('Sensor deleted!');
 
             } else if (xhr.status === 206) {
                 // Invalid
-                snackbarContainer.MaterialSnackbar.showSnackbar({
-                    message: 'Sensor could not be deleted!',
-                    timeout: 3000
-                });
+                snackbarMsg('Sensor could not be deleted!');
             }
         }).fail(function (xhr, error) {
             console.log(error);
