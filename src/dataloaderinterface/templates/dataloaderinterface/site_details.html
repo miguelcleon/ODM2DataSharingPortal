@@ -9,6 +9,14 @@
     <link rel="stylesheet" href="{% static 'dataloaderinterface/css/hydroshare-styles.css' %}">
 {% endblock %}
 
+{% block page_title %}
+    <title>{% if site.sampling_feature_name %}
+        {{ site.sampling_feature_name }} ({{ site.sampling_feature_code }})
+    {% else %}
+        {{ site.sampling_feature_code }}
+    {% endif %}</title>
+{% endblock %}
+
 {% block forced_scripts %}
     <script src="{% static 'dataloaderinterface/js/papaparse.min.js' %}"></script>
 {% endblock %}
