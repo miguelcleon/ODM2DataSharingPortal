@@ -249,14 +249,19 @@
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-6">
-                                                    <h6 class="variable-title">{{ sensor.sensor_output.variable_name }}</h6>
+                                                    <h6 class="variable-title d-inline">{{ sensor.sensor_output.variable_name }}</h6>
+                                                    <span id="provisional-{{ forloop.counter0 }}" class="badge badge-info">Provisional</span>
+                                                    <div class="mdl-tooltip mdl-tooltip--bottom"
+                                                         data-mdl-for="provisional-{{ forloop.counter0 }}">
+                                                        All data shown are raw observations and have not been subject to quality control post processing.
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-sm-12 col-md-6">
                                                     {#  View data table button  #}
                                                     <span id="table-trigger-{{ forloop.counter0 }}"
                                                           class="fa fa-table table-trigger pull-right"
-                                                          aria-hidden="true"></span>
+                                                          aria-hidden="false"></span>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="table-trigger-{{ forloop.counter0 }}">
                                                         View Data Table
@@ -277,7 +282,7 @@
                                                        href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.sensor_output.variable_code }}&view=visualization&plot=true">
                                                             <span id="tsa-trigger-{{ forloop.counter0 }}"
                                                                   class="fa fa-external-link tsa-trigger pull-right text-black"
-                                                                  aria-hidden="true"></span>
+                                                                  aria-hidden="false"></span>
                                                     </a>
                                                     <div class="mdl-tooltip mdl-tooltip--left"
                                                          data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">

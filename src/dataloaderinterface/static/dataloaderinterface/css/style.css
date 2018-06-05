@@ -274,6 +274,7 @@ div.registration-field span.control-label {
     width: 100%;
     margin-bottom: 30px;
     border-radius: 2px;
+    overflow: visible;
 }
 
 .plot_box .variable-title {
