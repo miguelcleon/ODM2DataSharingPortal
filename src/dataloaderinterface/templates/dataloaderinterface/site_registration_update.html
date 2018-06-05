@@ -223,9 +223,10 @@
                                         <br><br>
                                         <div class="section-title inline">Macroinvertebrate Data</div>
 
-                                        <a id="new-leaf-pack-btn" href="{% url 'leafpack:create' sampling_feature_form.sampling_feature_code.value %}"
-                                        class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
-                                        <i class="material-icons">add</i>
+                                        <a id="new-leaf-pack-btn"
+                                           href="{% url 'leafpack:create' siteregistration.sampling_feature_code %}"
+                                           class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
+                                            <i class="material-icons">add</i>
                                         </a>
 
                                         <div class="mdl-tooltip" data-mdl-for="new-leaf-pack-btn">
@@ -294,7 +295,7 @@
                             <div style="margin-top: 20px;">
                                 <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                         {% if request.resolver_match.view_name == "site_update" %}
-                                   href="{% autoescape off %}{% url 'site_detail' sampling_feature_form.sampling_feature_code.value %}{% endautoescape %}"
+                                   href="{% autoescape off %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}"
                                         {% else %}
                                    href="{% url 'sites_list' %}"
                                         {% endif %}

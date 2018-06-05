@@ -1,6 +1,7 @@
 from leafpack.models import LeafPackType, Macroinvertebrate
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 
 
 class Command(BaseCommand):
@@ -8,83 +9,64 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         leafpack_types = ['Beech', 'Birch', 'Cherry', 'Elm', 'Grasses', 'Gum', 'Maple', 'Oak', 'Pine', 'Sycamore', 'Tulip polar']
 
-        macroinvertebrates = {
-            'Ephemeroptera': {'common_name': 'mayflies', 'pollution_tolerance': 3.6},
-            'Plecoptera': {'common_name': 'stoneflies', 'pollution_tolerance': 1.0},
-            'Tricoptera': {
-                'common_name': 'all caddisflies', 'pollution_tolerance': 2.8,
-                'families': {'Hydropsychidae': {'common_name': 'common netspinner caddisflies', 'pollution_tolerance': 5.0}}
-            },
-            'Anisoptera': {'common_name': 'dragonflies', 'pollution_tolerance': 4.0},
-            'Zygoptera': {'common_name': 'damselflies', 'pollution_tolerance': 7.0},
-            'Megaloptera': {
-                'common_name': 'alderly, dobsonfly, fishfly', 'pollution_tolerance': 4.0,
-                'families': {
-                    'Corydalidae': {
-                        'common_name': 'Dobsonfly/Fishfly', 'pollution_tolerance': 3.0
-                    },
-                    'Sialidae': {
-                        'common_name': 'Alderfly', 'pollution_tolerance': 4.0
-                    }
-                }
-            },
-            'Diptera': {
-                'common_name': 'all true flies', 'pollution_tolerance': 6.0,
-                'families': {'Athericidae': {'common_name': 'watersnipe flies', 'pollution_tolerance': 2.0},
-                             'Chironomidae': {'common_name': 'midges', 'pollution_tolerance': 6.0},
-                             'Simuliidae': {'common_name': 'black flies', 'pollution_tolerance': 6.0},
-                             'Tipulidae': {'common_name': 'crane flies', 'pollution_tolerance': 3.0}}
-            },
-            'Coleoptera': {
-                'common_name': 'all beetles', 'pollution_tolerance': 4.6,
-                'families': {'Psephenidae': {'common_name': 'water-penny beetles', 'pollution_tolerance': 4.6},
-                             'Elmidae': {'common_name': 'riffle bettles', 'pollution_tolerance': 4.6}}
-            },
-            'Amphipoda': {'common_name': 'Scud', 'pollution_tolerance': 6.0},
-            'Isopoda': {'common_name': 'aquatic sow bugs', 'pollution_tolerance': 8.0},
-            'Decapoda': {'common_name': 'crayfish', 'pollution_tolerance': 5.0},
-            'Oligochaeta': {'common_name': 'aquatic worms', 'pollution_tolerance': 8.0},
-            'Hirudinea': {'common_name': 'leeches', 'pollution_tolerance': 8.0},
-            'Turbellaria': {'common_name': 'planarians', 'pollution_tolerance': 8.0},
-            'Gastropoda': {
-                'common_name': 'all gastropods', 'pollution_tolerance': 7.0,
-                'families': {
-                    'Prosobranchia': {'common_name': 'Right - handed / gilled snail', 'pollution_tolerance': 7.0},
-                    'Archaeopulmonata': {'common_name': 'Left - handed / lunged snail', 'pollution_tolerance': 7.0}}
-            },
-            'Bivalvia': {'common_name': 'all clams & mussels', 'pollution_tolerance': 8.0},
-        }
+        """  [scientific_name,    common_name,     pollution_tolerance,     parent_taxon] """
+        taxons = [
+            ['Ephemeroptera', 'Mayflies', 3.6, None],
+            ['Plecoptera', 'stoneflies', 1.0, None],
+            ['Tricoptera', 'all caddisflies', 2.8, None],
+            ['Hydropsychidae', 'Common netspinner caddisflies', 5.0, 'Tricoptera'],
+            ['Anisoptera', 'Dragonflies', 4.0, None],
+            ['Zygoptera', 'Damselflies', 7.0, None],
+            ['Corydalidae', 'Hellgrammites', 3.0, None],
+            ['Sialidae', 'Alderflies', 4.0, None],
+            ['Coleoptera', 'Beetles', 4.6, None],
+            ['Psephenidae', 'Water-penny beetles', 4.6, None],
+            ['Elmidae', '', 4.6, None],
+            ['Diptera', 'True flies', 6.0, None],
+            ['Eristalinae', 'Rat-tailed maggot', 6.0, 'Diptera'],
+            ['Athericidae', 'Watersnipe flies', 2.0, 'Diptera'],
+            ['Chironomidae', 'Midges', 6.0, 'Diptera'],
+            ['Simuliidae', 'Black flies', 6.0, 'Diptera'],
+            ['Tipulidae', 'Crane flies', 3.0, 'Diptera'],
+            ['Amphipoda', 'Scuds', 6.0, None],
+            ['Isopoda', 'Aquatic sowbugs', 8.0, None],
+            ['Decapoda', 'Crayfish', 5.0, None],
+            ['Oligochaeta', 'Aquatic worms', 8.0, None],
+            ['Hirudinea', 'Leeches', 8.0, None],
+            ['Turbellaria', 'Planarians', 8.0, None],
+            ['Gastropoda', 'Snails', 7.0, None],
+            ['Prosobranchia', 'Right-handed/gilled snail', 7.0, 'Gastropoda'],
+            ['Archaeopulmonata', 'Left-handed/lunged snail', 7.0, 'Gastropoda'],
+            ['Bivalvia', 'Clam/Mussel', 8.0, None],
+            ['Sphaeriidae', 'Fingernail clams', 8.0, 'Bivalvia']
+        ]
 
         for leafpack_type in leafpack_types:
-            types = LeafPackType.objects.filter(name=leafpack_type)
-            if not len(types):
-                self.create_leafpack_type(leafpack_type)
+            try:
+                LeafPackType.objects.create(name=leafpack_type)
+            except IntegrityError:
+                continue
 
-        for name, value in macroinvertebrates.iteritems():
+        for taxon_data in taxons:
+            self.update_or_create_taxon(*taxon_data)
 
-            bugs = Macroinvertebrate.objects.filter(scientific_name=name)
-
-            if len(bugs) > 0:
-                bug = bugs.first()
-            else:
-                bug = self.create_macroinvertebrate(name, value['common_name'], value['pollution_tolerance'])
-
-            if value.get('families', None):
-                for family_name, family_value in value.get('families').iteritems():
-                    self.create_macroinvertebrate(family_name, family_value['common_name'],
-                                                  family_value['pollution_tolerance'], family_of=bug)
-
-    def create_macroinvertebrate(self, scientific_name, common_name, pollution, family_of=None):
+    def update_or_create_taxon(self, scientific_name, common_name, pollution, family_of=None):
         try:
-            bug = Macroinvertebrate.objects.get(scientific_name=scientific_name, common_name=common_name)
+            bug = Macroinvertebrate.objects.get(scientific_name=scientific_name)
         except ObjectDoesNotExist:
             bug = Macroinvertebrate()
-        bug.scientific_name = scientific_name
+
         bug.common_name = common_name
         bug.pollution_tolerance = pollution
+
         if family_of:
-            bug.family_of = family_of
+            try:
+                bug.family_of = Macroinvertebrate.objects.get(scientific_name=family_of)
+            except ObjectDoesNotExist:
+                pass
+
         bug.save()
+
         return bug
 
     def create_leafpack_type(self, name):
