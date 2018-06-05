@@ -73,7 +73,6 @@ function initMap() {
     });
 }
 
-
 function notifyInputStatus() {
     if (!$("#id_notify").prop("checked")) {
         $("#id_hours_threshold").removeAttr("name");

@@ -307,7 +307,6 @@ function initializeResultsForm() {
         });
     });
 
-    defaultSensorsMessage();
     notifyInputStatus();
 }
 
@@ -371,12 +370,12 @@ $('#sensors-table').on('click', 'td[data-behaviour="edit"] button', function () 
     fillFormData(rowElement);
 
     $('#result-dialog-uuid').text(result_uuid).parent().show();
-    $('#result-dialog').modal('toggle');
+    $('#result-dialog').modal('show');
 });
 
 $('#sensors-table').on('click', 'td[data-behaviour="delete"] button', function () {
     var sensor = $(this).parents('tr');
-    $('#confirm-delete').data('to-delete', sensor).modal('toggle');
+    $('#confirm-delete').data('to-delete', sensor).modal('show');
 });
 
 function notifyInputStatus() {
@@ -451,5 +450,6 @@ $(document).ready(function() {
         dialog.modal('hide');
     });
 
+    defaultSensorsMessage();
     defaultExperimentsMessage();
 });
