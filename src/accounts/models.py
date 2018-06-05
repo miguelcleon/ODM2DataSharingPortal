@@ -20,6 +20,9 @@ class User(AbstractUser):
     def affiliation(self):
         return Affiliation.objects.get(pk=self.affiliation_id)
 
+    def owns_site(self, registration):
+        return registration.django_user == self
+
     def can_administer_site(self, registration):
         return self.is_staff or registration.django_user == self
 

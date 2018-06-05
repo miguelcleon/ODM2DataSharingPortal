@@ -17,6 +17,9 @@ class SiteRegistrationQuerySet(models.QuerySet):
     def with_leafpacks(self):
         return self.prefetch_related('leafpack_set')
 
+    def with_sensors_last_measurement(self):
+        return self.prefetch_related('sensors__last_measurement')
+
     def with_latest_measurement_id(self):
         sensor_model = [
             related_object.related_model

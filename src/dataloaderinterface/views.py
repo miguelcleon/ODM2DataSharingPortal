@@ -122,11 +122,13 @@ class SiteDetailView(DetailView):
     template_name = 'dataloaderinterface/site_details.html'
 
     def get_queryset(self):
-        return super(SiteDetailView, self).get_queryset().with_sensors()
+        return super(SiteDetailView, self).get_queryset().with_sensors().with_sensors_last_measurement()
 
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data(**kwargs)
         context['is_followed'] = self.object.followed_by.filter(id=self.request.user.id).exists()
+        context['can_administer_site'] = self.request.user.can_administer_site(self.object)
+        context['is_site_owner'] = self.request.user == self.object.django_user
         context['tsa_url'] = settings.TSA_URL
 
         context['leafpacks'] = LeafPack.objects.filter(site_registration=context['site'].pk)

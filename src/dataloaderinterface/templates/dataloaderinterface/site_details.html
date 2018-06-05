@@ -28,7 +28,7 @@
                                 {{ site.sampling_feature_code }}
                             {% endif %}
 
-                            {% if request.user.id and site.django_user_id != request.user.id %}
+                            {% if not is_site_owner %}
                                 <div class="follow-status pull-right">
                                     {# this is the button to trigger the follow/unfollow action #}
                                     <form id="follow-site-form">
@@ -53,7 +53,7 @@
                                 <hr class="dotted">
                             </div>
 
-                            {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                            {% if can_administer_site %}
                                 <div class="col-sm-12 col-md-6 text-right">
                                     <a href="#" data-toggle="modal" data-target="#code-output-modal"
                                        class="button-link mdl-button mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
@@ -85,14 +85,14 @@
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-user-o" aria-hidden="true"></i> Deployment By
                                     </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ site.person }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.django_user.get_full_name }}</td>
                                 </tr>
 
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <i class="fa fa-building-o" aria-hidden="true"></i> Organization
                                     </td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{ site.organization }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.organization_name }}</td>
                                 </tr>
 
                                 <tr>
@@ -141,7 +141,7 @@
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.site_type|default:"-" }}</td>
                                 </tr>
 
-                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                {% if can_administer_site %}
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Registration Token
@@ -152,9 +152,7 @@
                                             <span id="reg-token" data-copy-target="reg-token">{{ site.registration_token }}</span>
                                         </td>
                                     </tr>
-                                {% endif %}
 
-                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
                                     <tr>
                                         <td class="mdl-data-table__cell--non-numeric">
                                             <i class="material-icons center-icon">vpn_key</i> Sampling Feature UUID
@@ -168,7 +166,7 @@
                                 {% endif %}
                             </table>
 
-                            {% if site.django_user_id == request.user.id and site.alerts.first.hours_threshold.total_seconds|divide:3600 > 0 %}
+                            {% if is_site_owner and site.alerts.first.hours_threshold.total_seconds|divide:3600 > 0 %}
                                 <div class="text-muted">
                                     <br><br>
                                     <i class="fa fa-bell center-icon" aria-hidden="true"></i> You will be notified if this site stops receiving sensor data
@@ -186,7 +184,7 @@
                     </div>
 
                     {######    HydroShare Settings    #######}
-                    {% if site.django_user_id == request.user.id and hydroshare_account %}
+                    {% if is_site_owner and hydroshare_account %}
                     <div class="row">
                         <div class="col-md-6 col-sm-12">
                             <div class="mdl-card full-width hydroshare-container" id="hydroshare-settings-container">
@@ -235,13 +233,13 @@
                                 {% for sensor in site.sensors.all %}
                                 <div class="col-sm-12 col-md-6">
                                     <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
-                                         data-variable-name="{{ sensor.variable_name }}"
-                                         data-variable-code="{{ sensor.variable_code }}"
+                                         data-variable-name="{{ sensor.sensor_output.variable_name }}"
+                                         data-variable-code="{{ sensor.sensor_output.variable_code }}"
                                          data-influx-url="{{ sensor.influx_url }}">
                                         <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-6">
-                                                    <h6 class="variable-title">{{ sensor.variable_name }}</h6>
+                                                    <h6 class="variable-title">{{ sensor.sensor_output.variable_name }}</h6>
                                                 </div>
 
                                                 <div class="col-sm-12 col-md-6">
@@ -266,7 +264,7 @@
 
                                                     {#  View on TSA button  #}
                                                     <a target="_blank"
-                                                       href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.variable_code }}&view=visualization&plot=true">
+                                                       href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.sensor_output.variable_code }}&view=visualization&plot=true">
                                                             <span id="tsa-trigger-{{ forloop.counter0 }}"
                                                                   class="fa fa-external-link tsa-trigger pull-right text-black"
                                                                   aria-hidden="true"></span>
@@ -287,12 +285,12 @@
                                                 <div class="row">
                                                     <div class="col-6">
                                                         <span>Last observation </span><br>
-                                                        <span class="last-observation">{{ sensor.last_measurement_datetime|default:"-" }}</span>
+                                                        <span class="last-observation">{{ sensor.last_measurement.value_datetime|default:"-" }}</span>
                                                     </div>
                                                     <div class="col-6 text-right">
-                                                        <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement_value|roundfloat:4|default:" - " }}</h3>
+                                                        <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement.data_value|roundfloat:4|default:" - " }}</h3>
                                                         <h6 style="margin-top: 0;" class="unit">
-                                                            ({{ sensor.unit_abbreviation }})</h6>
+                                                            ({{ sensor.sensor_output.unit_abbreviation }})</h6>
                                                     </div>
                                                 </div>
                                             </div>
@@ -302,13 +300,13 @@
                                             <table class="mdl-data-table mdl-js-data-table full-width no-hover">
                                                 <tr>
                                                     <td><strong>Medium:</strong></td>
-                                                    <td class="mdl-data-table__cell--non-numeric">{{ sensor.sampled_medium }}</td>
+                                                    <td class="mdl-data-table__cell--non-numeric">{{ sensor.sensor_output.sampled_medium }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td><strong>Sensor:</strong></td>
                                                     <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
                                                 </tr>
-                                                {% if site.django_user_id == request.user.id or request.user.is_staff %}
+                                                {% if can_administer_site %}
                                                     <tr>
                                                         <td><strong>UUID:</strong></td>
                                                         <td class="mdl-data-table__cell--non-numeric">
