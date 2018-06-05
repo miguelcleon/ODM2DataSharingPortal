@@ -187,7 +187,7 @@ div.separator {
 }
 
 .result-d-container {
-    margin-top: 8px;
+    padding: 0 24px 0;
 }
 
 .modal-header h4 {
@@ -1321,4 +1321,8 @@ hr.dotted {
 .img-branding {
     max-width: 200px;
     margin-top: -10px;
+}
+
+#clipboard-snackbar {
+    z-index: 1051; /* Above bootstrap's modal windows */
 }

@@ -1,8 +1,3 @@
-// (function() {
-//     'use strict';
-//
-// }());
-
 function updateSitePosition(map, position) {
     map.panTo(position);
     $('input[name="latitude"]').val(Math.round(position.lat() * 100000) / 100000).trigger('keypress');
@@ -11,11 +6,11 @@ function updateSitePosition(map, position) {
 
 function updateSiteElevation(position) {
     var elevator = new google.maps.ElevationService();
-     elevator.getElevationForLocations({'locations':[position]}, function(results, status) {
-          if (status == google.maps.ElevationStatus.OK && results[0]) {
-              $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
-          }
-     });
+    elevator.getElevationForLocations({'locations': [position]}, function (results, status) {
+        if (status == google.maps.ElevationStatus.OK && results[0]) {
+            $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
+        }
+    });
 }
 
 function initMap() {
@@ -77,7 +72,6 @@ function initMap() {
     });
 }
 
-
 output_variables = {};
 
 filter_structure = {
@@ -106,7 +100,6 @@ function clear_filters() {
         select.val('');
         select.trigger('change');
     }
-
 }
 
 function apply_filter(filter_name, values, parent_filter_name) {
@@ -189,12 +182,6 @@ function bindResultEvents(form) {
     }
 }
 
-
-function defaultTableMessage() {
-    $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
-}
-
-
 function initializeResultsForm() {
     var form = $('div#result-dialog .result-form');
     bindResultEvents(form);
@@ -215,15 +202,13 @@ function initializeResultsForm() {
             form.find('input[name="id"]').val('');
             form.find('input[name="output_variable"]').val('');
 
-            dialog.find('#result-dialog-title').text("Add Sensor");
+            dialog.find('.mdl-dialog__title').text("Add Sensor");
             dialog.find('#add-sensor-button').show();
             dialog.find('#edit-sensor-button').hide();
             $('#result-dialog-uuid').parent().hide();
-
-
         } else {
             var row = dialog.data('row');
-            $('#result-dialog-title').text("Update Sensor");
+            dialog.find('.mdl-dialog__title').text("Update Sensor");
             dialog.find('#add-sensor-button').hide();
             dialog.find('#edit-sensor-button').show();
             $('#result-dialog-uuid').text(row['result_uuid']).parent().show();
@@ -244,14 +229,10 @@ function initializeResultsForm() {
                 form.find('[name="result_uuid"]').val(data['result_uuid']);
 
                 updateRowData(newRow);
-                bindResultEditEvent(newRow);
-                bindResultDeleteEvent(newRow);
-
                 $('div.results-table table').append(newRow);
-                defaultTableMessage();
+                defaultSensorsMessage();
 
                 $('#result-dialog').modal('toggle');
-
             } else if (xhr.status === 206) {
                 // not valid
                 for (var fieldName in data) {
@@ -289,10 +270,8 @@ function initializeResultsForm() {
                 form.find('[name="result_uuid"]').val(data['result_uuid']);
 
                 updateRowData(row);
-                bindResultEditEvent(row);
-                bindResultDeleteEvent(row);
 
-                defaultTableMessage();
+                defaultSensorsMessage();
 
                 $('#result-dialog').modal('toggle');
 
@@ -319,10 +298,9 @@ function initializeResultsForm() {
         });
     });
 
-    defaultTableMessage();
+    defaultSensorsMessage();
     notifyInputStatus();
 }
-
 
 function make_sensor_api_request(api_url) {
     var output_data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
@@ -336,7 +314,6 @@ function make_sensor_api_request(api_url) {
         data: $.extend({ csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val() }, output_data)
     });
 }
-
 
 function fillFormData(row) {
     var rowData = row.data();
@@ -375,36 +352,23 @@ function updateRowData(row) {
             dataColumn.find('.field-text').text(selectedOption.text());
         }
     }
-
 }
 
+$('#sensors-table').on('click', 'td[data-behaviour="edit"] button', function () {
+    var rowElement = $(this).parents('tr');
+    var result_uuid = rowElement.data('result_uuid');
 
-function bindResultEditEvent(row) {
-    row.find('td[data-behaviour="edit"] button').on('click', function(event) {
-        var rowElement = $(this).parents('tr');
-        var result_uuid = rowElement.data('result_uuid');
+    clear_filters();
+    fillFormData(rowElement);
 
-        clear_filters();
-        fillFormData(rowElement);
+    $('#result-dialog-uuid').text(result_uuid).parent().show();
+    $('#result-dialog').modal('toggle');
+});
 
-        $('#result-dialog-uuid').text(result_uuid).parent().show();
-        $('#result-dialog').modal('toggle');
-
-    });
-}
-
-function bindResultDeleteEvent(row) {
-    row.find('td[data-behaviour="delete"] button').on('click', function(event) {
-        var sensor = $(this).parents('tr');
-        $('#confirm-delete').data('to-delete', sensor).modal('toggle');
-    });
-}
-
-function initializeResultsTable() {
-    var rows = $('div.results-table tbody tr');
-    bindResultEditEvent(rows);
-    bindResultDeleteEvent(rows);
-}
+$('#sensors-table').on('click', 'td[data-behaviour="delete"] button', function () {
+    var sensor = $(this).parents('tr');
+    $('#confirm-delete').data('to-delete', sensor).modal('toggle');
+});
 
 function notifyInputStatus() {
     if (!$("#id_notify").prop("checked")) {
@@ -417,11 +381,18 @@ function notifyInputStatus() {
     }
 }
 
+function defaultExperimentsMessage() {
+    $("tr.no-experiments-row").toggleClass("hidden", !!$("tr.leafpack-form:not(.deleted-row)").length);
+}
+
+function defaultSensorsMessage() {
+    $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
+}
+
 $(document).ready(function() {
     $('nav .menu-register-site').addClass('active');
 
     initializeResultsForm();
-    initializeResultsTable();
 
     $('#btn-confirm-delete').on('click', function(event) {
         var dialog = $('#confirm-delete');
@@ -449,11 +420,25 @@ $(document).ready(function() {
         });
 
         dialog.modal('toggle');
-        defaultTableMessage();
+        defaultSensorsMessage();
     });
 
     $("#id_notify").change(function() {
         $("div[data-field='hours_threshold']").toggleClass("hidden", !this.checked);
         notifyInputStatus();
     });
+
+    $(".btn-delete-experiment").click(function () {
+        var experiment = $(this).parents('tr');
+        $('#confirm-delete-experiment').data('to-delete', experiment).modal('show');
+    });
+
+    $("#btn-confirm-delete-experiment").click(function () {
+        var dialog = $('#confirm-delete-experiment');
+        dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
+        defaultExperimentsMessage();
+        dialog.modal('hide');
+    });
+
+    defaultExperimentsMessage();
 });
