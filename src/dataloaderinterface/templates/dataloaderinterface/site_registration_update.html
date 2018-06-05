@@ -94,92 +94,122 @@
                                 <br>
                             </fieldset>
 
-                            <fieldset class="form-fieldset">
-                                <div class="row">
-                                    <div class="col-lg-12 results-table" id="formset"
-                                         data-formset-prefix="{{ results_formset.prefix }}">
+                            <fieldset>
+                                <div>
+                                    <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                            {% if request.resolver_match.view_name == "site_update" %}
+                                       href="{% autoescape off %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}"
+                                            {% else %}
+                                       href="{% url 'sites_list' %}"
+                                            {% endif %}>
+                                        Cancel
+                                    </a>
 
-                                        <div class="section-title inline">Sensors</div>
+                                    <button id="btnRegisterSite" type="submit"
+                                            class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                        {{ help }}
+                                        {% if request.resolver_match.view_name == "site_update" %}
+                                            Save Edits
+                                        {% else %}
+                                            Register Site
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
 
-                                        <span id="new-result-button" data-toggle="modal"
-                                              data-target="#result-dialog"
-                                              class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
+        <div class="container main-content ribbon-content mdl-color--white mdl-shadow--4dp">
+            <fieldset class="form-fieldset">
+                <div class="row">
+                    <div class="col-lg-12 results-table" id="formset"
+                         data-formset-prefix="{{ results_formset.prefix }}">
+
+                        <div class="section-title inline">Sensors</div>
+
+                        <span id="new-result-button" data-toggle="modal"
+                              data-target="#result-dialog"
+                              class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
                                             <i class="material-icons">add</i>
                                         </span>
 
-                                        <div class="mdl-tooltip" data-mdl-for="new-result-button">
-                                           Add New Sensor
-                                        </div>
+                        <div class="mdl-tooltip" data-mdl-for="new-result-button">
+                            Add New Sensor
+                        </div>
 
-                                        <br><br>
+                        <br><br>
 
-                                        <div style="overflow: auto;">
-                                            <table id="sensors-table" class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
-                                                <thead>
-                                                <tr class="full-width">
-                                                    <th class="mdl-data-table__cell--non-numeric">Equipment Make-Model
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Measured
-                                                        Variable
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Units</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Sampled Medium
-                                                    </th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for sensor in object.sensors.all %}
-                                                <tr class="result-form"
-                                                        data-id="{{ sensor.id }}"
-                                                        data-result_id="{{ sensor.result_id }}"
-                                                        data-result_uuid="{{ sensor.result_uuid }}"
-                                                        data-sensor_output="{{ sensor.sensor_output_id }}"
-                                                        data-sensor_manufacturer="{{ sensor.sensor_output.model_manufacturer }}"
-                                                        data-sensor_model="{{ sensor.sensor_output.model_id }}"
-                                                        data-variable="{{ sensor.sensor_output.variable_id }}"
-                                                        data-unit="{{ sensor.sensor_output.unit_id }}"
-                                                        data-sampled_medium="{{ sensor.sensor_output.sampled_medium }}">
+                        <div style="overflow: auto;">
+                            <table id="sensors-table"
+                                   class="no-hover mdl-textfield--full-width mdl-data-table mdl-shadow--2dp mdl-js-data-table sensors full-width">
+                                <thead>
+                                <tr class="full-width">
+                                    <th class="mdl-data-table__cell--non-numeric">Equipment Make-Model
+                                    </th>
+                                    <th class="mdl-data-table__cell--non-numeric">Measured
+                                        Variable
+                                    </th>
+                                    <th class="mdl-data-table__cell--non-numeric">Units</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Sampled Medium
+                                    </th>
+                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for sensor in object.sensors.all %}
+                                    <tr class="result-form"
+                                        data-id="{{ sensor.id }}"
+                                        data-result_id="{{ sensor.result_id }}"
+                                        data-result_uuid="{{ sensor.result_uuid }}"
+                                        data-sensor_output="{{ sensor.sensor_output_id }}"
+                                        data-sensor_manufacturer="{{ sensor.sensor_output.model_manufacturer }}"
+                                        data-sensor_model="{{ sensor.sensor_output.model_id }}"
+                                        data-variable="{{ sensor.sensor_output.variable_id }}"
+                                        data-unit="{{ sensor.sensor_output.unit_id }}"
+                                        data-sampled_medium="{{ sensor.sensor_output.sampled_medium }}">
 
-                                                    <td data-field="sensor_model" class="mdl-data-table__cell--non-numeric">
-                                                        <span class="field-text">{{ sensor.sensor_output.model_name }}</span>
-                                                    </td>
+                                        <td data-field="sensor_model" class="mdl-data-table__cell--non-numeric">
+                                            <span class="field-text">{{ sensor.sensor_output.model_name }}</span>
+                                        </td>
 
-                                                    <td data-field="variable" class="mdl-data-table__cell--non-numeric">
-                                                        <span class="field-text">{{ sensor.sensor_output.variable_code }}</span>
-                                                    </td>
+                                        <td data-field="variable" class="mdl-data-table__cell--non-numeric">
+                                            <span class="field-text">{{ sensor.sensor_output.variable_code }}</span>
+                                        </td>
 
-                                                    <td data-field="unit" class="mdl-data-table__cell--non-numeric">
-                                                        <span class="field-text">{{ sensor.sensor_output.unit_name }}</span>
-                                                    </td>
+                                        <td data-field="unit" class="mdl-data-table__cell--non-numeric">
+                                            <span class="field-text">{{ sensor.sensor_output.unit_name }}</span>
+                                        </td>
 
-                                                    <td data-field="sampled_medium" class="mdl-data-table__cell--non-numeric">
-                                                        <span class="field-text">{{ sensor.sensor_output.sampled_medium }}</span>
-                                                    </td>
-                                                    <td data-behaviour="edit"
-                                                        class="mdl-data-table__cell--non-numeric">
-                                                        <button class="mdl-button mdl-button--accent"
-                                                                type="button">
-                                                            <i class="material-icons center-icon">mode_edit</i>
-                                                        </button>
-                                                    </td>
-                                                    <td data-behaviour="delete"
-                                                        class="mdl-data-table__cell--non-numeric">
-                                                        <button class="mdl-button" style="color: #d9534f" type="button">
-                                                            <i class="material-icons center-icon">delete_forever</i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                                <tr class="no-sensors-row bg-white {% if object.sensors.count > 0 %}hidden{% endif %}">
-                                                    <td colspan="6" class="text-center">No sensors have been added.</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <td data-field="sampled_medium" class="mdl-data-table__cell--non-numeric">
+                                            <span class="field-text">{{ sensor.sensor_output.sampled_medium }}</span>
+                                        </td>
+                                        <td data-behaviour="edit"
+                                            class="mdl-data-table__cell--non-numeric">
+                                            <button class="mdl-button mdl-button--accent"
+                                                    type="button">
+                                                <i class="material-icons center-icon">mode_edit</i>
+                                            </button>
+                                        </td>
+                                        <td data-behaviour="delete"
+                                            class="mdl-data-table__cell--non-numeric">
+                                            <button class="mdl-button" style="color: #d9534f" type="button">
+                                                <i class="material-icons center-icon">delete_forever</i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                <tr class="no-sensors-row bg-white {% if object.sensors.count > 0 %}hidden{% endif %}">
+                                    <td colspan="6" class="text-center">No sensors have been added.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
-                                        <script id="sensor-row" type="text/plain">
+                        <script id="sensor-row" type="text/plain">
                                             <tr class="result-form"
                                                     data-id="" data-result_id="" data-result_uuid="" data-sensor_output=""
                                                     data-sensor_manufacturer="" data-sensor_model="" data-variable=""
@@ -214,109 +244,82 @@
                                                     </button>
                                                 </td>
                                             </tr>
-                                        </script>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <br><br>
-                                        <div class="section-title inline">Macroinvertebrate Data</div>
 
-                                        <a id="new-leaf-pack-btn"
-                                           href="{% url 'leafpack:create' siteregistration.sampling_feature_code %}"
-                                           class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
-                                            <i class="material-icons">add</i>
-                                        </a>
 
-                                        <div class="mdl-tooltip" data-mdl-for="new-leaf-pack-btn">
-                                            Add New Leaf Pack Experiment
-                                        </div>
-
-                                        <br><br>
-
-                                        <div style="overflow: auto;">
-    {#                                            TODO: Populate this table#}
-                                            <table class="no-hover mdl-data-table mdl-js-data-table macroinvertebrate">
-                                                <thead>
-                                                <tr class="full-width">
-    {#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment ID#}
-    {#                                                    </th>#}
-    {#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
-                                                    <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Content</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
-                                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% if leafpacks %}
-                                                    {% for leafpack in leafpacks %}
-                                                        <tr class="bg-white leafpack-form">
-    {#                                                            <td>{{ leafpack.id }}</td>#}
-    {#                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
-                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
-                                                            <td class="mdl-data-table__cell--non-numeric">
-                                                                <a href="{% url 'leafpack:update' siteregistration.sampling_feature_code leafpack.id %}"
-                                                                   class="mdl-button mdl-button--accent">
-                                                                        <i class="material-icons center-icon">mode_edit</i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="mdl-data-table__cell--non-numeric">
-                                                                {% csrf_token %}
-                                                                <button class="mdl-button btn-delete-experiment"
-                                                                        style="color: #d9534f"
-                                                                        type="button">
-                                                                    <i class="material-icons center-icon">delete_forever</i>
-    {#                                                                    TODO: SETUP THIS DELETE FORM SIMILAR TO SENSOR DELETE FORMS #}
-                                                                    {{ leafpack.DELETE }}
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                {% endif %}
-                                                <tr class="no-experiments-row bg-white">
-                                                    <td colspan="5" class="text-center">
-                                                        No macroinvertebrate data have been added to this site.
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </fieldset>
-
-                            <br>
-
-                            <div style="margin-top: 20px;">
-                                <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                                        {% if request.resolver_match.view_name == "site_update" %}
-                                   href="{% autoescape off %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}"
-                                        {% else %}
-                                   href="{% url 'sites_list' %}"
-                                        {% endif %}
-                                >
-                                    Cancel
-                                </a>
-
-                                <button id="btnRegisterSite" type="submit"
-                                        class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                                    {{ help }}
-                                    {% if request.resolver_match.view_name == "site_update" %}
-                                        Save Edits
-                                    {% else %}
-                                        Register Site
-                                    {% endif %}
-                                </button>
-                            </div>
-                        </form>
+                        </script>
                     </div>
-                </section>
-            </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12">
+                        <br><br>
+                        <div class="section-title inline">Macroinvertebrate Data</div>
+
+                        <span id="new-leaf-pack-btn" data-toggle="modal" data-target="#confirm-add-leafpack"
+                           class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect mdl-button--colored">
+                            <i class="material-icons">add</i>
+                        </span>
+
+                        <div class="mdl-tooltip" data-mdl-for="new-leaf-pack-btn">
+                            Add New Leaf Pack Experiment
+                        </div>
+
+                        <br><br>
+
+                        <div style="overflow: auto;">
+                            {#                                            TODO: Populate this table#}
+                            <table class="no-hover mdl-data-table mdl-js-data-table macroinvertebrate">
+                                <thead>
+                                <tr class="full-width">
+                                    {#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment ID#}
+                                    {#                                                    </th>#}
+                                    {#                                                    <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
+                                    <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Content</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Edit</th>
+                                    <th class="mdl-data-table__cell--non-numeric">Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if leafpacks %}
+                                    {% for leafpack in leafpacks %}
+                                        <tr class="bg-white leafpack-form">
+                                            {#                                                            <td>{{ leafpack.id }}</td>#}
+                                            {#                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
+                                            <td class="mdl-data-table__cell--non-numeric">
+                                                <a href="{% url 'leafpack:update' siteregistration.sampling_feature_code leafpack.id %}"
+                                                   class="mdl-button mdl-button--accent">
+                                                    <i class="material-icons center-icon">mode_edit</i>
+                                                </a>
+                                            </td>
+                                            <td class="mdl-data-table__cell--non-numeric">
+                                                {% csrf_token %}
+                                                <button class="mdl-button btn-delete-experiment"
+                                                        style="color: #d9534f"
+                                                        type="button">
+                                                    <i class="material-icons center-icon">delete_forever</i>
+                                                    {#                                                                    TODO: SETUP THIS DELETE FORM SIMILAR TO SENSOR DELETE FORMS #}
+                                                    {{ leafpack.DELETE }}
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                                <tr class="no-experiments-row bg-white">
+                                    <td colspan="5" class="text-center">
+                                        No macroinvertebrate data have been added to this site.
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
         </div>
     </div>
 
@@ -398,6 +401,24 @@
                 <div class="mdl-dialog__actions text-right">
                     <button type="button" class="mdl-button mdl-button--raised mdl-button-danger" id="btn-confirm-delete">Delete
                     </button>
+                    <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div class="modal fade" id="confirm-add-leafpack" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content mdl-modal-content mdl-shadow--4dp">
+                <h4 class="mdl-dialog__title">Continue to add Leaf Pack experiment?</h4>
+                <div class="mdl-dialog__content">
+                    <p>This action will redirect you to the Leaf Pack experiment page. Make sure you have saved any information you do not want to lose.</p>
+                    <p><strong>Are you sure you want to continue?</strong></p>
+                </div>
+                <div class="mdl-dialog__actions text-right">
+                    <a href="{% url 'leafpack:create' siteregistration.sampling_feature_code %}"
+                       class="mdl-button button-link mdl-button--raised mdl-button--accent" id="btn-continue">Continue
+                    </a>
                     <button type="button" class="mdl-button mdl-button--raised" data-dismiss="modal">Cancel</button>
                 </div>
             </div>

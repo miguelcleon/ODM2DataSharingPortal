@@ -778,13 +778,16 @@ span.table-trigger, span.tsa-trigger, span.download-trigger {
 }
 
 .ribbon-content {
-    margin-top: -35vh;
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
     flex-shrink: 0;
     padding: 80px 4vw !important;
     margin-bottom: 80px;
     border-radius: 2px;
+}
+
+.ribbon-content:first-child {
+     margin-top: -35vh;
 }
 
 .ribbon-container {

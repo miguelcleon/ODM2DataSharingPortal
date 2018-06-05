@@ -418,7 +418,7 @@ $(document).ready(function() {
             if (xhr.status === 202) {
                 // Valid
                 row.remove();
-                snackbarMsg('Sensor deleted!');
+                snackbarMsg('Sensor has been deleted!');
 
             } else if (xhr.status === 206) {
                 // Invalid
