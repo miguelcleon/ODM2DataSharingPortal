@@ -397,6 +397,8 @@ $(document).ready(function() {
     $('#btn-confirm-delete').on('click', function(event) {
         var dialog = $('#confirm-delete');
         var row = dialog.data('to-delete');
+        $("#btn-confirm-delete").prop("disabled", true).text("DELETING...");
+        var snackbarContainer = document.querySelector('#clipboard-snackbar');
 
         $.ajax({
             url: $('#sensor-delete-api').val(),
@@ -405,22 +407,29 @@ $(document).ready(function() {
                 csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val(),
                 id: row.data('id')
             }
-        }).done(function(data, message, xhr) {
+        }).done(function (data, message, xhr) {
             if (xhr.status === 202) {
-                // valid
+                // Valid
                 row.remove();
-                console.log('sensor deleted! :)');
-                // TODO: Maurice - Show message saying the deletion was successful.
+                snackbarContainer.MaterialSnackbar.showSnackbar({
+                    message: 'Sensor deleted!',
+                    timeout: 3000
+                });
 
             } else if (xhr.status === 206) {
-                console.log('sensor couldn\'t be deleted! :(');
-                // TODO: Maurice - Show message saying the deletion was unsuccessful.
+                // Invalid
+                snackbarContainer.MaterialSnackbar.showSnackbar({
+                    message: 'Sensor could not be deleted!',
+                    timeout: 3000
+                });
             }
-
+        }).fail(function (xhr, error) {
+            console.log(error);
+        }).always(function (response, status, xhr) {
+            $("#btn-confirm-delete").prop("disabled", true).text("DELETE");
+            defaultSensorsMessage();
+            dialog.modal('hide');
         });
-
-        dialog.modal('toggle');
-        defaultSensorsMessage();
     });
 
     $("#id_notify").change(function() {

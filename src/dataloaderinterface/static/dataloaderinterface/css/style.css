@@ -624,6 +624,11 @@ footer .separator {
     border-color: #d43f3a;
 }
 
+.mdl-button-danger:not([disabled]) {
+    background-color: #d9534f;
+    color: #FFF;
+}
+
 #btn-confirm-delete-experiment:not([disabled]) {
     background: #d9534f;
     color: #FFF;
