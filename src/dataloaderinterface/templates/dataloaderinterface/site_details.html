@@ -221,7 +221,7 @@
                         </div>
 
                         <div class="sparkline-plots col-sm-12">
-                            <div class="alert alert-info" role="alert">
+                            <div class="alert alert-light" role="alert">
                                 <table>
                                     <tr>
                                         <td style="padding-right: 20px; vertical-align: top;"><i class="material-icons center-icon">info</i></td>
@@ -236,6 +236,8 @@
                                     </tr>
                                 </table>
                             </div>
+
+                            <br>
 
                             <div class="row">
                                 {% for sensor in site.sensors.all %}
@@ -509,7 +511,7 @@ const char *UUIDs[] =                                                      // UU
     {{ block.super }}
     <script src="{% static 'dataloaderinterface/js/bootstrap-toolkit.min.js' %}"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="{% static 'dataloaderinterface/js/device-detail.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/site-detail.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/dialog-polyfill.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>

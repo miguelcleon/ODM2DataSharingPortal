@@ -333,7 +333,7 @@ svg.not-stale {
 
 .table-trigger.disabled, .download-trigger.disabled, .tsa-trigger.disabled {
     pointer-events: none;
-    color: #c5c5c5;
+    color: #3b8a8a;
 }
 
 .measurements-table {
