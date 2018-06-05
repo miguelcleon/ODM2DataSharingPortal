@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 
-from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, \
+from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, SensorListUpdateView, \
     HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceUpdateView, \
     HydroShareResourceCreateView, HydroShareResourceDeleteView, OAuthAuthorize, OAuthRedirect
 
@@ -27,11 +27,12 @@ urlpatterns = [
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
+    url(r'^sites/update/(?P<sampling_feature_code>.*)/sensors/$', SensorUpdateView.as_view(), name='sensor_update'),
     url(r'^sites/(?P<sampling_feature_code>.*)/leafpack/', include('leafpack.urls', namespace='leafpack')),
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/create/$', HydroShareResourceCreateView.as_view(), name='hs_resource_create'),
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/update/$', HydroShareResourceUpdateView.as_view(), name='hs_resource_update'),
     url(r'^sites/(?P<sampling_feature_code>.*)/hsr/delete/$', HydroShareResourceDeleteView.as_view(), name='hs_resource_delete'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
     url(r'hydroshare/oauth/$', OAuthAuthorize.as_view(), name='hydroshare_oauth'),
-    url(r'hydroshare/oauth/redirect/$', OAuthRedirect.as_view(), name='hydroshare_oauth_redirect'),
+    url(r'hydroshare/oauth/redirect/$', OAuthRedirect.as_view(), name='hydroshare_oauth_redirect')
 ]

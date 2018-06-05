@@ -143,6 +143,16 @@ class SiteDetailView(DetailView):
         return context
 
 
+class SensorListView(DetailView):
+    template_name = 'dataloaderinterface/sensor_list_view.html'
+    model = SiteRegistration
+
+
+class LeafPackListUpdateView(UpdateView):
+    template_name = 'dataloaderinterface/leafpack_list_view.html'
+    model = SiteRegistration
+
+
 class HydroShareResourceViewMixin:
     def __init__(self):
         self.request = None
