@@ -427,7 +427,7 @@ $(document).ready(function() {
         }).fail(function (xhr, error) {
             console.log(error);
         }).always(function (response, status, xhr) {
-            $("#btn-confirm-delete").prop("disabled", true).text("DELETE");
+            $("#btn-confirm-delete").prop("disabled", false).text("DELETE");
             defaultSensorsMessage();
             dialog.modal('hide');
         });
