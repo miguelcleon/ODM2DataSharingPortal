@@ -64,6 +64,17 @@ class SiteRegistration(models.Model):
     objects = SiteRegistrationQuerySet.as_manager()
 
     @property
+    def latest_measurement(self):
+        if not hasattr(self, 'latest_measurement_id'):
+            return
+        try:
+            last_updated_sensor = [sensor for sensor in self.sensors.all() if sensor.last_measurement.pk == self.latest_measurement_id].pop()
+        except IndexError:
+            return None
+
+        return last_updated_sensor.last_measurement
+
+    @property
     def sampling_feature(self):
         return SamplingFeature.objects.filter(pk=self.sampling_feature_id).first()
 
@@ -85,11 +96,14 @@ class SensorMeasurement(models.Model):
     value_datetime = models.DateTimeField()
     value_datetime_utc_offset = models.DurationField()
     data_value = models.FloatField()
-    # measurement_local_datetime = models.DateTimeField(db_column='MeasurementUtcDatetime')
 
     @property
-    def measurement_local_datetime(self):
-        return
+    def value_local_datetime(self):
+        return self.value_datetime + self.value_datetime_utc_offset
+
+    @property
+    def utc_offset_hours(self):
+        return int(self.value_datetime_utc_offset.total_seconds() / 3600)
 
     def __str__(self):
         return '%s: %s' % (self.value_datetime, self.data_value)
@@ -181,11 +195,11 @@ class SiteSensor(models.Model):
 
     @property
     def make_model(self):
-        return "{0}_{1}".format(self.model_manufacturer, self.model_name)
+        return "{0}_{1}".format(self.sensor_output.model_manufacturer, self.sensor_output.model_name)
 
-    @property
-    def last_measurement(self):
-        return TimeSeriesResultValue.objects.filter(pk=self.last_measurement_id).first()
+    # @property
+    # def last_measurement(self):
+    #     return TimeSeriesResultValue.objects.filter(pk=self.last_measurement_id).first()
 
     @property
     def sensor_identity(self):
@@ -193,12 +207,12 @@ class SiteSensor(models.Model):
 
     @property
     def influx_url(self):
-        if not self.last_measurement_id:
+        if not self.last_measurement:
             return
 
         return settings.INFLUX_URL_QUERY.format(
             result_uuid=str(self.result_uuid).replace('-', '_'),
-            last_measurement=self.last_measurement_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            last_measurement=self.last_measurement.value_datetime.strftime('%Y-%m-%dT%H:%M:%SZ'),
             days_of_data=settings.SENSOR_DATA_PERIOD
         )
 
@@ -206,8 +220,8 @@ class SiteSensor(models.Model):
         return '%s %s' % (self.sensor_identity, self.unit_abbreviation)
 
     def __repr__(self):
-        return "<SiteSensor('%s', [%s], '%s', '%s')>" % (
-            self.id, self.registration, self.variable_code, self.unit_abbreviation,
+        return "<SiteSensor('%s', [%s], '%s')>" % (
+            self.id, self.registration, self.result_id
         )
 
 

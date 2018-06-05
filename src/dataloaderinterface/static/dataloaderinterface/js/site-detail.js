@@ -160,8 +160,8 @@ function getTimeSeriesData(sensorInfo) {
     $.ajax({
         url: sensorInfo['influxUrl']
     }).done(function(influx_data) {
-        var resultSet = influx_data.results.shift();
-        if (resultSet.series && resultSet.series.length) {
+        var resultSet = influx_data.results ? influx_data.results.shift() : null;
+        if (resultSet && resultSet.series && resultSet.series.length) {
             var influxSeries = resultSet.series.shift();
             var indexes = {
                 time: influxSeries.columns.indexOf("time"),
@@ -180,10 +180,12 @@ function getTimeSeriesData(sensorInfo) {
             drawSparklineOnResize(sensorInfo, values);
             drawSparklinePlot(sensorInfo, values);
         } else {
-             console.error('No data values were found for this site');
-             console.info(series.getdatainflux);
+            console.log('No data values were found for this site');
+            drawSparklinePlot(sensorInfo, []);  // Will just render the empty message
+            // console.info(series.getdatainflux);
         }
     }).fail(function() {
+        drawSparklinePlot(sensorInfo, []);  // Will just render the empty message
         console.log('data failed to load.');
     });
 }
@@ -194,7 +196,6 @@ $(document).ready(function () {
         var statusContainer = $(".follow-status");
         var followForm = $("#follow-site-form");
         var following = !$(this).prop("checked");
-        // var tooltip = $(".mdl-tooltip[data-mdl-for='btn-follow']");
 
         $.ajax({
             url: $('#follow-site-api').val(),
@@ -202,19 +203,12 @@ $(document).ready(function () {
             data: {
                 csrfmiddlewaretoken: followForm.find('input[name="csrfmiddlewaretoken"]').val(),
                 sampling_feature_code: followForm.find('input[name="sampling_feature_code"]').val(),
-                action: (following)? 'unfollow': 'follow'
-            }}).done(function(data) {
-                statusContainer.toggleClass("following");
-            // tooltip.text((following)? 'Follow': 'Unfollow');
-
-            var snackbarContainer = document.querySelector('#clipboard-snackbar');
-
-            // var msg = (following)? 'You are now following this site.' : 'This site has been unfollowed.';
-            var snackbarMsg = {
-                message: (!following)? 'You are now following this site.' : 'This site has been unfollowed.',
-                timeout: 3000
-            };
-            snackbarContainer.MaterialSnackbar.showSnackbar(snackbarMsg);
+                action: (following) ? 'unfollow' : 'follow'
+            }
+        }).done(function () {
+            statusContainer.toggleClass("following");
+            var message = !following ? 'You are now following this site.' : 'This site has been unfollowed.';
+            snackbarMsg(message);
         });
     });
 

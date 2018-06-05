@@ -2,6 +2,10 @@
 {% load staticfiles %}
 {% load helpers %}
 
+{% block page_title %}
+    <title>My Sites</title>
+{% endblock %}
+
 {% block content %}
     <div class="ribbon ribbon-dark"></div>
 
@@ -75,7 +79,7 @@
                                      data-site="{{ site.sampling_feature_id }}"
                                      data-siteCode="{{ site.sampling_feature_code }}"
                                      data-registrationDate="{{ site.registration_date|date:"U" }}"
-                                     data-lastUpdated="{{ site.latest_measurement|date:"U" }}">
+                                     data-lastUpdated="{{ site.latest_measurement.value_datetime|date:"U" }}">
                                     <div class="mdl-card mdl-shadow--2dp site-card">
                                         <div class="mdl-card__title">
                                             <h2 class="mdl-card__title-text" id="mySite{{ forloop.counter }}">
@@ -126,8 +130,8 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="2">{{ site.latest_measurement }}
-                                                            (<span {% if site.latest_measurement_utc|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
+                                                        <td colspan="2">{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }}
+                                                            (<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -196,7 +200,7 @@
                                      data-site="{{ site.sampling_feature_id }}"
                                      data-siteCode="{{ site.sampling_feature_code }}"
                                      data-registrationDate="{{ site.registration_date|date:"U" }}"
-                                     data-lastUpdated="{{ site.latest_measurement|date:"U" }}">
+                                     data-lastUpdated="{{ site.latest_measurement.value_datetime|date:"U" }}">
                                     <div class="mdl-card mdl-shadow--2dp site-card">
                                         <div class="mdl-card__title">
                                             <h2 class="mdl-card__title-text" id="followedSite{{ forloop.counter }}">
@@ -248,8 +252,8 @@
                                                 </tr>
                                                 <tr>
                                                     <td></td>
-                                                    <td>{{ site.latest_measurement }}
-                                                        <br>(<span {% if site.latest_measurement_utc|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement_utc|utc_timesince }} ago</span>)
+                                                    <td>{{ site.latest_measurement.value_local_datetime }}
+                                                        <br>(<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -290,7 +294,7 @@
                         "latitude": {{ site.latitude|default_if_none:0 }},
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
+                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
                         "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                         "status":"owned"
                      }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
@@ -303,7 +307,7 @@
                         "latitude": {{ site.latitude|default_if_none:0 }},
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement_utc|utc_timesince }} ago){% else %}-{% endif %}",
+                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
                         "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                         "status":"followed"
                      }{% if not forloop.last %},{% endif %}

@@ -3,6 +3,14 @@
 {% load site %}
 {% load widget_tweaks %}
 
+{% block page_title %}
+    <title>{% if request.resolver_match.view_name == "leafpack:create" %}
+        Create Leaf Pack Experiment at {{ sampling_feature_code }}
+    {% else %}
+        Edit Leaf Pack Experiment at {{ leafpack.site_registration.sampling_feature_name }}
+    {% endif %}</title>
+{% endblock %}
+
 {% block content %}
     <div class="ribbon ribbon-lightblue"></div>
 

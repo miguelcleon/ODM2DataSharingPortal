@@ -1,8 +1,3 @@
-// (function() {
-//     'use strict';
-//
-// }());
-
 function updateSitePosition(map, position) {
     map.panTo(position);
     $('input[name="latitude"]').val(Math.round(position.lat() * 100000) / 100000).trigger('keypress');
@@ -11,11 +6,11 @@ function updateSitePosition(map, position) {
 
 function updateSiteElevation(position) {
     var elevator = new google.maps.ElevationService();
-     elevator.getElevationForLocations({'locations':[position]}, function(results, status) {
-          if (status == google.maps.ElevationStatus.OK && results[0]) {
-              $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
-          }
-     });
+    elevator.getElevationForLocations({'locations': [position]}, function (results, status) {
+        if (status == google.maps.ElevationStatus.OK && results[0]) {
+            $('input[name="elevation_m"]').val(Math.round(results[0].elevation)).trigger('keypress');
+        }
+    });
 }
 
 function initMap() {
@@ -77,7 +72,6 @@ function initMap() {
     });
 }
 
-
 output_variables = {};
 
 filter_structure = {
@@ -106,7 +100,6 @@ function clear_filters() {
         select.val('');
         select.trigger('change');
     }
-
 }
 
 function apply_filter(filter_name, values, parent_filter_name) {
@@ -160,12 +153,12 @@ function bindResultEvents(form) {
     $.ajax({
         url: $('#output-variables-api').val(),
         data: {csrfmiddlewaretoken: $('form').find('[name="csrfmiddlewaretoken"]').val()}
-    }).fail(function(xhr, error) {
+    }).fail(function (xhr, error) {
         console.log(error);
-    }).done(function(data) {
+    }).done(function (data) {
         output_variables = data;
-    }).always(function(response, status, xhr) {
-        console.log(status + ": " + xhr.responseText);
+    }).always(function (response, status, xhr) {
+        // console.log(status + ": " + xhr.responseText);
     });
 
     for (var index = 0; index < filters.length; index++) {
@@ -189,12 +182,6 @@ function bindResultEvents(form) {
     }
 }
 
-
-function defaultTableMessage() {
-    $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
-}
-
-
 function initializeResultsForm() {
     var form = $('div#result-dialog .result-form');
     bindResultEvents(form);
@@ -215,15 +202,13 @@ function initializeResultsForm() {
             form.find('input[name="id"]').val('');
             form.find('input[name="output_variable"]').val('');
 
-            dialog.find('#result-dialog-title').text("Add Sensor");
+            dialog.find('.mdl-dialog__title').text("Add Sensor");
             dialog.find('#add-sensor-button').show();
             dialog.find('#edit-sensor-button').hide();
             $('#result-dialog-uuid').parent().hide();
-
-
         } else {
             var row = dialog.data('row');
-            $('#result-dialog-title').text("Update Sensor");
+            dialog.find('.mdl-dialog__title').text("Update Sensor");
             dialog.find('#add-sensor-button').hide();
             dialog.find('#edit-sensor-button').show();
             $('#result-dialog-uuid').text(row['result_uuid']).parent().show();
@@ -232,10 +217,11 @@ function initializeResultsForm() {
 
     $('div#result-dialog button#add-sensor-button').on('click', function() {
         var new_sensor_api = $('#sensor-registration-api').val();
+        $("#add-sensor-button").prop("disabled", true).text("ADDING NEW SENSOR...");
 
         make_sensor_api_request(new_sensor_api).done(function(data, message, xhr) {
             var form = $('div#result-dialog div.result-form');
-
+            var message = "";
             if (xhr.status === 201) {
                 // valid
                 var newRow = $($('#sensor-row').html());
@@ -244,15 +230,11 @@ function initializeResultsForm() {
                 form.find('[name="result_uuid"]').val(data['result_uuid']);
 
                 updateRowData(newRow);
-                bindResultEditEvent(newRow);
-                bindResultDeleteEvent(newRow);
-
                 $('div.results-table table').append(newRow);
-                defaultTableMessage();
-
-                $('#result-dialog').modal('toggle');
-
-            } else if (xhr.status === 206) {
+                message = "The new sensor has been added!";
+                $('#result-dialog').modal('hide');
+            }
+            else if (xhr.status === 206) {
                 // not valid
                 for (var fieldName in data) {
                     var element = form.find('[name*="' + fieldName + '"]');
@@ -271,32 +253,34 @@ function initializeResultsForm() {
                         }
                     });
                 }
+
+                message = "Failed to add sensor.";
             }
+
+            $("#add-sensor-button").prop("disabled", false).text("ADD NEW SENSOR");
+            snackbarMsg(message);
         });
     });
 
-    $('div#result-dialog button#edit-sensor-button').on('click', function() {
+    $('div#result-dialog button#edit-sensor-button').on('click', function () {
         var edit_sensor_api = $('#sensor-edit-api').val();
+        $("#edit-sensor-button").prop("disabled", true).text("UPDATING SENSOR...");
 
         make_sensor_api_request(edit_sensor_api).done(function(data, message, xhr) {
             var form = $('div#result-dialog div.result-form');
-
+            var message = "";
             if (xhr.status === 202) {
                 // valid
                 var row = $('div#result-dialog').data('row');
                 form.find('[name="id"]').val(data['id']);
                 form.find('[name="result_id"]').val(data['result_id']);
                 form.find('[name="result_uuid"]').val(data['result_uuid']);
-
                 updateRowData(row);
-                bindResultEditEvent(row);
-                bindResultDeleteEvent(row);
-
-                defaultTableMessage();
-
-                $('#result-dialog').modal('toggle');
-
-            } else if (xhr.status === 206) {
+                defaultSensorsMessage();
+                $('#result-dialog').modal('hide');
+                message = "Sensor updated successfully!"
+            }
+            else if (xhr.status === 206) {
                 // not valid
                 for (var fieldName in data) {
                     var element = form.find('[name*="' + fieldName + '"]');
@@ -315,14 +299,16 @@ function initializeResultsForm() {
                         }
                     });
                 }
+                message = "Failed to update sensor."
             }
+
+            $("#edit-sensor-button").prop("disabled", false).text("UPDATE SENSOR");
+            snackbarMsg(message);
         });
     });
 
-    defaultTableMessage();
     notifyInputStatus();
 }
-
 
 function make_sensor_api_request(api_url) {
     var output_data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
@@ -336,7 +322,6 @@ function make_sensor_api_request(api_url) {
         data: $.extend({ csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val() }, output_data)
     });
 }
-
 
 function fillFormData(row) {
     var rowData = row.data();
@@ -375,36 +360,23 @@ function updateRowData(row) {
             dataColumn.find('.field-text').text(selectedOption.text());
         }
     }
-
 }
 
+$('#sensors-table').on('click', 'td[data-behaviour="edit"] button', function () {
+    var rowElement = $(this).parents('tr');
+    var result_uuid = rowElement.data('result_uuid');
 
-function bindResultEditEvent(row) {
-    row.find('td[data-behaviour="edit"] button').on('click', function(event) {
-        var rowElement = $(this).parents('tr');
-        var result_uuid = rowElement.data('result_uuid');
+    clear_filters();
+    fillFormData(rowElement);
 
-        clear_filters();
-        fillFormData(rowElement);
+    $('#result-dialog-uuid').text(result_uuid).parent().show();
+    $('#result-dialog').modal('show');
+});
 
-        $('#result-dialog-uuid').text(result_uuid).parent().show();
-        $('#result-dialog').modal('toggle');
-
-    });
-}
-
-function bindResultDeleteEvent(row) {
-    row.find('td[data-behaviour="delete"] button').on('click', function(event) {
-        var sensor = $(this).parents('tr');
-        $('#confirm-delete').data('to-delete', sensor).modal('toggle');
-    });
-}
-
-function initializeResultsTable() {
-    var rows = $('div.results-table tbody tr');
-    bindResultEditEvent(rows);
-    bindResultDeleteEvent(rows);
-}
+$('#sensors-table').on('click', 'td[data-behaviour="delete"] button', function () {
+    var sensor = $(this).parents('tr');
+    $('#confirm-delete').data('to-delete', sensor).modal('show');
+});
 
 function notifyInputStatus() {
     if (!$("#id_notify").prop("checked")) {
@@ -417,15 +389,23 @@ function notifyInputStatus() {
     }
 }
 
+function defaultExperimentsMessage() {
+    $("tr.no-experiments-row").toggleClass("hidden", !!$("tr.leafpack-form:not(.deleted-row)").length);
+}
+
+function defaultSensorsMessage() {
+    $("tr.no-sensors-row").toggleClass("hidden", !!$("tr.result-form:not(.deleted-row)").length);
+}
+
 $(document).ready(function() {
     $('nav .menu-register-site').addClass('active');
 
     initializeResultsForm();
-    initializeResultsTable();
 
-    $('#btn-confirm-delete').on('click', function(event) {
+    $('#btn-confirm-delete').on('click', function() {
         var dialog = $('#confirm-delete');
         var row = dialog.data('to-delete');
+        $("#btn-confirm-delete").prop("disabled", true).text("DELETING...");
 
         $.ajax({
             url: $('#sensor-delete-api').val(),
@@ -434,26 +414,42 @@ $(document).ready(function() {
                 csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val(),
                 id: row.data('id')
             }
-        }).done(function(data, message, xhr) {
+        }).done(function (data, message, xhr) {
             if (xhr.status === 202) {
-                // valid
+                // Valid
                 row.remove();
-                console.log('sensor deleted! :)');
-                // TODO: Maurice - Show message saying the deletion was successful.
+                snackbarMsg('Sensor has been deleted!');
 
             } else if (xhr.status === 206) {
-                console.log('sensor couldn\'t be deleted! :(');
-                // TODO: Maurice - Show message saying the deletion was unsuccessful.
+                // Invalid
+                snackbarMsg('Sensor could not be deleted!');
             }
-
+        }).fail(function (xhr, error) {
+            console.log(error);
+        }).always(function (response, status, xhr) {
+            $("#btn-confirm-delete").prop("disabled", false).text("DELETE");
+            defaultSensorsMessage();
+            dialog.modal('hide');
         });
-
-        dialog.modal('toggle');
-        defaultTableMessage();
     });
 
     $("#id_notify").change(function() {
         $("div[data-field='hours_threshold']").toggleClass("hidden", !this.checked);
         notifyInputStatus();
     });
+
+    $(".btn-delete-experiment").click(function () {
+        var experiment = $(this).parents('tr');
+        $('#confirm-delete-experiment').data('to-delete', experiment).modal('show');
+    });
+
+    $("#btn-confirm-delete-experiment").click(function () {
+        var dialog = $('#confirm-delete-experiment');
+        dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
+        defaultExperimentsMessage();
+        dialog.modal('hide');
+    });
+
+    defaultSensorsMessage();
+    defaultExperimentsMessage();
 });

@@ -39,6 +39,14 @@ $(document).on('click', ".menu-order li", function () {
     localStorage.setItem("UISortState", JSON.stringify(UISortState));
 });
 
+function snackbarMsg(message, duration = 3000) {
+    var snackbarContainer = document.querySelector('#clipboard-snackbar');
+    snackbarContainer.MaterialSnackbar.showSnackbar({
+        message: message,
+        timeout: duration
+    });
+}
+
 $(document).ready(function () {
     var UISortState = JSON.parse(localStorage.getItem("UISortState")) || {};
 
@@ -93,8 +101,7 @@ $(document).ready(function () {
     }).done(function (response) {
         var tagName = response[0].tag_name.replace("v", "Version ");
         var URL = response[0].html_url;
-        $("#txtRelease").attr("href", URL);
-        $("#txtRelease").text(tagName);
+        $("#txtRelease").attr("href", URL).text(tagName);
     });
 
     // Set auto zoom status

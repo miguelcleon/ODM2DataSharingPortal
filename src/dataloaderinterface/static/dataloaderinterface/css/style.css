@@ -187,7 +187,7 @@ div.separator {
 }
 
 .result-d-container {
-    margin-top: 8px;
+    padding: 0 24px 0;
 }
 
 .modal-header h4 {
@@ -274,12 +274,12 @@ div.registration-field span.control-label {
     width: 100%;
     margin-bottom: 30px;
     border-radius: 2px;
+    overflow: visible;
 }
 
 .plot_box .variable-title {
     font-weight: 500;
     margin: 0;
-    margin-left: 6px;
 }
 
 .plot_box .mdl-card__supporting-text {
@@ -333,7 +333,7 @@ svg.not-stale {
 
 .table-trigger.disabled, .download-trigger.disabled, .tsa-trigger.disabled {
     pointer-events: none;
-    color: #c5c5c5;
+    color: #3b8a8a;
 }
 
 .measurements-table {
@@ -624,6 +624,11 @@ footer .separator {
     border-color: #d43f3a;
 }
 
+.mdl-button-danger:not([disabled]) {
+    background-color: #d9534f;
+    color: #FFF;
+}
+
 #btn-confirm-delete-experiment:not([disabled]) {
     background: #d9534f;
     color: #FFF;
@@ -773,13 +778,16 @@ span.table-trigger, span.tsa-trigger, span.download-trigger {
 }
 
 .ribbon-content {
-    margin-top: -35vh;
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
     flex-shrink: 0;
     padding: 80px 4vw !important;
     margin-bottom: 80px;
     border-radius: 2px;
+}
+
+.ribbon-content:first-child {
+     margin-top: -35vh;
 }
 
 .ribbon-container {
@@ -1321,4 +1329,8 @@ hr.dotted {
 .img-branding {
     max-width: 200px;
     margin-top: -10px;
+}
+
+#clipboard-snackbar {
+    z-index: 1051; /* Above bootstrap's modal windows */
 }
