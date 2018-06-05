@@ -146,11 +146,25 @@ class SiteDetailView(DetailView):
 class SensorListView(DetailView):
     template_name = 'dataloaderinterface/sensor_list_view.html'
     model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+
+    def get_object(self, queryset=None):
+        return self.get_queryset()
+
+    def get_queryset(self):
+        return SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
 
 
 class LeafPackListUpdateView(UpdateView):
     template_name = 'dataloaderinterface/leafpack_list_view.html'
     model = SiteRegistration
+    slug_field = 'sampling_feature_code'
+
+    def get_object(self, queryset=None):
+        return self.get_queryset()
+
+    def get_queryset(self):
+        return SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
 
 
 class HydroShareResourceViewMixin:
