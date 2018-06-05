@@ -85,26 +85,6 @@
                     </header>
 
                     <div class="row">
-
-
-
-
-
-                        <div class="col-12">
-                            <a type="button" class="button" href="{% url 'sensors' site.sampling_feature_code %}">
-                                CLICK ME FOR SENSORS OMG
-                            </a>
-
-                            <a type="button" class="button" href="{% url 'leafpacks' site.sampling_feature_code %}">
-                                CLICK ME FOR LEAFPACK, ERMAHGERD
-                            </a>
-
-                        </div>
-
-
-
-
-
                         <div class="registration-data col-sm-12 col-md-6">
                             {# Deployment fields #}
 
@@ -228,204 +208,227 @@
                         </div>
                     </div>
                     {% endif %}
+                </section>
+            </div>
+        </div>
+
+        <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h6 class="page-title">
+                        <img class="img-fluid img-branding pull-right"
+                             src="{% static 'dataloaderinterface/images/envirodiy_logo.png' %}"
+                             alt="Data Sharing Portal">
+                        Sensor Observations at this Site
+                    </h6>
+                    <div class="buttons-toolbar row">
+                        <div class="col-12 text-right">
+                            <a class="button-link mdl-button mdl-button--accent mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                               href="{% url 'sensors' site.sampling_feature_code %}">
+                                <i class="material-icons center-icon clickable-float-left">vpn_key</i>
+                                Manage Sensors
+                            </a>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="sparkline-plots col-sm-12">
+                    <div class="alert alert-light" role="alert">
+                        <table>
+                            <tr>
+                                <td style="padding-right: 20px; vertical-align: top;"><i
+                                        class="material-icons center-icon">info</i></td>
+                                <td>
+                                    Only the most recent 72 hours of available data
+                                    are shown on the sparkline plots. The plots are broken when there are gaps
+                                    in the data
+                                    longer than 6 hours. Plots shaded in green have recent data. Plots shaded in
+                                    red have
+                                    not reported data in the last 72 hours.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <br>
 
                     <div class="row">
-                        <div class="col-sm-12">
-                            <h6 class="section-title">
-                                <img class="img-fluid img-branding pull-right"
-                                     src="{% static 'dataloaderinterface/images/envirodiy_logo.png' %}"
-                                     alt="Data Sharing Portal">
-                                Sensor Observations at this Site
-                            </h6>
-                            <hr>
-                        </div>
+                        {% for sensor in site.sensors.all %}
+                            <div class="col-sm-12 col-md-6">
+                                <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
+                                     data-variable-name="{{ sensor.sensor_output.variable_name }}"
+                                     data-variable-code="{{ sensor.sensor_output.variable_code }}"
+                                     data-influx-url="{{ sensor.influx_url }}">
+                                    <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-6">
+                                                <h6 class="variable-title d-inline">{{ sensor.sensor_output.variable_name }}</h6>
+                                                <span id="provisional-{{ forloop.counter0 }}" class="badge badge-info">Provisional</span>
+                                                <div class="mdl-tooltip mdl-tooltip--bottom"
+                                                     data-mdl-for="provisional-{{ forloop.counter0 }}">
+                                                    All data shown are raw observations and have not been subject to
+                                                    quality control post processing.
+                                                </div>
+                                            </div>
 
-                        <div class="sparkline-plots col-sm-12">
-                            <div class="alert alert-light" role="alert">
-                                <table>
-                                    <tr>
-                                        <td style="padding-right: 20px; vertical-align: top;"><i class="material-icons center-icon">info</i></td>
-                                        <td>
-                                            Only the most recent 72 hours of available data
-                                            are shown on the sparkline plots. The plots are broken when there are gaps
-                                            in the data
-                                            longer than 6 hours. Plots shaded in green have recent data. Plots shaded in
-                                            red have
-                                            not reported data in the last 72 hours.
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <br>
-
-                            <div class="row">
-                                {% for sensor in site.sensors.all %}
-                                <div class="col-sm-12 col-md-6">
-                                    <div class="plot_box mdl-card mdl-shadow--2dp" data-result-id="{{ sensor.result_id }}"
-                                         data-variable-name="{{ sensor.sensor_output.variable_name }}"
-                                         data-variable-code="{{ sensor.sensor_output.variable_code }}"
-                                         data-influx-url="{{ sensor.influx_url }}">
-                                        <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                            <div class="row">
-                                                <div class="col-sm-12 col-md-6">
-                                                    <h6 class="variable-title d-inline">{{ sensor.sensor_output.variable_name }}</h6>
-                                                    <span id="provisional-{{ forloop.counter0 }}" class="badge badge-info">Provisional</span>
-                                                    <div class="mdl-tooltip mdl-tooltip--bottom"
-                                                         data-mdl-for="provisional-{{ forloop.counter0 }}">
-                                                        All data shown are raw observations and have not been subject to quality control post processing.
-                                                    </div>
+                                            <div class="col-sm-12 col-md-6">
+                                                {#  View data table button  #}
+                                                <span id="table-trigger-{{ forloop.counter0 }}"
+                                                      class="fa fa-table table-trigger pull-right"
+                                                      aria-hidden="false"></span>
+                                                <div class="mdl-tooltip mdl-tooltip--left"
+                                                     data-mdl-for="table-trigger-{{ forloop.counter0 }}">
+                                                    View Data Table
                                                 </div>
 
-                                                <div class="col-sm-12 col-md-6">
-                                                    {#  View data table button  #}
-                                                    <span id="table-trigger-{{ forloop.counter0 }}"
-                                                          class="fa fa-table table-trigger pull-right"
+                                                {#  Download data button  #}
+                                                <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
+                                                    <span id="download-trigger-{{ forloop.counter0 }}"
+                                                          class="fa fa-cloud-download download-trigger pull-right text-black"></span>
+                                                </a>
+                                                <div class="mdl-tooltip mdl-tooltip--left"
+                                                     data-mdl-for="download-trigger-{{ forloop.counter0 }}">
+                                                    Download Data
+                                                </div>
+
+                                                {#  View on TSA button  #}
+                                                <a target="_blank"
+                                                   href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.sensor_output.variable_code }}&view=visualization&plot=true">
+                                                    <span id="tsa-trigger-{{ forloop.counter0 }}"
+                                                          class="fa fa-external-link tsa-trigger pull-right text-black"
                                                           aria-hidden="false"></span>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
-                                                         data-mdl-for="table-trigger-{{ forloop.counter0 }}">
-                                                        View Data Table
-                                                    </div>
-
-                                                    {#  Download data button  #}
-                                                    <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
-                                                            <span id="download-trigger-{{ forloop.counter0 }}"
-                                                                  class="fa fa-cloud-download download-trigger pull-right text-black"></span>
-                                                    </a>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
-                                                         data-mdl-for="download-trigger-{{ forloop.counter0 }}">
-                                                        Download Data
-                                                    </div>
-
-                                                    {#  View on TSA button  #}
-                                                    <a target="_blank"
-                                                       href="{{ tsa_url }}?sitecode={{ site.sampling_feature_code }}&variablecode={{ sensor.sensor_output.variable_code }}&view=visualization&plot=true">
-                                                            <span id="tsa-trigger-{{ forloop.counter0 }}"
-                                                                  class="fa fa-external-link tsa-trigger pull-right text-black"
-                                                                  aria-hidden="false"></span>
-                                                    </a>
-                                                    <div class="mdl-tooltip mdl-tooltip--left"
-                                                         data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
-                                                        Open in Time Series Analyst
-                                                    </div>
+                                                </a>
+                                                <div class="mdl-tooltip mdl-tooltip--left"
+                                                     data-mdl-for="tsa-trigger-{{ forloop.counter0 }}">
+                                                    Open in Time Series Analyst
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="mdl-card__supporting-text mdl-card--border full-width">
-                                             <div id="graph{{ forloop.counter0 }}"
-                                                 class="graph-container">
-                                            </div>
-                                            <div class="variable-data">
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <span>Last observation </span><br>
-                                                        <span class="last-observation">{{ sensor.last_measurement.value_datetime|default:"-" }}</span>
-                                                    </div>
-                                                    <div class="col-6 text-right">
-                                                        <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement.data_value|roundfloat:4|default:" - " }}</h3>
-                                                        <h6 style="margin-top: 0;" class="unit">
-                                                            ({{ sensor.sensor_output.unit_abbreviation }})</h6>
-                                                    </div>
+                                    <div class="mdl-card__supporting-text mdl-card--border full-width">
+                                        <div id="graph{{ forloop.counter0 }}"
+                                             class="graph-container">
+                                        </div>
+                                        <div class="variable-data">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <span>Last observation </span><br>
+                                                    <span class="last-observation">{{ sensor.last_measurement.value_datetime|default:"-" }}</span>
+                                                </div>
+                                                <div class="col-6 text-right">
+                                                    <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement.data_value|roundfloat:4|default:" - " }}</h3>
+                                                    <h6 style="margin-top: 0;" class="unit">
+                                                        ({{ sensor.sensor_output.unit_abbreviation }})</h6>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="full-width mdl-card__supporting-text">
-                                            <table class="mdl-data-table mdl-js-data-table full-width no-hover">
+                                    <div class="full-width mdl-card__supporting-text">
+                                        <table class="mdl-data-table mdl-js-data-table full-width no-hover">
+                                            <tr>
+                                                <td><strong>Medium:</strong></td>
+                                                <td class="mdl-data-table__cell--non-numeric">{{ sensor.sensor_output.sampled_medium }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Sensor:</strong></td>
+                                                <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
+                                            </tr>
+                                            {% if can_administer_site %}
                                                 <tr>
-                                                    <td><strong>Medium:</strong></td>
-                                                    <td class="mdl-data-table__cell--non-numeric">{{ sensor.sensor_output.sampled_medium }}</td>
+                                                    <td><strong>UUID:</strong></td>
+                                                    <td class="mdl-data-table__cell--non-numeric">
+                                                <span id="uuid-{{ sensor.result_id }}"
+                                                      data-copy-target="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
+                                                        <br>
+                                                        <small class="text-muted"><i class="fa fa-eye"
+                                                                                     aria-hidden="true"></i> Only
+                                                            you can see this.
+                                                        </small>
+                                                    </td>
                                                 </tr>
-                                                <tr>
-                                                    <td><strong>Sensor:</strong></td>
-                                                    <td class="mdl-data-table__cell--non-numeric">{{ sensor.make_model }}</td>
-                                                </tr>
-                                                {% if can_administer_site %}
-                                                    <tr>
-                                                        <td><strong>UUID:</strong></td>
-                                                        <td class="mdl-data-table__cell--non-numeric">
-                                                        <span id="uuid-{{ sensor.result_id }}"
-                                                              data-copy-target="uuid-{{ sensor.result_id }}">{{ sensor.result_uuid }}</span>
-                                                            <br>
-                                                            <small class="text-muted"><i class="fa fa-eye"
-                                                                                         aria-hidden="true"></i> Only
-                                                                you can see this.
-                                                            </small>
-                                                        </td>
-                                                    </tr>
-                                                {% endif %}
-                                            </table>
-                                        </div>
+                                            {% endif %}
+                                        </table>
                                     </div>
                                 </div>
-                                {% endfor %}
-                                {% if not site.sensors.all %}
-                                    <div class="col-12">
-                                        <i class="material-icons no-data-icon center-icon">
-                                            cloud_off
-                                        </i>
-                                        <span class="text-muted">No sensors have been added to this site.</span>
-                                    </div>
-                                {% endif %}
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <h5 class="section-title">
-                                <img class="img-fluid img-branding pull-right"
-                                 src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo-horiz-black.png' %}"
-                                 alt="Leaf Pack Network logo">
-                                Macroinvertebrate Data at this Site
-                            </h5>
-                        </div>
-
-                        <div class="col-12"><hr></div>
-
-                        <div class="col-12" style="overflow: auto;">
-
-                        {% if leafpacks %}
-                            <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
-                                <thead>
-                                    <tr>
-{#                                        <th class="mdl-data-table__cell--non-numeric">Experiment ID</th>#}
-{#                                        <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
-                                        <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
-                                        <th class="mdl-data-table__cell--non-numeric">Content</th>
-                                        <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
-                                        <th class="mdl-data-table__cell--non-numeric"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for leafpack in leafpacks %}
-                                        <tr>
-                                            {# TODO: Populate field experiment_type #}
-{#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>#}
-{#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
-                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type }}</td>
-                                            <td class="mdl-data-table__cell--non-numeric">
-                                                <a class="mdl-button mdl-js-button button-link mdl-button--primary"
-                                                   href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.id %}">
-                                                    View Details
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        {% else %}
-                            <i class="material-icons no-data-icon center-icon">
-                                cloud_off
-                            </i>
-                            <span class="text-muted">No Macroinvertebrate Data have been added to this site.</span>
+                        {% endfor %}
+                        {% if not site.sensors.all %}
+                            <div class="col-12">
+                                <i class="material-icons no-data-icon center-icon">
+                                    cloud_off
+                                </i>
+                                <span class="text-muted">No sensors have been added to this site.</span>
+                            </div>
                         {% endif %}
-                        </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <div class="col-12">
+                    <h5 class="page-title">
+                        <img class="img-fluid img-branding pull-right"
+                             src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo-horiz-black.png' %}"
+                             alt="Leaf Pack Network logo">
+                        Macroinvertebrate Data at this Site
+                    </h5>
+
+                    <div class="buttons-toolbar row">
+                        <div class="col-12 text-right">
+                            <a class="button-link mdl-button mdl-button--accent mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                               href="{% url 'leafpacks' site.sampling_feature_code %}">
+                                <i class="material-icons center-icon clickable-float-left">vpn_key</i>
+                                Manage Leaf Experiments
+                            </a>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+                <div class="col-12" style="overflow: auto;">
+                    {% if leafpacks %}
+                        <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
+                            <thead>
+                            <tr>
+                                {#                                        <th class="mdl-data-table__cell--non-numeric">Experiment ID</th>#}
+                                {#                                        <th class="mdl-data-table__cell--non-numeric">Experiment Type</th>#}
+                                <th class="mdl-data-table__cell--non-numeric">Begin Date</th>
+                                <th class="mdl-data-table__cell--non-numeric">Content</th>
+                                <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
+                                <th class="mdl-data-table__cell--non-numeric"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for leafpack in leafpacks %}
+                                <tr>
+                                    {# TODO: Populate field experiment_type #}
+                                    {#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.id }}</td>#}
+                                    {#                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type }}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <a class="mdl-button mdl-js-button button-link mdl-button--primary"
+                                           href="{% url 'leafpack:view' site.sampling_feature.sampling_feature_code leafpack.id %}">
+                                            View Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <i class="material-icons no-data-icon center-icon">
+                            cloud_off
+                        </i>
+                        <span class="text-muted">No Macroinvertebrate Data have been added to this site.</span>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
