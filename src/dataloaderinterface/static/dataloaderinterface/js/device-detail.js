@@ -194,7 +194,6 @@ $(document).ready(function () {
         var statusContainer = $(".follow-status");
         var followForm = $("#follow-site-form");
         var following = !$(this).prop("checked");
-        // var tooltip = $(".mdl-tooltip[data-mdl-for='btn-follow']");
 
         $.ajax({
             url: $('#follow-site-api').val(),
@@ -202,19 +201,12 @@ $(document).ready(function () {
             data: {
                 csrfmiddlewaretoken: followForm.find('input[name="csrfmiddlewaretoken"]').val(),
                 sampling_feature_code: followForm.find('input[name="sampling_feature_code"]').val(),
-                action: (following)? 'unfollow': 'follow'
-            }}).done(function(data) {
-                statusContainer.toggleClass("following");
-            // tooltip.text((following)? 'Follow': 'Unfollow');
-
-            var snackbarContainer = document.querySelector('#clipboard-snackbar');
-
-            // var msg = (following)? 'You are now following this site.' : 'This site has been unfollowed.';
-            var snackbarMsg = {
-                message: (!following)? 'You are now following this site.' : 'This site has been unfollowed.',
-                timeout: 3000
-            };
-            snackbarContainer.MaterialSnackbar.showSnackbar(snackbarMsg);
+                action: (following) ? 'unfollow' : 'follow'
+            }
+        }).done(function () {
+            statusContainer.toggleClass("following");
+            var message = !following ? 'You are now following this site.' : 'This site has been unfollowed.';
+            snackbarMsg(message);
         });
     });
 
