@@ -65,8 +65,14 @@ class SiteRegistration(models.Model):
 
     @property
     def latest_measurement(self):
-        last_updated_sensor = self.sensors.order_by('-last_measurement__value_datetime').first()
-        return last_updated_sensor and last_updated_sensor.last_measurement
+        if not hasattr(self, 'latest_measurement_id'):
+            return
+        try:
+            last_updated_sensor = [sensor for sensor in self.sensors.all() if sensor.last_measurement.pk == self.latest_measurement_id].pop()
+        except IndexError:
+            return None
+
+        return last_updated_sensor.last_measurement
 
     @property
     def sampling_feature(self):

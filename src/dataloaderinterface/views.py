@@ -67,12 +67,14 @@ class SitesListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return super(SitesListView, self).get_queryset()\
             .with_sensors()\
+            .with_latest_measurement_id()\
             .deployed_by(user_id=self.request.user.id)
 
     def get_context_data(self, **kwargs):
         context = super(SitesListView, self).get_context_data()
         context['followed_sites'] = super(SitesListView, self).get_queryset()\
-            .with_sensors()\
+            .with_sensors() \
+            .with_latest_measurement_id() \
             .followed_by(user_id=self.request.user.id)
         return context
 
@@ -85,14 +87,16 @@ class StatusListView(ListView):
     def get_queryset(self):
         return super(StatusListView, self).get_queryset()\
             .with_status_sensors()\
-            .deployed_by(self.request.user.id)\
+            .deployed_by(self.request.user.id) \
+            .with_latest_measurement_id() \
             .order_by('sampling_feature_code')
 
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
         context['followed_sites'] = super(StatusListView, self).get_queryset()\
             .with_status_sensors()\
-            .followed_by(user_id=self.request.user.id)\
+            .followed_by(user_id=self.request.user.id) \
+            .with_latest_measurement_id() \
             .order_by('sampling_feature_code')
         return context
 
@@ -103,7 +107,11 @@ class BrowseSitesListView(ListView):
     template_name = 'dataloaderinterface/browse-sites.html'
 
     def get_queryset(self):
-        return super(BrowseSitesListView, self).get_queryset().with_sensors()
+        return super(BrowseSitesListView, self).get_queryset()\
+            .with_sensors()\
+            .with_leafpacks()\
+            .with_latest_measurement_id()\
+            .with_ownership_status(self.request.user.id)
 
 
 class SiteDetailView(DetailView):
