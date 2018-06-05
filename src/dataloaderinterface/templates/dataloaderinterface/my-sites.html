@@ -252,7 +252,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td></td>
-                                                    <td>{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }}
+                                                    <td>{{ site.latest_measurement.value_local_datetime }}
                                                         <br>(<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
                                                     </td>
                                                 </tr>
