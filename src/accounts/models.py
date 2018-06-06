@@ -14,7 +14,6 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True, blank=False)
     organization_code = models.CharField(max_length=50, blank=True, null=True)
     organization_name = models.CharField(max_length=255, blank=True, null=True)
-    hydroshare_account = models.OneToOneField('dataloaderinterface.HydroShareAccount', db_column='hs_account_id', null=True, blank=True)
 
     @property
     def affiliation(self):

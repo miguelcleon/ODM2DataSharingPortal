@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.urls.base import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import UpdateView, CreateView
+from django.core.exceptions import ObjectDoesNotExist
 
 from accounts.forms import UserUpdateForm, UserRegistrationForm
 from dataloaderinterface.forms import OrganizationForm
@@ -26,7 +27,12 @@ class UserUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(UserUpdateView, self).get_context_data(**kwargs)
-        context['hs_account'] = self.get_hydroshare_account()
+
+        try:
+            context['hs_account'] = self.request.user.hydroshare_account
+        except ObjectDoesNotExist:
+            pass
+
         context['organization_form'] = OrganizationForm()
         return context
 

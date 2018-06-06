@@ -22,7 +22,7 @@ def handle_site_registration_pre_save(sender, instance, update_fields=None, **kw
         instance.sampling_feature_id = sampling_feature.sampling_feature_id
 
     affiliation = instance.odm2_affiliation
-    instance.django_user = get_user_model().objects.filter(affiliation_id=instance.affiliation_id).first()
+    instance.django_user = sender.django_user.get_object(instance)
     instance.person_id = affiliation.person_id
     instance.person_first_name = affiliation.person.person_first_name
     instance.person_last_name = affiliation.person.person_last_name

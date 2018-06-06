@@ -592,7 +592,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             if site_alert \
             else {}
 
-        # maybe just access site.leafpacks in the template?
+        # maybe just access site.leafpacks in the template? Naw.
         context['leafpacks'] = LeafPack.objects.filter(site_registration=self.object)
         context['sensor_form'] = SiteSensorForm(initial={'registration': self.object.registration_id})
         context['email_alert_form'] = SiteAlertForm(data=alert_data)
@@ -662,8 +662,15 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         form = self.get_form_class()(request.POST)
         notify_form = SiteAlertForm(request.POST)
 
+        try:
+            SamplingFeature.objects.get(sampling_feature_code='asdf').delete()
+        except:
+            pass
+
         if form.is_valid() and notify_form.is_valid():
             form.instance.affiliation_id = form.cleaned_data['affiliation_id'] or request.user.affiliation_id
+            form.instance.django_user = request.user
+            form.instance.save()
             self.object = form.save()
 
             if notify_form.cleaned_data['notify']:
@@ -680,7 +687,7 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
 class OAuthAuthorize(TemplateView):
     """handles the OAuth 2.0 authorization workflow with hydroshare.org"""
     def get(self, request, *args, **kwargs):
-        if request.user.is_authenticated():
+        if not request.user.is_authenticated():
             return HttpResponseServerError('You are not logged in!')
 
         if 'code' in request.GET:
@@ -702,28 +709,14 @@ class OAuthAuthorize(TemplateView):
                 # if account does not exist, create a new one
                 account = HydroShareAccount(is_enabled=True, ext_id=user_info['id'])
 
-            old_token = None
             if account.token:
-                old_token = account.token
-                account.token = None
+                account.token.delete()
                 account.save()
 
             # Make updates to datatbase
-            token = OAuthToken(**token_dict)
-            token.save()
-
-            account.token = token
+            account.token = OAuthToken.objects.create(**token_dict)
+            account.user = request.user
             account.save()
-
-            if old_token:
-                old_token.delete()
-
-            user = request.user
-            user.hydroshare_account = account
-            user.save()
-            # odm2user = ODM2User.objects.get(user=request.user.pk)
-            # odm2user.hydroshare_account = account
-            # odm2user.save()
 
             return redirect('user_account')
         elif 'error' in request.GET:

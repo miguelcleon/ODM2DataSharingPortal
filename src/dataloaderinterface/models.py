@@ -14,7 +14,7 @@ from dataloader.models import SamplingFeature, Affiliation, Result, TimeSeriesRe
     Unit, Medium
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 
 from dataloaderinterface.querysets import SiteRegistrationQuerySet, SensorOutputQuerySet
 
@@ -76,11 +76,17 @@ class SiteRegistration(models.Model):
 
     @property
     def sampling_feature(self):
-        return SamplingFeature.objects.filter(pk=self.sampling_feature_id).first()
+        try:
+            return SamplingFeature.objects.get(pk=self.sampling_feature_id)
+        except ObjectDoesNotExist:
+            return None
 
     @property
     def odm2_affiliation(self):
-        return Affiliation.objects.filter(pk=self.affiliation_id).first()
+        try:
+            return Affiliation.objects.get(pk=self.affiliation_id)
+        except ObjectDoesNotExist:
+            return None
 
     def __str__(self):
         return '%s' % self.sampling_feature_code
@@ -279,13 +285,17 @@ class OAuthToken(models.Model):
 
 # HSUAccount - holds information for user's Hydroshare account
 class HydroShareAccount(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True, related_name='hydroshare_account')
     is_enabled = models.BooleanField(default=False)
     ext_id = models.IntegerField(unique=True)  # external hydroshare account id
     token = models.ForeignKey(OAuthToken, db_column='token_id', null=True, on_delete=models.CASCADE)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         return super(HydroShareAccount, self).save(force_insert=force_insert, force_update=force_update, using=using,
-                                            update_fields=update_fields)
+                                                   update_fields=update_fields)
+
+    def delete(self, using=None, **kwargs):
+        return super(HydroShareAccount, self).delete(using=using, keep_parents=True)
 
     @property
     def username(self):
