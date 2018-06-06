@@ -55,6 +55,7 @@
                             {% endif %}
                         </div>
                         {% include 'includes/messages.template.html' with messages=messages %}
+
                         <div class="buttons-toolbar row">
                             {% if can_administer_site %}
                                 <div class="col-12 text-right">
@@ -142,6 +143,34 @@
                                         <i class="fa fa-circle" aria-hidden="true"></i> Site Type
                                     </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.site_type|default:"-" }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-quote-right" aria-hidden="true"></i> Stream Name
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.stream_name|default:"-" }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-circle" aria-hidden="true"></i> Major Watershed
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.major_watershed|default:"-" }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-circle" aria-hidden="true"></i> Sub Basin
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.sub_basin|default:"-" }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <i class="fa fa-circle" aria-hidden="true"></i> Closest Town
+                                    </td>
+                                    <td class="mdl-data-table__cell--non-numeric">{{ site.closest_town|default:"-" }}</td>
                                 </tr>
 
                                 {% if can_administer_site %}
