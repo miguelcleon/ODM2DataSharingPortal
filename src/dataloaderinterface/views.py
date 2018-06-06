@@ -149,8 +149,8 @@ class SiteDetailView(DetailView):
         return context
 
 
-class SensorListView(DetailView):
-    template_name = 'dataloaderinterface/sensor_list_view.html'
+class SensorListUpdateView(DetailView):
+    template_name = 'dataloaderinterface/manage_sensors.html'
     model = SiteRegistration
     slug_field = 'sampling_feature_code'
 
@@ -161,8 +161,8 @@ class SensorListView(DetailView):
         return SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
 
 
-class LeafPackListUpdateView(UpdateView):
-    template_name = 'dataloaderinterface/leafpack_list_view.html'
+class LeafPackListUpdateView(DetailView):
+    template_name = 'dataloaderinterface/manage_leafpack.html'
     model = SiteRegistration
     slug_field = 'sampling_feature_code'
 

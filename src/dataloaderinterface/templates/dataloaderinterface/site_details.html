@@ -214,7 +214,7 @@
 
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-12">
                     <h6 class="page-title">
                         <img class="img-fluid img-branding pull-right"
                              src="{% static 'dataloaderinterface/images/envirodiy_logo.png' %}"
@@ -222,37 +222,37 @@
                         Sensor Observations at this Site
                     </h6>
                     <div class="buttons-toolbar row">
-                        <div class="col-12 text-right">
+                        <div class="col-sm-12 col-md-8">
+                            <div class="alert alert-light" role="alert">
+                                <table>
+                                    <tr>
+                                        <td style="padding-right: 20px; vertical-align: top;"><i
+                                                class="material-icons center-icon">info</i></td>
+                                        <td>
+                                            Only the most recent 72 hours of available data
+                                            are shown on the sparkline plots. The plots are broken when there are gaps
+                                            in the data
+                                            longer than 6 hours. Plots shaded in green have recent data. Plots shaded in
+                                            red have
+                                            not reported data in the last 72 hours.
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <br>
+                        </div>
+
+                        <div class="col-sm-12 col-md-4 text-right">
                             <a class="button-link mdl-button mdl-button--accent mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                href="{% url 'sensors' site.sampling_feature_code %}">
                                 <i class="material-icons center-icon clickable-float-left">vpn_key</i>
                                 Manage Sensors
                             </a>
                         </div>
-                        <br>
                     </div>
                 </div>
 
                 <div class="sparkline-plots col-sm-12">
-                    <div class="alert alert-light" role="alert">
-                        <table>
-                            <tr>
-                                <td style="padding-right: 20px; vertical-align: top;"><i
-                                        class="material-icons center-icon">info</i></td>
-                                <td>
-                                    Only the most recent 72 hours of available data
-                                    are shown on the sparkline plots. The plots are broken when there are gaps
-                                    in the data
-                                    longer than 6 hours. Plots shaded in green have recent data. Plots shaded in
-                                    red have
-                                    not reported data in the last 72 hours.
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <br>
-
                     <div class="row">
                         {% for sensor in site.sensors.all %}
                             <div class="col-sm-12 col-md-6">

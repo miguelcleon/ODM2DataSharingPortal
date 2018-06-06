@@ -253,7 +253,7 @@
                     <div class="col">
                         <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                 {% if leafpack.pk is None %}
-                                    href="{% url 'site_update' sampling_feature_code %}"
+                                    href="{% url 'leafpacks' sampling_feature_code %}"
                                 {% else %}
                                     href="{% url 'leafpack:view' sampling_feature_code leafpack.id %}"
                                 {% endif %}

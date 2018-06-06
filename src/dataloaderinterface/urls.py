@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 
-from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, SensorListView, \
+from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, SensorListUpdateView, \
     HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceUpdateView, \
-    HydroShareResourceCreateView, HydroShareResourceDeleteView, OAuthAuthorize, OAuthRedirect
+    HydroShareResourceCreateView, HydroShareResourceDeleteView, OAuthAuthorize, OAuthRedirect, LeafPackListUpdateView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -25,8 +25,8 @@ urlpatterns = [
     url(r'^status/$', StatusListView.as_view(), name='status'),
     url(r'^browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
-    url(r'^sites/update/(?P<sampling_feature_code>.*?)/sensors/$', SensorListView.as_view(), name='sensors'),
-    url(r'^sites/update/(?P<sampling_feature_code>.*?)/leafpacks/$', SensorListView.as_view(), name='leafpacks'),
+    url(r'^sites/update/(?P<sampling_feature_code>.*?)/sensors/$', SensorListUpdateView.as_view(), name='sensors'),
+    url(r'^sites/update/(?P<sampling_feature_code>.*?)/leafpacks/$', LeafPackListUpdateView.as_view(), name='leafpacks'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
 
