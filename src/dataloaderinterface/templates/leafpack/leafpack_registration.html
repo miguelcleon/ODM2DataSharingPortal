@@ -65,14 +65,14 @@
 
                                     <div class="form-field col-6">
                                         <label for="{{ form.placement_air_temp.id_for_label }}">{{ form.placement_air_temp.label }}</label>
-                                        {{ form.placement_air_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
+                                        {{ form.placement_air_temp|add_class:"form-control d-inline" }}
+                                        <small>°C</small>
                                     </div>
 
                                     <div class="form-field col-6">
                                         <label for="{{ form.placement_water_temp.id_for_label }}">{{ form.placement_water_temp.label }}</label>
-                                        {{ form.placement_water_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
+                                        {{ form.placement_water_temp|add_class:"form-control d-inline" }}
+                                        <small>°C</small>
                                     </div>
 
                                     <div class="form-field col-6">
@@ -142,14 +142,14 @@
 
                                     <div class="form-field col-6">
                                         <label for="{{ form.retrieval_air_temp.id_for_label }}">{{ form.retrieval_air_temp.label }}</label>
-                                        {{ form.retrieval_air_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
+                                        {{ form.retrieval_air_temp|add_class:"form-control d-inline" }}
+                                        <small>°C</small>
                                     </div>
 
                                     <div class="form-field col-6">
                                         <label for="{{ form.retrieval_water_temp.id_for_label }}">{{ form.retrieval_water_temp.label }}</label>
-                                        {{ form.retrieval_water_temp|add_class:"form-control" }}
-                                        <small class="text-muted">Degrees Celcius</small>
+                                        {{ form.retrieval_water_temp|add_class:"form-control d-inline" }}
+                                        <small>°C</small>
                                     </div>
                                 </div>
                             </div>
@@ -180,8 +180,9 @@
 
                                     <div class="form-field">
                                         <label for="{{ form.storm_precipitation.id_for_label }}">{{ form.storm_precipitation.label }}</label>
-                                        {{ form.storm_precipitation|add_class:"form-control" }}
-                                        <small class="text-muted">depth (cm)</small>
+                                        <br>
+                                        {{ form.storm_precipitation|add_class:"form-control d-inline" }}
+                                        <small>cm (depth)</small>
                                     </div>
                                 </div>
 

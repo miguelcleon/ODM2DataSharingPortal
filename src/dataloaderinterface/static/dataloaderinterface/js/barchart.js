@@ -3,7 +3,7 @@
  */
 var c20 = d3.scale.category20();
 
-var margin = {top: 40, right: 20, bottom: 60, left: 60},
+var margin = {top: 40, right: 20, bottom: 60, left: 80},
     width = $(".svg-container").width() - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
