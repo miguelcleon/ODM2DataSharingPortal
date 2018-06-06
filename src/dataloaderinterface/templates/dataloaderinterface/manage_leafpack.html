@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 
 {% block page_title %}
-    <title>Manage Leaf Experiments</title>
+    <title>Manage Leaf Experiments at {{ siteregistration.sampling_feature_code }}</title>
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,8 @@
 
     <div class="ribbon-container">
         <div class="container main-content ribbon-content mdl-color--white mdl-shadow--4dp">
-            <div class="page-title">Manage Leaf Experiments</div>
+            <div class="page-title">Manage Leaf Experiments at  <a style="color: rgb(4, 138, 138);" href="{% autoescape on %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}">
+                    {{ siteregistration.sampling_feature_code }}</a></div>
             <fieldset class="form-fieldset">
                 <div class="row">
                     <div class="col-12">
@@ -82,6 +83,12 @@
                     </div>
                 </div>
             </fieldset>
+
+            <br><br>
+            <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+               href="{% autoescape on %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}">
+                Back to site details
+            </a>
         </div>
     </div>
 
