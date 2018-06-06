@@ -20,11 +20,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # MAGICAL BEAUTIFUL QUERY
         all_site_alerts = SiteAlert.objects \
-            .prefetch_related('site_registration__sensors', 'user') \
-            .annotate(last_measurement_utc_datetime=Max('site_registration__sensors__last_measurement_utc_datetime')) \
-            .filter(last_measurement_utc_datetime__isnull=False) \
-            .annotate(data_gap=ExpressionWrapper(datetime.utcnow() - F('last_measurement_utc_datetime'), output_field=DurationField())) \
-            .filter(Q(last_alerted__isnull=True) | Q(last_measurement_utc_datetime__gt=F('last_alerted')), data_gap__gte=F('hours_threshold'))
+            .prefetch_related('site_registration__sensors__last_measurement', 'user') \
+            .annotate(last_measurement_datetime=Max('site_registration__sensors__last_measurement__value_datetime')) \
+            .filter(last_measurement_datetime__isnull=False) \
+            .annotate(data_gap=ExpressionWrapper(datetime.utcnow() - F('last_measurement_datetime'), output_field=DurationField())) \
+            .filter(Q(last_alerted__isnull=True) | Q(last_measurement_datetime__gt=F('last_alerted')), data_gap__gte=F('hours_threshold'))
 
         print("{} site alerts found.".format(all_site_alerts.count()))
         for site_alert in all_site_alerts:
