@@ -89,11 +89,11 @@
                 <td>{{ site.sampling_feature_name }}</td>
                 <td>
                     {% if site.latest_measurement %}
-                    {{ site.latest_measurement }}
-                    (<span {% if site.latest_measurement|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement|timesince }} ago</span>)
+                    {{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }}
+                    (<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement.value_datetime|timesince }} ago</span>)
                 {% endif %}</td>
-                <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
-                <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
             </tr>
         {% endwith %}
     {% endfor %}
@@ -120,10 +120,10 @@
                 <td>{{ site.sampling_feature_name }}</td>
                 <td>{% if not site.latest_measurement %}
                     -{% else %}
-                    {{ site.latest_measurement }} (<span {% if site.latest_measurement|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement|timesince }} ago</span>)
+                    {{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }} (<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement.value_datetime|timesince }} ago</span>)
                 {% endif %}</td>
-                <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
-                <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
             </tr>
         {% endwith %}
     {% endfor %}
