@@ -1225,6 +1225,11 @@ td.indent-left {
     padding-left: 48px !important;
 }
 
+td.label, p.label {
+    color: rgba(0, 0, 0, .54);
+    font-weight: 700;
+}
+
 .form-leafpack .step-number {
     display: inline-block;
     border-radius: 50%;

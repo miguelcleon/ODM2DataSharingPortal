@@ -56,40 +56,40 @@
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-plus-o icon-blue" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Placement Date</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Placement Date</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-leaf icon-green" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Number of Packs Placed</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Number of Packs Placed</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_placement_count }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-three-quarters icon-light-blue" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">
+                            <td class="mdl-data-table__cell--non-numeric label">
                                 Placement Air Temperature
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_air_temp }}
-                                <small class="text-muted">Degrees Celcius</small>
+                                <small> °C</small>
                             </td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-quarter icon-light-blue" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">
+                            <td class="mdl-data-table__cell--non-numeric label">
                                 Placement Water Temperature
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_water_temp }}
-                                <small class="text-muted">Degrees Celcius</small>
+                                <small> °C</small>
                             </td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-cube" style="color: cadetblue;" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Deployment Type</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Deployment Type</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i style="color: rosybrown;" class="fa fa-archive" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Content</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Content</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
                         </tr>
                     </table>
@@ -98,7 +98,7 @@
                 <div class="col-sm-12 col-md-6">
                     <h6 class="title">Leaf Pack Type and Composition</h6>
                     <hr class="dotted">
-                    <p class="text-muted">Predominant Leaf Species:</p>
+                    <p class="text-muted label">Predominant Leaf Species:</p>
                     {% for lp in leafpack.types.all %}
                         <h5 class="d-inline"><span class="badge badge-info">{{ lp }}</span></h5>
                     {% endfor %}
@@ -111,26 +111,26 @@
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-calendar-minus-o icon-blue" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Retrieval Date</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Retrieval Date</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_date }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-leaf icon-orange" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Number of Packs Retrieved</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Number of Packs Retrieved</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.leafpack_retrieval_count }}</td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-three-quarters icon-light-blue" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Retrieval Air Temperature</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Retrieval Air Temperature</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_air_temp }}
-                                <small class="text-muted">Degrees Celcius</small>
+                                <small> °C</small>
                             </td>
                         </tr>
                         <tr>
                             <td class="mdl-data-table__cell--icon"><i class="fa fa-thermometer-quarter icon-light-blue" aria-hidden="true"></i></td>
-                            <td class="mdl-data-table__cell--non-numeric">Retrieval Water Temperature</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Retrieval Water Temperature</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.retrieval_water_temp }}
-                                <small class="text-muted">Degrees Celcius</small>
+                                <small> °C</small>
                             </td>
                         </tr>
                     </table>
@@ -141,7 +141,7 @@
                     <hr class="dotted">
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover full-width no-borders">
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Did storms occur while your leaf packs were in
+                            <td class="mdl-data-table__cell--non-numeric label">Did storms occur while your leaf packs were in
                                 the stream?
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">
@@ -156,20 +156,20 @@
                         </tr>
                         {% if leafpack.had_storm %}
                             <tr>
-                                <td class="mdl-data-table__cell--non-numeric indent-left">Number of storms that
+                                <td class="mdl-data-table__cell--non-numeric indent-left label">Number of storms that
                                     occurred
                                 </td>
                                 <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_count }}</td>
                             </tr>
                             <tr>
-                                <td class="mdl-data-table__cell--non-numeric indent-left">Total precipitation depth that
+                                <td class="mdl-data-table__cell--non-numeric indent-left label">Total precipitation depth that
                                     occurred
                                 </td>
                                 <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }} <small class="text-muted">cm</small></td>
                             </tr>
                         {% endif %}
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Did flooding occur?</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Did flooding occur?</td>
                             <td class="mdl-data-table__cell--non-numeric">
                                 {% if leafpack.had_flood is None %}
                                     Unknown
@@ -181,7 +181,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Was this site experiencing a drought during
+                            <td class="mdl-data-table__cell--non-numeric label">Was this site experiencing a drought during
                                 your experiment?
                             </td>
                             <td class="mdl-data-table__cell--non-numeric">
@@ -279,19 +279,19 @@
                     <br><br>
                     <table class="mdl-data-table mdl-js-data-table mdl-data-table-no-hover">
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Total Number of Individuals Found</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Total Number of Individuals Found</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.taxon_count }}</td>
                         </tr>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Biotic Index</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Biotic Index</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.biotic_index|floatformat:2 }}</td>
                         </tr>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Water Quality Category</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Water Quality Category</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.water_quality }}</td>
                         </tr>
                         <tr>
-                            <td class="mdl-data-table__cell--non-numeric">Percent EPT</td>
+                            <td class="mdl-data-table__cell--non-numeric label">Percent EPT</td>
                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.percent_EPT|floatformat:2 }}%</td>
                         </tr>
                     </table>
