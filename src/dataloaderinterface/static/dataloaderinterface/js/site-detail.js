@@ -228,7 +228,7 @@ $(document).ready(function () {
 
     $('nav .menu-sites-list').addClass('active');
 
-    var sensors = document.querySelectorAll('.device-data .plot_box');
+    var sensors = document.querySelectorAll('.sparkline-plots .plot_box');
     for (var index = 0; index < sensors.length; index++) {
         var sensorInfo = sensors[index].dataset;
         getTimeSeriesData(sensorInfo);
