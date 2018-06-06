@@ -15,6 +15,7 @@
             <div class="page-title">Manage Leaf Experiments at  <a style="color: rgb(4, 138, 138);" href="{% autoescape on %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}">
                     {{ siteregistration.sampling_feature_code }}</a></div>
             <fieldset class="form-fieldset">
+                {% csrf_token %}
                 <div class="row">
                     <div class="col-12">
                         <a id="new-leaf-pack-btn"
@@ -45,11 +46,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% if leafpacks %}
-                                    {% for leafpack in leafpacks %}
-                                        <tr class="bg-white leafpack-form">
-                                            {#                                                            <td>{{ leafpack.id }}</td>#}
-                                            {#                                                            <td class="mdl-data-table__cell--non-numeric">{{ leafpack.experiment_type }}</td>#}
+                                {% if object.leafpack_set.count > 0 %}
+                                    {% for leafpack in object.leafpack_set.all %}
+                                        <tr class="bg-white leafpack-form" data-id="{{ leafpack.id }}">
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.placement_date }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.content|default:"N/A" }}</td>
                                             <td class="mdl-data-table__cell--non-numeric">{{ leafpack.deployment_type|default:"N/A" }}</td>
@@ -71,12 +70,13 @@
                                             </td>
                                         </tr>
                                     {% endfor %}
-                                {% endif %}
+                                {% else %}
                                 <tr class="no-experiments-row bg-white">
                                     <td colspan="5" class="text-center">
                                         No macroinvertebrate data have been added to this site.
                                     </td>
                                 </tr>
+                                {% endif %}
                                 </tbody>
                             </table>
                         </div>
@@ -115,6 +115,7 @@
 
 {% block services_urls %}
     {{ block.super }}
+    <input id="leafpack-delete-api" type="hidden" value="{% url 'delete_leafpack_service' %}">
 {% endblock %}
 
 {% block styles %}

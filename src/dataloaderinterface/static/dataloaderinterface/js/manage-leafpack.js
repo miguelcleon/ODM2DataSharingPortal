@@ -14,10 +14,32 @@ $(document).ready(function() {
 
     $("#btn-confirm-delete-experiment").click(function () {
         var dialog = $('#confirm-delete-experiment');
-        dialog.data('to-delete').addClass('deleted-row').find('input[name*="DELETE"]').prop('checked', true);
-        defaultExperimentsMessage();
-        dialog.modal('hide');
-    });
+        var row = dialog.data('to-delete');
+        $("#btn-confirm-delete-experiment").prop("disabled", true).text("DELETING EXPERIMENT...");
 
-    defaultExperimentsMessage();
+        $.ajax({
+            url: $('#leafpack-delete-api').val(),
+            type: 'post',
+            data: {
+                csrfmiddlewaretoken: $('fieldset.form-fieldset input[name="csrfmiddlewaretoken"]').val(),
+                id: row.data('id')
+            }
+        }).done(function (data, message, xhr) {
+            if (xhr.status === 202) {
+                // Valid
+                row.remove();
+                snackbarMsg('Leafpack has been deleted!');
+
+            } else if (xhr.status === 206) {
+                // Invalid
+                snackbarMsg('Leafpack could not be deleted!');
+            }
+        }).fail(function (xhr, error) {
+            console.log(error);
+        }).always(function (response, status, xhr) {
+            $("#btn-confirm-delete-experiment").prop("disabled", false).text("DELETE");
+            defaultExperimentsMessage();
+            dialog.modal('hide');
+        });
+    });
 });

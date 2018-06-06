@@ -153,17 +153,16 @@ class SensorListUpdateView(DetailView):
     template_name = 'dataloaderinterface/manage_sensors.html'
     model = SiteRegistration
     slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.can_administer_site(self.get_object()):
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        if not request.user.can_administer_site(site):
             raise Http404
         return super(SensorListUpdateView, self).dispatch(request, *args, **kwargs)
 
-    def get_object(self, queryset=None):
-        return self.get_queryset().first()
-
     def get_queryset(self):
-        return SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        return super(SensorListUpdateView, self).get_queryset().with_sensors()
 
     def get_context_data(self, **kwargs):
         context = super(SensorListUpdateView, self).get_context_data(**kwargs)
@@ -175,21 +174,19 @@ class LeafPackListUpdateView(DetailView):
     template_name = 'dataloaderinterface/manage_leafpack.html'
     model = SiteRegistration
     slug_field = 'sampling_feature_code'
+    slug_url_kwarg = 'sampling_feature_code'
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.can_administer_site(self.get_object()):
+        site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        if not request.user.can_administer_site(site):
             raise Http404
         return super(LeafPackListUpdateView, self).dispatch(request, *args, **kwargs)
 
-    def get_object(self, queryset=None):
-        return self.get_queryset().first()
-
     def get_queryset(self):
-        return SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        return SiteRegistration.objects.with_leafpacks()
 
     def get_context_data(self, **kwargs):
         context = super(LeafPackListUpdateView, self).get_context_data(**kwargs)
-        context['sensor_form'] = SiteSensorForm(initial={'registration': self.object.registration_id})
         return context
 
 
