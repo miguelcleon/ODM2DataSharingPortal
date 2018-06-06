@@ -56,16 +56,16 @@ var legendContainer = $("#legend-container table");
 // Compute percentages
 for (var i = 0; i < data.length; i++) {
     data[i].frequency = data[i].frequency / total;
-    var f = isNaN(data[i].frequency)? "0" :(data[i].frequency * 100).toFixed(2);
+    var f = isNaN(data[i].frequency) ? "0" : (data[i].frequency * 100).toFixed(2);
 
     // Populate legend container
     legendContainer.append(
         '<tr>' +
-            '<td><i style="color: ' + c20(i) + '" class="fa fa-square mdl-list__item-icon" aria-hidden="true"></i></td>'+
-            '<td class="mdl-data-table__cell--non-numeric">' +
-                data[i].taxon +
-            '</td>' +
-            '<td>' + f + '%</td>' +
+        '<td><i style="color: ' + c20(i) + '" class="fa fa-square mdl-list__item-icon" aria-hidden="true"></i></td>' +
+        '<td class="mdl-data-table__cell--non-numeric">' +
+        data[i].taxon +
+        '</td>' +
+        '<td>' + f + '%</td>' +
         '</tr>'
     );
 }
@@ -76,49 +76,10 @@ x.domain(data.map(function (d) {
 }));
 
 // Comment out to use 0 to 100% domain
-y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+y.domain([0, d3.max(data, function (d) {
+    return d.frequency;
+})]);
 
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-    .append("text")
-    .attr("class", "label")
-    .style("text-anchor", "middle")
-    .attr("x", width / 2)
-    .attr("y", margin.bottom / 2)
-    .text("Taxonomic Group");
-
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -height / 2)
-    .attr("y", -(margin.left - 10))
-    .attr("dy", ".71em")
-    .style("text-anchor", "middle")
-    .text("% of Total Individuals");
-
-svg.selectAll(".bar")
-    .data(data)
-    .enter().append("rect")
-    .attr("class", "bar")
-    .attr("x", function (d) {
-        return x(d.taxon);
-    })
-    .attr("width", x.rangeBand())
-    .attr("y", function (d) {
-        return y(d.frequency);
-    })
-    .attr("fill", function (d, i) {
-        return c20(i);
-    })
-    .attr("height", function (d) {
-        return height - y(d.frequency);
-    })
-    .on('mouseover', tip.show)
-    .on('mouseout', tip.hide);
 
 // Define responsive behavior
 function resize() {
@@ -161,3 +122,86 @@ function type(d) {
     d.frequency = +d.frequency;
     return d;
 }
+
+// Example at: https://bl.ocks.org/mbostock/3885705
+function change() {
+    // Copy-on-write since tweens are evaluated after a delay.
+    var x0;
+
+    if (this.checked) {
+        x0 = x.domain(data.slice().sort( function(a, b) { return b.frequency - a.frequency; })
+            .map(function(d) { return d.taxon; }))
+            .copy();
+    }
+    else {
+        x0 = x.domain(data.slice().map(function(d) { return d.taxon; })).copy();
+    }
+
+    svg.selectAll(".bar")
+        .sort(function (a, b) {
+            return x0(a.taxon) - x0(b.taxon);
+        });
+
+    var transition = svg.transition().duration(750),
+        delay = function (d, i) {
+            return i * 50;
+        };
+
+    transition.selectAll(".bar")
+        .delay(delay)
+        .attr("x", function (d) {
+            return x0(d.taxon);
+        });
+
+    transition.select(".x.axis")
+        .call(xAxis)
+        .selectAll("g")
+        .delay(delay);
+}
+
+$(document).ready(function () {
+    d3.select("input").on("change", change);
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .style("text-anchor", "middle")
+        .attr("x", width / 2)
+        .attr("y", margin.bottom / 2)
+        .text("Taxonomic Group");
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", -height / 2)
+        .attr("y", -(margin.left - 10))
+        .attr("dy", ".71em")
+        .style("text-anchor", "middle")
+        .text("% of Total Individuals");
+
+    svg.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function (d) {
+            return x(d.taxon);
+        })
+        .attr("width", x.rangeBand())
+        .attr("y", function (d) {
+            return y(d.frequency);
+        })
+        .attr("fill", function (d, i) {
+            return c20(i);
+        })
+        .attr("height", function (d) {
+            return height - y(d.frequency);
+        })
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
+
+    $("#chkSortBars").change(change);
+});
