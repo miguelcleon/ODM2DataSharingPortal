@@ -215,10 +215,9 @@
                                     <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
                                     <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
                                 </div>
-                                <div class="col-12">
-                                    {######    HydroShare Settings    #######}
-                                    {% if is_site_owner and hydroshare_account %}
-                                        <br>
+                                {######    HydroShare Settings    #######}
+                                {% if is_site_owner and hydroshare_account %}
+                                    <div class="col-12">
                                         <div class="mdl-card full-width hydroshare-container"
                                              id="hydroshare-settings-container">
                                             <div class="mdl-card__title">
@@ -231,8 +230,8 @@
                                                      id="hydroshare-progress-spinner"></div>
                                             </div>
                                         </div>
-                                    {% endif %}
-                                </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
