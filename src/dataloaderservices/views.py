@@ -303,9 +303,12 @@ class TimeSeriesValuesApi(APIView):
             try:
                 result_value.save()
             except Exception as e:
-                raise exceptions.ParseError("{variable_code} value not saved {exception_message}".format(
-                    variable_code=result.variable.variable_code, exception_message=e
-                ))
+                # continue adding the remaining measurements in the request.
+                # TODO: use a logger to log the failed request information.
+                continue
+                # raise exceptions.ParseError("{variable_code} value not saved {exception_message}".format(
+                #     variable_code=result.variable.variable_code, exception_message=e
+                # ))
 
             result.value_count = F('value_count') + 1
             result.result_datetime = measurement_datetime
