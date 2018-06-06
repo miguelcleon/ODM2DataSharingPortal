@@ -103,7 +103,7 @@ function bindResultEvents(form) {
 
     $.ajax({
         url: $('#output-variables-api').val(),
-        data: {csrfmiddlewaretoken: $('form').find('[name="csrfmiddlewaretoken"]').val()}
+        data: {csrfmiddlewaretoken: $('div.result-form').find('[name="csrfmiddlewaretoken"]').val()}
     }).fail(function (xhr, error) {
         console.log(error);
     }).done(function (data) {
@@ -270,7 +270,7 @@ function make_sensor_api_request(api_url) {
     return $.ajax({
         url: api_url,
         type: 'post',
-        data: $.extend({ csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val() }, output_data)
+        data: $.extend({ csrfmiddlewaretoken: $('div.result-form input[name="csrfmiddlewaretoken"]').val() }, output_data)
     });
 }
 
@@ -324,7 +324,7 @@ $(document).ready(function () {
             url: $('#sensor-delete-api').val(),
             type: 'post',
             data: {
-                csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val(),
+                csrfmiddlewaretoken: $('div.result-form input[name="csrfmiddlewaretoken"]').val(),
                 id: row.data('id')
             }
         }).done(function (data, message, xhr) {

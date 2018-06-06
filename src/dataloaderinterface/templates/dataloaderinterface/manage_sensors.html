@@ -159,6 +159,7 @@
                 <div class="mdl-dialog__content">
                     <div class="row">
                         <div class="form-group col-12 result-form">
+                            {% csrf_token %}
                             {% for hidden in sensor_form.hidden_fields %}
                                 {{ hidden }}
                             {% endfor %}
@@ -246,8 +247,6 @@
 {% block services_urls %}
     {{ block.super }}
     <input id="output-variables-api" type="hidden" value="{% url 'output_variables_service' %}">
-    <input id="model-variables-api" type="hidden" value="{% url 'model_variables_service' %}">
-    <input id="result-validation-api" type="hidden" value="{% url 'result_validation_service' %}">
     <input id="sensor-registration-api" type="hidden" value="{% url 'register_sensor_service' %}">
     <input id="sensor-edit-api" type="hidden" value="{% url 'edit_sensor_service' %}">
     <input id="sensor-delete-api" type="hidden" value="{% url 'delete_sensor_service' %}">
@@ -255,10 +254,13 @@
 
 {% block styles %}
     {{ block.super }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet"/>
 {% endblock %}
 
 {% block scripts %}
     {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
 {#    <script src="{% static 'dataloaderinterface/js/bootstrap-toolkit.min.js' %}"></script>#}

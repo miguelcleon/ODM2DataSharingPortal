@@ -154,11 +154,21 @@ class SensorListUpdateView(DetailView):
     model = SiteRegistration
     slug_field = 'sampling_feature_code'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.can_administer_site(self.get_object()):
+            raise Http404
+        return super(SensorListUpdateView, self).dispatch(request, *args, **kwargs)
+
     def get_object(self, queryset=None):
-        return self.get_queryset()
+        return self.get_queryset().first()
 
     def get_queryset(self):
-        return SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        return SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code'])
+
+    def get_context_data(self, **kwargs):
+        context = super(SensorListUpdateView, self).get_context_data(**kwargs)
+        context['sensor_form'] = SiteSensorForm(initial={'registration': self.object.registration_id})
+        return context
 
 
 class LeafPackListUpdateView(DetailView):
@@ -166,11 +176,21 @@ class LeafPackListUpdateView(DetailView):
     model = SiteRegistration
     slug_field = 'sampling_feature_code'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.can_administer_site(self.get_object()):
+            raise Http404
+        return super(LeafPackListUpdateView, self).dispatch(request, *args, **kwargs)
+
     def get_object(self, queryset=None):
-        return self.get_queryset()
+        return self.get_queryset().first()
 
     def get_queryset(self):
-        return SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
+        return SiteRegistration.objects.filter(sampling_feature_code=self.kwargs['sampling_feature_code'])
+
+    def get_context_data(self, **kwargs):
+        context = super(LeafPackListUpdateView, self).get_context_data(**kwargs)
+        context['sensor_form'] = SiteSensorForm(initial={'registration': self.object.registration_id})
+        return context
 
 
 class HydroShareResourceViewMixin:
