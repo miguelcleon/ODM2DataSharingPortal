@@ -153,7 +153,7 @@ function initializeResultsForm() {
             form.find('input[name="id"]').val('');
             form.find('input[name="output_variable"]').val('');
 
-            dialog.find('.mdl-dialog__title').text("Add Sensor");
+            dialog.find('.mdl-dialog__title').text("Add New Sensor");
             dialog.find('#add-sensor-button').show();
             dialog.find('#edit-sensor-button').hide();
             $('#result-dialog-uuid').parent().hide();
