@@ -140,7 +140,7 @@
 
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
-                                        <i class="fa fa-circle" aria-hidden="true"></i> Site Type
+                                        <i class="material-icons" aria-hidden="true">layers</i> Site Type
                                     </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.site_type|default:"-" }}</td>
                                 </tr>
@@ -154,7 +154,7 @@
 
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
-                                        <i class="fa fa-circle" aria-hidden="true"></i> Major Watershed
+                                       <i class="material-icons" aria-hidden="true">landscape</i> Major Watershed
                                     </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.major_watershed|default:"-" }}</td>
                                 </tr>
@@ -168,7 +168,7 @@
 
                                 <tr>
                                     <td class="mdl-data-table__cell--non-numeric">
-                                        <i class="fa fa-circle" aria-hidden="true"></i> Closest Town
+                                        <i class="material-icons" aria-hidden="true">location_city</i> Closest Town
                                     </td>
                                     <td class="mdl-data-table__cell--non-numeric">{{ site.closest_town|default:"-" }}</td>
                                 </tr>
@@ -208,30 +208,34 @@
                             {% endif %}
                         </div>
 
-                        <div class="detail-map-container col-sm-12 col-md-6">
-                            <div id="map"></div>
-                            <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
-                            <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
-                        </div>
-                    </div>
-
-                    {######    HydroShare Settings    #######}
-                    {% if is_site_owner and hydroshare_account %}
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <div class="mdl-card full-width hydroshare-container" id="hydroshare-settings-container">
-                                <div class="mdl-card__title">
-                                    <div class="hs-img-container">
-                                        <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
-                                    </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="row">
+                                <div class="detail-map-container  col-12">
+                                    <div id="map"></div>
+                                    <input type="hidden" id="site-latitude" value="{{ site.latitude }}">
+                                    <input type="hidden" id="site-longitude" value="{{ site.longitude }}">
                                 </div>
-                                <div class="mdl-card__supporting-text">
-                                    <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active" id="hydroshare-progress-spinner"></div>
+                                <div class="col-12">
+                                    {######    HydroShare Settings    #######}
+                                    {% if is_site_owner and hydroshare_account %}
+                                        <br>
+                                        <div class="mdl-card full-width hydroshare-container"
+                                             id="hydroshare-settings-container">
+                                            <div class="mdl-card__title">
+                                                <div class="hs-img-container">
+                                                    <img src="{% static 'dataloaderinterface/images/hydroshare-logo-lg.png' %}">
+                                                </div>
+                                            </div>
+                                            <div class="mdl-card__supporting-text">
+                                                <div class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"
+                                                     id="hydroshare-progress-spinner"></div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
                 </section>
             </div>
         </div>
