@@ -28,6 +28,8 @@ from dataloaderservices.serializers import OrganizationSerializer, SensorSeriali
 
 from pytz import utc
 
+from leafpack.models import LeafPack
+
 
 class ResultApi(APIView):
     authentication_classes = (SessionAuthentication,)
@@ -120,6 +122,21 @@ class DeleteSensorApi(APIView):
             return Response({'id': 'Sensor not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         deleted = sensor.delete()
+        return Response(deleted, status=status.HTTP_202_ACCEPTED)
+
+
+class DeleteLeafpackApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        if 'id' not in request.POST:
+            return Response({'id': 'No leafpack id in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        leafpack = LeafPack.objects.filter(pk=request.POST['id']).first()
+        if not leafpack:
+            return Response({'id': 'Leafpack not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        deleted = leafpack.delete()
         return Response(deleted, status=status.HTTP_202_ACCEPTED)
 
 
