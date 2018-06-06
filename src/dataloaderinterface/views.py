@@ -648,7 +648,8 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         return data
 
     def get_form(self, form_class=None):
-        return self.get_form_class()(initial=self.get_default_data())
+        data = self.request.POST or None
+        return self.get_form_class()(initial=self.get_default_data(), data=data)
 
     def get_context_data(self, **kwargs):
         context = super(SiteRegistrationView, self).get_context_data()
