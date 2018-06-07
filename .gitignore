@@ -91,6 +91,7 @@ target/
 # .idea/mongoSettings.xml
 /src/WebSDL/WebSDL/settings/settings.json
 settings.json
+settings.*.json
 
 ## File-based project format:
 *.ipr

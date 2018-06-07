@@ -4,7 +4,7 @@
 {% load widget_tweaks %}
 
 {% block page_title %}
-    <title>Leaf Experiment Details at {{ leafpack.site_registration.sampling_feature_name }}</title>
+    <title>Leaf Pack Experiment Details at {{ leafpack.site_registration.sampling_feature_name }}</title>
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title">
-                        Leaf Experiment Details at
+                        Leaf Pack Experiment Details at
                         <a href="{% url 'site_detail' sampling_feature_code %}"
                            style="color: inherit;">
                             {{ leafpack.site_registration.sampling_feature_name }}
@@ -308,7 +308,7 @@
     <div class="modal fade" id="experiment-delete-dialog" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content mdl-modal-content mdl-shadow--4dp">
-                <h4 class="mdl-dialog__title">Delete Leaf Experiment?</h4>
+                <h4 class="mdl-dialog__title">Delete Leaf Pack Experiment?</h4>
 
                 <div class="mdl-dialog__content">
                     <p>

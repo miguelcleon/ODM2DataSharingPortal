@@ -163,7 +163,6 @@ class SiteRegistrationForm(forms.ModelForm):
             'sampling_feature_code': 'Site Code',
             'sampling_feature_name': 'Site Name',
             'elevation_m': 'Elevation',
-
         }
         help_texts = {
             'sampling_feature_code': 'Enter a brief and unique text string to identify your site (e.g., "Del_Phil")',
