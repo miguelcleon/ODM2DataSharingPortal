@@ -37,17 +37,10 @@ from django.views.generic.list import ListView
 from django.core.management import call_command
 
 from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, \
-    OrganizationForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
-    HydroShareResourceDeleteForm, SiteRegistrationForm, SiteSensorForm
-from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, SiteAlert
-from hydroshare.models import HydroShareResource, HydroShareAccount, OAuthToken
-from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
-from hydroshare_util.utility import HydroShareUtility
-from hydroshare_util.adapter import HydroShareAdapter
-from hydroshare_util.auth import AuthUtil
-from hydroshare_util.resource import Resource
-from hydroshare_util.coverage import PointCoverage, BoxCoverage, PeriodCoverage, Coverage
-from accounts.models import User
+    OrganizationForm, ActionByForm, SiteAlertForm, SiteRegistrationForm, SiteSensorForm
+
+from dataloaderinterface.models import SiteRegistration, SiteSensor, SiteAlert
+from hydroshare.models import HydroShareResource, HydroShareAccount
 
 
 class LoginRequiredMixin(object):

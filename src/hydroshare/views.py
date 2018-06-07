@@ -1,53 +1,31 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta
-from uuid import uuid4
 import json
 import requests
-import re
 import logging
 from oauthlib.oauth2.rfc6749.errors import TokenExpiredError
 
 from django.conf import settings
-from django.db.models.aggregates import Max
-from django.db.models.expressions import F
-from django.db.models.query import Prefetch
 from django.utils.safestring import mark_safe
 
 from dataloaderservices.views import CSVDataApi
 
-from dataloader.models import FeatureAction, Result, ProcessingLevel, TimeSeriesResult, SamplingFeature, \
-    SpatialReference, \
-    ElevationDatum, SiteType, ActionBy, Action, Method, DataLoggerProgramFile, DataLoggerFile, \
-    InstrumentOutputVariable, DataLoggerFileColumn, TimeSeriesResultValue
-from leafpack.models import LeafPack, LeafPackBug, Macroinvertebrate
-from django.contrib import messages
-from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.utils import timezone
-from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
-from django.http.response import HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseServerError
-from django.shortcuts import render, redirect
+from django.http.response import HttpResponse, JsonResponse, HttpResponseServerError
+from django.shortcuts import redirect
 from django.views.generic.base import TemplateView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import UpdateView, CreateView, DeleteView, FormView, ModelFormMixin
-from django.views.generic.list import ListView
-from django.core.management import call_command
+from django.views.generic.edit import UpdateView, DeleteView
 
-from dataloaderinterface.forms import SamplingFeatureForm, ResultFormSet, SiteForm, \
-    OrganizationForm, ActionByForm, HydroShareSettingsForm, SiteAlertForm, \
-    HydroShareResourceDeleteForm, SiteRegistrationForm, SiteSensorForm
-from dataloaderinterface.models import ODM2User, SiteRegistration, SiteSensor, SiteAlert
+from hydroshare.forms import HydroShareSettingsForm, HydroShareResourceDeleteForm
+from dataloaderinterface.models import SiteRegistration, SiteSensor
 from hydroshare.models import HydroShareAccount, HydroShareResource, OAuthToken
 from hydroshare_util import HydroShareNotFound, HydroShareHTTPException
-from hydroshare_util.utility import HydroShareUtility
 from hydroshare_util.adapter import HydroShareAdapter
 from hydroshare_util.auth import AuthUtil
 from hydroshare_util.resource import Resource
-from hydroshare_util.coverage import PointCoverage, BoxCoverage, PeriodCoverage, Coverage
-from accounts.models import User
+from hydroshare_util.coverage import PointCoverage
 
 
 class LoginRequiredMixin(object):
