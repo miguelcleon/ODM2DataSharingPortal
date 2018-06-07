@@ -28,14 +28,6 @@ urlpatterns = [
     url(r'^sites/update/(?P<sampling_feature_code>.*?)/leafpacks/$', LeafPackListUpdateView.as_view(), name='leafpacks'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
-
-
-
     url(r'^sites/(?P<sampling_feature_code>.*)/leafpack/', include('leafpack.urls', namespace='leafpack')),
-    # url(r'^sites/(?P<sampling_feature_code>.*)/hsr/create/$', HydroShareResourceCreateView.as_view(), name='hs_resource_create'),
-    # url(r'^sites/(?P<sampling_feature_code>.*)/hsr/update/$', HydroShareResourceUpdateView.as_view(), name='hs_resource_update'),
-    # url(r'^sites/(?P<sampling_feature_code>.*)/hsr/delete/$', HydroShareResourceDeleteView.as_view(), name='hs_resource_delete'),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
-    # url(r'hydroshare/oauth/$', OAuthAuthorize.as_view(), name='hydroshare_oauth'),
-    # url(r'hydroshare/oauth/redirect/$', OAuthRedirect.as_view(), name='hydroshare_oauth_redirect')
 ]
