@@ -135,6 +135,7 @@
                                     </div>
 
                                     <div class="form-field col-6">
+                                        {{ form.leafpack_retrieval_count.errors }}
                                         <label for="{{ form.leafpack_retrieval_count.id_for_label }}">{{ form.leafpack_retrieval_count.label }}</label>
                                         {{ form.leafpack_retrieval_count|add_class:"form-control" }}
                                     </div>

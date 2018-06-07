@@ -44,6 +44,17 @@ class LeafPackForm(forms.ModelForm):
 
         self.instance.save()
 
+    def clean(self):
+        cleaned_data = super(LeafPackForm, self).clean()
+        retrieval_count = cleaned_data.get('leafpack_retrieval_count', 0)
+        placement_count = cleaned_data.get('leafpack_placement_count', 0)
+
+        if retrieval_count > placement_count:
+            self.add_error('leafpack_retrieval_count', forms.ValidationError(
+                'The number of packs retrieved cannot exceed the number of packs placed!'))
+
+        return self.cleaned_data
+
     site_registration = forms.ModelChoiceField(
         widget=forms.HiddenInput,
         queryset=SiteRegistration.objects.all()
@@ -67,7 +78,7 @@ class LeafPackForm(forms.ModelForm):
 
     leafpack_placement_count = forms.IntegerField(
         label='Number of Packs Placed',
-        min_value=0
+        min_value=1
     )
 
     placement_air_temp = forms.FloatField(
@@ -84,7 +95,7 @@ class LeafPackForm(forms.ModelForm):
 
     leafpack_retrieval_count = forms.IntegerField(
         label='Number of Packs Retrieved',
-        min_value=0
+        min_value=1
     )
 
     retrieval_air_temp = forms.FloatField(
