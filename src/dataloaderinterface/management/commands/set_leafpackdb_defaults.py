@@ -52,9 +52,9 @@ class Command(BaseCommand):
 
     def update_or_create_taxon(self, scientific_name, common_name, pollution, family_of=None):
         try:
-            bug = Macroinvertebrate.objects.get(scientific_name=scientific_name)
+            bug = Macroinvertebrate.objects.get(scientific_name__iexact=scientific_name.lower())
         except ObjectDoesNotExist:
-            bug = Macroinvertebrate()
+            bug = Macroinvertebrate(scientific_name=scientific_name)
 
         bug.common_name = common_name
         bug.pollution_tolerance = pollution
@@ -65,7 +65,10 @@ class Command(BaseCommand):
             except ObjectDoesNotExist:
                 pass
 
-        bug.save()
+        try:
+            bug.save()
+        except IntegrityError as e:
+            print('Failed to save taxon "{}": {}'.format(scientific_name, e))
 
         return bug
 

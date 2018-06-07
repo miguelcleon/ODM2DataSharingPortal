@@ -156,7 +156,6 @@ class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
         return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
-
         # if 'leafpack_form' is in kwargs, that means self.form_invalid was most likely called due to a failed POST request
         if 'form' in kwargs:
             self.object = kwargs['form'].instance
