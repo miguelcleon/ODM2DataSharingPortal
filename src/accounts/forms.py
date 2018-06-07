@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django import forms
+from django.forms.widgets import Select
 
 from accounts.models import User
 from dataloader.models import Organization
@@ -15,6 +16,7 @@ class UserRegistrationForm(UserCreationForm):
 
     organization_code = UserOrganizationField(
         queryset=Organization.objects.exclude_vendors().order_by('organization_name'),
+        widget=Select(attrs={'id': 'id_user_organization_code'}),
         to_field_name='organization_code',
         required=False,
         help_text='Begin to enter the common name of your organization to choose from the list. '
