@@ -232,11 +232,15 @@ class CSVDataApi(View):
 
     @staticmethod
     def generate_metadata(result):
+        sensor = SiteSensor.objects.select_related('registration').filter(result_id=result.result_id).first()
+        if not sensor: # i dunno man, if it doesn't return anything it's messed up anyways.
+            return
+
         action = result.feature_action.action
-        equipment_model = result.data_logger_file_columns.first().instrument_output_variable.model
-        affiliation = action.action_by.filter(is_action_lead=True).first().affiliation
+        equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.equipment_model_id)
+        affiliation = sensor.registration.affiliation
         return CSVDataApi.get_metadata_template().format(
-            sampling_feature=result.feature_action.sampling_feature,
+            sampling_feature=sensor.registration.sampling_feature,
             variable=result.variable,
             unit=result.unit,
             model=equipment_model,
