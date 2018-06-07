@@ -163,9 +163,9 @@ class FollowSiteApi(APIView):
         site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
 
         if action == 'follow':
-            request.settings.AUTH_USER_MODEL.followed_sites.add(site)
+            request.user.followed_sites.add(site)
         elif action == 'unfollow':
-            request.settings.AUTH_USER_MODEL.followed_sites.remove(site)
+            request.user.followed_sites.remove(site)
 
         return Response({}, status.HTTP_200_OK)
 
