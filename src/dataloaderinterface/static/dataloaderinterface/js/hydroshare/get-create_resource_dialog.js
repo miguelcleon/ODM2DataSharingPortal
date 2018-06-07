@@ -7,8 +7,10 @@
 * HydroShare and loads the page content into the DOM.
 * */
 
+window.sfCode = window.location.href.match(/(?<=\/sites\/).+(?=\/)/)[0];
+
 $(() => {
-   const template_url = `${window.location.href}hsr/create/`;
+   const template_url = `/hydroshare/${window.sfCode}/create/`;
    const hydroshareContainer = $('#hydroshare-settings-container');
 
    $.get(template_url)

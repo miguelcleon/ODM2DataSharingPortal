@@ -9,7 +9,8 @@ from django import forms
 from django.forms.formsets import formset_factory
 import re
 
-from dataloaderinterface.models import HydroShareResource, SiteRegistration, SiteAlert, SiteSensor, SensorOutput
+from dataloaderinterface.models import SiteRegistration, SiteAlert, SiteSensor, SensorOutput
+from hydroshare.models import HydroShareResource
 
 allowed_site_types = [
     'Borehole', 'Ditch', 'Atmosphere', 'Estuary', 'House', 'Land', 'Pavement', 'Stream', 'Spring',

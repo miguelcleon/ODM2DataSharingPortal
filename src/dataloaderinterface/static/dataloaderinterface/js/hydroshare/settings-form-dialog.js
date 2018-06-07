@@ -3,6 +3,8 @@
 * This script performs setup for the hydroshare settings modal.
 */
 
+window.sfCode = window.location.href.match(/(?<=\/sites\/).+(?=\/)/)[0];
+
 function initializeHydroShareSettingsDialog() {
     const hydroshareSettingsForm = $('#hydroshare-settings-form')[0];
     document.body.appendChild(hydroshareSettingsForm);
@@ -61,7 +63,7 @@ function initializeHydroShareSettingsDialog() {
 
         let method = submitButton.id === 'create-resource' ? 'create' : 'update';
 
-        let url = `${hydroshareSettingsForm.baseURI}hsr/${method}/`;
+        let url = `/hydroshare/${window.sfCode}/${method}/`;
         let serializedForm = $(hydroshareSettingsForm).serialize();
         let progressSpinner = $(hydroshareSettingsForm).find('#hs-progress-spinner');
 

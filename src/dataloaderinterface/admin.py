@@ -4,7 +4,8 @@ from dataloader.models import *
 
 
 # Register your models here.
-from dataloaderinterface.models import SiteRegistration, SiteSensor, HydroShareResource, HydroShareAccount, SensorOutput
+from dataloaderinterface.models import SiteRegistration, SiteSensor, SensorOutput
+from hydroshare.models import HydroShareAccount, HydroShareResource
 from leafpack.models import LeafPack, LeafPackType, Macroinvertebrate
 
 
