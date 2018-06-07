@@ -26,78 +26,7 @@
                             <input name="user_first_name" type="hidden" value="{{ user.first_name }}">
                             <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
 
-                            <fieldset>
-                                <br>
-                                <div class="row">
-                                    <div class="form-group col-sm-12 col-md-4 sampling-feature-fields">
-                                        {% for field in form %}
-                                            <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                                                 data-field="{{ field.name }}">
-                                                <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                                <i id="action-by-help{{ forloop.counter0 }}" class="material-icons text-muted help-icon">help</i>
-                                                {{ field.errors }}
-                                                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left" data-mdl-for="action-by-help{{ forloop.counter0 }}">
-                                                    {{ field.help_text }}
-                                                </div>
-                                                {{ field|add_class:"form-control input-sm" }}
-                                            </div>
-                                        {% endfor %}
-
-                                        {% for field in email_alert_form %}
-                                            {% if field.name == 'notify' %}
-                                                <div class="form-field checkbox {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %}"
-                                                     data-field="{{ field.name }}">
-                                                    <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
-                                                           for="{{ field.id_for_label }}">
-                                                        {{ field|add_class:"mdl-checkbox__input" }}
-                                                        {{ field.label }}
-
-                                                        {{ field.errors }}
-                                                        {% if field.help_text %}
-                                                            <i id="email-alert-help-{{ forloop.counter0 }}"
-                                                               class="material-icons text-muted help-icon">help</i>
-                                                        {% endif %}
-
-                                                        {% if field.help_text %}
-                                                            <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                                                                 data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
-                                                                {{ field.help_text }}
-                                                            </div>
-                                                        {% endif %}
-                                                    </label>
-                                                </div>
-                                            {% else %}
-                                                <div class="form-field {% if field.field.required %} required-field{% endif %}{% if field.errors %} has-error{% endif %} {% if not field.value %}hidden{% endif %}"
-                                                     data-field="{{ field.name }}" style="margin-top: -15px;">
-                                                    <label class="control-label"
-                                                           for="{{ field.id_for_label }}">{{ field.label }}{{ field.label_suffix }}
-                                                    {% if field.help_text %}
-                                                        <i id="email-alert-help-{{ forloop.counter0 }}"
-                                                           class="material-icons text-muted help-icon">help</i>
-                                                        {{ field.errors }}
-                                                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                                                             data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
-                                                            {{ field.help_text }}
-                                                        </div>
-                                                    {% endif %}
-                                                    {{ field|add_class:"form-control input-sm" }}
-                                                    {{ email_alert_form.suffix }}
-                                                    </label>
-                                                </div>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                    <div class="form-group col-sm-12 col-md-8 map-container">
-                                        <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
-                                        <div id="map"></div>
-                                        <small class="text-muted">
-                                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                                            Click on the map to update coordinates and elevation data.</small>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <br>
-                            </fieldset>
+                            {% include 'includes/site-form-fieldset.template.html' %}
 
                             <div style="margin-top: 20px;">
                                 <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
