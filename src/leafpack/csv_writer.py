@@ -17,7 +17,12 @@ class LeafPackCSVWriter(object):
         self.output = io.BytesIO()
         self.writer = csv.writer(self.output, dialect=self.CSV_DIALECT)
 
-    def write(self):  # type: (csv.writer, LeafPack, SiteRegistration) -> None
+    def filename(self):
+        # filename format: {Sampling Feature Code}_{Placement date}_{zero padded leafpack id}.csv
+        return '{}_{}_{:03d}.csv'.format(self.site.sampling_feature_code,
+                                         self.leafpack.placement_date, int(self.leafpack.id))
+
+    def write(self):
         leafpack = self.leafpack
         site_registration = self.site
 

@@ -9,10 +9,10 @@ from django.shortcuts import reverse, redirect
 from django.http import HttpResponse
 from django.core.management import call_command
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 
 from .models import LeafPack, Macroinvertebrate, LeafPackType
 from .forms import LeafPackForm, LeafPackBugForm, LeafPackBugFormFactory, LeafPackBug
-from dataloaderinterface.views import LoginRequiredMixin
 
 from csv_writer import LeafPackCSVWriter
 
@@ -34,6 +34,14 @@ class LeafPackViewMixin(object):
                 is_valid = False
         return is_valid
 
+
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls):
+        return login_required(super(LoginRequiredMixin, cls).as_view())
+
+
+class LeafPackFormMixin(object):
     def get_bug_count_forms(self, leafpack=None):
         re_bug_name = re.compile(r'^(?P<bug_name>.*)-bug_count')
         form_data = list()
@@ -142,7 +150,7 @@ class LeafPackDetailView(DetailView):
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
-class LeafPackCreateView(LeafPackUpdateCreateMixin, CreateView):
+class LeafPackCreateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, CreateView):
     """
     Create View
     """
@@ -263,16 +271,19 @@ def download_leafpack_csv(request, sampling_feature_code, pk):
     :param sampling_feature_code: the first URL parameter
     :param pk: the second URL parameter and id of the leafpack experiement to download 
     """
-    leafpack = LeafPack.objects.get(id=pk)
-    site = SiteRegistration.objects.get(sampling_feature_code=sampling_feature_code)
+    filename, content = get_leafpack_csv(sampling_feature_code, pk)
+
+    response = HttpResponse(content, content_type='application/csv')
+    response['Content-Disposition'] = 'inline; filename={0}'.format(filename)
+
+    return response
+
+
+def get_leafpack_csv(sfc, lpid):  # type: (str, int) -> (str, str)
+    leafpack = LeafPack.objects.get(id=lpid)
+    site = SiteRegistration.objects.get(sampling_feature_code=sfc)
 
     writer = LeafPackCSVWriter(leafpack, site)
     writer.write()
 
-    # Filename format: {Sampling Feature Code}_{Placement date}_{leafpack ID padded with zeros}.csv
-    filename = '{}_{}_{:03d}.csv'.format(sampling_feature_code, leafpack.placement_date, int(pk))
-
-    response = HttpResponse(writer.read(), content_type='application/csv')
-    response['Content-Disposition'] = 'inline; filename={0}'.format(filename)
-
-    return response
+    return writer.filename(), writer.read()
