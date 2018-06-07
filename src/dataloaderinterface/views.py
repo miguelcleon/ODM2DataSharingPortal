@@ -222,6 +222,11 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('site_detail', kwargs={'sampling_feature_code': self.object.sampling_feature_code})
 
+    def get_form(self, form_class=None):
+        data = self.request.POST or None
+        site_registration = self.get_object()
+        return self.get_form_class()(data=data, instance=site_registration)
+
     def get_queryset(self):
         return super(SiteUpdateView, self).get_queryset().with_sensors()
 
@@ -236,7 +241,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
         context = super(SiteUpdateView, self).get_context_data()
 
         site_alert = self.request.user.site_alerts\
-            .filter(site_registration__sampling_feature_code=self.object.sampling_feature_code)\
+            .filter(site_registration__sampling_feature_code=self.get_object().sampling_feature_code)\
             .first()
 
         alert_data = {'notify': True, 'hours_threshold': int(site_alert.hours_threshold.total_seconds() / 3600)} \
@@ -244,8 +249,8 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
             else {}
 
         # maybe just access site.leafpacks in the template? Naw.
-        context['leafpacks'] = LeafPack.objects.filter(site_registration=self.object)
-        context['sensor_form'] = SiteSensorForm(initial={'registration': self.object.registration_id})
+        context['leafpacks'] = LeafPack.objects.filter(site_registration=self.get_object())
+        context['sensor_form'] = SiteSensorForm(initial={'registration': self.get_object().registration_id})
         context['email_alert_form'] = SiteAlertForm(data=alert_data)
         context['zoom_level'] = data['zoom-level'] if 'zoom-level' in data else None
 
@@ -313,11 +318,6 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         form = self.get_form_class()(request.POST)
         notify_form = SiteAlertForm(request.POST)
 
-        try:
-            SamplingFeature.objects.get(sampling_feature_code='asdf').delete()
-        except:
-            pass
-
         if form.is_valid() and notify_form.is_valid():
             form.instance.affiliation_id = form.cleaned_data['affiliation_id'] or request.user.affiliation_id
             form.instance.django_user = request.user
@@ -333,19 +333,3 @@ class SiteRegistrationView(LoginRequiredMixin, CreateView):
         else:
             messages.error(request, 'There are still some required fields that need to be filled out!')
             return self.form_invalid(form)
-
-# def delete_result(result):
-#     result_id = result.result_id
-#     feature_action = result.feature_action
-#     action = feature_action.action
-#
-#     result.data_logger_file_columns.all().delete()
-#     result.timeseriesresult.values.all().delete()
-#     result.timeseriesresult.delete()
-#
-#     action.action_by.all().delete()
-#     result.delete()
-#
-#     feature_action.delete()
-#     action.delete()
-#     SiteSensor.objects.filter(result_id=result_id).delete()
