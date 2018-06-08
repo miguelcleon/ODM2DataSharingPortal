@@ -61,7 +61,7 @@ class SiteRegistrationForm(forms.ModelForm):
     )
 
     def clean_affiliation_id(self):
-        return self.data['affiliation_id']
+        return self.data['affiliation_id'] if 'affiliation_id' in self.data else None
 
     def clean_site_type(self):
         return self.data['site_type']
