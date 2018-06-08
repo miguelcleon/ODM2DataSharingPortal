@@ -473,6 +473,11 @@ def get_site_files(site_registration):
 
 
 def upload_hydroshare_resource_files(site, resource):  # type: (SiteRegistration, Resource) -> None
+
+    if isinstance(resource, JsonResponse):
+        # This might happen if hydroshare isn't working
+        raise Exception(resource.content)
+
     files = get_site_files(site)
     for file_ in files:
         file_name = file_[0]

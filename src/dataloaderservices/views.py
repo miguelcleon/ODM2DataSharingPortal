@@ -237,8 +237,8 @@ class CSVDataApi(View):
             return
 
         action = result.feature_action.action
-        equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.equipment_model_id)
-        affiliation = sensor.registration.affiliation
+        equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.model_id)
+        affiliation = sensor.registration.odm2_affiliation
         return CSVDataApi.get_metadata_template().format(
             sampling_feature=sensor.registration.sampling_feature,
             variable=result.variable,
