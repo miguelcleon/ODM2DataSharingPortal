@@ -34,17 +34,19 @@
                         <i class="material-icons center-icon">cloud_download</i> Download CSV
                     </a>
 
-                    <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
-                       id="btn-edit-leaf-exp"
-                       class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
-                        <i class="material-icons center-icon">mode_edit</i> Edit
-                    </a>
+                    {% if can_administer_site %}
+                        <a href="{% url 'leafpack:update' sampling_feature_code leafpack.id %}"
+                           id="btn-edit-leaf-exp"
+                           class="button-link mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                            <i class="material-icons center-icon">mode_edit</i> Edit
+                        </a>
 
-                    <button id="btn-del-leaf-exp" type="button"
-                            data-toggle="modal" data-target="#experiment-delete-dialog"
-                            class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
-                        <i class="material-icons center-icon">delete_forever</i> Delete
-                    </button>
+                        <button id="btn-del-leaf-exp" type="button"
+                                data-toggle="modal" data-target="#experiment-delete-dialog"
+                                class="mdl-button mdl-js-ripple-effect mdl-button--raised mdl-button--accent">
+                            <i class="material-icons center-icon">delete_forever</i> Delete
+                        </button>
+                    {% endif %}
                 </div>
             </div>
 
