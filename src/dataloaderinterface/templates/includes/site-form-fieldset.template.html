@@ -160,16 +160,20 @@
                 </label>
             </div>
         </div>
-        <div class="form-group col-sm-12 col-md-6 map-container">
-            <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
-            <div id="map"></div>
-            <small class="text-muted">
-                <i class="fa fa-info-circle" aria-hidden="true"></i>
-                Click on the map to update coordinates and elevation data.
-            </small>
-
-            <br><br>
+        <div class="form-group col-sm-12 col-md-6">
             <div class="row">
+                <div class="col-12  map-container">
+                    <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
+                    <div id="map"></div>
+                </div>
+                <div class="col-12">
+                    <small class="text-muted">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        Click on the map to update coordinates and elevation data.
+                    </small>
+                    <br><br>
+                </div>
+
                 <div class="col-sm-12 col-md-6">
                     <div class="form-field {% if form.latitude.field.required %} required-field{% endif %}{% if form.latitude.errors %} has-error{% endif %}"
                          data-field="{{ form.latitude.name }}">
@@ -215,7 +219,6 @@
                         {{ form.elevation_m|add_class:"form-control input-sm" }}
                     </div>
                 </div>
-
                 <div class="col-sm-12 col-md-6">
                     <div class="form-field {% if form.elevation_datum.field.required %} required-field{% endif %}{% if form.elevation_datum.errors %} has-error{% endif %}"
                          data-field="{{ form.elevation_datum.name }}">
@@ -233,7 +236,6 @@
                 </div>
             </div>
         </div>
-        <div class="clearfix"></div>
     </div>
     <br>
 </fieldset>
