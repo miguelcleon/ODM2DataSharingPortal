@@ -263,7 +263,7 @@ class DataQualityType(ControlledVocabulary):
 
 class DataSetType(ControlledVocabulary):
     class Meta:
-        db_table = 'cv_datasettypecv'
+        db_table = 'cv_datasettype'
 
 
 class DeploymentType(ControlledVocabulary):
