@@ -269,6 +269,7 @@
                             <br>
                         </div>
 
+                        {% if can_administer_site %}
                         <div class="col-sm-12 col-md-4 text-right">
                             <a class="button-link mdl-button mdl-button--accent mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                                href="{% url 'sensors' site.sampling_feature_code %}">
@@ -276,6 +277,7 @@
                                 Manage Sensors
                             </a>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -405,6 +407,7 @@
                         Macroinvertebrate Data at this Site
                     </h5>
 
+                    {% if can_administer_site %}
                     <div class="buttons-toolbar row">
                         <div class="col-12 text-right">
                             <a class="button-link mdl-button mdl-button--accent mdl-js-button mdl-button--raised mdl-js-ripple-effect"
@@ -415,6 +418,7 @@
                         </div>
                         <br>
                     </div>
+                    {% endif %}
                 </div>
 
                 <div class="col-12" style="overflow: auto;">
@@ -520,7 +524,7 @@
         </div>
     </div>
 
-    {% if site.django_user_id == request.user.id or request.user.is_staff %}
+    {% if can_administer_site %}
     <div id="code-output-modal" class="modal fade" role="dialog" aria-hidden="true">
         <div class="vertical-alignment-helper">
             <div class="modal-dialog vertical-align-center">
@@ -571,12 +575,12 @@ const char *UUIDs[] =                                                      // UU
     <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
 
-    {% if site.django_user_id == request.user.id and hydroshare_account%}
+    {% if is_site_owner and hydroshare_account%}
     <script src="{% static 'dataloaderinterface/js/hydroshare/settings-form-dialog.js' %}"></script>
-    {% if site.django_user_id == request.user.id and resource_is_connected and hydroshare_account %}
+    {% if is_site_owner and resource_is_connected and hydroshare_account %}
         <script src="{% static 'dataloaderinterface/js/hydroshare/get-update_resource_dialog.js' %}"></script>
         <script src="{% static 'dataloaderinterface/js/hydroshare/hs-delete-resource.js' %}"></script>
-    {% elif site.django_user_id == request.user.id and hydroshare_account %}
+    {% elif is_site_owner and hydroshare_account %}
         <script src="{% static 'dataloaderinterface/js/hydroshare/get-create_resource_dialog.js' %}"></script>
     {% endif %}
     <script>
