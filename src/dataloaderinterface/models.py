@@ -232,7 +232,7 @@ class SiteSensor(models.Model):
 class ODM2User(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     affiliation_id = models.IntegerField()
-    # hydroshare_account = models.OneToOneField('HydroShareAccount', db_column='hs_account_id', null=True, blank=True)
+    hydroshare_account = models.OneToOneField('hydroshare.HydroShareAccount', db_column='hs_account_id', null=True, blank=True)
 
     @property
     def affiliation(self):
