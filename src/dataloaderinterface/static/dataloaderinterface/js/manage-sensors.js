@@ -183,6 +183,7 @@ function initializeResultsForm() {
                 updateRowData(newRow);
                 $('div.results-table table').append(newRow);
                 message = "The new sensor has been added!";
+                defaultSensorsMessage();
                 $('#result-dialog').modal('hide');
             }
             else if (xhr.status === 206) {

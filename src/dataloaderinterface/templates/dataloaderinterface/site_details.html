@@ -29,15 +29,18 @@
             <div class="row">
                 <section class="device-data col-sm-12">
                     <header>
-                        <div class="page-title">
-                            {% if site.sampling_feature_name %}
-                                {{ site.sampling_feature_name }} ({{ site.sampling_feature_code }})
-                            {% else %}
-                                {{ site.sampling_feature_code }}
-                            {% endif %}
+                        <div class="page-title grid" style="grid-template-columns: auto auto;">
+                            <div>
+                                {% if site.sampling_feature_name %}
+                                    {{ site.sampling_feature_name }} ({{ site.sampling_feature_code }})
+                                {% else %}
+                                    {{ site.sampling_feature_code }}
+                                {% endif %}
+                            </div>
+
 
                             {% if not is_site_owner %}
-                                <div class="follow-status pull-right">
+                                <div class="follow-status">
                                     {# this is the button to trigger the follow/unfollow action #}
                                     <form id="follow-site-form">
                                         {% csrf_token %}
@@ -242,14 +245,15 @@
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
             <div class="row">
                 <div class="col-12">
-                    <h6 class="page-title">
+                    <h6 class="page-title grid" style="grid-template-columns: auto auto;">
+                        <span>Sensor Observations at this Site</span>
                         <img class="img-fluid img-branding pull-right"
                              src="{% static 'dataloaderinterface/images/envirodiy_logo.png' %}"
                              alt="Data Sharing Portal">
-                        Sensor Observations at this Site
                     </h6>
+
                     <div class="buttons-toolbar row">
-                        <div class="col-sm-12 col-md-8">
+                        <div class="col-sm-12  {% if can_administer_site %}col-md-8{% endif %}">
                             <div class="alert alert-light" role="alert">
                                 <table>
                                     <tr>
@@ -290,7 +294,7 @@
                                      data-variable-code="{{ sensor.sensor_output.variable_code }}"
                                      data-influx-url="{{ sensor.influx_url }}">
                                     <div class="mdl-card__actions mdl-card--border mdl-card__supporting-text">
-                                        <div class="grid grid-title">
+                                        <div class="grid" style="grid-template-columns: auto auto;">
                                             <div>
                                                 <h6 class="variable-title d-inline">{{ sensor.sensor_output.variable_name }}</h6>
                                                 <span id="provisional-{{ forloop.counter0 }}" class="badge badge-info">Provisional</span>
@@ -341,12 +345,12 @@
                                              class="graph-container">
                                         </div>
                                         <div class="variable-data">
-                                            <div class="row">
-                                                <div class="col-6">
+                                            <div class="grid" style="grid-template-columns: auto auto">
+                                                <div>
                                                     <span>Last observation </span><br>
                                                     <span class="last-observation">{{ sensor.last_measurement.value_local_datetime|default:"-" }} {{ sensor.last_measurement.utc_offset_hours }}</span>
                                                 </div>
-                                                <div class="col-6 text-right">
+                                                <div class="text-right">
                                                     <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement.data_value|roundfloat:4|default:" - " }}</h3>
                                                     <h6 style="margin-top: 0;" class="unit">
                                                         ({{ sensor.sensor_output.unit_abbreviation }})</h6>
@@ -386,10 +390,12 @@
                         {% endfor %}
                         {% if not site.sensors.all %}
                             <div class="col-12">
-                                <i class="material-icons no-data-icon center-icon">
-                                    cloud_off
-                                </i>
-                                <span class="text-muted">No sensors have been added to this site.</span>
+                                <div class="grid" style="grid-template-columns: 60px auto;">
+                                    <i class="material-icons no-data-icon center-icon" style=" align-self: center">
+                                        cloud_off
+                                    </i>
+                                    <span style=" align-self: center" class="text-muted">No sensors have been added to this site.</span>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
@@ -400,11 +406,11 @@
         <div class="container ribbon-content mdl-color--white mdl-shadow--4dp">
             <div class="row">
                 <div class="col-12">
-                    <h5 class="page-title">
-                        <img class="img-fluid img-branding pull-right"
+                    <h5 class="page-title grid" style="grid-template-columns: auto auto;">
+                        <span>Macroinvertebrate Data at this Site</span>
+                        <img class="img-fluid img-branding"
                              src="{% static 'dataloaderinterface/images/Leaf-Pack-Network-logo-horiz-black.png' %}"
                              alt="Leaf Pack Network logo">
-                        Macroinvertebrate Data at this Site
                     </h5>
 
                     {% if can_administer_site %}
@@ -454,10 +460,12 @@
                             </tbody>
                         </table>
                     {% else %}
-                        <i class="material-icons no-data-icon center-icon">
-                            cloud_off
-                        </i>
-                        <span class="text-muted">No Macroinvertebrate Data have been added to this site.</span>
+                        <div class="grid" style="grid-template-columns: 60px auto;">
+                            <i class="material-icons no-data-icon center-icon" style=" align-self: center">
+                                cloud_off
+                            </i>
+                            <span style=" align-self: center" class="text-muted">No Macroinvertebrate Data have been added to this site.</span>
+                        </div>
                     {% endif %}
                 </div>
             </div>

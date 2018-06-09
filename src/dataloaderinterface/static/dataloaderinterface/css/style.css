@@ -325,6 +325,10 @@ svg.not-stale {
     margin-bottom: 15px;
 }
 
+.buttons-toolbar {
+    margin-top: -30px;
+}
+
 .table-trigger {
     cursor: pointer;
 }
@@ -746,9 +750,10 @@ span.table-trigger, span.tsa-trigger, span.download-trigger {
 .ribbon-content .page-title {
     margin: 0;
     margin-top: -40px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 10px;
     border-bottom: 1px solid #DDD;
+    line-height: 24px;
 }
 
 .ribbon {
@@ -1243,7 +1248,7 @@ td.label, p.label {
 }
 
 .no-data-icon {
-    font-size: 72px;
+    font-size: 46px;
     color: #DDD;
     margin-right: 24px;
 }
@@ -1332,16 +1337,18 @@ hr.dotted {
 .img-branding {
     max-width: 200px;
     margin-top: -10px;
+    justify-self: end;
+    align-self: center;
 }
 
 #clipboard-snackbar {
     z-index: 1051; /* Above bootstrap's modal windows */
 }
 
-div.grid {
+.grid {
     display: grid;
 }
 
-div.grid-title {
-    grid-template-columns: auto auto;
+.follow-status {
+    justify-self: end;
 }
