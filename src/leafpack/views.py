@@ -153,7 +153,7 @@ class LeafPackDetailView(DetailView):
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
-class LeafPackCreateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, CreateView):
+class LeafPackCreateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, LeafPackFormMixin, CreateView):
     """
     Create View
     """
@@ -206,7 +206,7 @@ class LeafPackCreateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, CreateVi
         return self.form_invalid(leafpack_form, bug_forms)
 
 
-class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, UpdateView):
+class LeafPackUpdateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, LeafPackFormMixin, UpdateView):
     """
     Update view
     """
