@@ -25,23 +25,6 @@ var filters = {
     }
 };
 
-function CenterControl(controlDiv, map) {
-    // Set CSS for the control border.
-    var controlUI = document.createElement('div');
-    controlUI.style.backgroundColor = '#fff';
-    controlUI.style.border = '2px solid #fff';
-    controlUI.style.borderRadius = '3px';
-    controlUI.style.boxShadow = '0 1px 1px rgba(0,0,0,.3)';
-    controlUI.style.margin = '1em';
-    controlDiv.appendChild(controlUI);
-
-    // Set CSS for the control interior.
-    var controlText = document.createElement('div');
-    controlText.style.padding = "1em";
-    controlText.innerHTML = 'Showing <strong id="marker-count">0</strong> out of <strong id="marker-total-count">0</strong> results.';
-    controlUI.appendChild(controlText);
-}
-
 function initMap() {
     const DEFAULT_ZOOM = 5;
     const DEFAULT_SPECIFIC_ZOOM = 12;
@@ -144,12 +127,26 @@ function initMap() {
     });
 
     var centerControlDiv = document.createElement('div');
-    CenterControl(centerControlDiv, map);
+
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.borderRadius = '3px';
+    controlUI.style.boxShadow = '0 1px 1px rgba(0,0,0,.3)';
+    controlUI.style.margin = '1em';
+    controlUI.style.width = "182px";
+    centerControlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior.
+    var controlText = document.createElement('div');
+    controlText.style.padding = "1em";
+    controlText.innerHTML = 'Showing <strong id="marker-count">'
+        + markers.length + '</strong> out of <strong id="marker-total-count">'
+        + markers.length + '</strong> results.';
+    controlUI.appendChild(controlText);
 
     map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
-
-    $("#marker-count").text(markers.length);
-    $("#marker-total-count").text(markers.length);
 }
 
 $(document).ready(function () {
