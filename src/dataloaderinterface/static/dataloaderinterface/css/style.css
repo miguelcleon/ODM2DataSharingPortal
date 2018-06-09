@@ -1337,3 +1337,11 @@ hr.dotted {
 #clipboard-snackbar {
     z-index: 1051; /* Above bootstrap's modal windows */
 }
+
+div.grid {
+    display: grid;
+}
+
+div.grid-title {
+    grid-template-columns: auto auto;
+}
