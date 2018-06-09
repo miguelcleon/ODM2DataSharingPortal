@@ -31,12 +31,8 @@ function CenterControl(controlDiv, map) {
     controlUI.style.backgroundColor = '#fff';
     controlUI.style.border = '2px solid #fff';
     controlUI.style.borderRadius = '3px';
-    controlUI.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 1px 1px)';
-    controlUI.style.cursor = 'pointer';
-    controlUI.style.marginBottom = '1em';
-    controlUI.style.marginTop = '1em';
-    controlUI.style.textAlign = 'center';
-    controlUI.title = 'Click to recenter the map';
+    controlUI.style.boxShadow = '0 1px 1px rgba(0,0,0,.3)';
+    controlUI.style.margin = '1em';
     controlDiv.appendChild(controlUI);
 
     // Set CSS for the control interior.
