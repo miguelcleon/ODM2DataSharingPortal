@@ -106,6 +106,11 @@ class SensorMeasurement(models.Model):
         return self.value_datetime + self.value_datetime_utc_offset
 
     @property
+    def utc_offset_hours_display(self):
+        total = int(self.value_datetime_utc_offset.total_seconds() / 3600)
+        return "(UTC{sign}{hours}:00)".format(sign=["-", "+"][total > 0], hours=str(abs(self.utc_offset_hours)).zfill(2))
+
+    @property
     def utc_offset_hours(self):
         return int(self.value_datetime_utc_offset.total_seconds() / 3600)
 

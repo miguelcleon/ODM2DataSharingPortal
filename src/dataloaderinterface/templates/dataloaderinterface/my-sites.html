@@ -132,8 +132,9 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="2">{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }}
-                                                            (<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
+                                                        <td colspan="2">{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }}
+                                                            <i>(<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}
+                                                                class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)</i>
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -254,8 +255,9 @@
                                                 </tr>
                                                 <tr>
                                                     <td></td>
-                                                    <td>{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }}
-                                                        <br>(<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
+                                                    <td>{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }}
+                                                        <br><i>(<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}
+                                                            class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)</i>
                                                     </td>
                                                 </tr>
                                                 </tbody>
