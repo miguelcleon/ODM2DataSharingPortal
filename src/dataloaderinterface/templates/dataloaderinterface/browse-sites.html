@@ -60,7 +60,7 @@
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
+                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
                     "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                     "dataType": "{% if site.sensors.all %}EnviroDIY,{% endif %}{% if site.leafpack_set.all %}Leaf Pack{% endif %}",
                     "status": "{{ site.ownership_status }}"

@@ -348,7 +348,7 @@
                                             <div class="grid" style="grid-template-columns: auto auto">
                                                 <div>
                                                     <span>Last observation </span><br>
-                                                    <span class="last-observation">{{ sensor.last_measurement.value_local_datetime|default:"-" }} {{ sensor.last_measurement.utc_offset_hours }}</span>
+                                                    <span class="last-observation">{{ sensor.last_measurement.value_local_datetime|default:"-" }} {{ sensor.last_measurement.utc_offset_hours_display }}</span>
                                                 </div>
                                                 <div class="text-right">
                                                     <h3 style="margin: 0; color: steelblue;">{{ sensor.last_measurement.data_value|roundfloat:4|default:" - " }}</h3>

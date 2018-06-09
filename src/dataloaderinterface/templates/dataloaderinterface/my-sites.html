@@ -132,7 +132,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="2">{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }}
+                                                        <td colspan="2">{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }}<br>
                                                             <i>(<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}
                                                                 class="text-danger"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)</i>
                                                         </td>
@@ -298,7 +298,7 @@
                         "latitude": {{ site.latitude|default_if_none:0 }},
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
+                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
                         "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                         "status":"owned"
                      }{% if not forloop.last or followed_sites.count > 0 %},{% endif %}
@@ -311,7 +311,7 @@
                         "latitude": {{ site.latitude|default_if_none:0 }},
                         "longitude": {{ site.longitude|default_if_none:0 }},
                         "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
+                        "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
                         "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
                         "status":"followed"
                      }{% if not forloop.last %},{% endif %}
