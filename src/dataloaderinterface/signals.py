@@ -80,6 +80,8 @@ def handle_site_registration_post_save(sender, instance, created, update_fields=
 @receiver(post_delete, sender=SiteRegistration)
 def handle_site_registration_post_delete(sender, instance, **kwargs):
     sampling_feature = instance.sampling_feature
+    if not sampling_feature:
+        return
     sampling_feature.annotations.all().delete()
     sampling_feature and sampling_feature.delete()
 
