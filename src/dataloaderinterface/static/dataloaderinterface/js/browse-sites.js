@@ -6,7 +6,6 @@ var filters = {
         icon: 'cloud_queue',
         label: 'Data Types',
         values: {},
-        values_sortable: [],
         inclusive: true, // For filter items that can take multiple values from a set of values
         has_search: false
     },
@@ -15,7 +14,6 @@ var filters = {
         label: 'Organizations',
         icon: 'business',   // From https://material.io/icons/
         values: {},
-        values_sortable: [],
         has_search: true
     },
     siteTypes: {
@@ -23,10 +21,30 @@ var filters = {
         icon: 'layers',
         label: 'Site Types',
         values: {},
-        values_sortable: [],
         has_search: true
     }
 };
+
+function CenterControl(controlDiv, map) {
+    // Set CSS for the control border.
+    var controlUI = document.createElement('div');
+    controlUI.style.backgroundColor = '#fff';
+    controlUI.style.border = '2px solid #fff';
+    controlUI.style.borderRadius = '3px';
+    controlUI.style.boxShadow = 'rgba(0, 0, 0, 0.3) 0px 1px 1px)';
+    controlUI.style.cursor = 'pointer';
+    controlUI.style.marginBottom = '1em';
+    controlUI.style.marginTop = '1em';
+    controlUI.style.textAlign = 'center';
+    controlUI.title = 'Click to recenter the map';
+    controlDiv.appendChild(controlUI);
+
+    // Set CSS for the control interior.
+    var controlText = document.createElement('div');
+    controlText.style.padding = "1em";
+    controlText.innerHTML = 'Showing <strong id="marker-count">0</strong> out of <strong id="marker-total-count">0</strong> results.';
+    controlUI.appendChild(controlText);
+}
 
 function initMap() {
     const DEFAULT_ZOOM = 5;
@@ -61,7 +79,7 @@ function initMap() {
         scaleControl: true
     });
 
-    map.setOptions({minZoom: 3, maxZoom: 18});
+    map.setOptions({minZoom: 1, maxZoom: 18});
 
     var infoWindow = new google.maps.InfoWindow({
         content: ''
@@ -128,6 +146,14 @@ function initMap() {
 
         markers.push(marker);
     });
+
+    var centerControlDiv = document.createElement('div');
+    CenterControl(centerControlDiv, map);
+
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+
+    $("#marker-count").text(markers.length);
+    $("#marker-total-count").text(markers.length);
 }
 
 $(document).ready(function () {
@@ -159,6 +185,7 @@ $(document).ready(function () {
 
     // Move the items to an array so we can sort them
     for (var f in filters) {
+        filters[f].values_sortable = [];
         for (var val in filters[f].values) {
             filters[f].values_sortable.push([val, filters[f].values[val]]);
         }
@@ -248,6 +275,9 @@ $(document).ready(function () {
         if ($("#switch-zoom").prop("checked")) {
             zoomExtent();
         }
+
+        $("#marker-count").text(markers.length);
+        $("#marker-total-count").text(markers.length);
     });
 
     $("#switch-zoom").change(function () {
@@ -258,12 +288,16 @@ $(document).ready(function () {
 
     $(".chk-filter").change(function() {
         var checkedItems = getCurrentFilters();
+        var someVisible = false;
+        var count = 0;
 
         // If nothing selected, display all
         if (!checkedItems.length) {
             for (var i = 0; i < markers.length; i++) {
                 markers[i].setVisible(true);
             }
+            someVisible = true;
+            count = markers.length;
         }
         else {
             for (var i = 0; i < markers.length; i++) {
@@ -289,7 +323,7 @@ $(document).ready(function () {
                                 break;
                             }
                         }
-                        visible = visible && found; // Hide if not any of the values was filtered
+                        visible = visible && found; // Hide if none of the values were filtered
                     }
                     else {
                         if (values.indexOf(markers[i][key]) < 0) {
@@ -297,16 +331,31 @@ $(document).ready(function () {
                         }
                     }
                 }
+
+                if (visible) {
+                    count++;
+                    someVisible = true;
+                }
+
                 markers[i].setVisible(visible);
+
+                if (!someVisible && visible) {
+                    someVisible = true;
+                }
             }
         }
 
-        if ($("#switch-zoom").prop("checked")) {
+        // Populate map count
+        $("#marker-count").text(count);
+        $("#marker-total-count").text(markers.length);
+
+        if ($("#switch-zoom").prop("checked") && someVisible) {
             zoomExtent();
         }
     });
 });
 
+// Zooms to the extent of markers.
 function zoomExtent() {
     var bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < markers.length; i++) {
