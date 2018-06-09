@@ -191,10 +191,10 @@ $(document).ready(function () {
         }
     }
 
-    // Sort the arrays
+    // Sort the arrays alphabetically
     for (var f in filters) {
         filters[f].values_sortable.sort(function (a, b) {
-            return b[1] - a[1];
+            return b[0] > a[0] ? -1 : 1;
         });
     }
 
