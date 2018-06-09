@@ -146,7 +146,7 @@ function initMap() {
         + markers.length + '</strong> results.';
     controlUI.appendChild(controlText);
 
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centerControlDiv);
+    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(centerControlDiv);
 }
 
 $(document).ready(function () {
