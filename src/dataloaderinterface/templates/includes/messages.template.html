@@ -3,10 +3,11 @@
         <div class="col-12">
             {% for message in messages %}
                 <div class="message-container">
-        <span class="mdl-chip mdl-chip--deletable form-message {{ message.tags }}">
-            <span class="mdl-chip__text">{{ message }}</span>
-            <button type="button" class="mdl-chip__action action_cancel"><i class="material-icons">cancel</i></button>
-        </span>
+                    <span class="mdl-chip mdl-chip--deletable form-message {{ message.tags }}">
+                        <span class="mdl-chip__text">{{ message }}</span>
+                        <button type="button" class="mdl-chip__action action_cancel"><i class="material-icons">cancel</i></button>
+                    </span>
+                <br><br>
                 </div>
             {% endfor %}
         </div>

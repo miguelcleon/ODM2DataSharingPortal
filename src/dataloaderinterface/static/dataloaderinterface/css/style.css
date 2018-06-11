@@ -457,7 +457,7 @@ span.map-help {
     background-color: #d4edda;
 }
 
-.sampling-feature-fields .help-icon {
+.sampling-feature-fields .help-icon, .location-fields .help-icon {
     float: right;
     margin-top: 10px;
 }

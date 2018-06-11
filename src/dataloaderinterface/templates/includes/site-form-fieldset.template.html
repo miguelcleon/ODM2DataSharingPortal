@@ -9,11 +9,11 @@
                  data-field="{{ form.affiliation_id.name }}">
                 <label class="control-label"
                        for="{{ form.affiliation_id.id_for_label }}">{{ form.affiliation_id.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
+                <i id="affiliation-help"
                    class="material-icons text-muted help-icon">help</i>
                 {{ form.affiliation_id.errors }}
                 <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                     data-mdl-for="affiliation-help">
                     {{ form.affiliation_id.help_text }}
                 </div>
                 {{ form.affiliation_id|add_class:"form-control input-sm" }}
@@ -24,11 +24,11 @@
                  data-field="{{ form.sampling_feature_code.name }}">
                 <label class="control-label"
                        for="{{ form.sampling_feature_code.id_for_label }}">{{ form.sampling_feature_code.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
+                <i id="sfc-help"
                    class="material-icons text-muted help-icon">help</i>
                 {{ form.sampling_feature_code.errors }}
                 <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                     data-mdl-for="sfc-help">
                     {{ form.sampling_feature_code.help_text }}
                 </div>
                 {{ form.sampling_feature_code|add_class:"form-control input-sm" }}
@@ -38,11 +38,11 @@
                  data-field="{{ form.sampling_feature_name.name }}">
                 <label class="control-label"
                        for="{{ form.sampling_feature_name.id_for_label }}">{{ form.sampling_feature_name.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
+                <i id="sfn-help"
                    class="material-icons text-muted help-icon">help</i>
                 {{ form.sampling_feature_name.errors }}
                 <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                     data-mdl-for="sfn-help">
                     {{ form.sampling_feature_name.help_text }}
                 </div>
                 {{ form.sampling_feature_name|add_class:"form-control input-sm" }}
@@ -52,27 +52,27 @@
                  data-field="{{ form.site_type.name }}">
                 <label class="control-label"
                        for="{{ form.site_type.id_for_label }}">{{ form.site_type.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
+                <i id="site-type-help"
                    class="material-icons text-muted help-icon">help</i>
                 {{ form.site_type.errors }}
                 <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                     data-mdl-for="site-type-help">
                     {{ form.site_type.help_text }}
                 </div>
                 {{ form.site_type|add_class:"form-control input-sm" }}
             </div>
-
+            {#TODO: DECIDE ON TOOLTIPS#}
             <div class="form-field {% if form.stream_name.field.required %} required-field{% endif %}{% if form.stream_name.errors %} has-error{% endif %}"
                  data-field="{{ form.stream_name.name }}">
                 <label class="control-label"
                        for="{{ form.stream_name.id_for_label }}">{{ form.stream_name.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
-                   class="material-icons text-muted help-icon">help</i>
+{#                <i id="stream-name-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
                 {{ form.stream_name.errors }}
-                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
-                    {{ form.stream_name.help_text }}
-                </div>
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="stream-name-help">#}
+{#                    {{ form.stream_name.help_text }}#}
+{#                </div>#}
                 {{ form.stream_name|add_class:"form-control input-sm" }}
             </div>
 
@@ -80,13 +80,13 @@
                  data-field="{{ form.major_watershed.name }}">
                 <label class="control-label"
                        for="{{ form.major_watershed.id_for_label }}">{{ form.major_watershed.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
-                   class="material-icons text-muted help-icon">help</i>
+{#                <i id="major-watershed-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
                 {{ form.major_watershed.errors }}
-                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
-                    {{ form.major_watershed.help_text }}
-                </div>
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="major-watershed-help">#}
+{#                    {{ form.major_watershed.help_text }}#}
+{#                </div>#}
                 {{ form.major_watershed|add_class:"form-control input-sm" }}
             </div>
 
@@ -94,13 +94,13 @@
                  data-field="{{ form.sub_basin.name }}">
                 <label class="control-label"
                        for="{{ form.sub_basin.id_for_label }}">{{ form.sub_basin.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
-                   class="material-icons text-muted help-icon">help</i>
+{#                <i id="sub-basin-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
                 {{ form.sub_basin.errors }}
-                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
-                    {{ form.sub_basin.help_text }}
-                </div>
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="sub-basin-help">#}
+{#                    {{ form.sub_basin.help_text }}#}
+{#                </div>#}
                 {{ form.sub_basin|add_class:"form-control input-sm" }}
             </div>
 
@@ -108,13 +108,13 @@
                  data-field="{{ form.closest_town.name }}">
                 <label class="control-label"
                        for="{{ form.closest_town.id_for_label }}">{{ form.closest_town.label }}</label>
-                <i id="action-by-help{{ forloop.counter0 }}"
-                   class="material-icons text-muted help-icon">help</i>
+{#                <i id="closest-town-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
                 {{ form.closest_town.errors }}
-                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                     data-mdl-for="action-by-help{{ forloop.counter0 }}">
-                    {{ form.closest_town.help_text }}
-                </div>
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="closest-town-help">#}
+{#                    {{ form.closest_town.help_text }}#}
+{#                </div>#}
                 {{ form.closest_town|add_class:"form-control input-sm" }}
             </div>
 
@@ -160,7 +160,7 @@
                 </label>
             </div>
         </div>
-        <div class="form-group col-sm-12 col-md-6">
+        <div class="form-group col-sm-12 col-md-6 location-fields">
             <div class="row">
                 <div class="col-12  map-container">
                     <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
@@ -179,11 +179,11 @@
                          data-field="{{ form.latitude.name }}">
                         <label class="control-label"
                                for="{{ form.latitude.id_for_label }}">{{ form.latitude.label }}</label>
-                        <i id="action-by-help{{ forloop.counter0 }}"
+                        <i id="latitude-help"
                            class="material-icons text-muted help-icon">help</i>
                         {{ form.latitude.errors }}
                         <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                             data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                             data-mdl-for="latitude-help">
                             {{ form.latitude.help_text }}
                         </div>
                         {{ form.latitude|add_class:"form-control input-sm" }}
@@ -194,11 +194,11 @@
                          data-field="{{ form.longitude.name }}">
                         <label class="control-label"
                                for="{{ form.longitude.id_for_label }}">{{ form.longitude.label }}</label>
-                        <i id="action-by-help{{ forloop.counter0 }}"
+                        <i id="longitude-help"
                            class="material-icons text-muted help-icon">help</i>
                         {{ form.longitude.errors }}
                         <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                             data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                             data-mdl-for="longitude-help">
                             {{ form.longitude.help_text }}
                         </div>
                         {{ form.longitude|add_class:"form-control input-sm" }}
@@ -209,11 +209,11 @@
                          data-field="{{ form.elevation_m.name }}">
                         <label class="control-label"
                                for="{{ form.elevation_m.id_for_label }}">{{ form.elevation_m.label }}</label>
-                        <i id="action-by-help{{ forloop.counter0 }}"
+                        <i id="elevation-help"
                            class="material-icons text-muted help-icon">help</i>
                         {{ form.elevation_m.errors }}
                         <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                             data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                             data-mdl-for="elevation-help">
                             {{ form.elevation_m.help_text }}
                         </div>
                         {{ form.elevation_m|add_class:"form-control input-sm" }}
@@ -224,11 +224,11 @@
                          data-field="{{ form.elevation_datum.name }}">
                         <label class="control-label"
                                for="{{ form.elevation_datum.id_for_label }}">{{ form.elevation_datum.label }}</label>
-                        <i id="action-by-help{{ forloop.counter0 }}"
+                        <i id="elevation-datum-help"
                            class="material-icons text-muted help-icon">help</i>
                         {{ form.elevation_datum.errors }}
                         <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
-                             data-mdl-for="action-by-help{{ forloop.counter0 }}">
+                             data-mdl-for="elevation-datum-help">
                             {{ form.elevation_datum.help_text }}
                         </div>
                         {{ form.elevation_datum|add_class:"form-control input-sm" }}
