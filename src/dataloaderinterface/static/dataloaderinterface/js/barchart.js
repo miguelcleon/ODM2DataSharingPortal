@@ -80,7 +80,6 @@ y.domain([0, d3.max(data, function (d) {
     return d.frequency;
 })]);
 
-
 // Define responsive behavior
 function resize() {
     width = $(".svg-container").width() - margin.left - margin.right;

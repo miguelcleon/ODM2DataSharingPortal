@@ -100,7 +100,7 @@
                 <div class="col-sm-12 col-md-6">
                     <h6 class="title">Leaf Pack Type and Composition</h6>
                     <hr class="dotted">
-                    <p class="text-muted label">Predominant Leaf Species:</p>
+                    <p class="label">Predominant Leaf Species:</p>
                     {% for lp in leafpack.types.all %}
                         <h5 class="d-inline"><span class="badge badge-info">{{ lp }}</span></h5>
                     {% endfor %}
@@ -167,7 +167,7 @@
                                 <td class="mdl-data-table__cell--non-numeric indent-left label">Total precipitation depth that
                                     occurred
                                 </td>
-                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }} <small class="text-muted">cm</small></td>
+                                <td class="mdl-data-table__cell--non-numeric">{{ leafpack.storm_precipitation }} <small>cm</small></td>
                             </tr>
                         {% endif %}
                         <tr>
