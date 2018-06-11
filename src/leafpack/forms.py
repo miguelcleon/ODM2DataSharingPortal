@@ -211,9 +211,7 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
         """
         form_list = []
 
-        queryset = Macroinvertebrate.objects.filter(family_of=None)\
-            .order_by('pollution_tolerance')\
-            .order_by('-sort_priority')
+        queryset = Macroinvertebrate.objects.filter(family_of=None).order_by('-sort_priority')
 
         for taxon in queryset:
             if leafpack is not None:

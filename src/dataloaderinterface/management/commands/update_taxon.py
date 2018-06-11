@@ -31,10 +31,15 @@ class Command(BaseCommand):
 
         reader = csv.DictReader(cStringIO.StringIO(data), delimiter=',')
 
+        current_taxons = Macroinvertebrate.objects.all()
+
         for row in reader:
             taxon_name = row.get('TaxonName', '')
 
             if not len(taxon_name):
+                continue
+
+            if '#' == taxon_name[0]:
                 continue
 
             common_name = row['CommonName']
@@ -43,9 +48,14 @@ class Command(BaseCommand):
             pollution_tolerance = row.get('Pollution Tolerance', 0)
             url = row['URL']
 
-            try:
-                taxon = Macroinvertebrate.objects.get(scientific_name__iregex=taxon_name)
-            except ObjectDoesNotExist:
+            taxon = None
+
+            for t in current_taxons:
+                if taxon_name.lower() in t.scientific_name.lower() or t.scientific_name.lower() in taxon_name.lower():
+                    taxon = t
+                    break
+
+            if taxon is None:
                 taxon = Macroinvertebrate()
 
             taxon.scientific_name = taxon_name

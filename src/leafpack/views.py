@@ -148,7 +148,7 @@ class LeafPackDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        # call_command('update_taxon')
+        call_command('update_taxon')
         # call_command('set_leafpackdb_defaults')
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
