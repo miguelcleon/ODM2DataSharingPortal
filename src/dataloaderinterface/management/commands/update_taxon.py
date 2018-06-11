@@ -1,10 +1,12 @@
 from leafpack.models import Macroinvertebrate
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 import requests
 import csv
 import cStringIO
 from django.conf import settings
+import logging
 
 
 class Command(BaseCommand):
@@ -30,17 +32,19 @@ class Command(BaseCommand):
         reader = csv.DictReader(cStringIO.StringIO(data), delimiter=',')
 
         for row in reader:
-            taxon_name = row['TaxonName']
-            common_name = row['CommonName']
-            parent_name = row['Parent Taxon']
-            itis_serial_num = row['ITIS Taxonomic Serial Number']
-            url = row['URL']
+            taxon_name = row.get('TaxonName', '')
 
             if not len(taxon_name):
                 continue
 
+            common_name = row['CommonName']
+            parent_name = row.get('Parent Taxon', None)
+            itis_serial_num = row.get('ITIS Taxonomic Serial Number', None)
+            pollution_tolerance = row.get('Pollution Tolerance', 0)
+            url = row['URL']
+
             try:
-                taxon = Macroinvertebrate.objects.get(scientific_name__iexact=taxon_name)
+                taxon = Macroinvertebrate.objects.get(scientific_name__iregex=taxon_name)
             except ObjectDoesNotExist:
                 taxon = Macroinvertebrate()
 
@@ -48,16 +52,20 @@ class Command(BaseCommand):
             taxon.common_name = common_name
             taxon.itis_serial_number = itis_serial_num
             taxon.url = url
+            taxon.pollution_tolerance = pollution_tolerance
 
             if len(parent_name):
 
                 try:
-                    parent = Macroinvertebrate.objects.get(scientific_name=parent_name)
+                    parent = Macroinvertebrate.objects.get(scientific_name__iregex=parent_name)
                     taxon.family_of = parent
                 except ObjectDoesNotExist:
                     continue
 
-            taxon.save()
+            try:
+                taxon.save()
+            except IntegrityError as e:
+                logging.error(e)
 
 
 
