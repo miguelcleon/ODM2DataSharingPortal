@@ -108,7 +108,7 @@ class LeafPackDetailView(DetailView):
         # order taxon by pollution_tolerance, then by sort_priority in descending order
         taxon = Macroinvertebrate.objects.filter(family_of=None)\
             .order_by('pollution_tolerance')\
-            .order_by('-sort_priority')
+            .order_by('sort_priority')
 
         # get subcategories of taxon
         for parent in taxon:
@@ -148,7 +148,7 @@ class LeafPackDetailView(DetailView):
         return context
 
     def get(self, request, *args, **kwargs):
-        call_command('update_taxon')
+        # call_command('update_taxon')
         # call_command('set_leafpackdb_defaults')
         return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
