@@ -43,6 +43,7 @@
                                     <th class="mdl-data-table__cell--non-numeric">Deployment Type</th>
                                     <th class="mdl-data-table__cell--non-numeric">Edit</th>
                                     <th class="mdl-data-table__cell--non-numeric">Delete</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -67,6 +68,12 @@
                                                     {#                                                                    TODO: SETUP THIS DELETE FORM SIMILAR TO SENSOR DELETE FORMS #}
                                                     {{ leafpack.DELETE }}
                                                 </button>
+                                            </td>
+                                            <td class="mdl-data-table__cell--non-numeric">
+                                                <a class="mdl-button mdl-js-button button-link mdl-button--primary"
+                                                   href="{% url 'leafpack:view' siteregistration.sampling_feature_code leafpack.id %}">
+                                                    View Details
+                                                </a>
                                             </td>
                                         </tr>
                                     {% endfor %}
