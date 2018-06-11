@@ -31,8 +31,8 @@ class HydroShareSettingsForm(forms.Form):
     )
     data_type_choices = (
         ('TS', 'Time Series'),
-        ('LP', 'Leaf Packet'),
-        ('SD', 'Stream Data')
+        ('LP', 'Leaf Pack Experiments'),
+        # ('SD', 'Stream Data')
     )
     schedule_freq_choices = (
         ('daily', 'Daily'),

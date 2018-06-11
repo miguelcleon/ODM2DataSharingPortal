@@ -5,6 +5,7 @@ from django.db import models
 from dataloaderinterface.models import SiteRegistration
 from accounts.models import User
 from django.db.models import Sum, Q
+from operator import __or__ as OR
 
 
 class Macroinvertebrate(models.Model):
@@ -111,9 +112,9 @@ class LeafPack(models.Model):
         if total == 0:
             return 0
 
-        ept_names = ['Ephemeroptera', 'Plecoptera', 'Trichoptera']
+        ept_filter = reduce(OR, [Q(bug__scientific_name=name) for name in ['Ephemeroptera', 'Plecoptera', 'Trichoptera']])
 
-        queryset = LeafPackBug.objects.filter(bug__scientific_name__in=ept_names)
+        queryset = LeafPackBug.objects.filter(ept_filter, leaf_pack=self)
 
         aggregate = queryset.aggregate(Sum('bug_count'))
 

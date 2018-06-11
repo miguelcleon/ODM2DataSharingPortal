@@ -87,6 +87,30 @@ class HydroShareResourceBaseView(UpdateView):
         context['date_format'] = settings.DATETIME_FORMAT
         return context
 
+    def upload_hydroshare_files(self, resource):
+
+        hydroshare_resource = self.object or self.get_object()
+        site = SiteRegistration.objects.get(hydroshare_resource=hydroshare_resource)
+        # Grab files for uploading to hydroshare
+        file_uploads = []
+
+        # if 'TS' is a keyword, add sensor data to file_uploads
+        if 'TS' in hydroshare_resource.data_types:
+            try:
+                file_uploads += get_sensor_files(site)
+            except Exception as e:
+                logging.error(e)
+
+        # if 'LP' is a keyword, add leaf pack data to file_uploads
+        if 'LP' in hydroshare_resource.data_types:
+            try:
+                file_uploads += get_leafpack_files(site)
+            except Exception as e:
+                logging.error(e)
+
+        if len(file_uploads):
+            upload_hydroshare_resource_files(resource, file_uploads)
+
     def get(self, request, *args, **kwargs):
         # # uncomment to force a hydroshare resource file update.
         # # Only do this for debugging purposes!
@@ -167,25 +191,28 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
         coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
         hs_resource.add_coverage(coverage)
 
-        # Add 'WikiWatershed' keyword to all resources
+        # Add 'WikiWatershed' and 'EnviroDIY' keyword to all resources
         hs_resource.keywords.add('WikiWatershed')
+        hs_resource.keywords.add('EnviroDIY')
 
-        sensors = SiteSensor.objects.filter(registration=site)
-        if len(sensors):
-            # If this site has sensors, add 'EnviroDIY' keyword.
-            hs_resource.keywords.add('EnviroDIY')
-            # Add sensor variable names as keywords
-            for sensor in sensors:
-                hs_resource.keywords.add(sensor.variable_name)
+        # Check if 'TS' (Time Series) is a selected data type, and add variable names as keywords if True
+        if 'TS' in resource.data_types:
+            sensors = SiteSensor.objects.filter(registration=site)
+            if len(sensors):
+                # Add sensor variable names as keywords
+                for sensor in sensors:
+                    output = sensor.sensor_output
+                    if output is not None and output.variable_name is not None:
+                        hs_resource.keywords.add(output.variable_name)
 
-        # TODO: Clearly, this will need to change once Leaf Packet datasets are actually integrated into the project
-        if getattr(resource, 'look_at_me_I_have_leaf_packet_datasets_yay', None):
+        # Check if 'LP' (Leaf Pack) is a selected data type, and add the 'Leaf Pack' keyword if True
+        if 'LP' in resource.data_types and len(site.leafpack_set.all()) > 0:
             hs_resource.keywords.add('Leaf Pack')
 
         try:
             """
             NOTE: The UUID returned when creating a resource on hydroshare.org is externally generated and should only 
-            be used as a reference to an external datasource that is not part of ODM2WebSDL database ecosystem.
+            be used as a reference to an external datasource that is not part of the ODM2DataSharingPortal ecosystem.
             """
             resource.ext_id = hs_resource.create()
             resource.title = hs_resource.title
@@ -201,11 +228,7 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
         """
         Creates a resource in hydroshare.org using form data.
         """
-
-        # NOTE: Eventually EnviroDIY will support multiple data types. For now, this defaults to 'TS' (Time Series)
-        post_data = request.POST.copy()
-        post_data.update({'data_types': 'TS'})
-        form = HydroShareSettingsForm(post_data)
+        form = HydroShareSettingsForm(request.POST)
 
         if form.is_valid():
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
@@ -226,12 +249,10 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
             else:
                 hs_resource = self.create_resource(site, form)
 
-            # Upload data files to the newly created resource
             try:
-                upload_hydroshare_resource_files(site, hs_resource)
+                self.upload_hydroshare_files(hs_resource)
             except Exception as e:
-                # If the app fails here, the resource was created but the resource files failed to upload.
-                logging.error('Failed to upload resource files: ' + e.message)
+                logging.error(e)
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
 
@@ -303,7 +324,7 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
 
                 # Upload the most recent resource files
                 try:
-                    upload_hydroshare_resource_files(site, hs_resource)
+                    self.upload_hydroshare_files(hs_resource)
                 except Exception as e:
                     return JsonResponse({'error': e.message}, status=500)
 
@@ -457,28 +478,45 @@ class OAuthRedirect(TemplateView):
         return super(OAuthRedirect, self).get(request, args, kwargs)
 
 
-def get_site_files(site_registration):
-    site_sensors = SiteSensor.objects.filter(registration=site_registration.pk)
+# def get_site_files(site_registration):
+#     site_sensors = SiteSensor.objects.filter(registration=site_registration.pk)
+#     files = []
+#     for site_sensor in site_sensors:
+#         filename, csv_file = CSVDataApi.get_csv_file(site_sensor.result_id)
+#         files.append((filename, csv_file.getvalue()))
+#
+#     leafpacks = LeafPack.objects.filter(site_registration=site_registration.pk)
+#     for leafpack in leafpacks:
+#         filename, csv_file = get_leafpack_csv(site_registration.sampling_feature_code, leafpack.id)
+#         files.append((filename, csv_file))
+#
+#     return files
+
+
+def get_sensor_files(site_registration):
+    queryset = SiteSensor.objects.filter(registration=site_registration.pk)
     files = []
-    for site_sensor in site_sensors:
+    for site_sensor in queryset:
         filename, csv_file = CSVDataApi.get_csv_file(site_sensor.result_id)
         files.append((filename, csv_file.getvalue()))
-
-    leafpacks = LeafPack.objects.filter(site_registration=site_registration.pk)
-    for leafpack in leafpacks:
-        filename, csv_file = get_leafpack_csv(site_registration.sampling_feature_code, leafpack.id)
-        files.append((filename, csv_file))
-
     return files
 
 
-def upload_hydroshare_resource_files(site, resource):  # type: (SiteRegistration, Resource) -> None
+def get_leafpack_files(site_registration):
+    leafpacks = LeafPack.objects.filter(site_registration=site_registration.pk)
+    files = []
+    for leafpack in leafpacks:
+        filename, csv_file = get_leafpack_csv(site_registration.sampling_feature_code, leafpack.id)
+        files.append((filename, csv_file))
+    return files
+
+
+def upload_hydroshare_resource_files(resource, files):  # type: (Resource, [object]) -> None
 
     if isinstance(resource, JsonResponse):
-        # This might happen if hydroshare isn't working
+        # This might happen if hydroshare isn't working...
         raise Exception(resource.content)
 
-    files = get_site_files(site)
     for file_ in files:
         file_name = file_[0]
         content = file_[1]
