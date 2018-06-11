@@ -235,7 +235,7 @@ class CSVDataApi(View):
     @staticmethod
     def generate_metadata(result):
         sensor = SiteSensor.objects.select_related('registration').filter(result_id=result.result_id).first()
-        if not sensor: # i dunno man, if it doesn't return anything it's messed up anyways.
+        if not sensor:  # I dunno man, if it doesn't return anything it's messed up anyways.
             return
 
         action = result.feature_action.action
