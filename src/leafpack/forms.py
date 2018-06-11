@@ -225,7 +225,7 @@ class LeafPackBugFormFactory(forms.BaseFormSet):
 
             order_bug_form = LeafPackBugForm(instance=lpg)
 
-            families = taxon.families.all().order_by('common_name').order_by('sort_priority')
+            families = taxon.families.all().order_by('common_name').order_by('-sort_priority')
             family_bug_forms = list()
             if len(families) > 0:
 

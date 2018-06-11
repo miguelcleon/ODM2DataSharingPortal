@@ -118,7 +118,7 @@ class LeafPackDetailView(DetailView):
                 continue
 
             child_taxons = []
-            for child in parent.families.all().order_by('common_name'):
+            for child in parent.families.all().order_by('sort_priority'):
 
                 try:
                     lpg = LeafPackBug.objects.get(leaf_pack=leafpack, bug=child)
