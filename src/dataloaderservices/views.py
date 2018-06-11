@@ -217,9 +217,9 @@ class CSVDataApi(View):
     @staticmethod
     def get_data_values(result):
         data_values = result.values.all()
-        return [(data_value.value_datetime.strftime(CSVDataApi.date_format),
+        return [((data_value.value_datetime + timedelta(hours=data_value.value_datetime_utc_offset)).strftime(CSVDataApi.date_format),
                  '{0}:00'.format(data_value.value_datetime_utc_offset),
-                 (data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset)).strftime(CSVDataApi.date_format),
+                 data_value.value_datetime.strftime(CSVDataApi.date_format),
                  data_value.data_value,
                  data_value.censor_code_id,
                  data_value.quality_code_id)
@@ -229,6 +229,8 @@ class CSVDataApi(View):
     def get_metadata_template():
         with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
             return metadata_file.read()
+
+
 
     @staticmethod
     def generate_metadata(result):
