@@ -102,7 +102,8 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: {lat: site.latitude, lng: site.longitude},
             map: map,
-            icon: icons[site.status]
+            icon: icons[site.status],
+            title: site.name
         });
 
         for (var f in filters) {
