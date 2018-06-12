@@ -72,7 +72,8 @@ function initMap() {
         var marker = new google.maps.Marker({
             position: { lat: site.latitude, lng: site.longitude },
             map: map,
-            icon: icons[site.status]
+            icon: icons[site.status],
+            title: site.name
         });
 
         bounds.extend(marker.getPosition());
