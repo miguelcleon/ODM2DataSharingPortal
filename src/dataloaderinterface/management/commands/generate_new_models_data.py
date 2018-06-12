@@ -96,7 +96,7 @@ class Command(BaseCommand):
         print('Measurement data added!')
 
     def handle(self, *args, **options):
-        # self.add_site_data()
+        self.add_site_data()
         # self.generate_sensor_output_data()
         self.create_last_measurements()
         # self.add_sensor_output_data()
