@@ -123,7 +123,8 @@ class SiteDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(SiteDetailView, self).get_context_data(**kwargs)
         context['is_followed'] = self.object.followed_by.filter(id=self.request.user.id).exists()
-        context['can_administer_site'] = self.request.user.can_administer_site(self.object)
+        user = self.request.user
+        context['can_administer_site'] = user.is_authenticated and user.can_administer_site(self.object)
         context['is_site_owner'] = self.request.user == self.object.django_user
         context['tsa_url'] = settings.TSA_URL
 
@@ -152,7 +153,7 @@ class SensorListUpdateView(DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
-        if not request.user.can_administer_site(site):
+        if request.user.is_authenticated and not request.user.can_administer_site(site):
             raise Http404
         return super(SensorListUpdateView, self).dispatch(request, *args, **kwargs)
 
@@ -173,7 +174,7 @@ class LeafPackListUpdateView(DetailView):
 
     def dispatch(self, request, *args, **kwargs):
         site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs['sampling_feature_code'])
-        if not request.user.can_administer_site(site):
+        if request.user.is_authenticated and not request.user.can_administer_site(site):
             raise Http404
         return super(LeafPackListUpdateView, self).dispatch(request, *args, **kwargs)
 
@@ -192,7 +193,7 @@ class SiteDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('sites_list')
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.can_administer_site(self.get_object()):
+        if request.user.is_authenticated and not request.user.can_administer_site(self.get_object()):
             raise Http404
         return super(SiteDeleteView, self).dispatch(request, *args, **kwargs)
 
@@ -216,7 +217,7 @@ class SiteUpdateView(LoginRequiredMixin, UpdateView):
     object = None
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.can_administer_site(self.get_object()):
+        if request.user.is_authenticated and not request.user.can_administer_site(self.get_object()):
             raise Http404
 
         return super(SiteUpdateView, self).dispatch(request, *args, **kwargs)

@@ -142,15 +142,11 @@ class LeafPackDetailView(DetailView):
         context['leafpack_bugs'] = self.get_taxon()
         context['sampling_feature_code'] = self.get_object().site_registration.sampling_feature_code
 
-        context['can_administer_site'] = self.request.user.can_administer_site(self.object.site_registration)
+        user = self.request.user
+        context['can_administer_site'] = user.is_authenticated and user.can_administer_site(self.object.site_registration)
         context['is_site_owner'] = self.request.user == self.object.site_registration.django_user
 
         return context
-
-    def get(self, request, *args, **kwargs):
-        # call_command('update_taxon')
-        # call_command('set_leafpackdb_defaults')
-        return super(LeafPackDetailView, self).get(request, *args, **kwargs)
 
 
 class LeafPackCreateView(LoginRequiredMixin, LeafPackUpdateCreateMixin, LeafPackFormMixin, CreateView):
