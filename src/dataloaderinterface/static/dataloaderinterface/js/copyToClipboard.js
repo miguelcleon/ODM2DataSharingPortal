@@ -3,8 +3,6 @@
  */
 
 $(document).ready(function () {
-    var snackbarContainer = document.querySelector('#clipboard-snackbar');
-
     $(".click-select-all").click(function () {
         $(this).select();
     });
@@ -13,15 +11,9 @@ $(document).ready(function () {
         var copyTarget = $(this).attr("data-copy-target");
         var copied = copyToClipboard(document.getElementById(copyTarget), e);
 
-        var data = {
-            message: 'Copied to clipboard.',
-            timeout: 3000
-        };
-        if (!copied) {
-           data.message = "This text could not be copied."
-        }
+        var message = !copied ? "This text could not be copied." : 'Copied to clipboard.';
 
-        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+        snackbarMsg(message);
     });
 });
 

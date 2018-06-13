@@ -1,6 +1,11 @@
 {% extends 'dataloaderinterface/base.html' %}
 {% load staticfiles %}
+{% load helpers %}
 {% load site %}
+
+{% block page_title %}
+    <title>Browse Sites</title>
+{% endblock %}
 
 {% block content %}
     <div class="container-fluid full-height">
@@ -14,9 +19,26 @@
         </div>
         <div class="row" id="filters-row">
             <div id="filters" class="col-sm-12 col-md-4 col-lg-3 mdl-shadow--2dp">
-                <button id="btnClearFilters" class="mdl-button mdl-js-button pull-right" style="margin: 10px 0;">
-                  <i class="material-icons">filter_list</i> Clear All Filters
-                </button>
+                <div class="row mdl-shadow--2dp">
+                    <div class="col-7">
+                        <label id="label-switch-zoom" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-zoom">
+                            <input type="checkbox" id="switch-zoom" class="mdl-switch__input" checked>
+                            <span class="mdl-switch__label">Auto Zoom</span>
+                        </label>
+                        <div class="mdl-tooltip" for="label-switch-zoom">
+                            Automatically zoom to the extent of visible markers
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <button id="btnClearFilters" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect pull-right"
+                                style="margin: 10px 0;">
+                            <i class="material-icons">filter_list</i> Clear
+                        </button>
+                        <div class="mdl-tooltip" for="btnClearFilters">
+                            Clear All Filters
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="col-sm-12 col-md-8 col-lg-9" style="padding: 0;">
@@ -38,8 +60,10 @@
                     "latitude": {{ site.latitude|default_if_none:0 }},
                     "longitude": {{ site.longitude|default_if_none:0 }},
                     "elevation": {{ site.elevation_m|default_if_none:'""' }},
-                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement }} ({{ site.latest_measurement|timesince }} ago){% else %}-{% endif %}",
-                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}"
+                    "latest-measurement": "{% if site.latest_measurement %}{{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }} ({{ site.latest_measurement.value_datetime|utc_timesince }} ago){% else %}-{% endif %}",
+                    "detail_link": "{% url 'site_detail' site.sampling_feature_code %}",
+                    "dataType": "{% if site.sensors.all %}EnviroDIY,{% endif %}{% if site.leafpack_set.all %}Leaf Pack{% endif %}",
+                    "status": "{{ site.ownership_status }}"
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ]

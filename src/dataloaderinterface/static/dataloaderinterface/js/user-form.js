@@ -18,13 +18,13 @@ function generateErrorList(errors) {
 }
 
 $(document).ready(function() {
-    var organizationForm = $('.organization-fields');
-    var organizationSelect = $('form').find('[name="organization"]');
+    var organizationForm = $('div.organization-fields');
+    var organizationSelect = $('div.user-fields').find('select[name="organization_code"]');
     initializeSelect(organizationForm.find('[name="organization_type"]'));
 
     $('<option value="new">Add New Organization...</option>').insertAfter(organizationSelect.children().first());
     organizationSelect.on('change', function() {
-        if ($(this).val() == 'new') {
+        if ($(this).val() === 'new') {
             cleanOrganizationForm();
             $('#organization-dialog').modal('toggle');
         }
@@ -36,7 +36,7 @@ $(document).ready(function() {
             dict[field.name] = field.value;
             return dict;
         }, {});
-        
+
         $.ajax({
             url: $('#new-organization-api').val(),
             type: 'post',
@@ -44,12 +44,12 @@ $(document).ready(function() {
                 csrfmiddlewaretoken: $('form input[name="csrfmiddlewaretoken"]').val()
             }, data)
         }).done(function(data, message, xhr) {
-            if (xhr.status == 201) {
+            if (xhr.status === 201) {
                 // organization created
-                var newOption = $('<option value="' + data.organization_id + '">' + data.organization_name + '</option>');
-                $('.user-fields select[name="organization"]').append(newOption).val(data.organization_id);
+                var newOption = $('<option value="' + data.organization_code + '">' + data.organization_name + '</option>');
+                $('.user-fields select[name="organization_code"]').append(newOption).val(data.organization_code);
                 $('#organization-dialog').modal('toggle');
-            } else if (xhr.status == 206) {
+            } else if (xhr.status === 206) {
                 // organization form error
                 var form = $('.organization-fields');
 
@@ -80,7 +80,7 @@ $(document).ready(function() {
     });
 
     $('#organization-modal-close').on('click', function() {
-        var organizationSelect = $('.user-fields select[name="organization"]');
+        var organizationSelect = $('.user-fields select[name="organization_code"]');
         organizationSelect.val('');
         initializeSelect(organizationSelect);
     });

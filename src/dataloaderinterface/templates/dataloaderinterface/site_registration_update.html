@@ -1,0 +1,76 @@
+{% extends 'dataloaderinterface/base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load site_form_util %}
+
+{% block page_title %}
+    <title>Update Site</title>
+{% endblock %}
+
+{% block content %}
+    <div class="ribbon ribbon-blue">
+
+    </div>
+    <div class="ribbon-container">
+        <div class="container main-content ribbon-content mdl-color--white mdl-shadow--4dp">
+            <div class="row">
+                <section class="device-data col-lg-12">
+                    <header class="section-header">
+                        <div class="page-title">Edit Site Information</div>
+                        {% include 'includes/messages.template.html' with messages=messages %}
+                    </header>
+
+                    <div class="section-body">
+                        <form method="post" enctype="multipart/form-data" role="form" id="site-registration-form">
+                            {% csrf_token %}
+                            <input name="user_first_name" type="hidden" value="{{ user.first_name }}">
+                            <input name="user_last_name" type="hidden" value="{{ user.last_name }}">
+
+                            {% include 'includes/site-form-fieldset.template.html' %}
+
+                            <fieldset>
+                                <div>
+                                    <a class="button-link mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                                       href="{% autoescape off %}{% url 'site_detail' siteregistration.sampling_feature_code %}{% endautoescape %}">
+                                        Cancel
+                                    </a>
+
+                                    <button id="btnRegisterSite" type="submit"
+                                            class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">
+                                        {{ help }}
+                                        Save Edits
+                                    </button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block services_urls %}
+    {{ block.super }}
+{#    <input id="output-variables-api" type="hidden" value="{% url 'output_variables_service' %}">#}
+{#    <input id="model-variables-api" type="hidden" value="{% url 'model_variables_service' %}">#}
+{#    <input id="result-validation-api" type="hidden" value="{% url 'result_validation_service' %}">#}
+{#    <input id="sensor-registration-api" type="hidden" value="{% url 'register_sensor_service' %}">#}
+{#    <input id="sensor-edit-api" type="hidden" value="{% url 'edit_sensor_service' %}">#}
+{#    <input id="sensor-delete-api" type="hidden" value="{% url 'delete_sensor_service' %}">#}
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script src="{% static 'dataloaderinterface/js/common-forms.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/site-update-form.js' %}"></script>
+    <script src="{% static 'dataloaderinterface/js/copyToClipboard.js' %}"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAiUxiuZaPEPtB4EhAquguz7kNzYU7bnnc&callback=initMap"></script>
+{% endblock %}

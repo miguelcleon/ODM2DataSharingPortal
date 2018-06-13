@@ -43,10 +43,14 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'debug_toolbar',
     'rest_framework',
-    'dataloader',
-    'dataloaderservices',
-    'dataloaderinterface',
+    'accounts.apps.AccountsConfig',
+    'dataloader.apps.DataloaderConfig',
+    'dataloaderservices.apps.DataloaderservicesConfig',
+    'dataloaderinterface.apps.DataloaderinterfaceConfig',
+    'hydroshare',
+    'leafpack',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,9 +59,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'requests',
+    'reset_migrations'
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -66,6 +71,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hydroshare_util.middleware.AuthMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -178,7 +185,7 @@ DATETIME_FORMAT = "N j, Y g:i a"
 HYDROSHARE_UTIL_CONFIG = {
     'CLIENT_ID': data["hydroshare_oauth"]["client_id"],
     'CLIENT_SECRET': data["hydroshare_oauth"]["client_secret"],
-    'REDIRECT_URI': data["hydroshare_oauth"]["redirect_uri"],
+    'REDIRECT_URI': data['hydroshare_oauth']['redirect_uri']
 }
 
 INFLUX_URL_QUERY = data['influx_query']
@@ -199,3 +206,6 @@ CRONTAB_LOGFILE_PATH = data.get('crontab_log_file', '/var/log/odm2websdl-cron.lo
 
 CRONTAB_EXECUTE_DAILY_AT_HOUR = 5
 
+GOOGLE_API_CONF = data.get('google_api_conf', None)
+
+AUTH_USER_MODEL = 'accounts.User'

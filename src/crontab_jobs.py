@@ -21,6 +21,13 @@ def start_jobs(user=True):
     :param user: A {bool} or a {string} that represents an OS level user (i.e. 'root'). If user is a bool and equal to
     True, crontab jobs are scheduled under the current OS user.
     """
+
+    if os.name != "posix":
+        """
+        crontab is a UNIX thing - skip executing if OS doesn't support this operation (i.e. Windows) 
+        """
+        return
+
     # check if LOGFILE exists and create if not
     if not os.path.exists(LOGFILE):
         try:
@@ -73,17 +80,11 @@ def start_jobs(user=True):
         Add additional jobs below here if ever needed... 
         """
 
-        # print jobs created
-        logging.info(colorize("Started crontab jobs: ", fg='blue'))
-        for job in cron:
-            logging.info(colorize('\t' + str(job), fg='green'))
 
-
-def stop_jobs(cron=None, user=None):
+def stop_jobs(cron=None):
     """ Stops crontab jobs containing JOB_COMMENT_PREPENDER in the job's comment """
-    logging.info(colorize("Stopping crontab jobs: ", fg='blue'))
-    if cron is None and user:
-        cron = CronTab(user=user)
+    if cron is None:
+        return
 
     for job in cron:
         if re.search(re.escape(JOB_COMMENT_PREPENDER), job.comment):

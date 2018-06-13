@@ -34,5 +34,12 @@
     "redirect_uri": "http://localhost:8000/hydroshare/oauth/"
   },
   "crontab_log_file": "/var/log/crontab.log",
-  "crontab_user": "joesmokum"
+  "crontab_user": "joesmokum",
+  "google_api_conf": {
+    "api_key": "<your_api_key>",
+    "files": {
+      "taxon_spreadsheet": "<this_spreadsheets_file_id>",
+      "<some_other_file>": "<some_other_file_id>"
+    }
+  }
 }

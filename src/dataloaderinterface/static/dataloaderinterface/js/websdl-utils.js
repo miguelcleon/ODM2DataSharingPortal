@@ -6,6 +6,10 @@ $(document).on('click', ".mdl-chip__action.action_cancel", function () {
     $(this).closest(".message-container").remove();
 });
 
+$(document).on('change', "#switch-zoom", function () {
+    localStorage.setItem("AutoZoom", JSON.stringify($(this).prop("checked")));
+});
+
 $(document).on('click', ".menu-order li", function () {
     var target = $(this).parent()[0].dataset.sortTarget;
 
@@ -34,6 +38,14 @@ $(document).on('click', ".menu-order li", function () {
 
     localStorage.setItem("UISortState", JSON.stringify(UISortState));
 });
+
+function snackbarMsg(message, duration = 3000) {
+    var snackbarContainer = document.querySelector('#clipboard-snackbar');
+    snackbarContainer.MaterialSnackbar.showSnackbar({
+        message: message,
+        timeout: duration
+    });
+}
 
 $(document).ready(function () {
     var UISortState = JSON.parse(localStorage.getItem("UISortState")) || {};
@@ -89,7 +101,12 @@ $(document).ready(function () {
     }).done(function (response) {
         var tagName = response[0].tag_name.replace("v", "Version ");
         var URL = response[0].html_url;
-        $("#txtRelease").attr("href", URL);
-        $("#txtRelease").text(tagName);
+        $("#txtRelease").attr("href", URL).text(tagName);
     });
+
+    // Set auto zoom status
+    if (localStorage.getItem("AutoZoom") != null) {
+        var autoZoomStatus = JSON.parse(localStorage.getItem("AutoZoom"));
+        $("#switch-zoom").prop("checked", autoZoomStatus)
+    }
 });

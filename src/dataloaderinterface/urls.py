@@ -13,11 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 
-from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, \
-    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, HydroShareResourceUpdateView, \
-    HydroShareResourceCreateView, HydroShareResourceDeleteView, OAuthAuthorize, OAuthRedirect
+from dataloaderinterface.views import SitesListView, SiteDetailView, SiteRegistrationView, SensorListUpdateView, \
+    HomeView, BrowseSitesListView, SiteUpdateView, SiteDeleteView, StatusListView, LeafPackListUpdateView
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -25,12 +24,10 @@ urlpatterns = [
     url(r'^status/$', StatusListView.as_view(), name='status'),
     url(r'^browse/$', BrowseSitesListView.as_view(), name='browse_sites'),
     url(r'^sites/register/$', SiteRegistrationView.as_view(), name='site_registration'),
+    url(r'^sites/update/(?P<sampling_feature_code>.*?)/sensors/$', SensorListUpdateView.as_view(), name='sensors'),
+    url(r'^sites/update/(?P<sampling_feature_code>.*?)/leafpacks/$', LeafPackListUpdateView.as_view(), name='leafpacks'),
     url(r'^sites/update/(?P<sampling_feature_code>.*)/$', SiteUpdateView.as_view(), name='site_update'),
     url(r'^sites/delete/(?P<sampling_feature_code>.*)/$', SiteDeleteView.as_view(), name='site_delete'),
-    url(r'^sites/(?P<sampling_feature_code>.*)/hsr/create/$', HydroShareResourceCreateView.as_view(), name='hs_resource_create'),
-    url(r'^sites/(?P<sampling_feature_code>.*)/hsr/update/$', HydroShareResourceUpdateView.as_view(), name='hs_resource_update'),
-    url(r'^sites/(?P<sampling_feature_code>.*)/hsr/delete/$', HydroShareResourceDeleteView.as_view(), name='hs_resource_delete'),
+    url(r'^sites/(?P<sampling_feature_code>.*)/leafpack/', include('leafpack.urls', namespace='leafpack')),
     url(r'^sites/(?P<sampling_feature_code>.*)/$', SiteDetailView.as_view(), name='site_detail'),
-    url(r'hydroshare/oauth/$', OAuthAuthorize.as_view(), name='hydroshare_oauth'),
-    url(r'hydroshare/oauth/redirect/$', OAuthRedirect.as_view(), name='hydroshare_oauth_redirect'),
 ]

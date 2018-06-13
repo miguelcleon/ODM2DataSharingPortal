@@ -1,29 +1,11 @@
-from dataloader.models import SamplingFeature, Result
 from django import template
-from django.core.exceptions import ObjectDoesNotExist
 import re
-
-from dataloaderinterface.models import SiteRegistration, SiteSensor
+from django.template.defaultfilters import date as date_filter
+from datetime import date
+from dataloaderinterface.models import SiteRegistration
 
 register = template.Library()
-#
-#
-# @register.filter(name='get_registration')
-# def get_registration(sampling_feature):
-#     if not isinstance(sampling_feature, SamplingFeature):
-#         return
-#
-#     return DeviceRegistration.objects.filter(deployment_sampling_feature_uuid__exact=sampling_feature.sampling_feature_uuid).first()
 
-#
-# @register.filter(name='get_sensor_csv_path')
-# def get_sensor_csv_path(sensor):
-#     if not isinstance(sensor, SiteSensor):
-#         return
-#     try:
-#         return SiteResultSerializer(sensor.result).get_file_path()
-#     except ObjectDoesNotExist:
-#         return None
 
 @register.filter(name='get_site_sensor')
 def get_site_sensor(site, variable_code):
@@ -56,3 +38,22 @@ def round_float(value, argv):
         return round(value, round_to)
     else:
         return value
+
+
+@register.filter("divide")
+def divide(value, arg):
+    try:
+        return float(value) / float(arg)
+    except (ValueError, ZeroDivisionError):
+        return None
+
+
+@register.filter("date_format")
+def date_format(value, arg):
+    if value is None:
+        return ''
+
+    if isinstance(value, date):
+        return date_filter(value, arg=arg)
+
+    return str(value)

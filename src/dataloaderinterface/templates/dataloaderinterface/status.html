@@ -1,4 +1,5 @@
 {% load site staticfiles %}
+{% load helpers %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,17 +83,17 @@
     </thead>
     <tbody>
     {% for site in sites %}
-        {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Batt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" sram=site %}
+        {% with voltage=site|get_site_sensor:"EnviroDIY_Mayfly_Batt" temperature=site|get_site_sensor:"EnviroDIY_Mayfly_Temp" %}
             <tr>
                 <td><a href="{% autoescape off %}{% url 'site_detail' site.sampling_feature_code %}{% endautoescape %}">{{ site.sampling_feature_code }}</a></td>
                 <td>{{ site.sampling_feature_name }}</td>
-                <td>{% if not site.latest_measurement %}
-                    -{% else %}
-                    {{ site.latest_measurement }}
-                    ({{ site.latest_measurement|timesince }} ago)
+                <td>
+                    {% if site.latest_measurement %}
+                    {{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours }}
+                    (<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
                 {% endif %}</td>
-                <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
-                <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
             </tr>
         {% endwith %}
     {% endfor %}
@@ -119,11 +120,10 @@
                 <td>{{ site.sampling_feature_name }}</td>
                 <td>{% if not site.latest_measurement %}
                     -{% else %}
-                    {{ site.latest_measurement }}
-                    ({{ site.latest_measurement|timesince }} ago)
+                    {{ site.latest_measurement.value_local_datetime }} {{ site.latest_measurement.utc_offset_hours_display }} (<span {% if site.latest_measurement.value_datetime|is_stale:site.alerts.first %}style="color: red;"{% endif %}>{{ site.latest_measurement.value_datetime|utc_timesince }} ago</span>)
                 {% endif %}</td>
-                <td class="numeric">{{ voltage.last_measurement_value|default:"-" }}</td>
-                <td class="numeric">{{ temperature.last_measurement_value|default:"-" }}</td>
+                <td class="numeric">{{ voltage.last_measurement.data_value|default:"-" }}</td>
+                <td class="numeric">{{ temperature.last_measurement.data_value|default:"-" }}</td>
             </tr>
         {% endwith %}
     {% endfor %}
@@ -134,26 +134,5 @@
     {% endif %}
     </tbody>
 </table>
-{##}
-{#{% for site in sites %}#}
-{#    <h4>{{ site.sampling_feature_code }}</h4>#}
-{#    <table>#}
-{#    <thead>#}
-{#        <tr>#}
-{#        {% for sensor in site.sensors.all %}#}
-{#            <th>{{ sensor.variable_code }}</th>#}
-{#        {% endfor %}#}
-{#        </tr>#}
-{#    </thead>#}
-{#    <tbody>#}
-{#        <tr>#}
-{#        {% for sensor in site.sensors.all %}#}
-{#            <td>{% if sensor.last_measurement %}{{ sensor.last_measurement.data_value }}{% endif %}</td>#}
-{#        {% endfor %}#}
-{#        </tr>#}
-{#    </tbody>#}
-{#    </table>#}
-{#    <br><br>#}
-{#{% endfor %}#}
 </body>
 </html>

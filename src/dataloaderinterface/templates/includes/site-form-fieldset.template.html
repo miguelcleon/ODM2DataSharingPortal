@@ -1,0 +1,241 @@
+{% load widget_tweaks %}
+
+<fieldset>
+    <br>
+    <div class="row">
+        <div class="form-group col-sm-12 col-md-6 sampling-feature-fields">
+            {% if user.is_staff %}
+            <div class="form-field {% if form.affiliation_id.field.required %} required-field{% endif %}{% if form.affiliation_id.errors %} has-error{% endif %}"
+                 data-field="{{ form.affiliation_id.name }}">
+                <label class="control-label"
+                       for="{{ form.affiliation_id.id_for_label }}">{{ form.affiliation_id.label }}</label>
+                <i id="affiliation-help"
+                   class="material-icons text-muted help-icon">help</i>
+                {{ form.affiliation_id.errors }}
+                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                     data-mdl-for="affiliation-help">
+                    {{ form.affiliation_id.help_text }}
+                </div>
+                {{ form.affiliation_id|add_class:"form-control input-sm" }}
+            </div>
+            {% endif %}
+
+            <div class="form-field {% if form.sampling_feature_code.field.required %} required-field{% endif %}{% if form.sampling_feature_code.errors %} has-error{% endif %}"
+                 data-field="{{ form.sampling_feature_code.name }}">
+                <label class="control-label"
+                       for="{{ form.sampling_feature_code.id_for_label }}">{{ form.sampling_feature_code.label }}</label>
+                <i id="sfc-help"
+                   class="material-icons text-muted help-icon">help</i>
+                {{ form.sampling_feature_code.errors }}
+                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                     data-mdl-for="sfc-help">
+                    {{ form.sampling_feature_code.help_text }}
+                </div>
+                {{ form.sampling_feature_code|add_class:"form-control input-sm" }}
+            </div>
+
+            <div class="form-field {% if form.sampling_feature_name.field.required %} required-field{% endif %}{% if form.sampling_feature_name.errors %} has-error{% endif %}"
+                 data-field="{{ form.sampling_feature_name.name }}">
+                <label class="control-label"
+                       for="{{ form.sampling_feature_name.id_for_label }}">{{ form.sampling_feature_name.label }}</label>
+                <i id="sfn-help"
+                   class="material-icons text-muted help-icon">help</i>
+                {{ form.sampling_feature_name.errors }}
+                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                     data-mdl-for="sfn-help">
+                    {{ form.sampling_feature_name.help_text }}
+                </div>
+                {{ form.sampling_feature_name|add_class:"form-control input-sm" }}
+            </div>
+
+            <div class="form-field {% if form.site_type.field.required %} required-field{% endif %}{% if form.site_type.errors %} has-error{% endif %}"
+                 data-field="{{ form.site_type.name }}">
+                <label class="control-label"
+                       for="{{ form.site_type.id_for_label }}">{{ form.site_type.label }}</label>
+                <i id="site-type-help"
+                   class="material-icons text-muted help-icon">help</i>
+                {{ form.site_type.errors }}
+                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                     data-mdl-for="site-type-help">
+                    {{ form.site_type.help_text }}
+                </div>
+                {{ form.site_type|add_class:"form-control input-sm" }}
+            </div>
+            {#TODO: DECIDE ON TOOLTIPS#}
+            <div class="form-field {% if form.stream_name.field.required %} required-field{% endif %}{% if form.stream_name.errors %} has-error{% endif %}"
+                 data-field="{{ form.stream_name.name }}">
+                <label class="control-label"
+                       for="{{ form.stream_name.id_for_label }}">{{ form.stream_name.label }}</label>
+{#                <i id="stream-name-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
+                {{ form.stream_name.errors }}
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="stream-name-help">#}
+{#                    {{ form.stream_name.help_text }}#}
+{#                </div>#}
+                {{ form.stream_name|add_class:"form-control input-sm" }}
+            </div>
+
+            <div class="form-field {% if form.major_watershed.field.required %} required-field{% endif %}{% if form.major_watershed.errors %} has-error{% endif %}"
+                 data-field="{{ form.major_watershed.name }}">
+                <label class="control-label"
+                       for="{{ form.major_watershed.id_for_label }}">{{ form.major_watershed.label }}</label>
+{#                <i id="major-watershed-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
+                {{ form.major_watershed.errors }}
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="major-watershed-help">#}
+{#                    {{ form.major_watershed.help_text }}#}
+{#                </div>#}
+                {{ form.major_watershed|add_class:"form-control input-sm" }}
+            </div>
+
+            <div class="form-field {% if form.sub_basin.field.required %} required-field{% endif %}{% if form.sub_basin.errors %} has-error{% endif %}"
+                 data-field="{{ form.sub_basin.name }}">
+                <label class="control-label"
+                       for="{{ form.sub_basin.id_for_label }}">{{ form.sub_basin.label }}</label>
+{#                <i id="sub-basin-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
+                {{ form.sub_basin.errors }}
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="sub-basin-help">#}
+{#                    {{ form.sub_basin.help_text }}#}
+{#                </div>#}
+                {{ form.sub_basin|add_class:"form-control input-sm" }}
+            </div>
+
+            <div class="form-field {% if form.closest_town.field.required %} required-field{% endif %}{% if form.closest_town.errors %} has-error{% endif %}"
+                 data-field="{{ form.closest_town.name }}">
+                <label class="control-label"
+                       for="{{ form.closest_town.id_for_label }}">{{ form.closest_town.label }}</label>
+{#                <i id="closest-town-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
+                {{ form.closest_town.errors }}
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="closest-town-help">#}
+{#                    {{ form.closest_town.help_text }}#}
+{#                </div>#}
+                {{ form.closest_town|add_class:"form-control input-sm" }}
+            </div>
+
+            <div class="form-field checkbox {% if email_alert_form.notify.field.required %} required-field{% endif %}{% if email_alert_form.notify.errors %} has-error{% endif %}"
+                 data-field="{{ email_alert_form.notify.name }}">
+                <br>
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
+                       for="{{ email_alert_form.notify.id_for_label }}">
+                    {{ email_alert_form.notify|add_class:"mdl-checkbox__input" }}
+                    {{ email_alert_form.notify.label }}
+                    {{ email_alert_form.notify.errors }}
+                    {% if email_alert_form.notify.help_text %}
+                        <i id="email-alert-help-{{ forloop.counter0 }}"
+                           class="material-icons text-muted help-icon">help</i>
+                    {% endif %}
+
+                    {% if email_alert_form.notify.help_text %}
+                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                             data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
+                            {{ email_alert_form.notify.help_text }}
+                        </div>
+                    {% endif %}
+                </label>
+            </div>
+
+            <div class="form-field {% if email_alert_form.hours_threshold.field.required %} required-field{% endif %}{% if email_alert_form.hours_threshold.errors %} has-error{% endif %} {% if not email_alert_form.hours_threshold.value %}hidden{% endif %}"
+                 data-field="{{ email_alert_form.hours_threshold.name }}"
+                 style="margin-top: -15px;">
+                <label class="control-label"
+                       for="{{ email_alert_form.hours_threshold.id_for_label }}">
+                    {{ email_alert_form.hours_threshold.label }}{{ email_alert_form.hours_threshold.label_suffix }}
+                    {% if email_alert_form.hours_threshold.help_text %}
+                        <i id="email-alert-help-{{ forloop.counter0 }}"
+                           class="material-icons text-muted help-icon">help</i>
+                        {{ email_alert_form.hours_threshold.errors }}
+                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                             data-mdl-for="email-alert-help-{{ forloop.counter0 }}">
+                            {{ email_alert_form.hours_threshold.help_text }}
+                        </div>
+                    {% endif %}
+                    {{ email_alert_form.hours_threshold|add_class:"form-control input-sm" }}
+                    {{ email_alert_form.suffix }}
+                </label>
+            </div>
+        </div>
+        <div class="form-group col-sm-12 col-md-6 location-fields">
+            <div class="row">
+                <div class="col-12  map-container">
+                    <input type="hidden" name="zoom-level" value="{{ zoom_level }}">
+                    <div id="map"></div>
+                </div>
+                <div class="col-12">
+                    <small class="text-muted">
+                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        Click on the map to update coordinates and elevation data.
+                    </small>
+                    <br><br>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-field {% if form.latitude.field.required %} required-field{% endif %}{% if form.latitude.errors %} has-error{% endif %}"
+                         data-field="{{ form.latitude.name }}">
+                        <label class="control-label"
+                               for="{{ form.latitude.id_for_label }}">{{ form.latitude.label }}</label>
+                        <i id="latitude-help"
+                           class="material-icons text-muted help-icon">help</i>
+                        {{ form.latitude.errors }}
+                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                             data-mdl-for="latitude-help">
+                            {{ form.latitude.help_text }}
+                        </div>
+                        {{ form.latitude|add_class:"form-control input-sm" }}
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-field {% if form.longitude.field.required %} required-field{% endif %}{% if form.longitude.errors %} has-error{% endif %}"
+                         data-field="{{ form.longitude.name }}">
+                        <label class="control-label"
+                               for="{{ form.longitude.id_for_label }}">{{ form.longitude.label }}</label>
+                        <i id="longitude-help"
+                           class="material-icons text-muted help-icon">help</i>
+                        {{ form.longitude.errors }}
+                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                             data-mdl-for="longitude-help">
+                            {{ form.longitude.help_text }}
+                        </div>
+                        {{ form.longitude|add_class:"form-control input-sm" }}
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-field {% if form.elevation_m.field.required %} required-field{% endif %}{% if form.elevation_m.errors %} has-error{% endif %}"
+                         data-field="{{ form.elevation_m.name }}">
+                        <label class="control-label"
+                               for="{{ form.elevation_m.id_for_label }}">{{ form.elevation_m.label }}</label>
+                        <i id="elevation-help"
+                           class="material-icons text-muted help-icon">help</i>
+                        {{ form.elevation_m.errors }}
+                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                             data-mdl-for="elevation-help">
+                            {{ form.elevation_m.help_text }}
+                        </div>
+                        {{ form.elevation_m|add_class:"form-control input-sm" }}
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="form-field {% if form.elevation_datum.field.required %} required-field{% endif %}{% if form.elevation_datum.errors %} has-error{% endif %}"
+                         data-field="{{ form.elevation_datum.name }}">
+                        <label class="control-label"
+                               for="{{ form.elevation_datum.id_for_label }}">{{ form.elevation_datum.label }}</label>
+                        <i id="elevation-datum-help"
+                           class="material-icons text-muted help-icon">help</i>
+                        {{ form.elevation_datum.errors }}
+                        <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"
+                             data-mdl-for="elevation-datum-help">
+                            {{ form.elevation_datum.help_text }}
+                        </div>
+                        {{ form.elevation_datum|add_class:"form-control input-sm" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</fieldset>

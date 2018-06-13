@@ -8,7 +8,9 @@
 * */
 'use strict';
 
-const resource_template_url = `${window.location.href}hsr/update/`;
+window.sfCode = window.location.href.match(/(?<=\/sites\/).+(?=\/)/)[0];
+
+const resource_template_url = `/hydroshare/${window.sfCode}/update/`;
 const hydroshareContainer = $('#hydroshare-settings-container');
 
 // Make a GET request to fetch HTML for hydroshare settings modal
@@ -27,7 +29,7 @@ $(hydroshareContainer).load(resource_template_url, () => {
         $(updateNowButton).prop('disabled', true);
         $('p#hydroshare-error').text('');
 
-        const url = `${hydroshareSettingsForm[0].baseURI}hsr/update/`;
+        const url = `/hydroshare/${window.sfCode}/update/`;
         const serializedForm = $(hydroshareSettingsForm).serialize();
         const spinners = $('div[id=hs-progress-spinner]');
 

@@ -2,7 +2,7 @@
 {% load site %}
 {% load static %}
 
-<form method="post" action="/sites/{{ sampling_feature_code }}/hsr/delete/" id="hs-delete-form">
+<form method="post" action="{% url 'hydroshare:delete' sampling_feature_code %}" id="hs-delete-form">
     {% csrf_token %}
     <dialog class="mdl-dialog" id="hydroshare-delete-dialog">
 

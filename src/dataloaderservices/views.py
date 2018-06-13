@@ -6,6 +6,7 @@ from StringIO import StringIO
 
 import requests
 from django.conf import settings
+from django.forms.models import model_to_dict
 from django.http.response import HttpResponse
 from django.views.generic.base import View
 from unicodecsv.py2 import UnicodeWriter
@@ -20,12 +21,14 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from dataloaderinterface.forms import ResultForm
-from dataloaderinterface.models import SiteSensor, SiteRegistration
+from dataloaderinterface.forms import ResultForm, SiteSensorForm
+from dataloaderinterface.models import SiteSensor, SiteRegistration, SensorOutput, SensorMeasurement
 from dataloaderservices.auth import UUIDAuthentication
-from dataloaderservices.serializers import OrganizationSerializer
+from dataloaderservices.serializers import OrganizationSerializer, SensorSerializer
 
 from pytz import utc
+
+from leafpack.models import LeafPack
 
 
 class ResultApi(APIView):
@@ -58,6 +61,83 @@ class ModelVariablesApi(APIView):
         output = equipment_model.instrument_output_variables.values('variable', 'instrument_raw_output_unit')
 
         return Response(output)
+
+
+class OutputVariablesApi(APIView):
+    authentication_classes = (SessionAuthentication,)
+
+    def get(self, request):
+        output = SensorOutput.objects.for_filters()
+        return Response(output)
+
+
+class RegisterSensorApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        form = SiteSensorForm(data=request.POST)
+
+        if not form.is_valid():
+            error_data = dict(form.errors)
+            return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
+
+        registration = form.cleaned_data['registration']
+        sensor_output = form.cleaned_data['output_variable']
+        site_sensor = SiteSensor.objects.create(registration=registration, sensor_output=sensor_output)
+        return Response(model_to_dict(site_sensor, fields=[field.name for field in site_sensor._meta.fields]), status=status.HTTP_201_CREATED)
+
+
+class EditSensorApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        if 'id' not in request.POST:
+            return Response({'id': 'No sensor id in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        sensor = SiteSensor.objects.filter(pk=request.POST['id']).first()
+        if not sensor:
+            return Response({'id': 'Sensor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        form = SiteSensorForm(data=request.POST, instance=sensor)
+
+        if not form.is_valid():
+            error_data = dict(form.errors)
+            return Response(error_data, status=status.HTTP_206_PARTIAL_CONTENT)
+
+        sensor_output = form.cleaned_data['output_variable']
+        sensor.sensor_output = sensor_output
+        sensor.save(update_fields=['sensor_output'])
+        return Response(model_to_dict(sensor, fields=[field.name for field in sensor._meta.fields]), status=status.HTTP_202_ACCEPTED)
+
+
+class DeleteSensorApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        if 'id' not in request.POST:
+            return Response({'id': 'No sensor id in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        sensor = SiteSensor.objects.filter(pk=request.POST['id']).first()
+        if not sensor:
+            return Response({'id': 'Sensor not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        deleted = sensor.delete()
+        return Response(deleted, status=status.HTTP_202_ACCEPTED)
+
+
+class DeleteLeafpackApi(APIView):
+    authentication_classes = (SessionAuthentication, )
+
+    def post(self, request, format=None):
+        if 'id' not in request.POST:
+            return Response({'id': 'No leafpack id in the request.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        leafpack = LeafPack.objects.filter(pk=request.POST['id']).first()
+        if not leafpack:
+            return Response({'id': 'Leafpack not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        deleted = leafpack.delete()
+        return Response(deleted, status=status.HTTP_202_ACCEPTED)
 
 
 class OrganizationApi(APIView):
@@ -137,9 +217,9 @@ class CSVDataApi(View):
     @staticmethod
     def get_data_values(result):
         data_values = result.values.all()
-        return [(data_value.value_datetime.strftime(CSVDataApi.date_format),
+        return [((data_value.value_datetime + timedelta(hours=data_value.value_datetime_utc_offset)).strftime(CSVDataApi.date_format),
                  '{0}:00'.format(data_value.value_datetime_utc_offset),
-                 (data_value.value_datetime - timedelta(hours=data_value.value_datetime_utc_offset)).strftime(CSVDataApi.date_format),
+                 data_value.value_datetime.strftime(CSVDataApi.date_format),
                  data_value.data_value,
                  data_value.censor_code_id,
                  data_value.quality_code_id)
@@ -150,13 +230,19 @@ class CSVDataApi(View):
         with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
             return metadata_file.read()
 
+
+
     @staticmethod
     def generate_metadata(result):
+        sensor = SiteSensor.objects.select_related('registration').filter(result_id=result.result_id).first()
+        if not sensor:  # I dunno man, if it doesn't return anything it's messed up anyways.
+            return
+
         action = result.feature_action.action
-        equipment_model = result.data_logger_file_columns.first().instrument_output_variable.model
-        affiliation = action.action_by.filter(is_action_lead=True).first().affiliation
+        equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.model_id)
+        affiliation = sensor.registration.odm2_affiliation
         return CSVDataApi.get_metadata_template().format(
-            sampling_feature=result.feature_action.sampling_feature,
+            sampling_feature=sensor.registration.sampling_feature,
             variable=result.variable,
             unit=result.unit,
             model=equipment_model,
@@ -188,7 +274,9 @@ class TimeSeriesValuesApi(APIView):
             raise exceptions.ParseError('The timestamp value requires timezone information.')
 
         utc_offset = int(measurement_datetime.utcoffset().total_seconds() / timedelta(hours=1).total_seconds())
-        measurement_datetime = measurement_datetime.replace(tzinfo=None)
+
+        # saving datetimes in utc time now.
+        measurement_datetime = measurement_datetime.replace(tzinfo=None) - timedelta(hours=utc_offset)
 
         # get odm2 sampling feature if it matches sampling feature uuid sent
         sampling_feature = SamplingFeature.objects.filter(sampling_feature_uuid__exact=request.data['sampling_feature']).first()
@@ -221,22 +309,28 @@ class TimeSeriesValuesApi(APIView):
             try:
                 result_value.save()
             except Exception as e:
-                raise exceptions.ParseError("{variable_code} value not saved {exception_message}".format(
-                    variable_code=result.variable.variable_code, exception_message=e
-                ))
+                # continue adding the remaining measurements in the request.
+                # TODO: use a logger to log the failed request information.
+                continue
+                # raise exceptions.ParseError("{variable_code} value not saved {exception_message}".format(
+                #     variable_code=result.variable.variable_code, exception_message=e
+                # ))
 
             result.value_count = F('value_count') + 1
             result.result_datetime = measurement_datetime
             result.result_datetime_utc_offset = utc_offset
 
-            site_sensor.last_measurement_id = result_value.value_id
-            site_sensor.last_measurement_value = result_value.data_value
-            site_sensor.last_measurement_datetime = result_value.value_datetime
-            site_sensor.last_measurement_utc_offset = result_value.value_datetime_utc_offset
-            site_sensor.last_measurement_utc_datetime = result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset)
+            # delete last measurement
+            last_measurement = SensorMeasurement.objects.filter(sensor=site_sensor).first()
+            last_measurement and last_measurement.delete()
 
-            if site_sensor.last_measurement_utc_datetime.tzinfo is None:
-                site_sensor.last_measurement_utc_datetime = utc.localize(result_value.value_datetime - timedelta(hours=result_value.value_datetime_utc_offset))
+            # create new 'last' measurement
+            SensorMeasurement.objects.create(
+                sensor=site_sensor,
+                value_datetime=result_value.value_datetime,
+                value_datetime_utc_offset=timedelta(hours=result_value.value_datetime_utc_offset),
+                data_value=result_value.data_value
+            )
 
             if is_first_value:
                 result.valid_datetime = measurement_datetime
@@ -247,12 +341,9 @@ class TimeSeriesValuesApi(APIView):
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
                     site_sensor.registration.deployment_date_utc_offset = utc_offset
-                    # site_sensor.registration.deployment_date_utc_offset = utc_offset
                     site_sensor.registration.save(update_fields=['deployment_date'])
 
             site_sensor.save(update_fields=[
-                'last_measurement_id', 'last_measurement_value', 'last_measurement_datetime',
-                'last_measurement_utc_datetime', 'last_measurement_utc_offset',
                 'activation_date', 'activation_date_utc_offset'
             ])
             result.save(update_fields=[
