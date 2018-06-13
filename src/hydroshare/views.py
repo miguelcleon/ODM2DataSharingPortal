@@ -191,13 +191,16 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
         coverage = PointCoverage(name=site.sampling_feature_name, latitude=site.latitude, longitude=site.longitude)
         hs_resource.add_coverage(coverage)
 
-        # Add 'WikiWatershed' and 'EnviroDIY' keyword to all resources
+        # Add 'WikiWatershed' keyword to all resources
         hs_resource.keywords.add('WikiWatershed')
-        hs_resource.keywords.add('EnviroDIY')
 
         # Check if 'TS' (Time Series) is a selected data type, and add variable names as keywords if True
         if 'TS' in resource.data_types:
+            # Add 'EnviroDIY' keyword to resource if sharing time series data
+            hs_resource.keywords.add('EnviroDIY')
+
             sensors = SiteSensor.objects.filter(registration=site)
+
             if len(sensors):
                 # Add sensor variable names as keywords
                 for sensor in sensors:
@@ -205,7 +208,7 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
                     if output is not None and output.variable_name is not None:
                         hs_resource.keywords.add(output.variable_name)
 
-        # Check if 'LP' (Leaf Pack) is a selected data type, and add the 'Leaf Pack' keyword if True
+        # Add the 'Leaf Pack' keyword if sharing leaf pack experiment data
         if 'LP' in resource.data_types and len(site.leafpack_set.all()) > 0:
             hs_resource.keywords.add('Leaf Pack')
 
