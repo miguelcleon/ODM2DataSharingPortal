@@ -46,6 +46,7 @@ class Command(BaseCommand):
             parent_name = row.get('Parent Taxon', None)
             itis_serial_num = row.get('ITIS Taxonomic Serial Number', None)
             pollution_tolerance = row.get('Pollution Tolerance', 0)
+            sort_priority = row.get('Sort Priority', 9999)
             url = row['URL']
 
             taxon = None
@@ -63,6 +64,7 @@ class Command(BaseCommand):
             taxon.itis_serial_number = itis_serial_num
             taxon.url = url
             taxon.pollution_tolerance = pollution_tolerance
+            taxon.sort_priority = sort_priority
 
             if len(parent_name):
 
