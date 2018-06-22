@@ -187,7 +187,7 @@ class Resource(HydroShareUtilityBaseClass):
                                                       abstract=self.abstract)
 
         # Set access level after the resource is created since you can't seem to set the access rule at creation.
-        if self.public:
+        if self.public is not None:
             self.client.setAccessRules(self.resource_id, self.public)
 
         return self.resource_id
@@ -195,7 +195,25 @@ class Resource(HydroShareUtilityBaseClass):
     def update(self, data=None):
         if data is None:
             data = self.to_object()
+
+        # if 'keywords' in data:
+            # data['subjects'] = data['keywords']
+            # data['subjects'] = []
+            #
+            # index = 0
+            # for keyword in data['keywords']:
+            #     data['subjects'].append({index: keyword})
+            #     index += 1
+            #
+            # del data['keywords']
+
         return self.client.updateScienceMetadata(self.resource_id, data)
+
+    def update_keywords(self, keywords=None):  # type: (list) -> object
+        if keywords is None:
+            keywords = self.keywords
+
+        return self.client.updateKeywords(self.resource_id, keywords)
 
     def to_object(self, clean=True):
         metadata = super(Resource, self).to_object(clean=clean)

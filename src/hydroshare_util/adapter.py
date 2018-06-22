@@ -5,6 +5,7 @@ from hs_restclient import HydroShare, DEFAULT_HOSTNAME, HydroShareNotAuthorized,
 from requests_toolbelt import MultipartEncoder, MultipartEncoderMonitor
 from oauthlib.oauth2.rfc6749.errors import TokenExpiredError
 
+
 class HydroShareAdapter(HydroShare):
     def __init__(self, hostname=DEFAULT_HOSTNAME, port=None, use_https=True, verify=True,
                  auth=None, default_headers=None):
@@ -118,3 +119,24 @@ class HydroShareAdapter(HydroShare):
                 raise HydroShareHTTPException((url, 'GET', r.status_code))
 
         return r.json()
+
+    def updateKeywords(self, pid, keywords):  # type: (str, set) -> object
+        url = "{url_base}/resource/{pid}/scimeta/elements/".format(url_base=self.url_base, pid=pid)
+
+        import json
+
+        keywords.add('TestKeyword')
+
+        subjects = {'subjects': []}
+        for keyword in keywords:
+            subjects['subjects'].append({'value': keyword})
+
+        # r = self._request('PUT', url, json={'subjects': keywords})
+        r = self._request('PUT', url, json={'subjects': [{"value": "keyword 1"}, {"value": "keyword 2"}]})
+        if r.status_code != 202:
+            if r.status_code == 403:
+                raise HydroShareNotAuthorized(('PUT', url))
+            elif r.status_code == 404:
+                raise HydroShareNotFound((pid,))
+            else:
+                raise HydroShareHTTPException((url, 'PUT', r.status_code, keywords))
