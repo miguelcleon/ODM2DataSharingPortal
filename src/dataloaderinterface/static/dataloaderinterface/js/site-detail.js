@@ -51,9 +51,9 @@ function drawSparklinePlot(seriesInfo, seriesData) {
     var height = plotBox.height() - margin.top - margin.bottom;
 
     if (seriesData.length === 0) {
-        card.find(".table-trigger").toggleClass("disabled", true);
-        card.find(".download-trigger").toggleClass("disabled", true);
-        card.find(".tsa-trigger").toggleClass("disabled", true);
+        // card.find(".table-trigger").toggleClass("disabled", true);
+        // card.find(".download-trigger").toggleClass("disabled", true);
+        // card.find(".tsa-trigger").toggleClass("disabled", true);
 
         // Append message when there is no data
         d3.select(plotBox.get(0)).append("svg")
