@@ -174,7 +174,7 @@ class FollowSiteApi(APIView):
 
 class CSVDataApi(View):
     authentication_classes = ()
-    csv_headers = ('DateTime', 'TimeOffset', 'DateTimeUTC', 'Value', 'CensorCode', 'QualifierCode',)
+
     date_format = '%Y-%m-%d %H:%M:%S'
 
     def get(self, request, *args, **kwargs):
@@ -215,103 +215,120 @@ class CSVDataApi(View):
         Gathers time series data for the passed in result id's to generate a csv file for download
         """
 
-        results = TimeSeriesResult.objects\
+        time_series_result = TimeSeriesResult.objects\
             .prefetch_related('values')\
             .select_related('result__feature_action__sampling_feature', 'result__variable')\
             .filter(pk__in=result_ids)
 
-        # time_series_result = TimeSeriesResult.objects \
-        #     .prefetch_related('values') \
-        #     .select_related('result__feature_action__sampling_feature', 'result__variable') \
-        #     .filter(pk=result_ids[0]) \
-        #     .first()
-
-        # if not time_series_result:
-        #     raise ValueError('Time Series Result not found (result id: {}).'.format(result_ids[0]))
-        # result = time_series_result.result
+        if not time_series_result:
+            raise ValueError('Time Series Result(s) not found (result id(s): {}).'.format(', '.join(result_ids)))
 
         csv_file = StringIO()
         csv_writer = UnicodeWriter(csv_file)
-        # csv_file.write(CSVDataApi.generate_metadata(time_series_result.result))
-        csv_file.write(CSVDataApi.generate_metadata(results))
-        csv_writer.writerow(CSVDataApi.csv_headers)
-        # csv_writer.writerows(CSVDataApi.get_data_values(time_series_result))
-        csv_writer.writerows(CSVDataApi.get_data_values(results))
+        csv_file.write(CSVDataApi.generate_metadata(time_series_result))
+        csv_writer.writerow(CSVDataApi.get_csv_headers(time_series_result))
+        csv_writer.writerows(CSVDataApi.get_data_values(time_series_result))
 
         # filename = "{0}_{1}_{2}.csv".format(result.feature_action.sampling_feature.sampling_feature_code,
         #                                     result.variable.variable_code, result.result_id)
-        filename = 'data.csv'
+        filename = 'data'
         return filename, csv_file
 
     @staticmethod
-    def get_data_values(time_series_results):  # type: (QuerySet) -> object
-        tsr_results = [tsr.result for tsr in time_series_results]
+    def get_csv_headers(ts_results):  # type: ([TimeSeriesResult]) -> None
+        headers = ['DateTime', 'TimeOffset', 'DateTimeUTC']
+        return headers + [ts_result.result.variable.variable_name for ts_result in ts_results]
 
-        def date_value_date(dv):  # type: (Result) -> str
+    @staticmethod
+    def get_data_values(time_series_results):  # type: (QuerySet) -> object
+
+        def date_value_date(dv):  # type: (TimeSeriesResult) -> str
             dt = dv.value_datetime + timedelta(hours=dv.value_datetime_utc_offset)
             return dt.strftime(CSVDataApi.date_format)
 
-        def get_values_for_row(*results):
+        def get_data_values(results):  # type: ([TimeSeriesResult]) -> object
+            results_data = [result.values.all() for result in results]  # type: [TimeSeriesResultValue]
+            max_data_len = max([len(result_data) for result_data in results_data])
 
             data = list()
 
-            row_data = (
-                date_value_date(first_value),
-                '{0}:00'.format(first_value.value_datetime_utc_offset),
-                first_value.value_datetime.strftime(CSVDataApi.date_format),
-            )
-
-            for value in values:
-                row_data += (
-                    value.value_datetime.strftime(CSVDataApi.date_format),
-                    value.data_value,
-                    value.censor_code_id,
-                    value.quality_code_id
+            for i in range(0, max_data_len):
+                dv = results_data[0][i]
+                row = (
+                    date_value_date(dv),
+                    '{0}:00'.format(dv.value_datetime_utc_offset),
+                    dv.value_datetime.strftime(CSVDataApi.date_format),
                 )
 
-            return row_data
+                for j in range(0, len(results_data)):
+                    row += (results_data[j][i].data_value,)
 
-        data = list()
+                data.append(row)
 
-        for result in tsr_results:
+            return data
 
-            data.append(get_values_for_row(result))
-
-        # return [(date_value_date(data_value),
-        #          '{0}:00'.format(data_value.value_datetime_utc_offset),
-        #          data_value.value_datetime.strftime(CSVDataApi.date_format),
-        #          data_value.data_value,
-        #          data_value.censor_code_id,
-        #          data_value.quality_code_id)
-        #         for data_value in data_values]
+        return get_data_values(time_series_results)
 
     @staticmethod
-    def get_metadata_template():  # type: () -> str
-        with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
-            return metadata_file.read()
+    def get_site_information_template():
+        return CSVDataApi.read_file('site_information.txt')
+
+    @staticmethod
+    def get_variable_and_unit_information_template():
+        return CSVDataApi.read_file('variable_and_unit_information.txt')
+
+    @staticmethod
+    def get_result_information_template():
+        return CSVDataApi.read_file('result_information.txt')
+
+    @staticmethod
+    def get_deployment_information_template():
+        return CSVDataApi.read_file('instrument_deployment_information.txt')
+
+    @staticmethod
+    def read_file(fname):
+        fpath = os.path.join(os.path.dirname(__file__), 'csv_templates', fname)
+        with codecs.open(fpath, 'r', encoding='utf-8') as fin:
+            return fin.read()
 
     @staticmethod
     def generate_metadata(time_series_results):  # type: (QuerySet) -> str
+        metadata = str()
+
+        # Get the first TimeSeriesResult object and use it to get values for the
+        # "Site Information" block in the header of the CSV
+        tsr = time_series_results.first()
+        site_sensor = SiteSensor.objects.select_related('registration').filter(result_id=tsr.result.result_id).first()
+        metadata += CSVDataApi.get_site_information_template().format(
+            sampling_feature=site_sensor.registration.sampling_feature
+        ).encode('utf-8')
 
         for tsr in time_series_results:
             result = tsr.result
             sensor = SiteSensor.objects.select_related('registration').filter(result_id=result.result_id).first()
             if not sensor:  # I dunno man, if it doesn't return anything it's messed up anyways.
-                return
+                continue
 
             action = result.feature_action.action
             equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.model_id)
             affiliation = sensor.registration.odm2_affiliation
 
-            return CSVDataApi.get_metadata_template().format(
-                sampling_feature=sensor.registration.sampling_feature,
+            metadata += CSVDataApi.get_variable_and_unit_information_template().format(
                 variable=result.variable,
-                unit=result.unit,
+                unit=result.unit
+            ).encode('utf-8')
+
+            metadata += CSVDataApi.get_result_information_template().format(
+                result=result
+            ).encode('utf-8')
+
+            metadata += CSVDataApi.get_deployment_information_template().format(
                 model=equipment_model,
-                result=result,
                 action=action,
                 affiliation=affiliation
             ).encode('utf-8')
+
+        return metadata
 
 
 class TimeSeriesValuesApi(APIView):

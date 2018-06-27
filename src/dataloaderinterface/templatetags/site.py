@@ -57,3 +57,8 @@ def date_format(value, arg):
         return date_filter(value, arg=arg)
 
     return str(value)
+
+
+@register.filter("join_sensor__result_ids")
+def join_sensor_ids(sensors):
+    return ','.join([str(sensor.result_id) for sensor in sensors])
