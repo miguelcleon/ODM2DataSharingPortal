@@ -111,9 +111,12 @@ class HydroShareResourceBaseView(UpdateView):
         if len(file_uploads):
             upload_hydroshare_resource_files(resource, file_uploads)
 
-    def update_keywords(self, resource):  # type: (Resource) -> None
-        hydroshare_resource = self.object or self.get_object()  # type: HydroShareResource
-        site = SiteRegistration.objects.get(hydroshare_resource=hydroshare_resource)
+    def update_keywords(self, resource, hydroshare_resource=None, site=None):  # type: (Resource, HydroShareResource, SiteRegistration) -> None
+        if site is None:
+            site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
+
+        if hydroshare_resource is None:
+            hydroshare_resource = HydroShareResource.objects.filter(site_registration=site.registration_id, visible=True).first()  # type: HydroShareResource
 
         # Add 'WikiWatershed' keyword to all resources
         resource.keywords.add('WikiWatershed')
@@ -124,7 +127,6 @@ class HydroShareResourceBaseView(UpdateView):
             resource.keywords.add('EnviroDIY')
 
             sensors = SiteSensor.objects.filter(registration=site)
-
             if len(sensors):
                 # Add sensor variable names as keywords
                 for sensor in sensors:
@@ -137,6 +139,8 @@ class HydroShareResourceBaseView(UpdateView):
             resource.keywords.add('Leaf Pack')
 
         if hydroshare_resource.pk is not None:
+            # if 'hydroshare_resource' has a primary key, then 'resource' has already been created
+            # and it's 'update_keywords()' method can be invoked.
             resource.update_keywords()
 
     def get(self, request, *args, **kwargs):
@@ -220,7 +224,7 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
         resource.add_coverage(coverage)
 
         # Add keywords to the resource
-        self.update_keywords(resource)
+        self.update_keywords(resource, hydroshare_resource=hydroshare_resource, site=site)
 
         try:
             """
@@ -235,6 +239,7 @@ class HydroShareResourceCreateView(HydroShareResourceBaseView, HydroShareResourc
                                 status=e.status_code)
 
         hydroshare_resource.save()
+
         return resource
 
     def post(self, request, *args, **kwargs):
@@ -338,10 +343,10 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
                 # Upload the most recent resource files
                 try:
                     # update the keywords
-                    self.update_keywords(hs_resource)
+                    self.update_keywords(hs_resource, hydroshare_resource=resource, site=site)
 
                     # update the files
-                    # self.upload_hydroshare_files(hs_resource)
+                    self.upload_hydroshare_files(hs_resource)
                 except Exception as e:
                     return JsonResponse({'error': e.message}, status=500)
 

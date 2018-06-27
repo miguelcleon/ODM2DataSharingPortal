@@ -188,7 +188,10 @@ class Resource(HydroShareUtilityBaseClass):
 
         # Set access level after the resource is created since you can't seem to set the access rule at creation.
         if self.public is not None:
-            self.client.setAccessRules(self.resource_id, self.public)
+            try:
+                self.client.setAccessRules(self.resource_id, self.public)
+            except Exception as e:
+                print('Error: unknown error occured, resource access level could not be updated: {}'.format(e.message))
 
         return self.resource_id
 
@@ -196,16 +199,13 @@ class Resource(HydroShareUtilityBaseClass):
         if data is None:
             data = self.to_object()
 
-        # if 'keywords' in data:
-            # data['subjects'] = data['keywords']
-            # data['subjects'] = []
-            #
-            # index = 0
-            # for keyword in data['keywords']:
-            #     data['subjects'].append({index: keyword})
-            #     index += 1
-            #
-            # del data['keywords']
+        if 'keywords' in data:
+            data['subjects'] = []
+
+            for keyword in data['keywords']:
+                data['subjects'].append({"value": keyword})
+
+            del data['keywords']
 
         return self.client.updateScienceMetadata(self.resource_id, data)
 
