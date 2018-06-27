@@ -20,6 +20,7 @@ class Macroinvertebrate(models.Model):
         db_table = 'macroinvertebrate'
 
     scientific_name = models.CharField(max_length=255, unique=True)
+    latin_name = models.CharField(max_length=255, default='')
     common_name = models.CharField(max_length=255, unique=True)
     family_of = models.ForeignKey('Macroinvertebrate',
                                   on_delete=models.CASCADE,
