@@ -1,3 +1,13 @@
+# Source Information
+# ------------------
+# Organization: {affiliation.organization}
+# SourceDescription: {}
+# SourceLink: {}
+# ContactName: {affiliation.person}
+# Phone: {affiliation.primary_email}
+# Email: {affiliation.primary_email}
+# Citation: {}
+#
 # Instrument Deployment Information
 # ---------------------------------
 # SensorModel: {model}

@@ -246,28 +246,25 @@ class CSVDataApi(View):
             dt = dv.value_datetime + timedelta(hours=dv.value_datetime_utc_offset)
             return dt.strftime(CSVDataApi.date_format)
 
-        def get_data_values(results):  # type: ([TimeSeriesResult]) -> object
-            results_data = [result.values.all() for result in results]  # type: [TimeSeriesResultValue]
-            max_data_len = max([len(result_data) for result_data in results_data])
+        results_data = [result.values.all() for result in time_series_results]  # type: [TimeSeriesResultValue]
+        max_data_len = max([len(result_data) for result_data in results_data])
 
-            data = list()
+        data = list()
 
-            for i in range(0, max_data_len):
-                dv = results_data[0][i]
-                row = (
-                    date_value_date(dv),
-                    '{0}:00'.format(dv.value_datetime_utc_offset),
-                    dv.value_datetime.strftime(CSVDataApi.date_format),
-                )
+        for i in range(0, max_data_len):
+            dv = results_data[0][i]
+            row = (
+                date_value_date(dv),
+                '{0}:00'.format(dv.value_datetime_utc_offset),
+                dv.value_datetime.strftime(CSVDataApi.date_format),
+            )
 
-                for j in range(0, len(results_data)):
-                    row += (results_data[j][i].data_value,)
+            for j in range(0, len(results_data)):
+                row += (results_data[j][i].data_value,)
 
-                data.append(row)
+            data.append(row)
 
-            return data
-
-        return get_data_values(time_series_results)
+        return data
 
     @staticmethod
     def get_site_information_template():
@@ -294,8 +291,6 @@ class CSVDataApi(View):
     @staticmethod
     def generate_metadata(time_series_results):  # type: (QuerySet) -> str
         metadata = str()
-        variable_and_method_headers = ['VariableCode', 'VariableName', 'Indicator', 'ValueType', 'DataType', 'GeneralCategory', 'SampleMedium', 'VariableUnitsName', 'VariableUnitsType', 'VariableUnitsAbbreviation', 'NoDataValue', 'TimeSupport', 'TimeSupportUnitsAbbreviation', 'TimeSupportUnitsName', 'TimeSupportUnitsType', 'MethodDescription', 'MethodLink']
-        varmethodinfo = str()  # variable and method information metadata
 
         # Get the first TimeSeriesResult object and use it to get values for the
         # "Site Information" block in the header of the CSV
@@ -305,16 +300,17 @@ class CSVDataApi(View):
             sampling_feature=site_sensor.registration.sampling_feature
         ).encode('utf-8')
 
-        metadata += ','.join(variable_and_method_headers) + "\n"
-
+        metadata += "# Variable and Method Information\n#---------------------------\n"
+        varmethinfo_template = CSVDataApi.read_file('variable_and_method_information_template.txt')
         # Write Variable and Method Information data
         for tsr in time_series_results:
-            metadata += CSVDataApi.read_file('variable_and_method_information_template.txt').format(
-                variable=tsr.result.variable,
-                unit=tsr.result.unit
+            metadata += varmethinfo_template.format(
+                r=tsr.result,
+                v=tsr.result.variable,
+                u=tsr.result.unit
             )
 
-        metadata += "\n\n"
+        metadata += "#\n#\n"
 
         for tsr in time_series_results:
             result = tsr.result
