@@ -9,3 +9,4 @@
 # Email: {affiliation.primary_email}
 # Affiliation: {affiliation.organization}
 #
+# VariableCode, VariableName, Indicator, ValueType, DataType, GeneralCategory, SampleMedium, VariableUnitsName, VariableUnitsType, VariableUnitsAbbreviation, NoDataValue, TimeSupport, TimeSupportUnitsAbbreviation, TimeSupportUnitsName, TimeSupportUnitsType, MethodDescription, MethodLink

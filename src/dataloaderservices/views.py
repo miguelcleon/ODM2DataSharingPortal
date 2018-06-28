@@ -294,6 +294,8 @@ class CSVDataApi(View):
     @staticmethod
     def generate_metadata(time_series_results):  # type: (QuerySet) -> str
         metadata = str()
+        variable_and_method_headers = ['VariableCode', 'VariableName', 'Indicator', 'ValueType', 'DataType', 'GeneralCategory', 'SampleMedium', 'VariableUnitsName', 'VariableUnitsType', 'VariableUnitsAbbreviation', 'NoDataValue', 'TimeSupport', 'TimeSupportUnitsAbbreviation', 'TimeSupportUnitsName', 'TimeSupportUnitsType', 'MethodDescription', 'MethodLink']
+        varmethodinfo = str()  # variable and method information metadata
 
         # Get the first TimeSeriesResult object and use it to get values for the
         # "Site Information" block in the header of the CSV
@@ -302,6 +304,17 @@ class CSVDataApi(View):
         metadata += CSVDataApi.get_site_information_template().format(
             sampling_feature=site_sensor.registration.sampling_feature
         ).encode('utf-8')
+
+        metadata += ','.join(variable_and_method_headers) + "\n"
+
+        # Write Variable and Method Information data
+        for tsr in time_series_results:
+            metadata += CSVDataApi.read_file('variable_and_method_information_template.txt').format(
+                variable=tsr.result.variable,
+                unit=tsr.result.unit
+            )
+
+        metadata += "\n\n"
 
         for tsr in time_series_results:
             result = tsr.result
@@ -313,15 +326,18 @@ class CSVDataApi(View):
             equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.model_id)
             affiliation = sensor.registration.odm2_affiliation
 
+            # Variable and Unit Information
             metadata += CSVDataApi.get_variable_and_unit_information_template().format(
                 variable=result.variable,
                 unit=result.unit
             ).encode('utf-8')
 
+            # Result Information
             metadata += CSVDataApi.get_result_information_template().format(
                 result=result
             ).encode('utf-8')
 
+            # Deployment Information
             metadata += CSVDataApi.get_deployment_information_template().format(
                 model=equipment_model,
                 action=action,

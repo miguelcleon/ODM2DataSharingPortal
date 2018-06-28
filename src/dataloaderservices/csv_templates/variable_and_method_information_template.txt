@@ -1,0 +1,1 @@
+{variable.variable_code},{variable.variable_name_id},INDICATOR,{variable.variable_type_id},DATA TYPE,GENERAL CATEGORY,SAMPLE MEDIUM,{unit.unit_name},{unit.unit_type_id},{variable.no_data_value},TIME SUPPORT,{unit.unit_abbreviation},TimeSupportUnitsName,TimeSupportUnitsType,MethodDescription,MethodLink\n
