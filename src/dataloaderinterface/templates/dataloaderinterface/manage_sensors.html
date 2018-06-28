@@ -57,12 +57,13 @@
                                         data-id="{{ sensor.id }}"
                                         data-result_id="{{ sensor.result_id }}"
                                         data-result_uuid="{{ sensor.result_uuid }}"
-                                        data-sensor_output="{{ sensor.sensor_output_id }}"
+                                        data-output_variable="{{ sensor.sensor_output_id }}"
                                         data-sensor_manufacturer="{{ sensor.sensor_output.model_manufacturer }}"
                                         data-sensor_model="{{ sensor.sensor_output.model_id }}"
                                         data-variable="{{ sensor.sensor_output.variable_id }}"
                                         data-unit="{{ sensor.sensor_output.unit_id }}"
-                                        data-sampled_medium="{{ sensor.sensor_output.sampled_medium }}">
+                                        data-sampled_medium="{{ sensor.sensor_output.sampled_medium }}"
+                                        data-height="{{ sensor.height }}">
 
                                         <td data-field="sensor_model" class="mdl-data-table__cell--non-numeric">
                                             <span class="field-text">{{ sensor.sensor_output.model_name }}</span>
@@ -110,9 +111,9 @@
 
                         <script id="sensor-row" type="text/plain">
                             <tr class="result-form"
-                                    data-id="" data-result_id="" data-result_uuid="" data-sensor_output=""
+                                    data-id="" data-result_id="" data-result_uuid="" data-output_variable=""
                                     data-sensor_manufacturer="" data-sensor_model="" data-variable=""
-                                    data-unit="" data-sampled_medium="">
+                                    data-unit="" data-sampled_medium="" data-height="">
 
                                 <td data-field="sensor_model" class="mdl-data-table__cell--non-numeric">
                                     <span class="field-text"></span>

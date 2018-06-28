@@ -149,6 +149,7 @@ class SiteSensor(models.Model):
     result_uuid = models.UUIDField(db_column='ResultUUID', unique=True, null=True)
 
     sensor_output = models.ForeignKey('SensorOutput', related_name='sensor_instances', null=True)
+    height = models.FloatField(blank=True, null=True)
 
     class Meta:
         ordering = ['result_id']
