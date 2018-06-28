@@ -1,21 +1,8 @@
 # Source Information
 # ------------------
 # Organization: {affiliation.organization}
-# SourceDescription: {}
-# SourceLink: {}
 # ContactName: {affiliation.person}
-# Phone: {affiliation.primary_email}
+# Phone: {affiliation.primary_phone}
 # Email: {affiliation.primary_email}
-# Citation: {}
-#
-# Instrument Deployment Information
-# ---------------------------------
-# SensorModel: {model}
-# MethodTypeCV: {action.method.method_type_id}
-# MethodCode: {action.method.method_code}
-# MethodName: {action.method.method_name}
-# MethodDescription: {action.method.method_description}
-# ResponsiblePerson: {affiliation.person}
-# Email: {affiliation.primary_email}
-# Affiliation: {affiliation.organization}
+# Citation: {citation}
 #

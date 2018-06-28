@@ -216,7 +216,8 @@ class CSVDataApi(View):
         """
 
         time_series_result = TimeSeriesResult.objects\
-            .prefetch_related('values')\
+            .prefetch_related('values') \
+            .prefetch_related('result__feature_action__action__people')\
             .select_related('result__feature_action__sampling_feature', 'result__variable')\
             .filter(pk__in=result_ids)
 
@@ -229,9 +230,13 @@ class CSVDataApi(View):
         csv_writer.writerow(CSVDataApi.get_csv_headers(time_series_result))
         csv_writer.writerows(CSVDataApi.get_data_values(time_series_result))
 
-        # filename = "{0}_{1}_{2}.csv".format(result.feature_action.sampling_feature.sampling_feature_code,
-        #                                     result.variable.variable_code, result.result_id)
-        filename = 'data'
+        result = time_series_result.first().result
+        if len(result_ids) > 1:
+            filename = "{}_TimeSeriesResults".format(result.feature_action.sampling_feature.sampling_feature_code)
+        else:
+            filename = "{0}_{1}_{2}".format(result.feature_action.sampling_feature.sampling_feature_code,
+                                            result.variable.variable_code, result.result_id)
+
         return filename, csv_file
 
     @staticmethod
@@ -267,22 +272,6 @@ class CSVDataApi(View):
         return data
 
     @staticmethod
-    def get_site_information_template():
-        return CSVDataApi.read_file('site_information.txt')
-
-    @staticmethod
-    def get_variable_and_unit_information_template():
-        return CSVDataApi.read_file('variable_and_unit_information.txt')
-
-    @staticmethod
-    def get_result_information_template():
-        return CSVDataApi.read_file('result_information.txt')
-
-    @staticmethod
-    def get_deployment_information_template():
-        return CSVDataApi.read_file('instrument_deployment_information.txt')
-
-    @staticmethod
     def read_file(fname):
         fpath = os.path.join(os.path.dirname(__file__), 'csv_templates', fname)
         with codecs.open(fpath, 'r', encoding='utf-8') as fin:
@@ -296,49 +285,30 @@ class CSVDataApi(View):
         # "Site Information" block in the header of the CSV
         tsr = time_series_results.first()
         site_sensor = SiteSensor.objects.select_related('registration').filter(result_id=tsr.result.result_id).first()
-        metadata += CSVDataApi.get_site_information_template().format(
+        metadata += CSVDataApi.read_file('site_information.txt').format(
             sampling_feature=site_sensor.registration.sampling_feature
         ).encode('utf-8')
 
         metadata += "# Variable and Method Information\n#---------------------------\n"
-        varmethinfo_template = CSVDataApi.read_file('variable_and_method_information_template.txt')
+        variablemethodinfo_template = CSVDataApi.read_file('variable_and_method_information_template.txt')
         # Write Variable and Method Information data
         for tsr in time_series_results:
-            metadata += varmethinfo_template.format(
+            metadata += variablemethodinfo_template.format(
                 r=tsr.result,
                 v=tsr.result.variable,
                 u=tsr.result.unit
             )
 
-        metadata += "#\n#\n"
+        metadata += "#\n"
 
-        for tsr in time_series_results:
-            result = tsr.result
-            sensor = SiteSensor.objects.select_related('registration').filter(result_id=result.result_id).first()
-            if not sensor:  # I dunno man, if it doesn't return anything it's messed up anyways.
-                continue
-
-            action = result.feature_action.action
-            equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.model_id)
-            affiliation = sensor.registration.odm2_affiliation
-
-            # Variable and Unit Information
-            metadata += CSVDataApi.get_variable_and_unit_information_template().format(
-                variable=result.variable,
-                unit=result.unit
-            ).encode('utf-8')
-
-            # Result Information
-            metadata += CSVDataApi.get_result_information_template().format(
-                result=result
-            ).encode('utf-8')
-
-            # Deployment Information
-            metadata += CSVDataApi.get_deployment_information_template().format(
-                model=equipment_model,
-                action=action,
-                affiliation=affiliation
-            ).encode('utf-8')
+        # Write Source Information data
+        affiliation = tsr.result.feature_action.action.people.first()
+        annotation = tsr.result.annotations.first()
+        citation = annotation.citation.title if annotation and annotation.citation else 'N/A'
+        metadata += CSVDataApi.read_file('source_info_template.txt').format(
+            affiliation=affiliation,
+            citation=citation
+        )
 
         return metadata
 

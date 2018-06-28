@@ -288,7 +288,7 @@
                                 Manage Sensors
                             </a>
                             <a class="button-link mdl-button mdl-button--accent mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                               href="{% url 'csv_data_service' %}?result_ids={{ site.sensors.all|join_sensor__result_ids }}">
+                               href="{% url 'csv_data_service' %}?result_ids={{ site.sensors.all|join_sensor__result_ids }}" download>
                                 <i class="material-icons center-icon">cloud_download</i>
                                 Download Site Sensor Data
                             </a>
@@ -328,7 +328,7 @@
                                                 </div>
 
                                                 {#  Download data button  #}
-                                                <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}">
+                                                <a href="{% url 'csv_data_service' %}?result_id={{ sensor.result_id }}" download>
                                                     <span id="download-trigger-{{ forloop.counter0 }}"
                                                           class="fa fa-cloud-download download-trigger pull-right text-black"></span>
                                                 </a>
