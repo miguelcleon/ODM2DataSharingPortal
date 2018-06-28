@@ -204,8 +204,11 @@ class SiteSensorForm(forms.ModelForm):
     class Meta:
         model = SiteSensor
         fields = [
-            'output_variable', 'sensor_manufacturer', 'sensor_model', 'variable', 'unit', 'sampled_medium'
+            'output_variable', 'sensor_manufacturer', 'sensor_model', 'variable', 'unit', 'sampled_medium', 'height'
         ]
+        labels = {
+            'height': 'Height above(+) or below(-) surface, in meters'
+        }
 
 
 class ResultForm(forms.ModelForm):
