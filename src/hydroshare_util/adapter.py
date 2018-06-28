@@ -115,15 +115,11 @@ class HydroShareAdapter(HydroShare):
     def updateKeywords(self, pid, keywords):  # type: (str, set) -> object
         url = "{url_base}/resource/{pid}/scimeta/elements/".format(url_base=self.url_base, pid=pid)
 
-        # import json
-
-        keywords.add('TestKeyword')
-
         subjects = []
         for keyword in keywords:
             subjects.append({"value": keyword})
 
-        r = self._request('PUT', url, json={"subjects": subjects})
+        r = self.session.request('PUT', url, json={"subjects": subjects})
         if r.status_code != 202:
             if r.status_code == 403:
                 raise HydroShareNotAuthorized(('PUT', url))
@@ -131,3 +127,5 @@ class HydroShareAdapter(HydroShare):
                 raise HydroShareNotFound((pid,))
             else:
                 raise HydroShareHTTPException((url, 'PUT', r.status_code, keywords))
+        else:
+            return r.json().get('subjects', dict())

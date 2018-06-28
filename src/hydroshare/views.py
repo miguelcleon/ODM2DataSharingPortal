@@ -112,6 +112,9 @@ class HydroShareResourceBaseView(UpdateView):
             upload_hydroshare_resource_files(resource, file_uploads)
 
     def update_keywords(self, resource, hydroshare_resource=None, site=None):  # type: (Resource, HydroShareResource, SiteRegistration) -> None
+        # Clear the resources keywords
+        resource.keywords = set()
+
         if site is None:
             site = SiteRegistration.objects.get(sampling_feature_code=self.kwargs[self.slug_field])
 
@@ -333,32 +336,34 @@ class HydroShareResourceUpdateView(HydroShareResourceViewMixin, HydroShareResour
 
         if form.is_valid():
             site = SiteRegistration.objects.get(pk=form.cleaned_data['site_registration'])
-            resource = self.get_object()
+            hydroshare_resource = self.get_object()  # type: HydroShareResource
 
-            if 'update_files' in request.POST and resource.is_enabled:
+            if 'update_files' in request.POST and hydroshare_resource.is_enabled:
                 # get hydroshare resource info using hydroshare_util; this will get authentication info needed to
                 # upload files to the resource.
-                hs_resource = self.get_hs_resource(resource)
+                resource = self.get_hs_resource(hydroshare_resource)  # type: Resource
 
                 # Upload the most recent resource files
                 try:
-                    # update the keywords
-                    self.update_keywords(hs_resource, hydroshare_resource=resource, site=site)
+                    # update hs_resource's keywords
+                    self.update_keywords(resource, hydroshare_resource=hydroshare_resource, site=site)
 
                     # update the files
-                    self.upload_hydroshare_files(hs_resource)
+                    self.upload_hydroshare_files(resource)
                 except Exception as e:
                     return JsonResponse({'error': e.message}, status=500)
 
                 # update last sync date on resource
-                resource.last_sync_date = timezone.now()
+                hydroshare_resource.last_sync_date = timezone.now()
             else:
-                resource.data_types = ",".join(form.cleaned_data['data_types'])
-                resource.update_freq = form.cleaned_data['update_freq']
-                resource.sync_type = form.cleaned_data['schedule_type']
-                resource.is_enabled = not form.cleaned_data["pause_sharing"]
+                hydroshare_resource.data_types = ",".join(form.cleaned_data['data_types'])
+                hydroshare_resource.update_freq = form.cleaned_data['update_freq']
+                hydroshare_resource.sync_type = form.cleaned_data['schedule_type']
+                hydroshare_resource.is_enabled = not form.cleaned_data["pause_sharing"]
 
-            resource.save()
+                hydroshare_resource.save()
+
+
 
             success_url = reverse('site_detail', kwargs={'sampling_feature_code': site.sampling_feature_code})
             if self.request.is_ajax():
