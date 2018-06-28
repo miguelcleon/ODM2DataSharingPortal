@@ -152,6 +152,7 @@ function initializeResultsForm() {
             clear_filters();
             form.find('input[name="id"]').val('');
             form.find('input[name="output_variable"]').val('');
+            form.find('input[name="height"]').val('');
 
             dialog.find('.mdl-dialog__title').text("Add New Sensor");
             dialog.find('#add-sensor-button').show();
@@ -290,9 +291,10 @@ function fillFormData(row) {
     }
 
     form.find('input[name="id"]').val(rowData['id']);
-    form.find('input[name="output_variable"]').val(rowData['sensor_output']);
+    form.find('input[name="output_variable"]').val(rowData['output_variable']);
     form.find('input[name="result_id"]').val(rowData['result_id']);
     form.find('input[name="result_uuid"]').val(rowData['result_uuid']);
+    form.find('input[name="height"]').val(rowData['height']);
 
     $('#result-dialog').data('row', row);
 }
