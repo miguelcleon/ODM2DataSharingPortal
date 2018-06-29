@@ -84,8 +84,9 @@ class RegisterSensorApi(APIView):
         registration = form.cleaned_data['registration']
         sensor_output = form.cleaned_data['output_variable']
         height = form.cleaned_data['height']
+        notes = form.cleaned_data['sensor_notes']
 
-        site_sensor = SiteSensor.objects.create(registration=registration, sensor_output=sensor_output, height=height)
+        site_sensor = SiteSensor.objects.create(registration=registration, sensor_output=sensor_output, height=height, sensor_notes=notes)
         return Response(model_to_dict(site_sensor, fields=[field.name for field in site_sensor._meta.fields]), status=status.HTTP_201_CREATED)
 
 
@@ -108,7 +109,8 @@ class EditSensorApi(APIView):
 
         sensor.sensor_output = form.cleaned_data['output_variable']
         sensor.height = form.cleaned_data['height']
-        sensor.save(update_fields=['sensor_output', 'height'])
+        sensor.sensor_notes = form.cleaned_data['sensor_notes']
+        sensor.save(update_fields=['sensor_output', 'height', 'sensor_notes'])
         return Response(model_to_dict(sensor, fields=[field.name for field in sensor._meta.fields]), status=status.HTTP_202_ACCEPTED)
 
 

@@ -153,6 +153,7 @@ function initializeResultsForm() {
             form.find('input[name="id"]').val('');
             form.find('input[name="output_variable"]').val('');
             form.find('input[name="height"]').val('');
+            form.find('textarea[name="sensor_notes"]').val('');
 
             dialog.find('.mdl-dialog__title').text("Add New Sensor");
             dialog.find('#add-sensor-button').show();
@@ -264,7 +265,7 @@ function initializeResultsForm() {
 }
 
 function make_sensor_api_request(api_url) {
-    var output_data = $('#result-dialog div.result-form input, #result-dialog div.result-form select').toArray().reduce(function(dict, field) {
+    var output_data = $('#result-dialog div.result-form input, #result-dialog div.result-form select, #result-dialog div.result-form textarea').toArray().reduce(function(dict, field) {
         dict[field.name] = field.value;
         return dict;
     }, {});
@@ -295,6 +296,7 @@ function fillFormData(row) {
     form.find('input[name="result_id"]').val(rowData['result_id']);
     form.find('input[name="result_uuid"]').val(rowData['result_uuid']);
     form.find('input[name="height"]').val(rowData['height']);
+    form.find('textarea[name="sensor_notes"]').val(rowData['sensor_notes']);
 
     $('#result-dialog').data('row', row);
 }
