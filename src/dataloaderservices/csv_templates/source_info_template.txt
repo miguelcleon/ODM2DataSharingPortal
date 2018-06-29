@@ -1,6 +1,7 @@
 # Source Information
 # ------------------
 # Organization: {affiliation.organization}
+# SourceLink: {source_link}
 # ContactName: {affiliation.person}
 # Phone: {affiliation.primary_phone}
 # Email: {affiliation.primary_email}

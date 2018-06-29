@@ -18,4 +18,3 @@
 # VerticalDatum: {sampling_feature.elevation_datum_id}
 # SiteType: {sampling_feature.site.site_type_id}
 #
-#
