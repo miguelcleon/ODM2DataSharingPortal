@@ -70,12 +70,13 @@ class SiteRegistrationForm(forms.ModelForm):
         model = SiteRegistration
         fields = [
             'affiliation_id', 'sampling_feature_code', 'sampling_feature_name', 'latitude', 'longitude', 'elevation_m',
-            'elevation_datum', 'site_type', 'stream_name', 'major_watershed', 'sub_basin', 'closest_town'
+            'elevation_datum', 'site_type', 'stream_name', 'major_watershed', 'sub_basin', 'closest_town', 'site_notes'
         ]
         labels = {
             'sampling_feature_code': 'Site Code',
             'sampling_feature_name': 'Site Name',
             'elevation_m': 'Elevation',
+            'site_notes': 'Notes'
         }
         help_texts = {
             'sampling_feature_code': 'Enter a brief and unique text string to identify your site (e.g., "Del_Phil")',

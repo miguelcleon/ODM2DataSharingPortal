@@ -47,6 +47,8 @@ class SiteRegistration(models.Model):
     sub_basin = models.CharField(max_length=255, db_column='SubBasin', blank=True, null=True)
     closest_town = models.CharField(max_length=255, db_column='ClosestTown', blank=True, null=True)
 
+    site_notes = models.TextField(db_column='SiteNotes', blank=True, null=True)
+
     followed_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followed_sites')
     alert_listeners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='+', through='SiteAlert')
 
