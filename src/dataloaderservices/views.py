@@ -1,6 +1,8 @@
 import codecs
 import os
 from datetime import timedelta, datetime
+import pandas as pd
+import logging
 
 from StringIO import StringIO
 
@@ -9,6 +11,8 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 from django.http.response import HttpResponse
 from django.views.generic.base import View
+from django.db.models import QuerySet
+from django.shortcuts import reverse
 from unicodecsv.py2 import UnicodeWriter
 
 from dataloader.models import SamplingFeature, TimeSeriesResultValue, Unit, EquipmentModel, TimeSeriesResult, Result
@@ -174,19 +178,34 @@ class FollowSiteApi(APIView):
 
 class CSVDataApi(View):
     authentication_classes = ()
-    csv_headers = ('DateTime', 'TimeOffset', 'DateTimeUTC', 'Value', 'CensorCode', 'QualifierCode',)
+
     date_format = '%Y-%m-%d %H:%M:%S'
 
-    def get(self, request):
-        if 'result_id' not in request.GET:
-            return Response({'error': 'Result Id not received.'})
+    def get(self, request, *args, **kwargs):
+        """
+        Downloads csv file for given result id's.
 
-        result_id = request.GET['result_id']
-        if result_id == '':
-            return Response({'error': 'Empty Result Id received.'})
+        example request to download csv data for one series:
+                curl -X GET http://localhost:8000/api.csv-values/?result_ids=100
+
+        example request to download csv data for multiple series:
+                curl -X GET http://localhost:8000/api.csv-values/?result_ids=100,101,102
+        """
+
+        if 'result_id' in request.GET:
+            result_ids = [request.GET['result_id']]
+        elif 'result_ids' in request.GET:
+            result_ids = request.GET['result_ids'].split(',')
+        else:
+            return Response({'error': 'Result ID(s) not found.'})
+
+        result_ids = filter(lambda x: len(x) > 0, result_ids)
+
+        if not len(result_ids):
+            return Response({'error': 'Result ID not found.'})
 
         try:
-            filename, csv_file = CSVDataApi.get_csv_file(result_id)
+            filename, csv_file = CSVDataApi.get_csv_file(result_ids, request=request)
         except ValueError as e:
             return Response({'error': e.message})  # Time Series Result not found.
 
@@ -195,63 +214,161 @@ class CSVDataApi(View):
         return response
 
     @staticmethod
-    def get_csv_file(result_id):
-        time_series_result = TimeSeriesResult.objects \
+    def get_csv_file(result_ids, request=None):
+        """
+        Gathers time series data for the passed in result id's to generate a csv file for download
+        """
+
+        time_series_result = TimeSeriesResult.objects\
             .prefetch_related('values') \
-            .select_related('result__feature_action__sampling_feature', 'result__variable') \
-            .filter(pk=result_id) \
-            .first()
+            .prefetch_related('result__feature_action__action__people')\
+            .select_related('result__feature_action__sampling_feature', 'result__variable')\
+            .filter(pk__in=result_ids)
 
         if not time_series_result:
-            raise ValueError('Time Series Result not found.')
-        result = time_series_result.result
+            raise ValueError('Time Series Result(s) not found (result id(s): {}).'.format(', '.join(result_ids)))
 
         csv_file = StringIO()
         csv_writer = UnicodeWriter(csv_file)
-        csv_file.write(CSVDataApi.generate_metadata(time_series_result.result))
-        csv_writer.writerow(CSVDataApi.csv_headers)
+        csv_file.write(CSVDataApi.generate_metadata(time_series_result, request=request))
+        csv_writer.writerow(CSVDataApi.get_csv_headers(time_series_result))
         csv_writer.writerows(CSVDataApi.get_data_values(time_series_result))
 
-        filename = "{0}_{1}_{2}.csv".format(result.feature_action.sampling_feature.sampling_feature_code,
+        result = time_series_result.first().result
+        if len(result_ids) > 1:
+            filename = "{}_TimeSeriesResults".format(result.feature_action.sampling_feature.sampling_feature_code)
+        else:
+            filename = "{0}_{1}_{2}".format(result.feature_action.sampling_feature.sampling_feature_code,
                                             result.variable.variable_code, result.result_id)
+
         return filename, csv_file
 
     @staticmethod
-    def get_data_values(result):
-        data_values = result.values.all()
-        return [((data_value.value_datetime + timedelta(hours=data_value.value_datetime_utc_offset)).strftime(CSVDataApi.date_format),
-                 '{0}:00'.format(data_value.value_datetime_utc_offset),
-                 data_value.value_datetime.strftime(CSVDataApi.date_format),
-                 data_value.data_value,
-                 data_value.censor_code_id,
-                 data_value.quality_code_id)
-                for data_value in data_values]
+    def get_csv_headers(ts_results):  # type: ([TimeSeriesResult]) -> None
+        headers = ['DateTime', 'TimeOffset', 'DateTimeUTC']
+        var_codes = [ts_result.result.variable.variable_code for ts_result in ts_results]
+        return headers + CSVDataApi.clean_variable_codes(var_codes)
 
     @staticmethod
-    def get_metadata_template():
-        with codecs.open(os.path.join(os.path.dirname(__file__), 'metadata_template.txt'), 'r', encoding='utf-8') as metadata_file:
-            return metadata_file.read()
+    def clean_variable_codes(varcodes):  # type: ([str]) -> [str]
+        """
+        Looks for duplicate variable codes and appends a number if collisions exist.
 
-
+        Example:
+            codes = clean_variable_codes(['foo', 'bar', 'foo'])
+            print(codes)
+            # ['foo-1', 'bar', 'foo-2']
+        """
+        for varcode in varcodes:
+            count = varcodes.count(varcode)
+            if count > 1:
+                counter = 1
+                for i in range(0, len(varcodes)):
+                    if varcodes[i] == varcode:
+                        varcodes[i] = '{}-{}'.format(varcode, counter)
+                        counter += 1
+        return varcodes
 
     @staticmethod
-    def generate_metadata(result):
-        sensor = SiteSensor.objects.select_related('registration').filter(result_id=result.result_id).first()
-        if not sensor:  # I dunno man, if it doesn't return anything it's messed up anyways.
-            return
+    def get_data_values(time_series_results):  # type: (QuerySet) -> object
 
-        action = result.feature_action.action
-        equipment_model = EquipmentModel.objects.get(pk=sensor.sensor_output.model_id)
-        affiliation = sensor.registration.odm2_affiliation
-        return CSVDataApi.get_metadata_template().format(
-            sampling_feature=sensor.registration.sampling_feature,
-            variable=result.variable,
-            unit=result.unit,
-            model=equipment_model,
-            result=result,
-            action=action,
-            affiliation=affiliation
+        def date_value_date(dv):  # type: (TimeSeriesResult) -> str
+            dt = dv.value_datetime + timedelta(hours=dv.value_datetime_utc_offset)
+            return dt.strftime(CSVDataApi.date_format)
+
+        results_data = [result.values.all() for result in time_series_results]  # type: [TimeSeriesResultValue]
+        max_data_len = max([len(result_data) for result_data in results_data])
+
+        data = list()
+
+        for i in range(0, max_data_len):
+            dv = results_data[0][i]
+            row = (
+                date_value_date(dv),
+                '{0}:00'.format(dv.value_datetime_utc_offset),
+                dv.value_datetime.strftime(CSVDataApi.date_format),
+            )
+
+            for j in range(0, len(results_data)):
+                try:
+                    row += (results_data[j][i].data_value,)
+                except IndexError:
+                    row += ('',)
+
+            data.append(row)
+
+        return data
+
+    @staticmethod
+    def read_file(fname):
+        fpath = os.path.join(os.path.dirname(__file__), 'csv_templates', fname)
+        with codecs.open(fpath, 'r', encoding='utf-8') as fin:
+            return fin.read()
+
+    @staticmethod
+    def generate_metadata(time_series_results, request=None):  # type: (QuerySet) -> str
+        metadata = str()
+
+        # Get the first TimeSeriesResult object and use it to get values for the
+        # "Site Information" block in the header of the CSV
+        tsr = time_series_results.first()
+        site_sensor = SiteSensor.objects.select_related('registration').filter(result_id=tsr.result.result_id).first()
+        metadata += CSVDataApi.read_file('site_information.txt').format(
+            sampling_feature=site_sensor.registration.sampling_feature
         ).encode('utf-8')
+
+        # Write Variable and Method Information data
+        metadata += "# Variable and Method Information\n#---------------------------\n"
+        variablemethodinfo_template = CSVDataApi.read_file('variable_and_method_information_template.txt')
+        varcodes = [tsr.result.variable for tsr in time_series_results]
+        varcodes = CSVDataApi.clean_variable_codes(varcodes)
+        time_series_results_as_list = [tsr for tsr in time_series_results]
+        for i in range(0, len(time_series_results_as_list)):
+            # Yeah, so this is enumerating like this because of the need to append "-#"
+            # to variable codes when there are duplicate variable codes. This is so the
+            # column names can be distinguished easily. This rather ugly solution is
+            # so the CSV files can be formatted as requested by the gods.
+            tsr = time_series_results_as_list[i]
+            varcode = varcodes[i]
+
+            metadata += variablemethodinfo_template.format(
+                variable_code=varcode,
+                r=tsr.result,
+                v=tsr.result.variable,
+                u=tsr.result.unit
+            )
+        metadata += "#\n"
+
+        if len(time_series_results) == 1:
+            # If there's only one timeseriesresult, add the variable and unit information block.
+            # When there are multiple timeseriesresults, this part of the CSV becomes cluttered
+            # and unreadable.
+            metadata += CSVDataApi.read_file('variable_and_unit_information.txt').format(
+                variable=tsr.result.variable,
+                unit=tsr.result.unit
+            )
+
+        # Write Source Information data
+
+        # affiliation = tsr.result.feature_action.action.people.first()
+        affiliation = site_sensor.registration.odm2_affiliation
+        annotation = tsr.result.annotations.first()
+        citation = annotation.citation.title if annotation and annotation.citation else ''
+
+        if request:
+            source_link = request.build_absolute_uri(reverse('site_detail', kwargs={
+                'sampling_feature_code': site_sensor.registration.sampling_feature_code}))
+        else:
+            source_link = reverse('site_detail', kwargs={
+                'sampling_feature_code': site_sensor.registration.sampling_feature_code})
+
+        metadata += CSVDataApi.read_file('source_info_template.txt').format(
+            affiliation=affiliation,
+            citation=citation,
+            source_link=source_link
+        )
+
+        return metadata
 
 
 class TimeSeriesValuesApi(APIView):
@@ -340,14 +457,15 @@ class TimeSeriesValuesApi(APIView):
                 site_sensor.activation_date = measurement_datetime
                 site_sensor.activation_date_utc_offset = utc_offset
 
+                site_sensor.save(update_fields=[
+                    'activation_date', 'activation_date_utc_offset'
+                ])
+
                 if not site_sensor.registration.deployment_date:
                     site_sensor.registration.deployment_date = measurement_datetime
                     site_sensor.registration.deployment_date_utc_offset = utc_offset
                     site_sensor.registration.save(update_fields=['deployment_date'])
 
-            site_sensor.save(update_fields=[
-                'activation_date', 'activation_date_utc_offset'
-            ])
             result.save(update_fields=[
                 'result_datetime', 'value_count', 'result_datetime_utc_offset',
                 'valid_datetime', 'valid_datetime_utc_offset'

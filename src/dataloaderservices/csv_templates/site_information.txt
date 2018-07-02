@@ -1,0 +1,20 @@
+# ----------------------------------------------------------------------------------
+# WARNING: These data are provisional and subject to revision. The data are provided
+# as is with no warranty and on the condition that neither the data collector nor
+# any of the participants in or developers of http://data.envirodiy.org may be held
+# liable for any damages resulting from their use.
+#
+# The following metadata describe the data in this file:
+# ----------------------------------------------------------------------------------
+#
+# Site Information
+# ---------------------------
+# SiteCode: {sampling_feature.sampling_feature_code}
+# SiteName: {sampling_feature.sampling_feature_name}
+# SiteDescription: {sampling_feature.sampling_feature_description}
+# Latitude: {sampling_feature.site.latitude}
+# Longitude: {sampling_feature.site.longitude}
+# Elevation: {sampling_feature.elevation_m}
+# VerticalDatum: {sampling_feature.elevation_datum_id}
+# SiteType: {sampling_feature.site.site_type_id}
+#
