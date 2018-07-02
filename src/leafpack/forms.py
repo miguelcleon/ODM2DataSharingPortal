@@ -82,11 +82,13 @@ class LeafPackForm(forms.ModelForm):
     )
 
     placement_air_temp = forms.FloatField(
-        label='Placement Air Temperature'
+        label='Placement Air Temperature',
+        required=False,
     )
 
     placement_water_temp = forms.FloatField(
-        label='Placement Water Temperature'
+        label='Placement Water Temperature',
+        required=False,
     )
 
     retrieval_date = forms.DateField(
@@ -99,11 +101,13 @@ class LeafPackForm(forms.ModelForm):
     )
 
     retrieval_air_temp = forms.FloatField(
-        label='Retrieval Air Temperature'
+        label='Retrieval Air Temperature',
+        required=False,
     )
 
     retrieval_water_temp = forms.FloatField(
-        label='Retrieval Water Temperature'
+        label='Retrieval Water Temperature',
+        required=False,
     )
 
     had_storm = forms.NullBooleanField(
