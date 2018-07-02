@@ -47,6 +47,8 @@ class SiteRegistration(models.Model):
     sub_basin = models.CharField(max_length=255, db_column='SubBasin', blank=True, null=True)
     closest_town = models.CharField(max_length=255, db_column='ClosestTown', blank=True, null=True)
 
+    site_notes = models.TextField(db_column='SiteNotes', blank=True, null=True)
+
     followed_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followed_sites')
     alert_listeners = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='+', through='SiteAlert')
 
@@ -148,8 +150,9 @@ class SiteSensor(models.Model):
     result_id = models.IntegerField(db_column='ResultID', unique=True, null=True)
     result_uuid = models.UUIDField(db_column='ResultUUID', unique=True, null=True)
 
-    sensor_output = models.ForeignKey('SensorOutput', related_name='sensor_instances', null=True)
     height = models.FloatField(blank=True, null=True)
+    sensor_notes = models.TextField(blank=True, null=True)
+    sensor_output = models.ForeignKey('SensorOutput', related_name='sensor_instances', null=True)
 
     class Meta:
         ordering = ['result_id']

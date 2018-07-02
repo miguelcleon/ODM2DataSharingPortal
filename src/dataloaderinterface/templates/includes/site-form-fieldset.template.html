@@ -94,6 +94,20 @@
                 {{ form.closest_town|add_class:"form-control input-sm" }}
             </div>
 
+            <div class="form-field {% if form.site_notes.field.required %} required-field{% endif %}{% if form.site_notes.errors %} has-error{% endif %}"
+                 data-field="{{ form.site_notes.name }}">
+                <label class="control-label"
+                       for="{{ form.site_notes.id_for_label }}">{{ form.site_notes.label }}</label>
+{#                <i id="closest-town-help"#}
+{#                   class="material-icons text-muted help-icon">help</i>#}
+                {{ form.site_notes.errors }}
+{#                <div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--left"#}
+{#                     data-mdl-for="closest-town-help">#}
+{#                    {{ form.closest_town.help_text }}#}
+{#                </div>#}
+                {{ form.site_notes|add_class:"form-control" }}
+            </div>
+
             <div class="form-field checkbox {% if email_alert_form.notify.field.required %} required-field{% endif %}{% if email_alert_form.notify.errors %} has-error{% endif %}"
                  data-field="{{ email_alert_form.notify.name }}">
                 <br>
@@ -135,6 +149,7 @@
                     {{ email_alert_form.suffix }}
                 </label>
             </div>
+
         </div>
         <div class="form-group col-sm-12 col-md-6 location-fields">
             <div class="row">
