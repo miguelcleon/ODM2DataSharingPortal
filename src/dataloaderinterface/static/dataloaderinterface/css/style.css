@@ -1358,3 +1358,8 @@ hr.dotted {
 .follow-status {
     justify-self: end;
 }
+
+textarea[name="sensor_notes"] {
+    height: 95px;
+    min-height: 60px;
+}
