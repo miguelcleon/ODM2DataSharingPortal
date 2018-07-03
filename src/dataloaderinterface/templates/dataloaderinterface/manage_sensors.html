@@ -165,15 +165,17 @@
                             {% for hidden in sensor_form.hidden_fields %}
                                 {{ hidden }}
                             {% endfor %}
-                            {% for field in sensor_form.visible_fields %}
-                                <div class="form-field {% if field.field.required %}required-field{% endif %}">
-                                    <label class="control-label"
-                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                    {% with "placeholder:"|add:field.help_text as placeholder %}
-                                        {{ field|add_class:"form-control input-sm"|attr:placeholder }}
-                                    {% endwith %}
-                                </div>
-                            {% endfor %}
+                            <div class="row">
+                                {% for field in sensor_form.visible_fields %}
+                                    <div class="form-field {% if not forloop.last %}col-md-6{% endif %} col-sm-12{% if field.field.required %} required-field{% endif %}">
+                                        <label class="control-label"
+                                               for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        {% with "placeholder:"|add:field.help_text as placeholder %}
+                                            {{ field|add_class:"form-control input-sm"|attr:placeholder }}
+                                        {% endwith %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
 
                         <div class="col-12">
